@@ -1,0 +1,76 @@
+/* Page Background Color */
+body {
+    background-color: #f5fbff; /* Light background */
+}
+
+/* Header Section */
+.header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px 0;
+}
+
+.header .icon {
+    font-size: 72px; /* Double the size for account circle */
+    color: #003366; /* Dark blue color for icons */
+    margin-bottom: -10px; /* Adjust spacing */
+}
+
+.header .icon-edit {
+    font-size: 25px; /* 1/4 size of account circle */
+    color: #DE3163; /* Pink color for edit icon */
+    margin-left: -14px; /* Move pen slightly to the right */
+    margin-top: 69px; /* Adjust vertical spacing to move it down */
+}
+
+/* Form Container */
+.form-container {
+    max-width: 500px; /* Centering the form */
+    margin: auto;
+    padding: 20px;
+    border-radius: 10px; /* General border radius */
+}
+
+/* Form Styling */
+.form-label {
+    color: #003366; /* Dark blue color for labels */
+}
+
+.form-control, .form-select {
+    border: 1px solid black; /* Black border for input boxes */
+    background-color: #e9ecef; /* Grey background inside input boxes and dropdown */
+    border-radius: 10px; /* Increased border radius */
+    padding: 12px; /* Increased height for input fields */
+    height: auto; /* Adjust height to auto for better fitting */
+}
+
+.btn-primary {
+    background-color: #DE3163; /* Change button color to pink */
+    border: none; /* Remove border */
+    border-radius: 25px; /* Increased border radius for the button */
+    width: 150px; /* Increased width for the button */
+}
+
+.btn-primary:hover {
+    background-color: #ff99cc; /* Lighter shade on hover */
+}
+
+/* Spacing for the Form */
+.form-spacing {
+    margin-top: 50px; /* Space above the form */
+}
+
+/* Password Input Container */
+.password-container {
+    position: relative; /* Positioning for the eye icon */
+}
+
+.eye-icon {
+    position: absolute;
+    right: 15px; /* Position the icon inside the input */
+    top: 65%; /* Adjusted vertical position for the icon (moved lower) */
+    transform: translateY(-50%);
+    cursor: pointer; /* Change cursor to pointer */
+    color: #003366; /* Dark blue color for eye icon */
+}
