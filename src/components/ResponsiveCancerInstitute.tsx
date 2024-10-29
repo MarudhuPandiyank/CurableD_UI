@@ -8,6 +8,7 @@ const ResponsiveCancerInstitute: React.FC = () => {
   // State for sidebar visibility
   const [isLeftSidebarOpen, setIsLeftSidebarOpen] = useState(false);
   const [isRightSidebarOpen, setIsRightSidebarOpen] = useState(false);
+  
 
   return (
     <div style={{ backgroundColor: '#f5fbff', minHeight: '100vh' }}>
