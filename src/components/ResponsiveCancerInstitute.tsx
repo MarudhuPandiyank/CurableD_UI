@@ -1,14 +1,20 @@
-// src/ResponsiveCancerInstitute.tsx
 import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import './ResponsiveCancerInstitute.css';
+import { useNavigate } from 'react-router-dom';
 
 const ResponsiveCancerInstitute: React.FC = () => {
   // State for sidebar visibility
   const [isLeftSidebarOpen, setIsLeftSidebarOpen] = useState(false);
   const [isRightSidebarOpen, setIsRightSidebarOpen] = useState(false);
   
+  const navigate = useNavigate(); 
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    navigate('/');
+  };
 
   return (
     <div style={{ backgroundColor: '#f5fbff', minHeight: '100vh' }}>
@@ -36,7 +42,9 @@ const ResponsiveCancerInstitute: React.FC = () => {
           <h3>Username1234</h3>
           <button className="sidebar-btn"><i className="fas fa-home"></i> Home</button>
           <button className="sidebar-btn"><i className="fas fa-user-edit"></i> Edit Profile</button>
-          <button className="sidebar-logout"><i className="fas fa-sign-out-alt"></i> Log Out</button>
+          <button className="sidebar-logout" onClick={handleLogout}>
+            <i className="fas fa-sign-out-alt"></i> Log Out
+          </button>
         </div>
       </div>
 
