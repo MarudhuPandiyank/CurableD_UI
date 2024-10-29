@@ -10,7 +10,7 @@ const ResponsiveCancerInstitute: React.FC = () => {
   const [isRightSidebarOpen, setIsRightSidebarOpen] = useState(false);
   
   const navigate = useNavigate(); 
-
+//for clear token
   const handleLogout = () => {
     localStorage.removeItem('token');
     navigate('/');
