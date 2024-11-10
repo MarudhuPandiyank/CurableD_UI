@@ -11,6 +11,8 @@ import OutreachClinicCreation from './components/OutreachClinicCreation';
 import ResourcePlanning from './components/ResourcePlanning'; 
 import SuccessMessage from './components/SuccessMessage'; 
 import OutreachClinicInfo from './components/OutreachClinicInfo'; 
+import EditOutreachClinic from './components/EditOutreachClinic';
+import ResourceAllocation from './components/ResourceAllocation';
 
 const App: React.FC = () => {
   return (
@@ -23,6 +25,8 @@ const App: React.FC = () => {
         <Route path="/resource-planning" element={<ResourcePlanning />} /> 
         <Route path="/success-message" element={<SuccessMessage />} />
         <Route path="/outreach-clinic-info" element={<OutreachClinicInfo />} />
+        <Route path="/EditOutreachClinic" element={<EditOutreachClinic />} />
+        <Route path="/resource-allocation" element={<ResourceAllocation />} />
         <Route
           path="/dashboard"
           element={

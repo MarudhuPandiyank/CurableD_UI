@@ -1,0 +1,92 @@
+.container {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px; /* Increased margin for more space below */
+    font-size: 24px; /* Adjusted font size for header */
+  }
+  
+  .back-link {
+    color: #000;
+    text-decoration: none;
+    font-size: 16px;
+  }
+  
+  .icons {
+    display: flex;
+    align-items: center;
+  }
+  
+  .icon {
+    font-size: 25px; /* Increased font size */
+    margin-left: 15px;
+    color: #003366; /* Dark blue color */
+    margin-bottom: -10px; /* Slightly lower the icon */
+  }
+  
+  .title {
+    font-size: 20px;
+    margin-bottom: 20px;
+    color: #2e2e2e;
+  }
+  
+  .form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .form-group {
+    margin-bottom: 15px;
+    position: relative;
+  }
+  
+  .label {
+    font-size: 16px;
+    color: #2e2e2e;
+    margin-bottom: 5px;
+  }
+  
+  .value {
+    font-size: 16px;
+    color: #7d7d7d;
+  }
+  
+  .date-picker-input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #000;
+    background-color: #e6e6e6;
+    font-size: 16px;
+    color: #2e2e2e;
+  }
+  
+  .date-icon {
+    position: absolute;
+    right: 10px;
+    top: 35px;
+    color: #000;
+    pointer-events: none;
+  }
+  
+  .submit-button {
+    width: 100%;
+    padding: 12px;
+    background-color: #de3163;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 20px;
+  }
+  

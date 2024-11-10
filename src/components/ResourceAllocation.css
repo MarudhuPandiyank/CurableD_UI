@@ -1,0 +1,87 @@
+.container {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+  
+.header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+  
+.back-link {
+    color: #000;
+    text-decoration: none;
+    font-size: 16px;
+}
+  
+.icons {
+    display: flex;
+    align-items: center;
+    margin-left: auto;
+    gap: 10px;
+}
+  
+.header .icon { /* Updated to reflect the new style */
+    font-size: 25px;
+    color: #003366; /* Changed icon color to dark blue */
+    margin-bottom: -10px; /* Adjusted margin */
+}
+  
+.title {
+    font-size: 20px;
+    margin-bottom: 20px;
+    color: #2e2e2e;
+}
+  
+.form {
+    display: flex;
+    flex-direction: column;
+}
+  
+.form-group {
+    margin-bottom: 15px;
+}
+  
+.label {
+    font-size: 16px;
+    color: #2e2e2e;
+    margin-bottom: 5px;
+}
+  
+.select-input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #000;
+    background-color: #e6e6e6;
+    font-size: 16px;
+    color: #2e2e2e;
+    appearance: none;
+}
+  
+.select-input:focus {
+    border-color: #de3163;
+    outline: none;
+    background-color: #fff;
+}
+  
+.submit-button {
+    width: 100%;
+    padding: 12px;
+    background-color: #de3163;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 20px;
+}
+
+.submit-button:hover {
+    background-color: #d03050;
+}
