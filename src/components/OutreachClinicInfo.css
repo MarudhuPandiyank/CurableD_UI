@@ -1,0 +1,189 @@
+/* Root container styling */
+.container2 {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    font-family: Arial, sans-serif;
+    color: #333;
+    background-color: #fff;
+}
+
+/* Header styling */
+.header {
+    display: flex;
+    align-items: center;
+    padding: 10px 16px;
+    background-color: #f8f8f8;
+    border-bottom: 1px solid #ddd;
+}
+
+.back-button {
+    background: none;
+    border: none;
+    color: #007bff;
+    font-size: 16px;
+    cursor: pointer;
+    margin-right: auto;
+}
+
+.header h1 {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #333;
+    margin: 0;
+}
+
+/* Content styling */
+.content {
+    flex-grow: 1;
+    padding: 16px;
+    overflow-y: auto;
+}
+
+/* Search container */
+.search-container {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 16px;
+    text-align: left;
+}
+
+.search-container label {
+    font-weight: bold;
+    color: #555;
+    margin-bottom: 8px;
+}
+
+/* Search input container */
+.search-input-container {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    max-width: 300px;  /* Limit the width of the search input container */
+}
+
+/* Text input styling */
+.search-input-container input {
+    flex-grow: 1;
+    padding: 12px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #f8f8f8;
+    color: #333;
+    outline: none;
+    width: 100%;  /* Ensure it fills the available space */
+}
+
+/* Search button styling */
+.search-button {
+    padding: 12px 16px;
+    background-color: #e91e63;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-left: 8px;  /* Space between input and button */
+    width: 120px;  /* Set a fixed width for the search button */
+}
+
+/* Button hover effect */
+.search-button:hover {
+    background-color: #d81b60;
+}
+
+/* Clinic details styling */
+.clinic-details {
+    border: 1px solid #ddd;
+    padding: 16px;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    margin-top: 16px;
+    max-width: 300px;
+    margin: 0 auto;  /* Center the clinic details box */
+}
+
+/* Clinic details paragraph styling */
+.clinic-details p {
+    display: flex; /* Using flexbox to align the label and value */
+    justify-content: space-between; /* Ensure the label and value are spaced out properly */
+    margin: 8px 0;
+    font-size: 16px;
+    color: #333;
+}
+
+.clinic-details p strong {
+    color: #555;
+    text-align: left; /* Left-align the label */
+}
+
+.clinic-details p span {
+    text-align: right; /* Right-align the value */
+    margin-left: 10px; /* Adds spacing between label and value */
+}
+
+/* Button styling */
+.edit-button, .create-button {
+    width: 100%;
+    padding: 12px;
+    background-color: #e91e63;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    margin-top: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    max-width: 300px; /* Ensure buttons have consistent width */
+}
+
+/* Reduced size for the edit button */
+.edit-button {
+    padding: 6px 12px; /* Reduce padding (height and width) */
+    font-size: 14px; /* Reduce font size */
+    max-width: 150px; /* Half the width of the original */
+    margin-left: auto; /* Align to the right */
+}
+
+/* Button hover effect */
+.edit-button:hover, .create-button:hover {
+    background-color: #d81b60;
+}
+
+/* Footer styling */
+.footer {
+    text-align: center;
+    padding: 16px;
+    font-size: 14px;
+    color: #aaa;
+    background-color: #f8f8f8;
+}
+
+/* Responsive design for smaller screens */
+@media (max-width: 600px) {
+    .header h1 {
+        font-size: 1em;
+    }
+
+    .search-input-container input {
+        font-size: 14px;
+        padding: 8px;
+    }
+
+    .search-button {
+        padding: 10px 14px;
+    }
+
+    .clinic-details p {
+        font-size: 14px;
+    }
+
+    .edit-button, .create-button {
+        font-size: 14px;
+        padding: 10px;
+    }
+}

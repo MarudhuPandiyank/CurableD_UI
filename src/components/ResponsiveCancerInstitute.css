@@ -121,14 +121,14 @@ body {
 }
 
 /* Flexbox container for boxes */
-.container-box {
+.container4-box {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
 }
 
 /* Ensure there are always 2 boxes per row */
-.container-box .box {
+.container4-box .box {
     flex: 0 0 calc(50% - 50px);
 }
 

@@ -5,16 +5,33 @@ import './ResponsiveCancerInstitute.css';
 import { useNavigate } from 'react-router-dom';
 
 const ResponsiveCancerInstitute: React.FC = () => {
-  // State for sidebar visibility
   const [isLeftSidebarOpen, setIsLeftSidebarOpen] = useState(false);
   const [isRightSidebarOpen, setIsRightSidebarOpen] = useState(false);
-  
-  const navigate = useNavigate(); 
-//for clear token
+
+  const navigate = useNavigate();
+
   const handleLogout = () => {
     localStorage.removeItem('token');
     navigate('/');
   };
+
+  const handleNavigate = (page: string) => {
+    if (page === 'Outreach Clinic') {
+      window.location.href = '/HomePage';
+    } else if (page === 'Survey') {
+      navigate('/survey');
+    }
+  };
+
+  // List of boxes and icons
+  const boxes = [
+    { title: 'Outreach Clinic', icon: 'Outreach Clinic.png' },
+    { title: 'Survey', icon: 'Survey.png' },
+    { title: 'Patient Registration', icon: 'Patient Registration.png' },
+    { title: 'Screening', icon: 'Screening.png' },
+    { title: 'Clinical Evaluation', icon: 'Clinical Evaluation.png' },
+    { title: 'Referral to Hospital', icon: 'Referral to Hospital.png' }
+  ];
 
   return (
     <div style={{ backgroundColor: '#f5fbff', minHeight: '100vh' }}>
@@ -63,12 +80,21 @@ const ResponsiveCancerInstitute: React.FC = () => {
       </div>
 
       {/* Main Content with Boxes */}
-      <main className="container-fluid mt-4">
-        <div className="container-box d-flex flex-wrap justify-content-center">
-          {['Outreach Clinic', 'Survey', 'Patient Registration', 'Screening', 'Referral To Hospital', 'Master Data Management'].map((title, index) => (
-            <div key={index} className="box">
-              <i className={`fas fa-${index % 2 === 0 ? 'clinic-medical' : 'poll'}`}></i>
-              {title}
+      <main className="container4-fluid mt-4">
+        <div className="container4-box d-flex flex-wrap justify-content-center">
+          {boxes.map((box, index) => (
+            <div
+              key={index}
+              className="box"
+              onClick={() => handleNavigate(box.title)}
+              style={{ cursor: 'pointer' }}
+            >
+              <img
+                src={`/HomeScreenIcons/PNG/${box.icon}`}
+                alt={box.title}
+                style={{ width: '50px', height: '50px', marginBottom: '10px' }}
+              />
+              {box.title}
               <i className="fas fa-info-circle info-icon"></i>
             </div>
           ))}

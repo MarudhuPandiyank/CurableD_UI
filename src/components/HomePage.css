@@ -1,0 +1,114 @@
+/* HomePage.css */
+
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    justify-content: space-between;
+    padding: 1rem;
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.title {
+    flex-grow: 1;
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.back-button {
+    background: none;
+    border: none;
+    color: #555;
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+
+.user-icon {
+    font-size: 1.5rem;
+    color: #555;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.home-icon, .user-icon {
+    font-size: 1.5rem;
+    color: #555;
+    cursor: pointer;
+}
+
+.home-icon:hover, .user-icon:hover {
+    color: #333;
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;  /* Centers buttons vertically */
+    gap: 1rem;
+    flex-grow: 1;  /* Ensures content fills available space */
+}
+
+.primary-button, .secondary-button {
+    padding: 0.75rem 2rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    width: 100%;
+    max-width: 300px;
+}
+
+.primary-button {
+    background-color: #d4739e;
+    color: white;
+    border: none;
+}
+
+.secondary-button {
+    background-color: white;
+    color: #d4739e;
+    border: 2px solid #d4739e;
+}
+
+.footer {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0.5rem 0;
+    font-size: 0.875rem;
+    color: #666;
+    background: linear-gradient(90deg, #9b4e89, #d4739e);
+    color: white;
+}
+
+.curable-logo strong {
+    color: #ffffff;
+}
+
+@media (max-width: 600px) {
+    .title {
+        font-size: 1.25rem;
+    }
+
+    .primary-button, .secondary-button {
+        font-size: 0.9rem;
+        padding: 0.5rem 1.5rem;
+    }
+
+    .footer {
+        font-size: 0.75rem;
+    }
+}
