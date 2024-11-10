@@ -1,44 +1,34 @@
-/* HomePage.css */
-
+/* Base styles */
 .container {
     display: flex;
     flex-direction: column;
     height: 100vh;
     justify-content: space-between;
     padding: 1rem;
+    background-color: white;
 }
 
-.header {
+.header1 {
     display: flex;
     align-items: center;
     justify-content: space-between;
-}
-
-.title {
-    flex-grow: 1;
-    text-align: center;
-    font-size: 1.5rem;
-    font-weight: bold;
 }
 
 .back-button {
     background: none;
     border: none;
     color: #555;
-    font-size: 1rem;
+    font-size: 1.5rem;
     cursor: pointer;
     display: flex;
     align-items: center;
+    font-weight: bold;
 }
 
-.user-icon {
-    font-size: 1.5rem;
-    color: #555;
-}
-
-.header-right {
+.right {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     gap: 1rem;
 }
 
@@ -56,9 +46,16 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;  /* Centers buttons vertically */
     gap: 1rem;
-    flex-grow: 1;  /* Ensures content fills available space */
+}
+
+.button-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    gap: 1rem;
 }
 
 .primary-button, .secondary-button {
@@ -68,18 +65,8 @@
     cursor: pointer;
     width: 100%;
     max-width: 300px;
-}
-
-.primary-button {
-    background-color: #d4739e;
-    color: white;
-    border: none;
-}
-
-.secondary-button {
-    background-color: white;
-    color: #d4739e;
-    border: 2px solid #d4739e;
+    font-weight: 600;
+    text-align: center;
 }
 
 .footer {
@@ -90,7 +77,6 @@
     padding: 0.5rem 0;
     font-size: 0.875rem;
     color: #666;
-    background: linear-gradient(90deg, #9b4e89, #d4739e);
     color: white;
 }
 
@@ -98,17 +84,156 @@
     color: #ffffff;
 }
 
-@media (max-width: 600px) {
-    .title {
+.container1 {
+    display: flex;
+    flex-direction: column;
+    /* height: 100vh; */
+    justify-content: space-between;
+    background-color: white;
+}
+
+.title1 {
+    flex-grow: 1;
+    text-align: left;
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+/* Form field styling */
+.clinic-form label {
+    padding: 0.5rem;
+    display: block;
+    font-size: 14px;
+    color: #555;
+    margin-top: 10px;
+}
+
+.clinic-form input,
+.clinic-form select {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    font-size: 14px;
+    background-color: #f9f9f9;
+}
+
+input[type="date"] {
+    padding: 8px;
+}
+
+/* Button styling */
+.submit-button1,
+.allocate-button {
+    width: 90%;
+    padding: 12px;
+    margin-top: 20px;
+    background-color: #d81b60;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.submit-button1:hover {
+    background-color: #ad1457;
+}
+
+.allocate-button {
+    background-color: #ffffff;
+    color: #d81b60;
+    border: 2px solid #d81b60;
+}
+
+.allocate-button:hover {
+    background-color: #f8bbd0;
+}
+
+.error-messages {
+    margin-top: 15px;
+    color: #d32f2f;
+}
+
+.error-text {
+    font-size: 14px;
+    margin: 5px 0;
+}
+
+h1 {
+    font-size: 1.5em;
+    color: #333;
+}
+
+/* Media Queries */
+
+/* Small devices (phones, <600px) */
+@media only screen and (max-width: 600px) {
+    .header1, .footer, .content, .button-container {
+        padding: 0.5rem;
+    }
+    
+    .back-button, .home-icon, .user-icon {
         font-size: 1.25rem;
     }
-
+    
     .primary-button, .secondary-button {
-        font-size: 0.9rem;
         padding: 0.5rem 1.5rem;
+        font-size: 0.875rem;
     }
+    
+    .title1 {
+        font-size: 1.25rem;
+    }
+}
 
-    .footer {
-        font-size: 0.75rem;
+/* Medium devices (tablets, 600px to 900px) */
+@media only screen and (min-width: 600px) and (max-width: 900px) {
+    .header1, .footer, .content, .button-container {
+        padding: 1rem;
+    }
+    
+    .back-button, .home-icon, .user-icon {
+        font-size: 1.5rem;
+    }
+    
+    .primary-button, .secondary-button {
+        padding: 0.75rem 2rem;
+        font-size: 1rem;
+    }
+    
+    .title1 {
+        font-size: 1.5rem;
+    }
+}
+
+/* Large devices (laptops/desktops, 900px to 1200px) */
+@media only screen and (min-width: 900px) and (max-width: 1200px) {
+    .container, .container1 {
+        padding: 2rem;
+    }
+    
+    .primary-button, .secondary-button {
+        max-width: 350px;
+    }
+    
+    .title1 {
+        font-size: 1.75rem;
+    }
+}
+
+/* Extra-large devices (large desktops, >1200px) */
+@media only screen and (min-width: 1200px) {
+    .container, .container1 {
+        padding: 2rem 4rem;
+    }
+    
+    .primary-button, .secondary-button {
+        max-width: 400px;
+    }
+    
+    .title1 {
+        font-size: 2rem;
     }
 }

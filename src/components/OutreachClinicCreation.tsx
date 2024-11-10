@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './OutreachClinicCreation.css';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowLeft, faUserCircle, faHome } from '@fortawesome/free-solid-svg-icons';
+import './HomePage.css';
 import axios from 'axios';
+import Header from './Header';
 
 type StateData = { name: string, id: number };
 type DistrictData = { name: string, id: number };
@@ -13,6 +12,8 @@ type PanchayatData = { name: string };
 const axiosInstance = axios.create({
     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
 });
+
+
 
 const OutreachClinicCreation: React.FC = () => {
     const navigate = useNavigate();
@@ -114,15 +115,16 @@ const OutreachClinicCreation: React.FC = () => {
             setLoadingPanchayats(false);
         }
     };
-
+    
+    
     // Handle form submission
     const handleNextClick = (e: React.FormEvent) => {
         e.preventDefault();
 
-        if (!clinicName || !pincode || !state || !district || !taluk || !panchayat || !startDate || !endDate) {
-            alert('Please fill out all required fields.');
-            return;
-        }
+        // if (!clinicName || !pincode || !state || !district || !taluk || !panchayat || !startDate || !endDate) {
+        //     alert('Please fill out all required fields.');
+        //     return;
+        // }
 
         if (new Date(startDate) > new Date(endDate)) {
             alert('End date cannot be before start date.');
@@ -131,22 +133,13 @@ const OutreachClinicCreation: React.FC = () => {
 
         navigate('/resource-planning');
     };
-
     return (
         <div className="container1">
-            <header className="header">
-                <button className="back-button" onClick={() => navigate(-1)}>
-                    <FontAwesomeIcon icon={faArrowLeft} /> Back
-                </button>
-                <h1 className="title">Outreach Clinic</h1>
-                <div className="header-right">
-                    <FontAwesomeIcon icon={faHome} className="home-icon" onClick={() => navigate('/home')} />
-                    <FontAwesomeIcon icon={faUserCircle} className="user-icon" />
-                </div>
-            </header>
             <form className="clinic-form" onSubmit={handleNextClick}>
+            <Header/>
+            <p className='title1' style={{ color: 'darkblue', fontWeight: 'bold', }}>Outreach Clinic Creation</p>
                 <label>
-                    Outreach Clinic Name:*
+                    <span style={{color : "darkblue"}}>  Outreach Clinic Name:</span> <span style={{ color: 'darkred', fontWeight: 'bold', }}>*</span>
                     <input
                         type="text"
                         placeholder="Enter Outreach Clinic Name"
@@ -156,9 +149,9 @@ const OutreachClinicCreation: React.FC = () => {
                     />
                 </label>
                 <label>
-                    Pincode:*
+                    <span style={{color : "darkblue"}}>Pincode:</span><span style={{ color: 'darkred', fontWeight: 'bold', }}>*</span>
                     <input
-                        type="text"
+                        type="number"
                         placeholder="Enter Pincode"
                         value={pincode}
                         onChange={(e) => setPincode(e.target.value)}
@@ -166,7 +159,7 @@ const OutreachClinicCreation: React.FC = () => {
                     />
                 </label>
                 <label>
-                    State Name:*
+                    <span style={{color : "darkblue"}}>State Name:</span><span style={{ color: 'darkred', fontWeight: 'bold', }}>*</span>
                     <select value={state} onChange={(e) => handleStateChange(e.target.value)} required>
                         <option value="">Select State</option>
                         {states.map((state) => (
@@ -177,7 +170,7 @@ const OutreachClinicCreation: React.FC = () => {
                     </select>
                 </label>
                 <label>
-                    District Name:*
+                    <span style={{color : "darkblue"}}>District Name:</span><span style={{ color: 'darkred', fontWeight: 'bold', }}>*</span>
                     <select value={district} onChange={(e) => handleDistrictChange(e.target.value)} required disabled={!state || loadingDistricts}>
                         <option value="">Select District</option>
                         {districts.map((district) => (
@@ -188,7 +181,7 @@ const OutreachClinicCreation: React.FC = () => {
                     </select>
                 </label>
                 <label>
-                    Taluk Name:*
+                    <span style={{color : "darkblue"}}>Taluk Name:</span><span style={{ color: 'darkred', fontWeight: 'bold', }}>*</span>
                     <select value={taluk} onChange={(e) => handleTalukChange(e.target.value)} required disabled={!district || loadingTaluks}>
                         <option value="">Select Taluk</option>
                         {taluks.map((taluk) => (
@@ -199,7 +192,7 @@ const OutreachClinicCreation: React.FC = () => {
                     </select>
                 </label>
                 <label>
-                    Panchayat/Village Name:*
+                    <span style={{color : "darkblue"}}>Panchayat/Village Name:</span><span style={{ color: 'darkred', fontWeight: 'bold', }}>*</span>
                     <select value={panchayat} onChange={(e) => setPanchayat(e.target.value)} required disabled={!taluk || loadingPanchayats}>
                         <option value="">Select Panchayat/Village</option>
                         {panchayats.map((panchayat, index) => (
@@ -210,25 +203,30 @@ const OutreachClinicCreation: React.FC = () => {
                     </select>
                 </label>
                 <label>
-                    Outreach Clinic Start Date:
+                    <span style={{color : "darkblue"}}>Outreach Clinic Start Date:</span>
                     <input
                         type="date"
                         value={startDate}
+                        placeholder="Select Outreach Clinic Start Date"
                         onChange={(e) => setStartDate(e.target.value)}
                         
                     />
                 </label>
                 <label>
-                    Outreach Clinic End Date:
+                    <span style={{color : "darkblue"}}>Outreach Clinic End Date:</span>
                     <input
                         type="date"
                         value={endDate}
                         onChange={(e) => setEndDate(e.target.value)}
                     />
                 </label>
-                <button type="submit" className="submit-button">
+                <label>
+                    <span style={{color : "darkblue"}}>Outreach Clinic ID:</span><span style={{ color: 'darkred', fontWeight: 'bold', }}>*</span>
+                    <input type="text" placeholder="Show 7 digit System ID" />
+                </label>
+                <center><button type="submit" className="submit-button1">
                     Next
-                </button>
+                </button></center>
             </form>
         </div>
     );

@@ -1,47 +1,37 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowLeft, faUserCircle, faHome } from '@fortawesome/free-solid-svg-icons';
+import Header from './Header';
 import './HomePage.css';
-
 const HomePage: React.FC = () => {
     const navigate = useNavigate();
 
-    const handleCreateClick = () => {
-        navigate('/create-outreach-clinic');
-    };
+    // const handleCreateClick = () => {
+    //     navigate('/create-outreach-clinic');
+    // };
 
-    const handleEditClick = () => {
-        navigate('/outreach-clinic-info');
-    };
-
-    const handleHomeClick = () => {
-        navigate('/home');  // Assuming '/home' is the route to the homepage
-    };
+    // const handleEditClick = () => {
+    //     navigate('/outreach-clinic-info');
+    // };
 
     return (
         <div className="container">
-            <header className="header">
-                <button className="back-button" onClick={() => navigate(-1)}>
-                    <FontAwesomeIcon icon={faArrowLeft} /> Back
-                </button>
-                <h1 className="title">Outreach Clinic</h1>
-                <div className="header-right">
-                    <FontAwesomeIcon icon={faHome} className="home-icon" onClick={handleHomeClick} />
-                    <FontAwesomeIcon icon={faUserCircle} className="user-icon" />
-                </div>
-            </header>
+            <Header/><br/>
+            <p style={{ color: 'darkblue', fontWeight: 'bold', }}>Outreach Clinic</p>
             <main className="content">
-                <button className="primary-button" onClick={handleCreateClick}>
-                    Create New Outreach Clinic
-                </button>
-                <button className="secondary-button" onClick={handleEditClick}>
-                    Edit Existing Outreach Clinic
-                </button>
+                <div className="button-container">
+                    <button className="primary-button" onClick={() => navigate('/create-outreach-clinic')}>
+                        Create New Outreach Clinic
+                    </button>
+                    <button className="secondary-button" onClick={() => navigate('/outreach-clinic-info')}>
+                        Edit Existing Outreach Clinic
+                    </button>
+                </div>
             </main>
-            <footer className="footer">
-                <span className="curable-logo">Powered By <strong>Curable</strong></span>
-            </footer>
+
+            <center>
+                <span className="curable-logo">Powered By</span>
+                <img src="/assets/Curable logo - rectangle with black text.png" alt="Curable Logo" className="curable-logo" />
+            </center>
         </div>
     );
 };

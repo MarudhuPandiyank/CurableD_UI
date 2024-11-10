@@ -1,10 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './ResourcePlanning.css';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowLeft, faUserCircle, faHome } from '@fortawesome/free-solid-svg-icons';
-
-
+import './HomePage.css';
+import Header from './Header';
 
 const ResourcePlanning: React.FC = () => {
   const navigate = useNavigate();
@@ -15,9 +12,7 @@ const ResourcePlanning: React.FC = () => {
     nurses: '',
     doctors: '',
   });
-  const handleHomeClick = () => {
-    navigate('/home');  // Assuming '/home' is the route to the homepage
-};
+  
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
       ...formData,
@@ -39,19 +34,11 @@ const ResourcePlanning: React.FC = () => {
   };
 
   return (
-    <div className="container4">
-      <header className="header">
-                <button className="back-button" onClick={() => navigate(-1)}>
-                    <FontAwesomeIcon icon={faArrowLeft} /> Back
-                </button>
-                <h1 className="title">Outreach Clinic</h1>
-                <div className="header-right">
-                    <FontAwesomeIcon icon={faHome} className="home-icon" onClick={handleHomeClick} />
-                    <FontAwesomeIcon icon={faUserCircle} className="user-icon" />
-                </div>
-            </header>
-      <form className="resource-form" onSubmit={handleSubmit}>
-        <label>Program Co-ordinator:</label>
+    <div className="container1">
+      <Header/><br></br>
+      <p className='title1' style={{ color: 'darkblue', fontWeight: 'bold', }}>ResourcePlanning</p>
+      <form className="clinic-form" onSubmit={handleSubmit}>
+        <label><span style={{color : "darkblue"}}>Program Co-ordinator:</span> </label>
         <input
           type="text"
           placeholder="Enter No of Program Co-ordinators"
@@ -61,7 +48,7 @@ const ResourcePlanning: React.FC = () => {
           required
         />
 
-        <label>Camp Co-ordinator:</label>
+        <label> <span style={{color : "darkblue"}}>Camp Co-ordinator:</span></label>
         <input
           type="text"
           placeholder="Enter No of Camp Co-ordinators"
@@ -71,7 +58,7 @@ const ResourcePlanning: React.FC = () => {
           required
         />
 
-        <label>Social Workers:</label>
+        <label><span style={{color : "darkblue"}}>Social Workers:</span></label>
         <input
           type="text"
           placeholder="Enter No of Social Workers"
@@ -81,7 +68,7 @@ const ResourcePlanning: React.FC = () => {
           required
         />
 
-        <label>Nurses:</label>
+        <label><span style={{color : "darkblue"}}>Nurses:</span></label>
         <input
           type="text"
           placeholder="Enter No of Nurses"
@@ -91,7 +78,7 @@ const ResourcePlanning: React.FC = () => {
           required
         />
 
-        <label>Doctors:</label>
+        <label><span style={{color : "darkblue"}}>Doctors:</span></label>
         <input
           type="text"
           placeholder="Enter No of Doctors"
@@ -100,9 +87,10 @@ const ResourcePlanning: React.FC = () => {
           onChange={handleChange}
           required
         />
-
-        <button type="button" className="allocate-button">Allocate Resources</button>
-        <button type="submit" className="submit-button">Submit</button>
+        <center>
+          <button type="button" className="allocate-button">Allocate Resources</button>
+          <button type="submit" className="submit-button1">Submit</button>
+        </center>
       </form>
     </div>
   );
