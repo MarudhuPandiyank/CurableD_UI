@@ -12,7 +12,7 @@ const SuccessMessage = () => {
         <button className="primary-button" onClick={() => navigate('/create-outreach-clinic')}>
                     Create New Outreach Clinic
                 </button>
-                <button className="secondary-button" onClick={() => navigate('/')}>
+                <button className="secondary-button" onClick={() => navigate('/responsive-cancer-institute')}>
                     Back To Home
                 </button>
             </main>

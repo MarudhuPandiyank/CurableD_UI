@@ -88,7 +88,7 @@ const ResourcePlanning: React.FC = () => {
           required
         />
         <center>
-          <button type="button" className="allocate-button">Allocate Resources</button>
+          <button type="button" className="allocate-button" onClick={()=>navigate('/resource-allocation')}>Allocate Resources</button>
           <button type="submit" className="submit-button1">Submit</button>
         </center>
       </form>

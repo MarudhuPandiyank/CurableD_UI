@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import '../components/OutreachClinicInfo.css';
+import Header from './Header';
 
 interface Clinic {
   id: string;
@@ -30,6 +31,7 @@ const OutreachClinicInfo: React.FC = () => {
   const [clinics, setClinics] = useState<Clinic[]>([]);
   const [searchInput, setSearchInput] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
+  const [selectedClinicId, setSelectedClinicId] = useState<string>('');
 
   const handleSearch = async () => {
     if (!searchInput) {
@@ -39,7 +41,6 @@ const OutreachClinicInfo: React.FC = () => {
 
     setLoading(true);
 
-    // Retrieve token from storage or a secure location
     const token = localStorage.getItem('token');
     if (!token) {
       alert('Authorization token not found. Please log in again.');
@@ -65,6 +66,7 @@ const OutreachClinicInfo: React.FC = () => {
           taluk: clinicData.talukName,
           village: clinicData.panchayatName,
         }));
+
         setClinics(clinicsData);
       } else {
         alert('No clinics found.');
@@ -78,20 +80,29 @@ const OutreachClinicInfo: React.FC = () => {
     }
   };
 
-  const handleBackClick = () => {
-    navigate(-1);
+  const handleEditClick = (clinic: Clinic) => {
+    navigate('/EditOutreachClinic', { state: clinic });
   };
 
-  const handleEditClick = (clinic: Clinic) => {
-    navigate('/EditOutreachClinic', { state: clinic }); // Passing clinic data to EditOutreachClinic
+  const handleClinicSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedId = event.target.value;
+    setSelectedClinicId(selectedId);
   };
+
+  const filteredClinics = clinics.filter(
+    (clinic) => !selectedClinicId || clinic.id === selectedClinicId
+  );
+
+  const hasDuplicateNames = clinics.some(
+    (clinic, index, self) =>
+      self.findIndex((c) => c.name === clinic.name) !== index
+  );
 
   return (
     <div className="container2">
-      <header className="header">
-        <button className="back-button" onClick={handleBackClick}>Back</button>
-        <h1>Outreach Clinic Information</h1>
-      </header>
+      <Header />
+     <br/>
+      <p style={{color:'darkblue', fontWeight:'bold'}}>Outreach Clinic</p>
       <main className="content">
         <div className="search-container">
           <label>Search:</label>
@@ -108,10 +119,23 @@ const OutreachClinicInfo: React.FC = () => {
           </div>
         </div>
 
-        {/* Render clinic details dynamically based on response array size */}
-        {clinics.length > 0 && (
+        {hasDuplicateNames && (
+          <div className="clinic-select-container">
+            <label>Select Clinic ID:</label>
+            <select onChange={handleClinicSelect} value={selectedClinicId}>
+              <option value="">All</option>
+              {clinics.map((clinic) => (
+                <option key={clinic.id} value={clinic.id}>
+                  {clinic.id} - {clinic.name}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
+
+        {filteredClinics.length > 0 && (
           <div className="clinic-details-container">
-            {clinics.map((clinic) => (
+            {filteredClinics.map((clinic) => (
               <div className="clinic-details" key={clinic.id}>
                 <p><strong>Outreach Clinic ID:</strong> <span>{clinic.id}</span></p>
                 <p><strong>Outreach Clinic Name:</strong> <span>{clinic.name}</span></p>

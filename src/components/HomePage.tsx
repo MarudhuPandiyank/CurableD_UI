@@ -14,7 +14,7 @@ const HomePage: React.FC = () => {
     // };
 
     return (
-        <div className="container">
+        <div className="container1">
             <Header/><br/>
             <p style={{ color: 'darkblue', fontWeight: 'bold', }}>Outreach Clinic</p>
             <main className="content">
@@ -36,4 +36,4 @@ const HomePage: React.FC = () => {
     );
 };
 
-export default HomePage;
+export default HomePage;
