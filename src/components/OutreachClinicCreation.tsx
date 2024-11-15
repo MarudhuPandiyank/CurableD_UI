@@ -3,7 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import './HomePage.css';
 import axios from 'axios';
 import Header from './Header';
-
+import DatePicker from 'react-datepicker';
+import "react-datepicker/dist/react-datepicker.css"; 
+import { newDate } from 'react-datepicker/dist/date_utils';
 type StateData = { name: string, id: number };
 type DistrictData = { name: string, id: number };
 type TalukData = { name: string, id: number };
@@ -24,8 +26,8 @@ const OutreachClinicCreation: React.FC = () => {
     const [district, setDistrict] = useState('');
     const [taluk, setTaluk] = useState('');
     const [panchayat, setPanchayat] = useState('');
-    const [startDate, setStartDate] = useState('');
-    const [endDate, setEndDate] = useState('');
+    const [startDate, setStartDate] = useState<Date | null>(null);  // Use Date | null
+    const [endDate, setEndDate] = useState<Date | null>(null);  
     const [states, setStates] = useState<StateData[]>([]);
     const [districts, setDistricts] = useState<DistrictData[]>([]);
     const [taluks, setTaluks] = useState<TalukData[]>([]);
@@ -120,21 +122,22 @@ const OutreachClinicCreation: React.FC = () => {
     // Handle form submission
     const handleNextClick = (e: React.FormEvent) => {
         e.preventDefault();
-
-        // if (!clinicName || !pincode || !state || !district || !taluk || !panchayat || !startDate || !endDate) {
-        //     alert('Please fill out all required fields.');
-        //     return;
-        // }
-
+    
+        if (!clinicName || !pincode || !state || !district || !taluk || !panchayat || !startDate || !endDate) {
+            alert('Please fill out all required fields.');
+            return;
+        }
+    
+        // Validate that the end date is not before the start date
         if (new Date(startDate) > new Date(endDate)) {
             alert('End date cannot be before start date.');
             return;
         }
-
+    
         navigate('/resource-planning');
     };
     return (
-        <div className="container1">
+        <div className="container2">
             <form className="clinic-form" onSubmit={handleNextClick}>
             <Header/>
             <p className='title1' style={{ color: 'darkblue', fontWeight: 'bold', }}>Outreach Clinic Creation</p>
@@ -202,27 +205,57 @@ const OutreachClinicCreation: React.FC = () => {
                         ))}
                     </select>
                 </label>
+               
+
+
+<label>
+                <span style={{ color: 'darkblue' }}>Outreach Clinic Start Date:</span>
+                <span style={{ color: 'darkred', fontWeight: 'bold' }}>*</span>
+                <div className="input-with-icon">
+
+                <DatePicker
+                    selected={startDate}
+                    onChange={(date: Date | null) => setStartDate(date)}  // Update start date
+                    onSelect={() => (document.activeElement as HTMLElement)?.blur()}  // Hide DatePicker popup on date select
+                    onClickOutside={() => (document.activeElement as HTMLElement)?.blur()}  // Hide DatePicker popup when clicked outside
+                    dateFormat="yyyy-MM-dd"
+                    placeholderText="Select Start Date"
+                    required
+                    wrapperClassName='DatePicker'
+                    minDate={new Date()}
+                />
+                    <img src="./Curable Icons/PNG/Calendar.png" className="clinic-id-icon" alt="calendar icon" />
+                </div>
+            </label>
+
+            <label>
+                <span style={{ color: 'darkblue' }}>Outreach Clinic End Date:</span>
+                <span style={{ color: 'darkred', fontWeight: 'bold' }}>*</span>
+                <div className="input-with-icon">
+                <DatePicker
+                    selected={endDate}
+                    onChange={(date: Date | null) => setEndDate(date)}  // Update end date
+                    onSelect={() => (document.activeElement as HTMLElement)?.blur()}  // Hide DatePicker popup on date select
+                    onClickOutside={() => (document.activeElement as HTMLElement)?.blur()}  // Hide DatePicker popup when clicked outside
+                    dateFormat="yyyy-MM-dd"
+                    placeholderText="Select End Date"
+                    required
+                    wrapperClassName='DatePicker'
+                    minDate={startDate || new Date()}
+                />
+                    <img src="./Curable Icons/PNG/Calendar.png" className="clinic-id-icon" alt="calendar icon" />
+                </div>
+            </label>
+
+
+
                 <label>
-                    <span style={{color : "darkblue"}}>Outreach Clinic Start Date:</span>
-                    <input
-                        type="date"
-                        value={startDate}
-                        placeholder="Select Outreach Clinic Start Date"
-                        onChange={(e) => setStartDate(e.target.value)}
-                        
-                    />
-                </label>
-                <label>
-                    <span style={{color : "darkblue"}}>Outreach Clinic End Date:</span>
-                    <input
-                        type="date"
-                        value={endDate}
-                        onChange={(e) => setEndDate(e.target.value)}
-                    />
-                </label>
-                <label>
-                    <span style={{color : "darkblue"}}>Outreach Clinic ID:</span><span style={{ color: 'darkred', fontWeight: 'bold', }}>*</span>
-                    <input type="text" placeholder="Show 7 digit System ID" />
+                    <span style={{ color: 'darkblue' }}>Outreach Clinic ID:</span>
+                    <span style={{ color: 'darkred', fontWeight: 'bold' }}>*</span>
+                    <div className="input-with-icon">
+                        <input type="text" placeholder="Show 7 digit System ID" />
+                        <img src="./Curable Icons/PNG/Group 1269.png" className="clinic-id-icon" />
+                    </div>
                 </label>
                 <center><button type="submit" className="submit-button1">
                     Next

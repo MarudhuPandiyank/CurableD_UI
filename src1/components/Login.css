@@ -1,0 +1,133 @@
+.login-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background-color: #ffffff;
+  padding: 20px;
+}
+
+.logo {
+  width: 150px;
+  height: auto;
+  margin-bottom: 30px;
+}
+
+h1,
+h2 {
+  color: #002366;
+  margin: 0 0 20px 0;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 300px; /* Sets a fixed width for the form */
+}
+
+.input-group {
+  margin-bottom: 40px;
+  width: 100%; /* Matches the width of the login form */
+  position: relative;
+}
+
+.input-label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #aaa;
+  position: absolute;
+  top: -14px;
+  left: 10px;
+  background-color: #ffffff;
+  padding: 0 5px;
+  font-size: 14px;
+}
+
+.input-wrapper {
+  display: flex;
+  align-items: center;
+  position: relative;
+  margin-top: 10px;
+  width: 100%; /* Ensures wrapper matches the full width */
+}
+
+.input-icon {
+  position: absolute;
+  left: 10px;
+  color: #aaa;
+}
+
+.input-field {
+  width: 100%; /* Ensures input takes the full width of the input group */
+  padding: 15px 10px 15px 40px;
+  height: 50px;
+  border: 1px solid #ccc;
+  border-radius: 20px;
+  font-size: 16px;
+  background-color: hwb(202 92% 5%);
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.input-field:focus {
+  border-color: #002366;
+  box-shadow: 0 0 8px rgba(0, 35, 102, 0.2);
+  outline: none;
+}
+
+.sign-in-button {
+  width: 100%; /* Ensures button matches the width of input fields */
+  height: 50px;
+  background-color: orange;
+  color: white;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.sign-in-button:hover {
+  background-color: #e69500;
+  transform: scale(1.02);
+}
+
+.sign-in-button:disabled {
+  background-color: #f5a623;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.forgot-password {
+  align-self: flex-start;
+  color: orange;
+  text-decoration: none;
+  margin-top: 10px;
+  margin-left: 12px;
+  font-weight: bold;
+  transition: color 0.3s;
+}
+
+.forgot-password:hover {
+  color: #e69500;
+}
+
+.powered-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.powered-by {
+  font-weight: bold;
+  color: #000;
+  margin-right: 10px;
+}
+
+.curable-logo {
+  width: 100px;
+  height: auto;
+}

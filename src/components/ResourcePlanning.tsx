@@ -34,13 +34,13 @@ const ResourcePlanning: React.FC = () => {
   };
 
   return (
-    <div className="container1">
-      <Header/><br></br>
-      <p className='title1' style={{ color: 'darkblue', fontWeight: 'bold', }}>ResourcePlanning</p>
+    <div className="container2">
+      <Header/>
+      <p className='title1' style={{ color: 'darkblue', fontWeight: 'bold',marginTop:"15px" }}>ResourcePlanning</p>
       <form className="clinic-form" onSubmit={handleSubmit}>
         <label><span style={{color : "darkblue"}}>Program Co-ordinator:</span> </label>
         <input
-          type="text"
+          type="number"
           placeholder="Enter No of Program Co-ordinators"
           name="programCoordinators"
           value={formData.programCoordinators}
@@ -50,7 +50,7 @@ const ResourcePlanning: React.FC = () => {
 
         <label> <span style={{color : "darkblue"}}>Camp Co-ordinator:</span></label>
         <input
-          type="text"
+          type="number"
           placeholder="Enter No of Camp Co-ordinators"
           name="campCoordinators"
           value={formData.campCoordinators}
@@ -60,7 +60,7 @@ const ResourcePlanning: React.FC = () => {
 
         <label><span style={{color : "darkblue"}}>Social Workers:</span></label>
         <input
-          type="text"
+          type="number"
           placeholder="Enter No of Social Workers"
           name="socialWorkers"
           value={formData.socialWorkers}
@@ -70,7 +70,7 @@ const ResourcePlanning: React.FC = () => {
 
         <label><span style={{color : "darkblue"}}>Nurses:</span></label>
         <input
-          type="text"
+          type="number"
           placeholder="Enter No of Nurses"
           name="nurses"
           value={formData.nurses}
@@ -80,7 +80,7 @@ const ResourcePlanning: React.FC = () => {
 
         <label><span style={{color : "darkblue"}}>Doctors:</span></label>
         <input
-          type="text"
+          type="number"
           placeholder="Enter No of Doctors"
           name="doctors"
           value={formData.doctors}
@@ -88,7 +88,7 @@ const ResourcePlanning: React.FC = () => {
           required
         />
         <center>
-          <button type="button" className="allocate-button" onClick={()=>navigate('/resource-allocation')}>Allocate Resources</button>
+          <button type="button" className="allocate-button" onClick={() => navigate('/resource-allocation')}>Allocate Resources</button>
           <button type="submit" className="submit-button1">Submit</button>
         </center>
       </form>

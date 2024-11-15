@@ -1,0 +1,291 @@
+/* Base styles */
+.container1 {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    justify-content: space-between;
+    padding: 1rem;
+    background-color: white;
+}
+
+.header1 {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.back-button {
+    background: none;
+    border: none;
+    color: #555;
+    font-size: 1.5rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    font-weight: bold;
+}
+
+.right {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+p {
+    margin-top: 0;
+    margin-bottom: 0rem;
+}
+.home-icon {
+    width: 24px; /* Adjust the size as needed */
+    height: 24px;
+    cursor: pointer;
+}
+ .user-icon {
+    font-size: 1.5rem;
+    color: #003366;
+    cursor: pointer;
+}
+
+.home-icon:hover, .user-icon:hover {
+    color: #333;
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+/* ----------- */
+/* .button-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    gap: 1rem;
+} */
+.input-with-icon {
+    position: relative;
+    width: 100%;
+}
+
+.input-with-icon input {
+    width: 100%;
+    padding-right: 40px; /* Make space for the icon on the right */
+    box-sizing: border-box;
+}
+/* --------------------- */
+/* Hide default calendar icon */
+input[type="date"]::-webkit-calendar-picker-indicator {
+    display: none;
+    -webkit-appearance: none;
+}
+
+/* Container for the input and icon */
+.input-with-icon1 {
+    position: relative;
+    display: inline-block;
+}
+
+/* Style for the custom calendar icon */
+.clinic-id-icon1 {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 20px;
+    height: 20px;
+    cursor: pointer; 
+}
+
+.clinic-id-icon {
+    position: absolute;
+    right: 5px; 
+    top: 55%;
+    transform: translateY(-50%);
+    width: 35px; 
+    height: 35px; 
+    pointer-events: none; 
+}
+
+/* ------------------ */
+.primary-button, .secondary-button {
+    padding: 0.75rem 2rem;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    width: 100%;
+    max-width: 300px;
+    font-weight: 600;
+    text-align: center;
+}
+
+.footer {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0.5rem 0;
+    font-size: 0.875rem;
+    color: #666;
+    color: white;
+}
+
+.curable-logo strong {
+    color: #ffffff;
+}
+
+.container2 {
+    display: flex;
+    flex-direction: column;
+    /* height: 100vh; */
+    justify-content: space-between;
+    background-color: white;
+}
+
+.title1 {
+    flex-grow: 1;
+    text-align: left;
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+/* Form field styling */
+.clinic-form label {
+    padding: 0.5rem;
+    display: block;
+    font-size: 14px;
+    color: #555;
+    margin-top: 10px;
+}
+
+.clinic-form input,
+.clinic-form select {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    font-size: 14px;
+    background-color: #f9f9f9;
+}
+
+input[type="date"] {
+    padding: 8px;
+}
+
+/* Button styling */
+.submit-button1,
+.allocate-button {
+    width: 90%;
+    padding: 12px;
+    margin-top: 20px;
+    background-color: #d81b60;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.submit-button1:hover {
+    background-color: #ad1457;
+}
+
+.allocate-button {
+    background-color: #ffffff;
+    color: #d81b60;
+    border: 2px solid #d81b60;
+}
+
+.allocate-button:hover {
+    background-color: #f8bbd0;
+}
+
+.error-messages {
+    margin-top: 15px;
+    color: #d32f2f;
+}
+
+.error-text {
+    font-size: 14px;
+    margin: 5px 0;
+}
+
+h1 {
+    font-size: 1.5em;
+    color: #333;
+}
+
+/* Media Queries */
+
+/* Small devices (phones, <600px) */
+@media only screen and (max-width: 600px) {
+    .header1, .footer, .content, .button-container {
+        padding: 0.5rem;
+    }
+    
+    .back-button, .home-icon, .user-icon {
+        font-size: 1.25rem;
+    }
+    
+    .primary-button, .secondary-button {
+        padding: 0.5rem 1.5rem;
+        font-size: 0.875rem;
+    }
+    
+    .title1 {
+        font-size: 1.25rem;
+    }
+}
+
+/* Medium devices (tablets, 600px to 900px) */
+@media only screen and (min-width: 600px) and (max-width: 900px) {
+    .header1, .footer, .content, .button-container {
+        padding: 1rem;
+    }
+    
+    .back-button, .home-icon, .user-icon {
+        font-size: 1.5rem;
+    }
+    
+    .primary-button, .secondary-button {
+        padding: 0.75rem 2rem;
+        font-size: 1rem;
+    }
+    
+    .title1 {
+        font-size: 1.5rem;
+    }
+}
+
+/* Large devices (laptops/desktops, 900px to 1200px) */
+@media only screen and (min-width: 900px) and (max-width: 1200px) {
+    .container1, .container2 {
+        padding: 2rem;
+    }
+    
+    .primary-button, .secondary-button {
+        max-width: 350px;
+    }
+    
+    .title1 {
+        font-size: 1.75rem;
+    }
+}
+
+/* Extra-large devices (large desktops, >1200px) */
+@media only screen and (min-width: 1200px) {
+    .container1, .container2 {
+        padding: 2rem 4rem;
+    }
+    
+    .primary-button, .secondary-button {
+        max-width: 400px;
+    }
+    
+    .title1 {
+        font-size: 2rem;
+    }
+}

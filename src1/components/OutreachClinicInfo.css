@@ -1,0 +1,261 @@
+/* Root container styling */
+.container2 {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    font-family: Arial, sans-serif;
+    color: #333;
+    background-color: #fff;
+    padding: 16px;
+}
+
+/* Header styling */
+.header {
+    display: flex;
+    align-items: center;
+    padding: 10px 0;
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+}
+
+.back-button {
+    background: none;
+    border: none;
+    color: #007bff;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+/* Content styling */
+.content {
+    flex-grow: 1;
+    padding: 16px;
+    overflow-y: auto;
+    text-align: center;
+}
+
+/* Search container */
+.search-container {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 16px;
+    text-align: left;
+}
+
+.search-container label {
+    font-weight: bold;
+    color: #555;
+    margin-bottom: 8px;
+}
+
+/* Search input container */
+.search-input-container {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto; /* Center the search input */
+}
+
+/* Text input styling */
+.search-input-container input {
+    flex-grow: 1;
+    width: 400px;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    color: #333;
+    outline: none;
+}
+
+/* Search button styling */
+.search-button {
+    padding: 10px 16px;
+    background-color: #e91e63;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-left: 8px;
+    transition: background-color 0.3s ease;
+}
+
+.search-button:hover {
+    background-color: #d81b60;
+}
+
+/* Clinic details styling */
+.clinic-details-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 16px;
+    width: 400px;
+}
+
+.clinic-details {
+    width: 100%;
+    max-width: 400px;
+    border: 1px solid #ddd;
+    padding: 16px;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    margin-top: 16px;
+}
+
+.clinic-details p {
+    display: flex;
+    justify-content: space-between;
+    margin: 8px 0;
+    font-size: 16px;
+    color: #333;
+}
+
+.clinic-details p strong {
+    color: #555;
+    font-weight: bold;
+}
+
+.clinic-details p span {
+    text-align: right;
+    margin-left: 10px;
+}
+
+/* Edit button styling */
+.edit-button {
+    width: 100%;
+    max-width: 150px;
+    padding: 8px;
+    background-color: #e91e63;
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 16px;
+}
+
+.edit-button:hover {
+    background-color: #d81b60;
+}
+
+/* Create button styling */
+.create-button {
+    width: 100%;
+    max-width: 400px;
+    padding: 12px;
+    background-color: #e91e63;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 32px;
+}
+
+.create-button:hover {
+    background-color: #d81b60;
+}
+/* Dropdown container styling */
+.clinic-select-container {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 16px;
+    text-align: left;
+    width: 400px
+}
+
+/* Label styling for dropdown */
+.clinic-select-container label {
+    font-weight: bold;
+    color: #555;
+    margin-bottom: 8px;
+}
+
+/* Dropdown menu styling */
+.clinic-select-container select {
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    color: #333;
+    outline: none;
+    width: 100%;
+    max-width: 400px;
+    margin-top: 8px;
+    background-color: #fff;
+    transition: border-color 0.3s ease;
+}
+
+/* Dropdown hover effect */
+.clinic-select-container select:hover {
+    border-color: #e91e63;
+}
+
+/* Focused dropdown styling */
+.clinic-select-container select:focus {
+    border-color: #e91e63;
+    box-shadow: 0 0 5px rgba(233, 30, 99, 0.3);
+}
+@media (max-width: 600px) {
+    /* Dropdown menu responsive styling */
+    .clinic-select-container {
+
+        width: 300px
+    }
+    .clinic-select-container select {
+        font-size: 14px;
+        padding: 8px;
+    }
+    .search-input-container input {
+        width: 300px
+        }
+    .clinic-details-container {
+
+        width: 300px
+    }
+
+    /* Adjust the label font size */
+    .clinic-select-container label {
+        font-size: 14px;
+    }
+    .clinic-select-container select {
+        /* font-size: 14px; */
+        width: 300px
+    }
+}
+/* Responsive design for smaller screens */
+@media (max-width: 600px) {
+    .search-input-container input {
+        font-size: 14px;
+        padding: 8px;
+        width: 215px
+    }
+
+    .search-button {
+        padding: 8px 12px;
+    }
+
+    .clinic-details p {
+        width: auto;
+        font-size: 14px;
+    }
+
+    /* .edit-button, .create-button {
+        font-size: 14px;
+        padding: 10px;
+    } */
+.edit-button, .create-button {
+    font-size: 14px;
+    padding: 10px;
+}
+
+}
