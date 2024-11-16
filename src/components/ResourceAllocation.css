@@ -65,7 +65,7 @@
 }
   
 .select-input:focus {
-    border-color: #de3163;
+    border-color: #d774ad;
     outline: none;
     background-color: #fff;
 }
@@ -73,7 +73,7 @@
 .submit-button {
     width: 100%;
     padding: 12px;
-    background-color: #de3163;
+    background-color: #d774ad;
     color: #fff;
     border: none;
     border-radius: 10px;
@@ -83,5 +83,5 @@
 }
 
 .submit-button:hover {
-    background-color: #d03050;
+    background-color: #d774ad;
 }

@@ -1,10 +1,14 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import './HomePage.css';
 import Header from './Header';
 
 const ResourcePlanning: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { startDate, endDate, panchayatMasterId } = location.state || {};
+
   const [formData, setFormData] = useState({
     programCoordinators: '',
     campCoordinators: '',
@@ -12,7 +16,21 @@ const ResourcePlanning: React.FC = () => {
     nurses: '',
     doctors: '',
   });
-  
+
+  const [reviewData, setReviewData] = useState({
+    panchayatMasterId: panchayatMasterId || 0, 
+    outreachClinicStartDate: startDate || '',
+    outreachClinicEndDate: endDate || '',
+    noCampCoordinators: 0,
+    noDoctors: 0,
+    noNurses: 0,
+    noProgramCoordinators: 0,
+    noSocialWorkers: 0,
+    pincode: ''
+  });
+
+  const [loading, setLoading] = useState(false);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
       ...formData,
@@ -20,7 +38,7 @@ const ResourcePlanning: React.FC = () => {
     });
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const { programCoordinators, campCoordinators, socialWorkers, nurses, doctors } = formData;
@@ -30,15 +48,49 @@ const ResourcePlanning: React.FC = () => {
       return;
     }
 
-    navigate('/success-message');
+    const requestData = {
+      campDTO: {
+        startDate: reviewData.outreachClinicStartDate,
+        endDate: reviewData.outreachClinicEndDate,
+        panchayatMasterId: reviewData.panchayatMasterId,
+        pincode: reviewData.pincode,
+        noCampcordinators: campCoordinators,
+        noDoctors: doctors,
+        noNurses: nurses,
+        noProgramcordinators: programCoordinators,
+        noSocialworkers: socialWorkers,
+      },
+      campStaffs: []  // Assuming you have a way to add staff info here if needed
+    };
+
+    setLoading(true);  // Start loading
+
+    const axiosInstance = axios.create({
+      headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+    });
+
+    try {
+      const response = await axiosInstance.post('http://13.234.4.214:8015/api/newcamp', requestData);
+      
+      if (response.status === 200) {
+        navigate('/success-message', { state: { message: 'Resource planning submitted successfully!' } });
+      } else {
+       // alert('Failed to submit data: ' + response.data.message);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Something went wrong, please try again later.');
+    } finally {
+      setLoading(false);  // Stop loading
+    }
   };
 
   return (
     <div className="container2">
-      <Header/>
-      <p className='title1' style={{ color: 'darkblue', fontWeight: 'bold',marginTop:"15px" }}>ResourcePlanning</p>
+      <Header />
+      <p className='title1' style={{ color: 'darkblue', fontWeight: 'bold', marginTop: "15px" }}>Resource Planning</p>
       <form className="clinic-form" onSubmit={handleSubmit}>
-        <label><span style={{color : "darkblue"}}>Program Co-ordinator:</span> </label>
+        <label><span style={{ color: "darkblue" }}>Program Co-ordinator:</span> </label>
         <input
           type="number"
           placeholder="Enter No of Program Co-ordinators"
@@ -48,7 +100,7 @@ const ResourcePlanning: React.FC = () => {
           required
         />
 
-        <label> <span style={{color : "darkblue"}}>Camp Co-ordinator:</span></label>
+        <label> <span style={{ color: "darkblue" }}>Camp Co-ordinator:</span></label>
         <input
           type="number"
           placeholder="Enter No of Camp Co-ordinators"
@@ -58,7 +110,7 @@ const ResourcePlanning: React.FC = () => {
           required
         />
 
-        <label><span style={{color : "darkblue"}}>Social Workers:</span></label>
+        <label><span style={{ color: "darkblue" }}>Social Workers:</span></label>
         <input
           type="number"
           placeholder="Enter No of Social Workers"
@@ -68,7 +120,7 @@ const ResourcePlanning: React.FC = () => {
           required
         />
 
-        <label><span style={{color : "darkblue"}}>Nurses:</span></label>
+        <label><span style={{ color: "darkblue" }}>Nurses:</span></label>
         <input
           type="number"
           placeholder="Enter No of Nurses"
@@ -78,7 +130,7 @@ const ResourcePlanning: React.FC = () => {
           required
         />
 
-        <label><span style={{color : "darkblue"}}>Doctors:</span></label>
+        <label><span style={{ color: "darkblue" }}>Doctors:</span></label>
         <input
           type="number"
           placeholder="Enter No of Doctors"
@@ -89,7 +141,9 @@ const ResourcePlanning: React.FC = () => {
         />
         <center>
           <button type="button" className="allocate-button" onClick={() => navigate('/resource-allocation')}>Allocate Resources</button>
-          <button type="submit" className="submit-button1">Submit</button>
+          <button type="submit" className="submit-button1" disabled={loading}>
+            {loading ? 'Submitting...' : 'Submit'}
+          </button>
         </center>
       </form>
     </div>

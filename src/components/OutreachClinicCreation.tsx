@@ -6,16 +6,36 @@ import Header from './Header';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css"; 
 import { newDate } from 'react-datepicker/dist/date_utils';
-type StateData = { name: string, id: number };
-type DistrictData = { name: string, id: number };
-type TalukData = { name: string, id: number };
-type PanchayatData = { name: string };
+import ResourcePlanning from './ResourcePlanning';
+
 
 const axiosInstance = axios.create({
     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
 });
 
+interface StateData {
+    code: string;
+    id: number;
+    name: string;
+  }
 
+  interface DistrictData {
+    code: string;
+    id: number;
+    name: string;
+  }
+
+  interface TalukData {
+    code: string;
+    id: number;
+    name: string;
+  }
+
+  interface PanchayatData {
+    code: string;
+    id: number;
+    name: string;
+  }
 
 const OutreachClinicCreation: React.FC = () => {
     const navigate = useNavigate();
@@ -35,7 +55,12 @@ const OutreachClinicCreation: React.FC = () => {
     const [loadingDistricts, setLoadingDistricts] = useState(false);
     const [loadingTaluks, setLoadingTaluks] = useState(false);
     const [loadingPanchayats, setLoadingPanchayats] = useState(false);
-
+    const [stateCode, setStateCode] = useState('');
+    const [districtCode, setDistrictCode] = useState('');
+    const [talukCode, setTalukCode] = useState('');
+    const [panchayatCode, setPanchayatCode] = useState('');
+    const [panchayatId, setPanchayatId] = useState(0);
+    const [clinicCode, setClinicCode] = useState('');
     // Fetch states from API
     useEffect(() => {
         const fetchStates = async () => {
@@ -58,6 +83,8 @@ const OutreachClinicCreation: React.FC = () => {
         fetchStates();
     }, [navigate]);
 
+    
+
     // Handle state change and fetch districts
     const handleStateChange = async (selectedState: string) => {
         setState(selectedState);
@@ -67,6 +94,7 @@ const OutreachClinicCreation: React.FC = () => {
 
         const selectedStateObj = states.find(s => s.name === selectedState);
         if (selectedStateObj) {
+            setStateCode(selectedStateObj.code);
             setLoadingDistricts(true);
             try {
                 const response = await axiosInstance.get<DistrictData[]>(`http://13.234.4.214:8015/api/curable/districtmaster/statemaster/${selectedStateObj.id}`);
@@ -88,6 +116,7 @@ const OutreachClinicCreation: React.FC = () => {
         const selectedDistrictObj = districts.find(d => d.name === selectedDistrict);
         if (selectedDistrictObj) {
             setLoadingTaluks(true);
+            setDistrictCode(selectedDistrictObj.code);
             try {
                 const response = await axiosInstance.get<TalukData[]>(`http://13.234.4.214:8015/api/curable/taluqmaster/districtmaster/${selectedDistrictObj.id}`);
                 setTaluks(response.data);
@@ -106,6 +135,7 @@ const OutreachClinicCreation: React.FC = () => {
 
         const selectedTalukObj = taluks.find(t => t.name === selectedTaluk);
         if (selectedTalukObj) {
+            setTalukCode(selectedTalukObj.code);
             setLoadingPanchayats(true);
             try {
                 const response = await axiosInstance.get<PanchayatData[]>(`http://13.234.4.214:8015/api/curable/panchayatmaster/taluqmaster/${selectedTalukObj.id}`);
@@ -116,6 +146,16 @@ const OutreachClinicCreation: React.FC = () => {
             }
             setLoadingPanchayats(false);
         }
+    };
+    const handlePanchayatChange = (selectedPanchayat: string) => {
+        setPanchayat(selectedPanchayat);
+        const selectedPanchayats = panchayats.find(t => t.name === selectedPanchayat);
+        if (selectedPanchayats) {
+            setPanchayatCode(selectedPanchayats.code);
+            setPanchayatId(selectedPanchayats.id);
+            setClinicCode(`${stateCode}${districtCode}${talukCode}${panchayatCode}`);
+        }
+        console.log(`Selected Panchayat: ${selectedPanchayat}`);
     };
     
     
@@ -134,7 +174,9 @@ const OutreachClinicCreation: React.FC = () => {
             return;
         }
     
-        navigate('/resource-planning');
+        navigate('/resource-planning', {
+            state: { startDate, endDate, panchayatId }
+          });
     };
     return (
         <div className="container2">
@@ -194,7 +236,7 @@ const OutreachClinicCreation: React.FC = () => {
                         ))}
                     </select>
                 </label>
-                <label>
+                {/* <label>
                     <span style={{color : "darkblue"}}>Panchayat/Village Name:</span><span style={{ color: 'darkred', fontWeight: 'bold', }}>*</span>
                     <select value={panchayat} onChange={(e) => setPanchayat(e.target.value)} required disabled={!taluk || loadingPanchayats}>
                         <option value="">Select Panchayat/Village</option>
@@ -204,8 +246,32 @@ const OutreachClinicCreation: React.FC = () => {
                             </option>
                         ))}
                     </select>
-                </label>
-               
+                </label> */}
+               <label htmlFor="panchayat-select">
+    <span style={{ color: 'darkblue' }}>Panchayat/Village Name:</span>
+    <span style={{ color: 'darkred', fontWeight: 'bold' }}>*</span>
+    <select
+        id="panchayat-select"
+        value={panchayat}
+        onChange={(e) => handlePanchayatChange(e.target.value)}
+        required
+        disabled={!taluk || loadingPanchayats}
+    >
+        {loadingPanchayats ? (
+            <option value="">Loading Panchayats...</option>
+        ) : (
+            <>
+                <option value="">Select Panchayat/Village</option>
+                {panchayats.map((panchayat, index) => (
+                    <option key={index} value={panchayat.name}>
+                        {panchayat.name}
+                    </option>
+                ))}
+            </>
+        )}
+    </select>
+</label>
+
 
 
 <label>
@@ -249,14 +315,32 @@ const OutreachClinicCreation: React.FC = () => {
 
 
 
-                <label>
+                {/* <label>
                     <span style={{ color: 'darkblue' }}>Outreach Clinic ID:</span>
                     <span style={{ color: 'darkred', fontWeight: 'bold' }}>*</span>
                     <div className="input-with-icon">
                         <input type="text" placeholder="Show 7 digit System ID" />
                         <img src="./Curable Icons/PNG/Group 1269.png" className="clinic-id-icon" />
                     </div>
-                </label>
+                </label> */}
+
+<label>
+            <span style={{ color: 'darkblue' }}>Outreach Clinic ID:</span>
+            <span style={{ color: 'darkred', fontWeight: 'bold' }}>*</span>
+            <div className="input-with-icon">
+                <input
+                    type="text"
+                    placeholder="Show 7 digit System ID"
+                    value={clinicCode} // Prefill with clinicId state
+                    readOnly // Make the field read-only
+                />
+                <img
+                    src="./Curable Icons/PNG/Group 1269.png"
+                    className="clinic-id-icon"
+                    alt="Clinic ID Icon"
+                />
+            </div>
+        </label>
                 <center><button type="submit" className="submit-button1">
                     Next
                 </button></center>
