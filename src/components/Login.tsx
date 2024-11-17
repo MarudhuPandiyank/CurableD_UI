@@ -4,6 +4,7 @@ import LockIcon from '@mui/icons-material/Lock';
 import MailIcon from '@mui/icons-material/Mail';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
@@ -11,7 +12,7 @@ const Login: React.FC = () => {
   const [password, setPassword] = useState('');
   const [isForgotPassword, setIsForgotPassword] = useState(false);
   const [newPassword, setNewPassword] = useState('');
-
+  const [showPassword, setShowPassword] = useState(false);
   interface AuthResponse {
     id: string | null;
     userName: string;
@@ -108,33 +109,45 @@ const Login: React.FC = () => {
             </label>
             <div className="input-wrapper">
               <LockIcon className="input-icon" />
+              
               <input
-                type="password"
+                 type={showPassword ? 'text' : 'password'}
                 id="new-password"
                 className="input-field"
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
               />
+               <span
+              className="password-toggle-icon"
+              onClick={() => setShowPassword((prev) => !prev)}
+            >
+              {showPassword ? <VisibilityOff /> : <Visibility />}
+            </span>
             </div>
           </div>
         ) : (
           <div className="input-group">
-            <label htmlFor="password" className="input-label">
-              Password
-            </label>
-            <div className="input-wrapper">
-              <LockIcon className="input-icon" />
-              <input
-                type="password"
-                id="password"
-                className="input-field"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </div>
+          <label htmlFor="password" className="input-label">
+            Password
+          </label>
+          <div className="input-wrapper">
+            <LockIcon className="input-icon" />
+            <input
+              type={showPassword ? 'text' : 'password'}
+              id="password"
+              className="input-field"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <span
+              className="password-toggle-icon"
+              onClick={() => setShowPassword((prev) => !prev)}
+            >
+              {showPassword ? <VisibilityOff /> : <Visibility />}
+            </span>
           </div>
-        )}
-
+        </div>
+        )}
         {isForgotPassword ? (
           <>
             <button type="button" onClick={handleForgotPassword} className="sign-in-button">

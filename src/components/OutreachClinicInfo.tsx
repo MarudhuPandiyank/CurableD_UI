@@ -288,7 +288,7 @@ const OutreachClinicInfo: React.FC = () => {
   };
 
   const handleEditClick = (clinic: Clinic) => {
-    navigate('/EditOutreachClinic', { state: clinic });
+    navigate('/resource-allocation', { state: clinic });
   };
 
   const handleClinicSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {

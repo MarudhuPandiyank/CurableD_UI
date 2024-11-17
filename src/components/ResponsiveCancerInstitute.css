@@ -29,7 +29,7 @@ body {
 /* Sidebar styling */
 .sidebar {
     height: 100%;
-    width: 250px;
+    width: 500px;
     position: fixed;
     top: 0;
     background-color: white;
@@ -40,28 +40,44 @@ body {
 
 /* Left Sidebar */
 .sidebar.left {
-    left: -250px; /* Initially hidden on the left */
+    left: -500px;
 }
 
 /* Right Sidebar */
 .sidebar.right {
-    right: -250px; /* Initially hidden on the right */
+    right: -500px; 
+    top: 0; 
+    height: 100%;
+    width: 500px;
+    margin-top: 0; 
+    background-color: white;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+    transition: 0.3s;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column; 
+    align-items: center; 
 }
 
 /* Sidebar content */
 .sidebar-content {
-    padding: 20px;
+    padding: 20px; 
+    margin: 0; 
+    width: 100%; 
+    flex-grow: 1; 
     display: flex;
-    flex-direction: column;
+    flex-direction: column; 
+    align-items: flex-start; 
 }
 
 .sidebar-btn,
 .sidebar-logout {
-    padding: 15px;
-    margin: 10px 0;
-    font-size: 18px;
+    padding: 10px;
+    margin: 5px 0;
+    font-size: 15px;
     background-color: #f0f0f0;
-    border-radius: 10px;
+    border-radius: 100px;
+    width: 400px;
     text-align: left;
     border: none;
     cursor: pointer;
@@ -87,19 +103,19 @@ body {
 .close-btn {
     background-color: transparent;
     border: none;
-    font-size: 18px;
-    margin: 15px;
+    font-size: 10px;
+    margin: 10px;
     cursor: pointer;
 }
 
 /* Active Sidebar State */
 .sidebar.active {
-    left: 0; /* Slide in from left */
+    left: 0; 
 }
 
 .sidebar.right.active {
-    right: 0; /* Slide in from right */
-    left: auto; /* Ensure no conflict with left sidebar */
+    right: 0; 
+    left: auto; 
 }
 
 /* Styling for the Boxes */
@@ -147,14 +163,78 @@ body {
     font-size: 16px;
     color: #003366;
 }
+.sidebar-header {
+    display: flex;
+    align-items: center; 
+    padding: 10px 20px;
+}
 
-@media (max-width: 768px) {
+.sidebar-header .close-btn {
+    background-color: transparent;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    padding: 0;
+}
+
+.sidebar-header h6 {
+    font-size: 18px;
+    color: #003366;
+    margin: 0; 
+    flex-grow: 1; 
+    margin-right: 100px;
+}
+
+/* @media (max-width: 768px) {
     .sidebar {
-        width: 200px;
+        width: 300px;
     }
 
     .box {
         flex: 0 0 calc(100% - 50px);
     }
-   
+    .sidebar-btn,
+    .sidebar-logout {
+        width: 230px;
+}
+    .sidebar.right {
+        width: 350px;
+}
+   
+} */
+
+/* @media (max-width: 768px) {
+    .sidebar {
+        width: 300px;
+    }
+
+    .box {
+        flex: 0 0 calc(100% - 50px);
+    }
+    .sidebar-btn,
+    .sidebar-logout {
+        width: 230px;
+}
+    .sidebar.right {
+        width: 350px;
+}
+   
+} */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 300px;
+    }
+
+    .box {
+        flex: 0 0 calc(100% - 50px);
+    }
+
+    .sidebar-btn,
+    .sidebar-logout {
+        width: 230px;
+    }
+
+    .sidebar.right {
+        width: 350px;
+    }
 }
