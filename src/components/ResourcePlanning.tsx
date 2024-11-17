@@ -3,22 +3,25 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './HomePage.css';
 import Header from './Header';
+import SuccessMessage from './SuccessMessage';
+import ResourceAllocation from './ResourceAllocation';
 
 const ResourcePlanning: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { startDate, endDate, panchayatMasterId } = location.state || {};
+  const { startDate, endDate, panchayatId,pincode } = location.state || {};
+  const [clickId, setClickId] = useState('');
 
   const [formData, setFormData] = useState({
-    programCoordinators: '',
-    campCoordinators: '',
-    socialWorkers: '',
-    nurses: '',
-    doctors: '',
+    noProgramCoordinators: '',
+    noCampcordinators: '',
+    noSocialWorkers: '',
+    noNurses: '',
+    noDoctors: '',
   });
 
   const [reviewData, setReviewData] = useState({
-    panchayatMasterId: panchayatMasterId || 0, 
+    panchayatMasterId: panchayatId || 0, 
     outreachClinicStartDate: startDate || '',
     outreachClinicEndDate: endDate || '',
     noCampCoordinators: 0,
@@ -26,7 +29,7 @@ const ResourcePlanning: React.FC = () => {
     noNurses: 0,
     noProgramCoordinators: 0,
     noSocialWorkers: 0,
-    pincode: ''
+    pincode: pincode || ''
   });
 
   const [loading, setLoading] = useState(false);
@@ -37,54 +40,60 @@ const ResourcePlanning: React.FC = () => {
       [e.target.name]: e.target.value,
     });
   };
-
+  const { noProgramCoordinators, noCampcordinators, noSocialWorkers, noNurses, noDoctors } = formData;
+  const requestData = {
+    campDTO: {
+      startDate: reviewData.outreachClinicStartDate,
+      endDate: reviewData.outreachClinicEndDate,
+      panchayatMasterId: reviewData.panchayatMasterId,
+      pincode: reviewData.pincode,
+      noCampcordinators: noCampcordinators,
+      noDoctors: noDoctors,
+      noNurses: noNurses,
+      noProgramcordinators: noProgramCoordinators,
+      noSocialworkers: noSocialWorkers,
+    },
+    campStaffs: [],
+  };
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    const { programCoordinators, campCoordinators, socialWorkers, nurses, doctors } = formData;
-
-    if (!programCoordinators || !campCoordinators || !socialWorkers || !nurses || !doctors) {
+  
+  
+    if (!noProgramCoordinators || !noCampcordinators || !noSocialWorkers || !noNurses || !noDoctors) {
       alert('Please fill out all required fields.');
       return;
     }
+  
 
-    const requestData = {
-      campDTO: {
-        startDate: reviewData.outreachClinicStartDate,
-        endDate: reviewData.outreachClinicEndDate,
-        panchayatMasterId: reviewData.panchayatMasterId,
-        pincode: reviewData.pincode,
-        noCampcordinators: campCoordinators,
-        noDoctors: doctors,
-        noNurses: nurses,
-        noProgramcordinators: programCoordinators,
-        noSocialworkers: socialWorkers,
-      },
-      campStaffs: []  // Assuming you have a way to add staff info here if needed
-    };
-
-    setLoading(true);  // Start loading
-
+  
+    setLoading(true); // Start loading
+  
     const axiosInstance = axios.create({
       headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
     });
-
+  
     try {
-      const response = await axiosInstance.post('http://13.234.4.214:8015/api/newcamp', requestData);
-      
+      const response = await axiosInstance.post<string>('http://13.234.4.214:8015/api/curable/newcamp', requestData);
+  
       if (response.status === 200) {
-        navigate('/success-message', { state: { message: 'Resource planning submitted successfully!' } });
+        navigate('/success-message', {
+          state: { clickId: response.data }, // Directly pass the response data
+        });
       } else {
-       // alert('Failed to submit data: ' + response.data.message);
+        alert('Failed to submit data.');
       }
     } catch (error) {
       console.error('Error:', error);
       alert('Something went wrong, please try again later.');
     } finally {
-      setLoading(false);  // Stop loading
+      setLoading(false); // Stop loading
     }
   };
+  
+  const handleAllocateResources = () => {
 
+    navigate('/resource-allocation', { state: { startDate,endDate,panchayatId,pincode,noCampcordinators,noDoctors,noNurses,noProgramCoordinators,noSocialWorkers} });
+  };
   return (
     <div className="container2">
       <Header />
@@ -94,8 +103,8 @@ const ResourcePlanning: React.FC = () => {
         <input
           type="number"
           placeholder="Enter No of Program Co-ordinators"
-          name="programCoordinators"
-          value={formData.programCoordinators}
+          name="noProgramCoordinators"
+          value={formData.noProgramCoordinators}
           onChange={handleChange}
           required
         />
@@ -104,8 +113,8 @@ const ResourcePlanning: React.FC = () => {
         <input
           type="number"
           placeholder="Enter No of Camp Co-ordinators"
-          name="campCoordinators"
-          value={formData.campCoordinators}
+          name="noCampcordinators"
+          value={formData.noCampcordinators}
           onChange={handleChange}
           required
         />
@@ -114,8 +123,8 @@ const ResourcePlanning: React.FC = () => {
         <input
           type="number"
           placeholder="Enter No of Social Workers"
-          name="socialWorkers"
-          value={formData.socialWorkers}
+          name="noSocialWorkers"
+          value={formData.noSocialWorkers}
           onChange={handleChange}
           required
         />
@@ -124,8 +133,8 @@ const ResourcePlanning: React.FC = () => {
         <input
           type="number"
           placeholder="Enter No of Nurses"
-          name="nurses"
-          value={formData.nurses}
+          name="noNurses"
+          value={formData.noNurses}
           onChange={handleChange}
           required
         />
@@ -134,13 +143,13 @@ const ResourcePlanning: React.FC = () => {
         <input
           type="number"
           placeholder="Enter No of Doctors"
-          name="doctors"
-          value={formData.doctors}
+          name="noDoctors"
+          value={formData.noDoctors}
           onChange={handleChange}
           required
         />
         <center>
-          <button type="button" className="allocate-button" onClick={() => navigate('/resource-allocation')}>Allocate Resources</button>
+          <button type="button" className="allocate-button" onClick={handleAllocateResources}>Allocate Resources</button>
           <button type="submit" className="submit-button1" disabled={loading}>
             {loading ? 'Submitting...' : 'Submit'}
           </button>

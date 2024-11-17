@@ -21,23 +21,31 @@ const Login: React.FC = () => {
     apiVersion: number;
   }
 
-  
+  interface AuthResponseData {
+    hospitalId: string; // Added the hospitalId type here
+  }
 
   const handleSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     try {
+      // Step 1: Authenticate user and get token
       const response = await axios.post<AuthResponse>('http://13.234.4.214:8015/token/authenticate', { userName, password });
 
       if (response && response.data.token) {
+        // Step 2: Store token in localStorage
         localStorage.setItem('token', response.data.token);
 
-        const authResponse = await axios.get(`http://13.234.4.214:8015/api/curable/authorizeUserRequest/${userName}`, {
+        // Step 3: Get hospitalId using authorizeUserRequest API
+        const authResponse = await axios.get<AuthResponseData>(`http://13.234.4.214:8015/api/curable/authorizeUserRequest/${userName}`, {
           headers: { Authorization: `Bearer ${response.data.token}` },
         });
 
-        if (authResponse) {
+        // Step 4: If user is authorized, store hospitalId in localStorage and navigate
+        if (authResponse && authResponse.data) {
           console.log('User authorized, navigating to dashboard...');
+          const hospitalId = authResponse.data.hospitalId;
+          localStorage.setItem('hospitalId', hospitalId); // Store hospitalId
           navigate('/responsive-cancer-institute');
         } else {
           alert('User is not authorized');

@@ -175,7 +175,7 @@ const OutreachClinicCreation: React.FC = () => {
         }
     
         navigate('/resource-planning', {
-            state: { startDate, endDate, panchayatId }
+            state: { startDate, endDate, panchayatId,pincode }
           });
     };
     return (
