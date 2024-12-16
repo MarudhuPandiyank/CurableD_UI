@@ -4,20 +4,18 @@ import './ResourceAllocation.css';
 import Header from './Header';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Select, { MultiValue, GroupBase } from 'react-select';
-import ResourcePlanning from './ResourcePlanning';
 
 interface Admin {
-  name: string;
   id: number;
+  name: string;
 }
 
 interface HospitalStaffResponse {
-  admin: Admin[];
+  [key: string]: Admin[];
 }
 
-// Define Option type
 interface SelectOption {
-  value: string | number;
+  value: number;
   label: string;
 }
 
@@ -27,21 +25,27 @@ const ResourceAllocation: React.FC = () => {
   const { startDate, endDate, panchayatId, pincode, noCampcordinators, noDoctors, noNurses, noProgramCoordinators, noSocialWorkers } = location.state || {};
 
   const [formData, setFormData] = useState({
-    programCoordinators: [] as Admin[],  // Storing full Admin objects
-    campCoordinators: [] as Admin[],  // Storing full Admin objects
-    socialWorkers: [] as Admin[],  // Storing full Admin objects
-    nurses: [] as Admin[],  // Storing full Admin objects
-    doctors: [] as Admin[],  // Storing full Admin objects
+    programCoordinators: [] as Admin[],
+    campCoordinators: [] as Admin[],
+    socialWorkers: [] as Admin[],
+    nurses: [] as Admin[],
+    doctors: [] as Admin[],
   });
 
-  const [programCoordinators, setProgramCoordinators] = useState<Admin[]>([]);
+  const [dropdownData, setDropdownData] = useState({
+    programCoordinators: [] as Admin[],
+    campCoordinators: [] as Admin[],
+    socialWorkers: [] as Admin[],
+    nurses: [] as Admin[],
+    doctors: [] as Admin[],
+  });
 
   const axiosInstance = axios.create({
     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
   });
 
   useEffect(() => {
-    const fetchProgramCoordinators = async () => {
+    const fetchStaffDetails = async () => {
       const token = localStorage.getItem('token');
       if (!token) {
         console.error('No token found, redirecting to login.');
@@ -50,28 +54,40 @@ const ResourceAllocation: React.FC = () => {
       }
 
       try {
-        const response = await axiosInstance.get<HospitalStaffResponse>(`http://13.234.4.214:8015/api/curable/hospitalstaffdetails/${localStorage.getItem('hospitalId')}`);
+        const response = await axiosInstance.get<HospitalStaffResponse>(
+          `http://13.234.4.214:8015/api/curable/hospitalstaffdetails/${localStorage.getItem('hospitalId')}`
+        );
 
-        setProgramCoordinators(response.data.admin.map((admin) => ({
-          id: admin.id,
-          name: admin.name,
-        })));
+        setDropdownData({
+          programCoordinators: response.data['Program Coordinator'] || [],
+          campCoordinators: response.data['Camp Coordinator'] || [],
+          socialWorkers: response.data['Social Worker'] || [],
+          nurses: response.data['Nurse'] || [],
+          doctors: response.data['Doctor'] || [],
+        });
       } catch (error) {
-        console.error('Error fetching coordinators:', error);
-        alert('Failed to fetch coordinators. Please try again.');
+        console.error('Error fetching staff details:', error);
+        alert('Failed to fetch staff details. Please try again.');
       }
     };
 
-    fetchProgramCoordinators();
+    fetchStaffDetails();
   }, [navigate]);
 
   const handleMultiSelectChange = (name: string) => (selectedOptions: MultiValue<SelectOption>) => {
     setFormData((prevData) => ({
       ...prevData,
       [name]: selectedOptions.map((option) => ({
-        id: option.value,  // Assuming 'value' is the 'id' of the coordinator
-        name: option.label,  // Assuming 'label' is the name of the coordinator
+        id: option.value,
+        name: option.label,
       })),
+    }));
+  };
+
+  const createSelectOptions = (data: Admin[]): SelectOption[] => {
+    return data.map((item) => ({
+      value: item.id,
+      label: item.name,
     }));
   };
 
@@ -84,28 +100,24 @@ const ResourceAllocation: React.FC = () => {
       return;
     }
 
-    // Create an array of selected program coordinators for the campStaffs
-    const selectedProgramCoordinators = programCoordinators.map((coordinator) => ({
-      role: 'Program Coordinator',
-      name: coordinator.name,
-      id: coordinator.id,
-    }));
-
-    // Prepare the request payload
     const requestDataFinal = {
       campDTO: {
-        startDate: startDate,
-        endDate: endDate,
+        startDate,
+        endDate,
         panchayatMasterId: panchayatId,
-        pincode: pincode,
-        noCampcordinators: noCampcordinators,
-        noDoctors: noDoctors,
-        noNurses: noNurses,
+        pincode,
+        noCampcordinators,
+        noDoctors,
+        noNurses,
         noProgramcordinators: noProgramCoordinators,
         noSocialworkers: noSocialWorkers,
       },
       campStaffs: [
-        ...selectedProgramCoordinators,  // Add selected program coordinators to the campStaffs
+        ...programCoordinators.map((coordinator) => ({
+          role: 'Program Coordinator',
+          name: coordinator.name,
+          id: coordinator.id,
+        })),
         ...campCoordinators.map((coordinator) => ({
           role: 'Camp Coordinator',
           name: coordinator.name,
@@ -133,32 +145,21 @@ const ResourceAllocation: React.FC = () => {
       const response = await axiosInstance.post<string>('http://13.234.4.214:8015/api/curable/newcamp', requestDataFinal);
 
       if (response.status === 200) {
-        navigate('/success-message', {
-          state: { clickId: response.data },  // Directly pass the response data
-        });
+        navigate('/success-message', { state: { clickId: response.data } });
       } else {
         alert('Failed to submit data.');
       }
     } catch (error) {
-      console.error('Error:', error);
+      console.error('Error submitting data:', error);
       alert('Something went wrong, please try again later.');
     }
-  };
-
-  const createSelectOptions = (data: Admin[]): SelectOption[] => {
-    return data.map((item) => ({
-      value: item.id,  // Use 'id' as the value
-      label: item.name,  // Use 'name' as the label
-    }));
   };
 
   return (
     <div className="container2">
       <form className="clinic-form" onSubmit={handleSubmit}>
         <Header />
-        <p className="title1" style={{ color: 'darkblue', fontWeight: 'bold' }}>
-          Resource Allocation
-        </p>
+        <p className="title1" style={{ color: 'darkblue', fontWeight: 'bold' }}>Resource Allocation</p>
 
         <div className="form-group">
           <label className="label">Program Co-ordinator:</label>
@@ -169,7 +170,7 @@ const ResourceAllocation: React.FC = () => {
               value: coordinator.id,
               label: coordinator.name,
             }))}
-            options={createSelectOptions(programCoordinators)}
+            options={createSelectOptions(dropdownData.programCoordinators)}
             onChange={handleMultiSelectChange('programCoordinators')}
           />
         </div>
@@ -183,7 +184,7 @@ const ResourceAllocation: React.FC = () => {
               value: coordinator.id,
               label: coordinator.name,
             }))}
-            options={createSelectOptions([{ id: 1, name: 'Harish' }, { id: 2, name: 'Asha' }, { id: 3, name: 'Naveen' }])}
+            options={createSelectOptions(dropdownData.campCoordinators)}
             onChange={handleMultiSelectChange('campCoordinators')}
           />
         </div>
@@ -197,7 +198,7 @@ const ResourceAllocation: React.FC = () => {
               value: worker.id,
               label: worker.name,
             }))}
-            options={createSelectOptions([{ id: 1, name: 'Mani, Ranjani' }, { id: 2, name: 'Gopi, Sakthi' }, { id: 3, name: 'Ravi, Divya' }])}
+            options={createSelectOptions(dropdownData.socialWorkers)}
             onChange={handleMultiSelectChange('socialWorkers')}
           />
         </div>
@@ -211,7 +212,7 @@ const ResourceAllocation: React.FC = () => {
               value: nurse.id,
               label: nurse.name,
             }))}
-            options={createSelectOptions([{ id: 1, name: 'Sasi, Chitra' }, { id: 2, name: 'Aarti, Meera' }, { id: 3, name: 'Ravi, Kumari' }])}
+            options={createSelectOptions(dropdownData.nurses)}
             onChange={handleMultiSelectChange('nurses')}
           />
         </div>
@@ -225,7 +226,7 @@ const ResourceAllocation: React.FC = () => {
               value: doctor.id,
               label: doctor.name,
             }))}
-            options={createSelectOptions([{ id: 1, name: 'Dr Karthik, Dr Sunder' }, { id: 2, name: 'Dr Aravind, Dr Meena' }, { id: 3, name: 'Dr Suresh, Dr Priya' }])}
+            options={createSelectOptions(dropdownData.doctors)}
             onChange={handleMultiSelectChange('doctors')}
           />
         </div>
@@ -244,8 +245,6 @@ const ResourceAllocation: React.FC = () => {
           Submit
         </button>
       </form>
-
-     
     </div>
   );
 };
