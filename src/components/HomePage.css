@@ -153,6 +153,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
 /* Form field styling */
 .clinic-form label {
+    color: darkblue;
     padding: 0.5rem;
     display: block;
     font-size: 14px;
@@ -164,8 +165,108 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     max-width: auto; 
     margin: 0 auto; 
 }
+.dob-group {
+    position: relative;
+  }
+  
+  .dob-container {
+    display: flex;
+    align-items: center;
+    position: relative;
+  }
+  
+  input[type="date"] {
+    padding-right: 40px;
+  }
+  
+  .calendar-icon {
+    position: absolute;
+    right: 10px;
+    font-size: 18px;
+    color: #007bff;
+    cursor: pointer;
+  }
+  
+.gender-group {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .gender-btn {
+    padding: 10px 20px;
+    border: 1px solid #ccc;
+    border-radius: 100px;
+    background-color: #f5f5f5;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+  }
 
+  .gender-btn:hover {
+    background-color: #e0e0e0;
+  }
+  
+  .gender-btn.active {
+    background-color: #d774ad; /* Change this to your preferred color */
+    color: white;
+    border-color: #f7189a;
+  }
+  
+  .toggle-group {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .toggle-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    background-color: lightgray;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+  }
+  
+  .toggle-btn:focus {
+    outline: none;
+  }
+  .participant-container {
+    width: 100%; /* Set width to 50% */
+    margin: 0 auto; /* Center the container horizontally */
+    background-color: #f8f9fa; /* Light gray background */
+    padding: 15px 20px; /* Padding for content */
+    text-align: center; /* Center text */
+    margin-bottom: 20px; /* Bottom margin for spacing */
+    border: 1px solid #ddd; /* Light border for separation */
+    border-radius: 8px; /* Slightly rounded corners */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    font-family: Arial, sans-serif;
+    color: #333; /* Text color */
+  }
+  .owned-active {
+    background-color: #28a745; /* Green for Owned */
+    color: white;
+    border-color: #28a745;
+  }
+  
+  .rental-active {
+    background-color: #007bff; /* Blue for Rental */
+    color: white;
+    border-color: #007bff;
+  }
+  /* Specific styling when 'Yes' is selected */
+  .yes-active {
+    background-color: green;
+    color: white;
+  }
+
+  
+  /* Specific styling when 'No' is selected */
+  .no-active {
+    background-color: red;
+    color: white;
+  }
+  
 .clinic-form input,
+.clinic-form textarea,
 .clinic-form select {
     width: 100%;
     padding: 10px;
@@ -175,6 +276,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     font-size: 14px;
     background-color: #f9f9f9;
 }
+
 
 input[type="date"] {
     padding: 8px;
@@ -207,7 +309,114 @@ input[type="date"] {
 .allocate-button:hover {
     /* background-color: #d774ad; */
 }
+/* --------------------------------------------------- */
+.buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+}
 
+.Next-button {
+  padding: 10px 50px;
+  border: 2px solid #d774ad; /* Pink border color */
+  background-color: white; /* White background for 'Finish' */
+  color: #d774ad; /* Pink text color */
+  border-radius: 10px; /* Rounded corners */
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.Next-button:hover {
+  background-color: #fce4f9; /* Light pink on hover */
+}
+
+.Finish-button {
+  padding: 10px 50px;
+  border: none;
+  background-color: #d774ad; /* Pink background for 'Next' */
+  color: white; /* White text color */
+  border-radius: 10px; /* Rounded corners */
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.Finish-button:hover {
+  background-color: #d774ad; /* Darker pink on hover */
+}
+/* ------------------------- */
+.social-habits-container {
+    background-color: #f4f4f4; /* Light background color */
+    padding: 20px; /* Padding around the content */
+    border-radius: 8px; /* Rounded corners */
+    border: 1px solid #ccc; /* Light border */
+    margin-top: 20px;
+  }
+  
+  .social-habits-container legend {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #333;
+  }
+  
+  .toggle-group {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .toggle-btn {
+    background-color: #ddd; /* Default background */
+    border: 1px solid #bbb;
+    padding: 10px 20px;
+    border-radius: 100px;
+    cursor: pointer;
+  }
+  
+  .toggle-btn.yes-active {
+    background-color: #4CAF50; /* Green for 'Yes' */
+    color: white;
+  }
+  
+  .toggle-btn.no-active {
+    background-color: #f44336; /* Red for 'No' */
+    color: white;
+  }
+  
+  .habit-box {
+    margin-top: 15px;
+  }
+  
+  .habit-box label {
+    font-weight: bold;
+    margin-top: 10px;
+    display: block;
+  }
+  
+  .habit-box input,
+  .habit-box select {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  .add-habit-btn {
+   
+    color: #d774ad;
+    padding: 10px 20px;
+    border: 1px solid #d774ad;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .add-habit-btn:hover {
+    background-color: #d774ad;
+    color: #ccc;
+  }
+  
 .error-messages {
     margin-top: 15px;
     color: #d774ad;

@@ -1,0 +1,212 @@
+.container2 {
+    padding: 20px;
+    font-family: Arial, sans-serif;
+  }
+  
+  .patient-info {
+    margin-bottom: 20px;
+  }
+  
+  .info-label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+  }
+  
+  .input-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  
+  .patient-input {
+    padding: 8px;
+    width: 300px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  .dropdown-button {
+    margin-left: 5px;
+    padding: 8px;
+    background-color: #d774ad;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .dropdown-button:hover {
+    background-color: #d774ad;
+  }
+  
+  .dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 300px;
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    max-height: 150px;
+    overflow-y: auto;
+    z-index: 1000;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-top: 5px;
+  }
+  
+  .dropdown-item {
+    padding: 10px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #333;
+  }
+  
+  .dropdown-item:hover {
+    background-color: #d774ad;
+    color: #fff;
+  }
+  
+  .note {
+    margin-top: 5px;
+    font-size: 12px;
+    color: #555;
+  }
+  
+  .details {
+    margin-top: 20px;
+    padding: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #f9f9f9;
+  }
+  
+  .details p {
+    margin: 10px 10px;
+    font-size: 14px;
+  }
+  .examinations {
+    margin-top: 20px;
+  }
+  
+  .exam-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    /* padding: 10px 0; */
+  }
+  
+  .exam-item:last-child {
+    border-bottom: none;
+  }
+  
+  .exam-item span {
+    font-size: 16px;
+  }
+  
+  .status {
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .status .dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+  
+  .status.not-selected {
+    color: #ff0000;
+  }
+  
+  .status.not-selected .dot {
+    background-color: #ff0000;
+  }
+  
+  .status.yet-to-be-done {
+    color: #ff9900;
+  }
+  
+  .status.yet-to-be-done .dot {
+    background-color: #ff9900;
+  }
+  
+  .status.done {
+    color: #4caf50;
+  }
+  
+  .status.done .dot {
+    background-color: #4caf50;
+  }
+  .details span {
+    font-weight: bold;
+  }
+  
+  .exam-item {
+    display: flex;
+    justify-content: space-between;
+    margin: 10px 0;
+  }
+  
+  .select-exam {
+    margin-top: 20px;
+  }
+  
+  .exam-buttons {
+    border-radius: 10px;
+
+    display: flex;
+    gap: 10px;
+  }
+  .patient-select {
+    width: 300px;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #f9f9f9;
+    appearance: none; /* Removes default dropdown styling */
+    -webkit-appearance: none; /* Ensures cross-browser consistency */
+    -moz-appearance: none;
+    background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 12px;
+    cursor: pointer;
+  }
+  
+  .patient-select:focus {
+    outline: none;
+    border-color: #007bff;
+  }
+  
+  .exam-button {
+    padding: 8px 16px;
+    border: #333;
+    border-radius: 4px;
+    background-color: #c7c5c5;
+    color: rgb(8, 8, 8)5c5;
+    cursor: pointer;
+  }
+  
+  .exam-button.selected {
+    background-color: #d774ad;
+  }
+  
+  .submit-button1 {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background-color: #d774ad;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+  }
+  
+  .submit-button1:hover {
+    background-color: #e66ab2;
+  }
+  

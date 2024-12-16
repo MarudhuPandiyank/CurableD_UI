@@ -13,7 +13,14 @@ import SuccessMessage from './components/SuccessMessage';
 import OutreachClinicInfo from './components/OutreachClinicInfo'; 
 import EditOutreachClinic from './components/EditOutreachClinic';
 import ResourceAllocation from './components/ResourceAllocation';
-
+import DiseaseSpecificDetails from './components/DiseaseSpecificDetails';
+import NewScreeningEnrollment from './components/NewScreeningEnrollment';
+import MedicalomenHealthDetails from './components/MedicalomenHealthDetails';
+import ParticipantDetails from './components/ParticipantDetails';
+import TenantDetails from './components/TenantDetails';
+import PatientSearchPage from './components/clinical/PatientSearchPage';
+import ExaminationScreen from './components/clinical/ExaminationScreen';
+import OralExaminationPage from './components/clinical/OralExaminationPage';
 const App: React.FC = () => {
   return (
     <Router>
@@ -27,6 +34,14 @@ const App: React.FC = () => {
         <Route path="/outreach-clinic-info" element={<OutreachClinicInfo />} />
         <Route path="/EditOutreachClinic" element={<EditOutreachClinic />} />
         <Route path="/resource-allocation" element={<ResourceAllocation />} />
+        <Route path="/DiseaseSpecificDetails" element={<DiseaseSpecificDetails />} />
+        <Route path="/NewScreeningEnrollment" element={<NewScreeningEnrollment />} />
+        <Route path="/MedicalomenHealthDetails" element={<MedicalomenHealthDetails />} />
+        <Route path="/ParticipantDetails" element={<ParticipantDetails />} />
+        <Route path="/TenantDetails" element={<TenantDetails />} />
+        <Route path="/PatientSearchPage" element={<PatientSearchPage />} />
+        <Route path="/ExaminationScreen" element={<ExaminationScreen />} />
+        <Route path="/OralExaminationPage" element={<OralExaminationPage />} />
         <Route
           path="/dashboard"
           element={

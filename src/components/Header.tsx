@@ -33,22 +33,21 @@ const Header: React.FC = () => {
                     <FontAwesomeIcon icon={faUserCircle} className="user-icon" onClick={() => setIsRightSidebarOpen(true)} />
                 </div>
             </header>
+            {/* Right Sidebar */}
             <div className={`sidebar right ${isRightSidebarOpen ? 'active' : ''}`}>
-    <div className="sidebar-content p-3">
-        <div className="sidebar-header">
-            <button className="close-btn" onClick={() => setIsRightSidebarOpen(false)}><FontAwesomeIcon icon={faChevronLeft}/> Back</button>
-            <h6 className="ms-2 mb-0">Username1234</h6>
-        </div>
-        <div className="sidebar-options">
-            <button className="sidebar-btn"><i className="fas fa-home"></i> Home</button>
-            <button className="sidebar-btn"><i className="fas fa-user-edit"></i> Edit Profile</button>
-            {/* <button className="sidebar-logout" onClick={handleLogout}>
-                <i className="fas fa-sign-out-alt"></i> Log Out
-            </button> */}
-        </div>
-    </div>
-</div>
-
+                <div className="sidebar-header d-flex align-items-center">
+                <button className="close-btn" onClick={() => setIsRightSidebarOpen(false)} ><FontAwesomeIcon icon={faChevronLeft}/>Back</button>
+                <h6 className="ms-2 mb-0">Username1234</h6>
+                </div>
+                <div className="sidebar-content p-3">
+                {/* <h3></h3> */}
+                <button className="sidebar-btn"><i className="fas fa-home"></i> Home</button>
+                <button className="sidebar-btn"><i className="fas fa-user-edit"></i> Edit Profile</button>
+                {/* <button className="sidebar-logout" onClick={handleLogout}>
+                    <i className="fas fa-sign-out-alt"></i> Log Out
+                </button> */}
+                </div>
+            </div>
         </div>
     );
 };

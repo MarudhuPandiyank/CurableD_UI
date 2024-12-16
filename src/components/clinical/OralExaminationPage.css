@@ -1,0 +1,114 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f9f9f9;
+}
+
+.container {
+    max-width: 400px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.back-button {
+    font-size: 16px;
+    background: none;
+    border: none;
+    color: #333;
+    cursor: pointer;
+}
+
+.profile-icon {
+    font-size: 24px;
+    background-color: #2A2D80;
+    color: #fff;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+h2 {
+    font-size: 18px;
+    font-weight: bold;
+    color: #2A2D80;
+    margin-bottom: 20px;
+}
+
+.form-section {
+    margin-bottom: 20px;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+
+.input-container {
+    position: relative;
+}
+
+.form-input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 25px;
+    background-color: #f3f3f3;
+    outline: none;
+}
+
+.calendar-icon {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.radio-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.radio-button {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 25px;
+    background-color: #f3f3f3;
+    cursor: pointer;
+    text-align: center;
+}
+
+.radio-button.selected {
+    background-color: #d774ad;
+    color: #fff;
+}
+
+.complete-button {
+    width: 100%;
+    padding: 10px;
+    background-color: #d774ad;
+    color: #fff;
+    border: none;
+    border-radius: 25px;
+    font-size: 16px;
+    cursor: pointer;
+}
