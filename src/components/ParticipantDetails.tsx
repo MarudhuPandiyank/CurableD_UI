@@ -4,6 +4,17 @@ import Header1 from './Header1';
 const ParticipantDetails: React.FC = () => {
   const [houseType, setHouseType] = useState<string>('');
   const [selectedToggle1, setSelectedToggle1] = useState<string | null>(null);
+  const [education, setEducation] = useState<string>('');
+  const [occupation, setOccupation] = useState<string>('');
+  const [fatherName, setFatherName] = useState<string>('');
+  const [spouseName, setSpouseName] = useState<string>('');
+  const [altMobile, setAltMobile] = useState<string>('');
+  const [income, setIncome] = useState<string>('');
+  const [aadhaar, setAadhaar] = useState<string>('');
+  const [voterId, setVoterId] = useState<string>('');
+  const [rationCard, setRationCard] = useState<string>('');
+  
+  const [isLoading, setIsLoading] = useState(false); // To show loading state while API call is in progress
 
   const toggleOption = (setOption: React.Dispatch<React.SetStateAction<string>>, value: string) => {
     setOption(value);
@@ -13,30 +24,88 @@ const ParticipantDetails: React.FC = () => {
     setSelectedToggle1(option);
   };
 
+  const handleFormSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const tobaccoUser = selectedToggle1 === 'yes'; // Convert tobacco/alcohol habits to boolean
+
+    const formData = {
+      fatherName,
+      spouseName,
+      alternateMobileNo: altMobile,
+      monthlyIncome: parseFloat(income) || 0,
+      houseType,
+      occupation,
+      education,
+      aadhar: aadhaar,
+      rationCard,
+      voterId,
+      tobaccoUser,
+      // Get patientId from localStorage
+      id: localStorage.getItem('patientId') || '', // Assuming patientId is stored in localStorage
+    };
+
+    // Get the token from localStorage (or wherever you store it)
+    const token = localStorage.getItem('token'); 
+
+    if (!token) {
+      console.error('Token not found');
+      return;
+    }
+
+    try {
+      setIsLoading(true); // Show loading state
+
+      const response = await fetch('http://13.234.4.214:8015/api/curable/candidate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`, // Pass the token in Authorization header
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log('Success:', data);
+        // Navigate or show success message if needed
+      } else {
+        console.error('Error:', response.statusText);
+        // Handle error response (show error message)
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      // Handle network or other errors
+    } finally {
+      setIsLoading(false); // Hide loading state
+    }
+  };
+  const patientId = localStorage.getItem('patientId');
+  const patientName = localStorage.getItem('patientName');
   return (
     <div className="container2">
       <Header1 />
       <div className="participant-container">
-        <p>Participant: Sudha, 36/F</p>
-        <p>ID 123456890123456</p>
+      <p>Participant: {patientId}</p>
+      <p>ID:{patientName}</p>
       </div>
-      <form className="clinic-form">
+      <form className="clinic-form" onSubmit={handleFormSubmit}>
         <h2>General Details</h2>
         <div className="form-group">
           <label htmlFor="father-name">Father Name:</label>
-          <input type="text" id="father-name" name="father-name" placeholder="Enter Father Name" />
+          <input type="text" id="father-name" name="father-name" value={fatherName} onChange={(e) => setFatherName(e.target.value)} placeholder="Enter Father Name" />
         </div>
         <div className="form-group">
           <label htmlFor="spouse-name">Spouse Name:</label>
-          <input type="text" id="spouse-name" name="spouse-name" placeholder="Enter Spouse Name" />
+          <input type="text" id="spouse-name" name="spouse-name" value={spouseName} onChange={(e) => setSpouseName(e.target.value)} placeholder="Enter Spouse Name" />
         </div>
         <div className="form-group">
           <label htmlFor="alt-mobile">Alt Mobile No:</label>
-          <input type="text" id="alt-mobile" name="alt-mobile" placeholder="Enter Alt Mobile No" />
+          <input type="text" id="alt-mobile" name="alt-mobile" value={altMobile} onChange={(e) => setAltMobile(e.target.value)} placeholder="Enter Alt Mobile No" />
         </div>
         <div className="form-group">
           <label htmlFor="income">Monthly Income:</label>
-          <input type="text" id="income" name="income" placeholder="Enter Monthly Income" />
+          <input type="text" id="income" name="income" value={income} onChange={(e) => setIncome(e.target.value)} placeholder="Enter Monthly Income" />
         </div>
         <div className="form-group">
           <label>Type of House:</label>
@@ -59,8 +128,8 @@ const ParticipantDetails: React.FC = () => {
         </div>
         <div className="form-group">
           <label htmlFor="education">Education:</label>
-          <select id="education" name="education">
-            <option value="" disabled selected>Select Education</option>
+          <select id="education" name="education" value={education} onChange={(e) => setEducation(e.target.value)}>
+            <option value="" disabled>Select Education</option>
             <option value="primary">Primary</option>
             <option value="secondary">Secondary</option>
             <option value="graduate">Graduate</option>
@@ -69,8 +138,8 @@ const ParticipantDetails: React.FC = () => {
         </div>
         <div className="form-group">
           <label htmlFor="occupation">Occupation:</label>
-          <select id="occupation" name="occupation">
-            <option value="" disabled selected>Select Occupation</option>
+          <select id="occupation" name="occupation" value={occupation} onChange={(e) => setOccupation(e.target.value)}>
+            <option value="" disabled>Select Occupation</option>
             <option value="farmer">Farmer</option>
             <option value="worker">Worker</option>
             <option value="professional">Professional</option>
@@ -80,15 +149,15 @@ const ParticipantDetails: React.FC = () => {
         <h2>ID Proof</h2>
         <div className="form-group">
           <label htmlFor="aadhaar">Aadhaar Number:</label>
-          <input type="text" id="aadhaar" name="aadhaar" placeholder="Enter Aadhaar Number" />
+          <input type="text" id="aadhaar" name="aadhaar" value={aadhaar} onChange={(e) => setAadhaar(e.target.value)} placeholder="Enter Aadhaar Number" />
         </div>
         <div className="form-group">
           <label htmlFor="voter-id">Voter ID:</label>
-          <input type="text" id="voter-id" name="voter-id" placeholder="Enter Voter ID" />
+          <input type="text" id="voter-id" name="voter-id" value={voterId} onChange={(e) => setVoterId(e.target.value)} placeholder="Enter Voter ID" />
         </div>
         <div className="form-group">
           <label htmlFor="ration-card">Ration Card:</label>
-          <input type="text" id="ration-card" name="ration-card" placeholder="Enter Ration Card" />
+          <input type="text" id="ration-card" name="ration-card" value={rationCard} onChange={(e) => setRationCard(e.target.value)} placeholder="Enter Ration Card" />
         </div>
         <h2>Social Habits</h2>
         <div className="form-group">
@@ -111,8 +180,12 @@ const ParticipantDetails: React.FC = () => {
           </div>
         </div>
         <div className="buttons">
-          <button type="button" className="submit-button1">Finish</button>
-          <button type="submit" className="allocate-button">Next</button>
+          <button type="button" className="submit-button1" onClick={handleFormSubmit} disabled={isLoading}>
+            {isLoading ? 'Submitting...' : 'Finish'}
+          </button>
+          <button type="submit" className="allocate-button" disabled={isLoading}>
+            {isLoading ? 'Submitting...' : 'Next'}
+          </button>
         </div>
       </form>
       <div className="powered-container">

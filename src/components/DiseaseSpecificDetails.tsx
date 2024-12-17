@@ -10,11 +10,11 @@ interface FamilyMetricsParam {
   condition: string | null;
   valueType: string;
   values: string[];
-  selectedValues: string[];
+  selectedValues: string[]; // Add selectedValues to the structure
 }
 
 interface ApiResponse {
-  familyMetrics: {
+  eligibilityMetrics: {
     params: FamilyMetricsParam[];
   };
 }
@@ -33,12 +33,12 @@ function DiseaseSpecificDetails() {
           return;
         }
 
-        const response = await axios.get<ApiResponse>(`http://13.234.4.214:8015/api/curable/diseasetestmaster/27`, {
+        const response = await axios.get<ApiResponse>(`http://13.234.4.214:8015/api/curable/getMetrics/ELIGIBILE`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
-        setFormData(response.data.familyMetrics.params); // Store dynamic form fields based on the API response
+        setFormData(response.data.eligibilityMetrics.params); // Store dynamic form fields based on the API response
         console.log('Disease Test Master Data:', response.data);
       } catch (error) {
         console.error('Error fetching disease test master data:', error);
@@ -56,17 +56,74 @@ function DiseaseSpecificDetails() {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log('Form Submitted', formValues);
+  const handleSelectChange = (testName: string, value: string) => {
+    setFormValues((prevValues) => ({
+      ...prevValues,
+      [testName]: value,
+    }));
   };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    // Construct the body of the POST request to match the desired structure
+    const updatedFormData = formData.map((field) => {
+      const selectedValue = formValues[field.testName] ? [formValues[field.testName]] : [];
+      return {
+        ...field,
+        selectedValues: selectedValue, // Assign the selected value to selectedValues
+      };
+    });
+
+    const payload = {
+      description: "Eligibility Metrics",
+      diseaseTestId: 1,
+      eligibilityMetrics: {
+        params: updatedFormData,
+      },
+      familyMedicalMetrics: null,
+      familyMetrics: null,
+      gender: "FEMALE", // You can dynamically adjust this if necessary
+      genderValid: true,
+      hospitalId: 1,
+      id: 27,
+      medicalMetrics: null,
+      name: "Eligibility Metrics",
+      stage: "ELIGIBILE",
+      testMetrics: null,
+    };
+
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        setError('Token is missing. Please log in again.');
+        return;
+      }
+
+      await axios.post('http://13.234.4.214:8015/api/curable/candidatehistory', payload, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      console.log('Data submitted successfully!');
+      window.location.href = '/ParticipantDetails';
+     
+    } catch (error) {
+      console.error('Error submitting data:', error);
+      setError('Failed to submit data. Please try again.');
+    }
+  };
+
+  const patientId = localStorage.getItem('patientId');
+  const patientName = localStorage.getItem('patientName');
 
   return (
     <div className="container2">
       <Header1 />
       <div className="participant-container">
-        <p>Participant: Sudha, 36/F</p>
-        <p>ID 123456890123456</p>
+        <p>Participant: {patientId}</p>
+        <p>ID:{patientName}</p>
       </div>
 
       {error && <div className="error-message">{error}</div>} {/* Display error message if there's an issue */}
@@ -84,11 +141,13 @@ function DiseaseSpecificDetails() {
                 id={field.testName.toLowerCase().replace(' ', '-')}
                 name={field.testName.toLowerCase().replace(' ', '-')}
                 value={formValues[field.testName] || ''}
-                onChange={(e) => handleInputChange(field.testName, e.target.value)}
+                onChange={(e) => handleSelectChange(field.testName, e.target.value)}
               >
                 <option value="" disabled>Select {field.testName}</option>
                 {field.values.map((value: string, idx: number) => (
-                  <option key={idx} value={value.toLowerCase()}>{value}</option>
+                  <option key={idx} value={value}>
+                    {value}
+                  </option>
                 ))}
               </select>
             ) : (
