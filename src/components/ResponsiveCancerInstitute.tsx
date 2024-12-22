@@ -40,63 +40,9 @@ const ResponsiveCancerInstitute: React.FC = () => {
 
   return (
     <div style={{ backgroundColor: 'white', minHeight: '100vh' }}>
-      {/* Header */}
-      {/* <header className="header d-flex justify-content-between align-items-center p-3">
-        <span
-          className="menu-icon fas fa-bars"
-          onClick={() => setIsLeftSidebarOpen(true)}
-          aria-label="Open Left Sidebar"
-        ></span>
-        <span className="title text-center flex-grow-1" style={{ fontSize: '20px', color: '#003366' }}>
-          <img src="./Curable Icons/PNG/Earth.png" style={{ height: '30px', width: '30px' }} alt="Earth Icon" />
-          Tenant Name
-        </span>
-        <span
-          className="account-icon fas fa-user-circle"
-          onClick={() => setIsRightSidebarOpen(true)}
-          aria-label="Account Settings"
-        ></span>
-      </header> */}
+    
       <Header1 />
-      {/* Left Sidebar
-      <div className={`sidebar left ${isLeftSidebarOpen ? 'active' : ''}`}>
-        <div className="sidebar-header">
-          <button className="close-btn" onClick={() => setIsLeftSidebarOpen(false)}><FontAwesomeIcon icon={faChevronLeft}/>Back</button>
-          <h6>Menu</h6>
-        </div>
-        <div className="sidebar-content">
-          <button className="sidebar-btn"><i className="fas fa-clinic-medical"></i> Outreach Clinic</button>
-          <button className="sidebar-btn"><i className="fas fa-poll"></i> Survey</button>
-          <button className="sidebar-btn"><i className="fas fa-user-plus"></i> Patient Registration</button>
-          <button className="sidebar-btn"><i className="fas fa-stethoscope"></i> Screening</button>
-          <button className="sidebar-btn"><i className="fas fa-hospital"></i> Referral To Hospital</button>
-          <button className="sidebar-btn"><i className="fas fa-database"></i> Master Data Management</button>
-        </div>
-      </div> */}
-
-
-{/* Right Sidebar
-<div className={`sidebar right ${isRightSidebarOpen ? 'active' : ''}`}>
-  <div className="sidebar-header">
-    <button
-      className="close-btn"
-      onClick={() => setIsRightSidebarOpen(false)}
-    >
-      <FontAwesomeIcon icon={faChevronLeft} className="me-2" />
-      Back
-    </button>
-    <h6>{userName}</h6>
-  </div>
-  <div className="sidebar-content">
-    <button className="sidebar-btn">
-      <i className="fas fa-home"></i> Home
-    </button>
-    <button className="sidebar-btn">
-      <i className="fas fa-user-edit"></i> Edit Profile
-    </button>
-  </div>
-</div> */}
-
+    
       {/* Main Content with Boxes */}
       <main className="container4-fluid mt-4">
         <div className="container4-box d-flex flex-wrap justify-content-center">

@@ -2,7 +2,6 @@ import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Login from './components/Login';
 import ResetPassword from './components/ResetPassword';
-import Dashboard from './components/Dashboard';
 import ResponsiveCancerInstitute from './components/ResponsiveCancerInstitute';
 import UserAccountInfo from './components/UserAccountInfo';
 import AuthGuard from './components/AuthGuard';
@@ -42,14 +41,7 @@ const App: React.FC = () => {
         <Route path="/PatientSearchPage" element={<PatientSearchPage />} />
         <Route path="/ExaminationScreen" element={<ExaminationScreen />} />
         <Route path="/OralExaminationPage" element={<OralExaminationPage />} />
-        <Route
-          path="/dashboard"
-          element={
-            <AuthGuard>
-              <Dashboard />
-            </AuthGuard>
-          }
-        />
+       
         <Route
           path="/responsive-cancer-institute"
           element={
