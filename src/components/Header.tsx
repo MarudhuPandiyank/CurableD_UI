@@ -8,7 +8,7 @@ const Header: React.FC = () => {
     const navigate = useNavigate();
 
     const [isRightSidebarOpen, setIsRightSidebarOpen] = useState(false);
-
+   const userName = localStorage.getItem('userName');
     const handleHomeClick = () => {
         navigate('/responsive-cancer-institute'); 
     };
@@ -37,7 +37,7 @@ const Header: React.FC = () => {
             <div className={`sidebar right ${isRightSidebarOpen ? 'active' : ''}`}>
                 <div className="sidebar-header d-flex align-items-center">
                 <button className="close-btn" onClick={() => setIsRightSidebarOpen(false)} ><FontAwesomeIcon icon={faChevronLeft}/>Back</button>
-                <h6 className="ms-2 mb-0">Username1234</h6>
+                <h6>{userName}</h6>
                 </div>
                 <div className="sidebar-content p-3">
                 {/* <h3></h3> */}

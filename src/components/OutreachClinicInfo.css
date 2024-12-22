@@ -130,7 +130,7 @@
     width: 100%;
     max-width: 150px;
     padding: 8px;
-    background-color: #e91e63;
+    background-color: #d774ad;
     color: white;
     font-size: 14px;
     font-weight: bold;
@@ -150,7 +150,7 @@
     width: 100%;
     max-width: 400px;
     padding: 12px;
-    background-color: #e91e63;
+    background-color: #d81b60;
     color: white;
     font-size: 16px;
     font-weight: bold;
@@ -197,12 +197,12 @@
 
 /* Dropdown hover effect */
 .clinic-select-container select:hover {
-    border-color: #e91e63;
+    border-color: #d81b60;
 }
 
 /* Focused dropdown styling */
 .clinic-select-container select:focus {
-    border-color: #e91e63;
+    border-color: #d81b60;
     box-shadow: 0 0 5px rgba(233, 30, 99, 0.3);
 }
 @media (max-width: 600px) {

@@ -36,6 +36,7 @@ const Login: React.FC = () => {
       if (response && response.data.token) {
         // Step 2: Store token in localStorage
         localStorage.setItem('token', response.data.token);
+        localStorage.setItem('userName', userName);
 
         // Step 3: Get hospitalId using authorizeUserRequest API
         const authResponse = await axios.get<AuthResponseData>(`http://13.234.4.214:8015/api/curable/authorizeUserRequest/${userName}`, {

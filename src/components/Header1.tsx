@@ -7,7 +7,7 @@ import './ResponsiveCancerInstitute.css';
 const Header: React.FC = () => {
     const [isLeftSidebarOpen, setIsLeftSidebarOpen] = useState(false);
   const [isRightSidebarOpen, setIsRightSidebarOpen] = useState(false);
-
+  const userName = localStorage.getItem('userName');
   const navigate = useNavigate();
     
     return (
@@ -33,7 +33,7 @@ const Header: React.FC = () => {
       <div className={`sidebar left ${isLeftSidebarOpen ? 'active' : ''}`}>
         <div className="sidebar-header d-flex align-items-center">
           <button className="close-btn" onClick={() => setIsLeftSidebarOpen(false)}><FontAwesomeIcon icon={faChevronLeft}/>Back</button>
-          <h6 className="ms-2 mb-0" >Menu</h6>
+          <h6 className="" >Menu</h6>
         </div>
         <div className="sidebar-content p-3">
           <button className="sidebar-btn"><img 
@@ -82,7 +82,7 @@ const Header: React.FC = () => {
       <div className={`sidebar right ${isRightSidebarOpen ? 'active' : ''}`}>
         <div className="sidebar-header d-flex align-items-center">
           <button className="close-btn" onClick={() => setIsRightSidebarOpen(false)} ><FontAwesomeIcon icon={faChevronLeft}/>Back</button>
-          <h6 className="ms-2 mb-0">Username1234</h6>
+          <h6 className="">{userName}</h6>
         </div>
         <div className="sidebar-content p-3">
           {/* <h3></h3> */}

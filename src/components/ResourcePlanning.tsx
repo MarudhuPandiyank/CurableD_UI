@@ -97,7 +97,7 @@ const ResourcePlanning: React.FC = () => {
   return (
     <div className="container2">
       <Header />
-      <p className='title1' style={{ color: 'darkblue', fontWeight: 'bold', marginTop: "15px" }}>Resource Planning</p>
+      <p className='title1' style={{ color: 'darkblue', fontWeight: 'bold',marginTop:'10px'  }}>Resource Planning</p>
       <form className="clinic-form" onSubmit={handleSubmit}>
         <label><span style={{ color: "darkblue" }}>Program Co-ordinator:</span> </label>
         <input

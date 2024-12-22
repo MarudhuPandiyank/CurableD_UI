@@ -5,11 +5,13 @@ import './ResponsiveCancerInstitute.css';
 import { useNavigate } from 'react-router-dom';
 import { faChevronLeft } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import Header1 from './Header1';
 const ResponsiveCancerInstitute: React.FC = () => {
   const [isLeftSidebarOpen, setIsLeftSidebarOpen] = useState(false);
   const [isRightSidebarOpen, setIsRightSidebarOpen] = useState(false);
 
   const navigate = useNavigate();
+  const userName = localStorage.getItem('userName');
 
   const handleLogout = () => {
     localStorage.removeItem('token');
@@ -39,7 +41,7 @@ const ResponsiveCancerInstitute: React.FC = () => {
   return (
     <div style={{ backgroundColor: 'white', minHeight: '100vh' }}>
       {/* Header */}
-      <header className="header d-flex justify-content-between align-items-center p-3">
+      {/* <header className="header d-flex justify-content-between align-items-center p-3">
         <span
           className="menu-icon fas fa-bars"
           onClick={() => setIsLeftSidebarOpen(true)}
@@ -54,15 +56,15 @@ const ResponsiveCancerInstitute: React.FC = () => {
           onClick={() => setIsRightSidebarOpen(true)}
           aria-label="Account Settings"
         ></span>
-      </header>
-
-      {/* Left Sidebar */}
+      </header> */}
+      <Header1 />
+      {/* Left Sidebar
       <div className={`sidebar left ${isLeftSidebarOpen ? 'active' : ''}`}>
-        <div className="sidebar-header d-flex align-items-center">
+        <div className="sidebar-header">
           <button className="close-btn" onClick={() => setIsLeftSidebarOpen(false)}><FontAwesomeIcon icon={faChevronLeft}/>Back</button>
-          <h6 className="ms-2 mb-0" >Menu</h6>
+          <h6>Menu</h6>
         </div>
-        <div className="sidebar-content p-3">
+        <div className="sidebar-content">
           <button className="sidebar-btn"><i className="fas fa-clinic-medical"></i> Outreach Clinic</button>
           <button className="sidebar-btn"><i className="fas fa-poll"></i> Survey</button>
           <button className="sidebar-btn"><i className="fas fa-user-plus"></i> Patient Registration</button>
@@ -70,23 +72,30 @@ const ResponsiveCancerInstitute: React.FC = () => {
           <button className="sidebar-btn"><i className="fas fa-hospital"></i> Referral To Hospital</button>
           <button className="sidebar-btn"><i className="fas fa-database"></i> Master Data Management</button>
         </div>
-      </div>
+      </div> */}
 
-      {/* Right Sidebar */}
-      <div className={`sidebar right ${isRightSidebarOpen ? 'active' : ''}`}>
-        <div className="sidebar-header d-flex align-items-center">
-          <button className="close-btn" onClick={() => setIsRightSidebarOpen(false)} ><FontAwesomeIcon icon={faChevronLeft}/>Back</button>
-          <h6 className="ms-2 mb-0">Username1234</h6>
-        </div>
-        <div className="sidebar-content p-3">
-          {/* <h3></h3> */}
-          <button className="sidebar-btn"><i className="fas fa-home"></i> Home</button>
-          <button className="sidebar-btn"><i className="fas fa-user-edit"></i> Edit Profile</button>
-          {/* <button className="sidebar-logout" onClick={handleLogout}>
-            <i className="fas fa-sign-out-alt"></i> Log Out
-          </button> */}
-        </div>
-      </div>
+
+{/* Right Sidebar
+<div className={`sidebar right ${isRightSidebarOpen ? 'active' : ''}`}>
+  <div className="sidebar-header">
+    <button
+      className="close-btn"
+      onClick={() => setIsRightSidebarOpen(false)}
+    >
+      <FontAwesomeIcon icon={faChevronLeft} className="me-2" />
+      Back
+    </button>
+    <h6>{userName}</h6>
+  </div>
+  <div className="sidebar-content">
+    <button className="sidebar-btn">
+      <i className="fas fa-home"></i> Home
+    </button>
+    <button className="sidebar-btn">
+      <i className="fas fa-user-edit"></i> Edit Profile
+    </button>
+  </div>
+</div> */}
 
       {/* Main Content with Boxes */}
       <main className="container4-fluid mt-4">
