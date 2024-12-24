@@ -20,6 +20,7 @@ import TenantDetails from './components/TenantDetails';
 import PatientSearchPage from './components/clinical/PatientSearchPage';
 import ExaminationScreen from './components/clinical/ExaminationScreen';
 import OralExaminationPage from './components/clinical/OralExaminationPage';
+import DiseaseSpecificDetailsClinic from './components/DiseaseSpecificDetailsClinic';
 const App: React.FC = () => {
   return (
     <Router>
@@ -41,6 +42,7 @@ const App: React.FC = () => {
         <Route path="/PatientSearchPage" element={<PatientSearchPage />} />
         <Route path="/ExaminationScreen" element={<ExaminationScreen />} />
         <Route path="/OralExaminationPage" element={<OralExaminationPage />} />
+        <Route path="/DiseaseSpecificDetailsClinic" element={<DiseaseSpecificDetailsClinic />} />
        
         <Route
           path="/responsive-cancer-institute"

@@ -1,5 +1,3 @@
-/* PatientSearchPage.css */
-
 /* Base Styles */
 .container10 {
     display: flex;
@@ -60,7 +58,7 @@
     border-radius: 10px;
     cursor: pointer;
     margin-top: 20px;
-    width: 100%; /* Full width */
+    width: 100%;
 }
 
 .next-button:hover {
@@ -75,17 +73,21 @@
 
 .patient-list {
     margin-top: 20px;
+    display: flex;
+    flex-direction: column;  /* Ensure the patient items are in separate rows */
 }
 
 .select-label {
     font-weight: bold;
+    margin-bottom: 5px;
+    color: grey;
 }
 
 .patient-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 10px;
+    margin-bottom: 20px;  /* Added space between each patient item */
 }
 
 .patient-box {
@@ -172,6 +174,48 @@ select::-ms-expand {
     width: 100%;
 }
 
+/* Stage Dropdown */
+.stage-dropdown {
+    margin-top: 15px;
+    margin-bottom: 15px;
+    display: flex;
+    flex-direction: column;
+}
+
+.stage-dropdown .select-label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    font-size: 16px;
+    color: grey;
+}
+
+.stage-dropdown select {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    background-color: #f8f8f8;
+    height: 40px;
+    appearance: none;
+    cursor: pointer;
+}
+
+.stage-dropdown select:hover {
+    border-color: #aaa;
+    background-color: #fff;
+}
+
+.stage-dropdown select:focus {
+    outline: none;
+    border-color: #d774ad;
+    background-color: #fff;
+}
+
+.stage-dropdown select::-ms-expand {
+    display: none;
+}
+
 /* Profile Icon Style */
 .profile-icon {
     cursor: pointer;
@@ -209,7 +253,9 @@ select::-ms-expand {
 /* Mobile Styles */
 @media (max-width: 768px) {
     /* Adjust input and button widths */
-    .search-input, .search-button, .next-button {
+    .search-input,
+    .search-button,
+    .next-button {
         width: 100%;
         margin-left: 0;
     }
@@ -311,4 +357,3 @@ select::-ms-expand {
         align-items: center;
     }
 }
-

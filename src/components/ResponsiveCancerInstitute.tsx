@@ -23,6 +23,8 @@ const ResponsiveCancerInstitute: React.FC = () => {
       window.location.href = '/HomePage';
     } else if (page === 'Patient Registration') {
       navigate('/NewScreeningEnrollment');
+    } else if(page === 'Screening') {
+      navigate('/PatientSearchPage');
     }
   };
 
