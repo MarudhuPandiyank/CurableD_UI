@@ -115,7 +115,7 @@ const PatientSearchPage: React.FC = () => {
     <div className="container10">
       <Header />
       <div className="title">
-        <p className="search-patient-title">Search Patient</p>
+        <p className="search-patient-title">Screening</p>
       </div>
       <div className="search-section">
         <input
@@ -163,7 +163,7 @@ const PatientSearchPage: React.FC = () => {
 
           {/* Select Stage and Next button */}
           <div className="stage-dropdown">
-            <label className="select-label">Select Test</label>
+            <label className="select-label">Screening</label>
             <select
               value={selectedStage || ''}
               onChange={handleStageChange}
