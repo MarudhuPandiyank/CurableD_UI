@@ -20,7 +20,7 @@ const ResponsiveCancerInstitute: React.FC = () => {
 
   const handleNavigate = (page: string) => {
     if (page === 'Outreach Clinic') {
-      window.location.href = '/HomePage';
+      navigate('/HomePage');
     } else if (page === 'Patient Registration') {
       navigate('/NewScreeningEnrollment');
     } else if(page === 'Screening') {

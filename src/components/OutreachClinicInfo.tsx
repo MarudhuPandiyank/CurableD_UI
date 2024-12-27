@@ -74,22 +74,27 @@ const OutreachClinicInfo: React.FC = () => {
       );
 
       if (response.data.length > 0) {
-        const clinicsData = response.data.map((clinicData) => ({
-          id: clinicData.campIdPrefix + clinicData.campId,
-          name: clinicData.campName,
-          pincode: clinicData.pincode,
-          state: clinicData.stateName,
-          district: clinicData.districtName,
-          taluk: clinicData.talukName,
-          village: clinicData.panchayatName,
-          startDate: clinicData.startDate,
-          endDate: clinicData.endDate,
-          noCampcordinators: clinicData.noCampcordinators,
-          noDoctors: clinicData.noDoctors,
-          noNurses: clinicData.noNurses,
-          noProgramCoordinators: clinicData.noProgramCoordinators,
-          noSocialWorkers: clinicData.noSocialWorkers,
-        }));
+        const clinicsData = response.data.map((clinicData) => {
+          const startDate = new Date(clinicData.startDate).toISOString();
+          const endDate = new Date(clinicData.endDate).toISOString();
+
+          return {
+            id: clinicData.campIdPrefix + clinicData.campId,
+            name: clinicData.campName,
+            pincode: clinicData.pincode,
+            state: clinicData.stateName,
+            district: clinicData.districtName,
+            taluk: clinicData.talukName,
+            village: clinicData.panchayatName,
+            startDate: startDate,
+            endDate: endDate,
+            noCampcordinators: clinicData.noCampcordinators,
+            noDoctors: clinicData.noDoctors,
+            noNurses: clinicData.noNurses,
+            noProgramCoordinators: clinicData.noProgramCoordinators,
+            noSocialWorkers: clinicData.noSocialWorkers,
+          };
+        });
 
         setClinics(clinicsData);
       } else {

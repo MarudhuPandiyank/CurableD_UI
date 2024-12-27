@@ -4,8 +4,10 @@ import Header1 from './Header1';
 import './HomePage.css';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
+import { useNavigate } from 'react-router-dom';
 
 const NewScreeningEnrollment: React.FC = () => {
+  const navigate = useNavigate();
   const [name, setName] = useState('');
   const [mobile, setMobile] = useState('');
   const [gender, setGender] = useState<string>('');
@@ -19,19 +21,24 @@ const NewScreeningEnrollment: React.FC = () => {
     const input = e.target.value;
     if (/^\d*$/.test(input)) setMobile(input); // Only numeric input
   };
-  
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-  
-    // Retrieve token from local storage
+
+    // Retrieve token and hospitalId from localStorage
     const token = localStorage.getItem('token');
-  
+    const hospitalId = localStorage.getItem('hospitalId'); // Read hospitalId from localStorage
+
     if (!token) {
       alert('No token found. Please log in again.');
       return;
     }
-  
+
+    if (!hospitalId) {
+      alert('No hospital ID found. Please ensure hospitalId is set in local storage.');
+      return;
+    }
+
     const payload = {
       name,
       mobileNo: mobile,
@@ -39,8 +46,9 @@ const NewScreeningEnrollment: React.FC = () => {
       dob: dob ? dob.toISOString().split('T')[0] : null,
       address,
       streetId: parseInt(streetId, 10) || 0, // Convert to number
+      hospitalId: parseInt(hospitalId, 10), // Add hospitalId to payload
     };
-  
+
     try {
       const response = await axios.post('http://13.234.4.214:8015/api/curable/candidate', payload, {
         headers: {
@@ -48,25 +56,22 @@ const NewScreeningEnrollment: React.FC = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-      
-      // Assert the type of response.data
+
       const data = response.data as { id: number; name: string };
-      
+
       if (response.status === 200) {
         // Store patientId and patientName in localStorage
         localStorage.setItem('patientId', data.id.toString());
         localStorage.setItem('patientName', data.name);
-      
+
         // Navigate to the DiseaseSpecificDetails page
-        window.location.href = '/DiseaseSpecificDetails';
+        navigate('/DiseaseSpecificDetails');
       }
     } catch (error) {
       console.error('Error during enrollment:', error);
       alert('Failed to enroll. Please try again.');
     }
   };
-  
-    
 
   return (
     <div>
@@ -126,7 +131,7 @@ const NewScreeningEnrollment: React.FC = () => {
                 required
               />
               <img
-                src="./Curable Icons/PNG/Calendar.png"
+                src="/assets/Curable Icons/PNG/Calendar.png"
                 className="clinic-id-icon"
                 alt="calendar icon"
               />

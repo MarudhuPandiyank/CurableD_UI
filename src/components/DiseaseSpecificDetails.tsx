@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Header1 from './Header1';
 import './HomePage.css';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 // Define types for API response
 interface FamilyMetricsParam {
@@ -20,6 +21,7 @@ interface ApiResponse {
 }
 
 function DiseaseSpecificDetails() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState<FamilyMetricsParam[]>([]); // State to store dynamic form fields
   const [error, setError] = useState<string | null>(null); // State to store error message
   const [formValues, setFormValues] = useState<Record<string, string>>({}); // State to store the form values dynamically
@@ -107,7 +109,7 @@ function DiseaseSpecificDetails() {
       });
 
       console.log('Data submitted successfully!');
-      window.location.href = '/ParticipantDetails';
+      navigate('/ParticipantDetails');
      
     } catch (error) {
       console.error('Error submitting data:', error);
