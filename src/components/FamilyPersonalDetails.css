@@ -1,0 +1,122 @@
+.family-personal-details-container {
+    padding: 20px;
+  }
+  
+  .family-personal-details-content {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 20px;
+  }
+  
+  .form-group {
+    margin-bottom: 15px;
+  }
+  
+  .form-control {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 10px;
+    width: 100%;  /* Ensure all input fields take full width */
+  }
+  
+  .marital-status {
+    width: 100%; /* Ensures the select box takes the full width of the form */
+  }
+  
+  .btn-group .btn {
+    margin-right: 10px;
+  }
+  
+  .button-row {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 10px;
+  }
+  
+  .add-member-btn {
+    background-color: #28a745;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100%;  /* Make sure the button takes full width */
+  }
+  
+  .add-member-btn:hover {
+    background-color: #218838;
+  }
+  
+  /* Ensure Finish and Next buttons are in the same row */
+  .finish-next-row {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-top: 15px;
+    flex-wrap: nowrap;  /* Prevent wrapping */
+  }
+  
+  .finish-btn,
+  .next-btn {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 10px 20px;
+    flex: 1; /* Allow buttons to stretch equally */
+    margin: 0 5px;  /* Add margin between buttons */
+  }
+  
+  .finish-btn {
+    background-color: #dc3545;
+  }
+  
+  .finish-btn:hover,
+  .next-btn:hover {
+    background-color: #0056b3;
+  }
+  
+  .powered-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    margin-top: 20px;
+  }
+  
+  .powered-by {
+    font-size: 12px;
+    margin: 0;
+    text-align: center;
+  }
+  
+  .curable-logo {
+    width: 100px;
+    margin-top: 5px;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .finish-next-row {
+      flex-direction: row;  /* Ensure buttons stay in the same row */
+    }
+  
+    .finish-btn,
+    .next-btn {
+      width: 48%;  /* Ensure each button takes up almost half the width */
+      margin: 5px 1%;
+    }
+  
+    .form-control {
+      width: 100%;  /* Ensure full-width input fields on smaller screens */
+    }
+  
+    .add-member-btn {
+      width: 100%;  /* Ensure the Add Member button is full width on smaller screens */
+    }
+  
+    .curable-logo {
+      width: 80px;  /* Reduce logo size on smaller screens */
+    }
+  }
+  

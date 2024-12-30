@@ -62,6 +62,7 @@ const NewScreeningEnrollment: React.FC = () => {
       if (response.status === 200) {
         // Store patientId and patientName in localStorage
         localStorage.setItem('patientId', data.id.toString());
+      
         localStorage.setItem('patientName', data.name);
 
         // Navigate to the DiseaseSpecificDetails page

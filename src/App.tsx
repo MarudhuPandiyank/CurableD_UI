@@ -21,6 +21,8 @@ import PatientSearchPage from './components/clinical/PatientSearchPage';
 import ExaminationScreen from './components/clinical/ExaminationScreen';
 import OralExaminationPage from './components/clinical/OralExaminationPage';
 import DiseaseSpecificDetailsClinic from './components/DiseaseSpecificDetailsClinic';
+import FamilyPersonalDetails from './components/FamilyPersonalDetails';
+import FamilyMedicalDetails from './components/FamilyMedicalDetails';
 const App: React.FC = () => {
   return (
     <Router>
@@ -43,6 +45,8 @@ const App: React.FC = () => {
         <Route path="/ExaminationScreen" element={<ExaminationScreen />} />
         <Route path="/OralExaminationPage" element={<OralExaminationPage />} />
         <Route path="/DiseaseSpecificDetailsClinic" element={<DiseaseSpecificDetailsClinic />} />
+        <Route path="/FamilyPersonalDetails" element={<FamilyPersonalDetails />} />
+        <Route path="/FamilyMedicalDetails" element={<FamilyMedicalDetails />} />
        
         <Route
           path="/responsive-cancer-institute"

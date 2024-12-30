@@ -93,6 +93,8 @@ function DiseaseSpecificDetails() {
       name: "Eligibility Metrics",
       stage: "ELIGIBILE",
       testMetrics: null,
+      type:1,
+      candidateId: Number(patientId),
     };
 
     try {
