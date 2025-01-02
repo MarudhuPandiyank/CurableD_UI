@@ -36,7 +36,7 @@ function FamilyMedicalDetails() {
         }
 
         const response = await axios.get<ApiResponse>(
-          'http://13.234.4.214:8015/api/curable/getMetrics/FAMILY_MEDICAL',
+          'http://13.234.4.214:8015/api/curable/getMetrics/createMedicalHistory',
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -83,20 +83,20 @@ function FamilyMedicalDetails() {
     });
 
     const payload = {
-      description: "Family Medical Metrics",
+      description: 'Family Medical Metrics',
       diseaseTestId: 1,
       familyMetrics: null,
       familyMedicalMetrics: {
         params: updatedFormData.flat(),
       },
       eligibilityMetrics: null,
-      gender: "FEMALE",
+      gender: 'FEMALE',
       genderValid: true,
       hospitalId: 1,
       id: 28,
       medicalMetrics: null,
-      name: "Family Medical Metrics",
-      stage: "FAMILY_MEDICAL",
+      name: 'Family Medical Metrics',
+      stage: 'FAMILY_MEDICAL',
       testMetrics: null,
       type: 1,
       candidateId: Number(localStorage.getItem('patientId')),
