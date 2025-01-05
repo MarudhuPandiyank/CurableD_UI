@@ -35,14 +35,11 @@ function FamilyMedicalDetails() {
           return;
         }
 
-        const response = await axios.get<ApiResponse>(
-          'http://13.234.4.214:8015/api/curable/getMetrics/createMedicalHistory',
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        const response = await axios.get<ApiResponse>(`http://13.234.4.214:8015/api/curable/getMetrics/FAMILY_MEDICAL`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
         setFormData(response.data.testMetrics.params);
         console.log('Family Medical Metrics Data:', response.data);

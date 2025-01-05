@@ -15,7 +15,10 @@ const Header: React.FC = () => {
     setIsRightSidebarOpen(false); // Close right sidebar when navigating
     navigate(path);
   };
-
+  const handleLogout = () => {
+    localStorage.removeItem('token'); // Clear the token
+    navigate('/'); // Redirect to login page
+  };
   return (
     <div>
      <header className="header d-flex justify-content-between align-items-center p-3">
@@ -111,6 +114,9 @@ const Header: React.FC = () => {
           </button>
           <button className="sidebar-btn">
             <i className="fas fa-user-edit"></i> Edit Profile
+          </button>
+          <button className="sidebar-btn" onClick={handleLogout}>
+            <i className="fas fa-sign-out-alt"></i> Log Out
           </button>
         </div>
       </div>

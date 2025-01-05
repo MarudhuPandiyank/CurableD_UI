@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header1 from './Header1';
 
-const ParticipantDetails: React.FC = () => {
+const ClinicalDetails: React.FC = () => {
   const [houseType, setHouseType] = useState<string>('');
   const [selectedToggle1, setSelectedToggle1] = useState<string | null>(null);
   const [education, setEducation] = useState<string>('');
@@ -65,11 +65,11 @@ const ParticipantDetails: React.FC = () => {
         },
         body: JSON.stringify(formData),
       });
-   
+
       if (response.ok) {
         const data = await response.json();
         console.log('Success:', data);
-        navigate('/MedicalomenHealthDetails');
+        navigate('/responsive-cancer-institute'); // Navigate on success
       } else {
         const errorData = await response.json();
         console.error('Error:', errorData);
@@ -253,4 +253,4 @@ const ParticipantDetails: React.FC = () => {
   );
 };
 
-export default ParticipantDetails;
+export default ClinicalDetails;

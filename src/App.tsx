@@ -23,44 +23,49 @@ import OralExaminationPage from './components/clinical/OralExaminationPage';
 import DiseaseSpecificDetailsClinic from './components/DiseaseSpecificDetailsClinic';
 import FamilyPersonalDetails from './components/FamilyPersonalDetails';
 import FamilyMedicalDetails from './components/FamilyMedicalDetails';
+import ClinicSearchPage from './components/clinical/ClinicSearchPage';
+import ClinicalDetails from './components/ClinicalDetails';
+import DiseaseSpecificDetailsClinical from './components/DiseaseSpecificDetailsClinical';
+
 const App: React.FC = () => {
+ 
   return (
     <Router>
       <Routes>
+        {/* Public Routes */}
         <Route path="/" element={<Login />} />
         <Route path="/reset-password" element={<ResetPassword />} />
-        <Route path="/HomePage" element={<HomePage />} />
-        <Route path="/create-outreach-clinic" element={<OutreachClinicCreation />} />
-        <Route path="/resource-planning" element={<ResourcePlanning />} /> 
-        <Route path="/success-message" element={<SuccessMessage />} />
-        <Route path="/outreach-clinic-info" element={<OutreachClinicInfo />} />
-        <Route path="/EditOutreachClinic" element={<EditOutreachClinic />} />
-        <Route path="/resource-allocation" element={<ResourceAllocation />} />
-        <Route path="/DiseaseSpecificDetails" element={<DiseaseSpecificDetails />} />
-        <Route path="/NewScreeningEnrollment" element={<NewScreeningEnrollment />} />
-        <Route path="/MedicalomenHealthDetails" element={<MedicalomenHealthDetails />} />
-        <Route path="/ParticipantDetails" element={<ParticipantDetails />} />
-        <Route path="/TenantDetails" element={<TenantDetails />} />
-        <Route path="/PatientSearchPage" element={<PatientSearchPage />} />
-        <Route path="/ExaminationScreen" element={<ExaminationScreen />} />
-        <Route path="/OralExaminationPage" element={<OralExaminationPage />} />
-        <Route path="/DiseaseSpecificDetailsClinic" element={<DiseaseSpecificDetailsClinic />} />
-        <Route path="/FamilyPersonalDetails" element={<FamilyPersonalDetails />} />
-        <Route path="/FamilyMedicalDetails" element={<FamilyMedicalDetails />} />
-       
+
+        {/* Protected Routes */}
         <Route
-          path="/responsive-cancer-institute"
+          path="/*"
           element={
             <AuthGuard>
-              <ResponsiveCancerInstitute />
-            </AuthGuard>
-          }
-        />
-        <Route
-          path="/account-info"
-          element={
-            <AuthGuard>
-              <UserAccountInfo />
+              <Routes>
+                <Route path="/HomePage" element={<HomePage />} />
+                <Route path="/create-outreach-clinic" element={<OutreachClinicCreation />} />
+                <Route path="/resource-planning" element={<ResourcePlanning />} /> 
+                <Route path="/success-message" element={<SuccessMessage />} />
+                <Route path="/outreach-clinic-info" element={<OutreachClinicInfo />} />
+                <Route path="/EditOutreachClinic" element={<EditOutreachClinic />} />
+                <Route path="/resource-allocation" element={<ResourceAllocation />} />
+                <Route path="/DiseaseSpecificDetails" element={<DiseaseSpecificDetails />} />
+                <Route path="/NewScreeningEnrollment" element={<NewScreeningEnrollment />} />
+                <Route path="/MedicalomenHealthDetails" element={<MedicalomenHealthDetails />} />
+                <Route path="/ParticipantDetails" element={<ParticipantDetails />} />
+                <Route path="/ClinicalDetails" element={<ClinicalDetails />} />
+                <Route path="/TenantDetails" element={<TenantDetails />} />
+                <Route path="/PatientSearchPage" element={<PatientSearchPage />} />
+                <Route path="/ExaminationScreen" element={<ExaminationScreen />} />
+                <Route path="/OralExaminationPage" element={<OralExaminationPage />} />
+                <Route path="/DiseaseSpecificDetailsClinic" element={<DiseaseSpecificDetailsClinic />} />
+                <Route path="/FamilyPersonalDetails" element={<FamilyPersonalDetails />} />
+                <Route path="/FamilyMedicalDetails" element={<FamilyMedicalDetails />} />
+                <Route path="/responsive-cancer-institute" element={<ResponsiveCancerInstitute />} />
+                <Route path="/account-info" element={<UserAccountInfo />} />
+                <Route path="/ClinicSearchPage" element={<ClinicSearchPage />} />
+                <Route path="/DiseaseSpecificDetailsClinical" element={<DiseaseSpecificDetailsClinical />} />
+              </Routes>
             </AuthGuard>
           }
         />

@@ -25,13 +25,14 @@ const ResponsiveCancerInstitute: React.FC = () => {
       navigate('/NewScreeningEnrollment');
     } else if(page === 'Screening') {
       navigate('/PatientSearchPage');
+    }else if(page === 'Clinical Evaluation') {
+      navigate('/ClinicSearchPage');
     }
   };
 
   // List of boxes and icons
   const boxes = [
     { title: 'Outreach Clinic', icon: 'Outreach Clinic.png' },
-    { title: 'Survey', icon: 'Survey.png' },
     { title: 'Patient Registration', icon: 'Patient Registration.png' },
     { title: 'Screening', icon: 'Screening.png' },
     { title: 'Clinical Evaluation', icon: 'Clinical Evaluation.png' },

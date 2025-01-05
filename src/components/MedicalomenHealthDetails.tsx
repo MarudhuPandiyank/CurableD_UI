@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Header from './Header';
 import './HomePage.css';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const MedicalomenHealthDetails: React.FC = () => {
   const [selectedHistory, setSelectedHistory] = useState<string>('');
@@ -24,7 +25,7 @@ const MedicalomenHealthDetails: React.FC = () => {
   const [selectedContraception, setSelectedContraception] = useState<string>('');
   const [selectedBreastFedMonths, setSelectedBreastFedMonths] = useState<string>('');
   const [selectedToggle2, setSelectedToggle2] = useState<string | null>(null);
-
+const navigate = useNavigate();
   const toggleOption = (option: string) => {
     setSelectedToggle(option);
   };
@@ -37,7 +38,7 @@ const MedicalomenHealthDetails: React.FC = () => {
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-
+    const patientId = localStorage.getItem('patientId');
     const payload = {
       abnormalBleedingVaginum: selectedBleedingIssues,
       ageAtFirstChild: parseInt(ageAtFirstChild) || 0,
@@ -46,12 +47,12 @@ const MedicalomenHealthDetails: React.FC = () => {
       ageAtMenarche: parseInt(ageAtMenarche) || 0,
       allergy,
       bloodPressure,
-      candidateId: 123456890123456, // Replace with the actual candidate ID
+      candidateId: patientId, // Replace with the actual candidate ID
       cervicalBreastScrening: selectedToggle2 === 'yes',
       currentlyPregant: selectedToggle1 === 'yes',
       height: parseInt(height) || 0,
       historyOfSurgery: selectedToggle === 'yes',
-      id: 0, // Replace with actual ID if required
+     
       medicalhistory: selectedHistory,
       methodOfContraceptionUsed: selectedContraception,
       noOfBreastFedMonths: selectedBreastFedMonths,
@@ -59,7 +60,7 @@ const MedicalomenHealthDetails: React.FC = () => {
       pulseRate,
       spo2: parseInt(spo2) || 0,
       totalPregnancies: parseInt(totalPregnancies) || 0,
-      weight: parseInt(weight) || 0,
+      weight: parseInt(weight) || 0,//double
       whenWasLastMentrution: selectedLastMenstruation
     };
     
@@ -74,6 +75,7 @@ const MedicalomenHealthDetails: React.FC = () => {
         }
       );
       console.log('Response:', response.data);
+      navigate('/FamilyPersonalDetails');
       alert('Data submitted successfully!');
     } catch (error) {
       console.error('Error submitting data:', error);

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import './Login.css';
 import LockIcon from '@mui/icons-material/Lock';
 import MailIcon from '@mui/icons-material/Mail';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 
@@ -13,6 +13,7 @@ const Login: React.FC = () => {
   const [isForgotPassword, setIsForgotPassword] = useState(false);
   const [newPassword, setNewPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+
   interface AuthResponse {
     id: string | null;
     userName: string;
@@ -23,31 +24,32 @@ const Login: React.FC = () => {
   }
 
   interface AuthResponseData {
-    hospitalId: string; // Added the hospitalId type here
+    hospitalId: string;
   }
 
   const handleSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+    e.preventDefault(); // Prevent default form submission
 
     try {
-      // Step 1: Authenticate user and get token
-      const response = await axios.post<AuthResponse>('http://13.234.4.214:8015/token/authenticate', { userName, password });
+      const response = await axios.post<AuthResponse>(
+        'http://13.234.4.214:8015/token/authenticate',
+        { userName, password }
+      );
 
       if (response && response.data.token) {
-        // Step 2: Store token in localStorage
         localStorage.setItem('token', response.data.token);
         localStorage.setItem('userName', userName);
 
-        // Step 3: Get hospitalId using authorizeUserRequest API
-        const authResponse = await axios.get<AuthResponseData>(`http://13.234.4.214:8015/api/curable/authorizeUserRequest/${userName}`, {
-          headers: { Authorization: `Bearer ${response.data.token}` },
-        });
+        const authResponse = await axios.get<AuthResponseData>(
+          `http://13.234.4.214:8015/api/curable/authorizeUserRequest/${userName}`,
+          {
+            headers: { Authorization: `Bearer ${response.data.token}` },
+          }
+        );
 
-        // Step 4: If user is authorized, store hospitalId in localStorage and navigate
         if (authResponse && authResponse.data) {
-          console.log('User authorized, navigating to dashboard...');
           const hospitalId = authResponse.data.hospitalId;
-          localStorage.setItem('hospitalId', hospitalId); // Store hospitalId
+          localStorage.setItem('hospitalId', hospitalId);
           navigate('/responsive-cancer-institute');
         } else {
           alert('User is not authorized');
@@ -63,10 +65,13 @@ const Login: React.FC = () => {
 
   const handleForgotPassword = async () => {
     try {
-      const response = await axios.post('http://13.234.4.214:8015/token/forgotPassword', {
-        userName,
-        password: newPassword,
-      });
+      const response = await axios.post(
+        'http://13.234.4.214:8015/token/forgotPassword',
+        {
+          userName,
+          password: newPassword,
+        }
+      );
 
       if (response.data) {
         alert('Password reset successful. Please log in with your new password.');
@@ -80,13 +85,19 @@ const Login: React.FC = () => {
     }
   };
 
+  const handleCancel = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault(); // Prevent default form behavior
+    setIsForgotPassword(false);
+    navigate('/');
+  };
+
   return (
     <div className="login-container">
       <img src="/assets/CI_70 years Logo.jpg" alt="Logo" className="logo" />
       <h1>Cancer Institute (WIA)</h1>
       <h2>{isForgotPassword ? 'Forgot Password' : 'Login'}</h2>
 
-      <form className="login-form" onSubmit={isForgotPassword ? undefined : handleSignIn}>
+      <form className="login-form" onSubmit={handleSignIn}>
         <div className="input-group">
           <label htmlFor="email" className="input-label">
             Email ID
@@ -110,51 +121,55 @@ const Login: React.FC = () => {
             </label>
             <div className="input-wrapper">
               <LockIcon className="input-icon" />
-              
               <input
-                 type={showPassword ? 'text' : 'password'}
+                type={showPassword ? 'text' : 'password'}
                 id="new-password"
                 className="input-field"
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
               />
-               <span
-              className="password-toggle-icon"
-              onClick={() => setShowPassword((prev) => !prev)}
-            >
-              {showPassword ? <VisibilityOff /> : <Visibility />}
-            </span>
+              <span
+                className="password-toggle-icon"
+                onClick={() => setShowPassword((prev) => !prev)}
+              >
+                {showPassword ? <VisibilityOff /> : <Visibility />}
+              </span>
             </div>
           </div>
         ) : (
           <div className="input-group">
-          <label htmlFor="password" className="input-label">
-            Password
-          </label>
-          <div className="input-wrapper">
-            <LockIcon className="input-icon" />
-            <input
-              type={showPassword ? 'text' : 'password'}
-              id="password"
-              className="input-field"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-            <span
-              className="password-toggle-icon"
-              onClick={() => setShowPassword((prev) => !prev)}
-            >
-              {showPassword ? <VisibilityOff /> : <Visibility />}
-            </span>
+            <label htmlFor="password" className="input-label">
+              Password
+            </label>
+            <div className="input-wrapper">
+              <LockIcon className="input-icon" />
+              <input
+                type={showPassword ? 'text' : 'password'}
+                id="password"
+                className="input-field"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+              <span
+                className="password-toggle-icon"
+                onClick={() => setShowPassword((prev) => !prev)}
+              >
+                {showPassword ? <VisibilityOff /> : <Visibility />}
+              </span>
+            </div>
           </div>
-        </div>
-        )}
+        )}
+
         {isForgotPassword ? (
           <>
             <button type="button" onClick={handleForgotPassword} className="sign-in-button">
               Reset Password
             </button>
-            <button type="button" onClick={() => setIsForgotPassword(false)} className="sign-in-button cancel-button">
+            <button
+              type="button"
+              onClick={handleCancel}
+              className="sign-in-button cancel-button"
+            >
               Cancel
             </button>
           </>
@@ -172,7 +187,11 @@ const Login: React.FC = () => {
 
       <div className="powered-container">
         <p className="powered-by">Powered By Curable</p>
-        <img src="/assets/Curable logo - rectangle with black text.png" alt="Curable Logo" className="curable-logo" />
+        <img
+          src="/assets/Curable logo - rectangle with black text.png"
+          alt="Curable Logo"
+          className="curable-logo"
+        />
       </div>
     </div>
   );
