@@ -27,6 +27,7 @@ const NewScreeningEnrollment: React.FC = () => {
 
     // Retrieve token and hospitalId from localStorage
     const token = localStorage.getItem('token');
+    const campId = localStorage.getItem('campId');
     const hospitalId = localStorage.getItem('hospitalId'); // Read hospitalId from localStorage
 
     if (!token) {
@@ -47,6 +48,7 @@ const NewScreeningEnrollment: React.FC = () => {
       address,
       streetId: parseInt(streetId, 10) || 0, // Convert to number
       hospitalId: parseInt(hospitalId, 10), // Add hospitalId to payload
+      campId
     };
 
     try {
