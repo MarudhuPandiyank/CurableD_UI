@@ -12,7 +12,7 @@ const HomePage: React.FC = () => {
     // const handleEditClick = () => {
     //     navigate('/outreach-clinic-info');
     // };
-
+console.log('test');
     return (
         <div className="container1">
             <Header/><br/>

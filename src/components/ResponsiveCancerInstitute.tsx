@@ -36,7 +36,7 @@ const ResponsiveCancerInstitute: React.FC = () => {
     { title: 'Patient Registration', icon: 'Patient Registration.png' },
     { title: 'Screening', icon: 'Screening.png' },
     { title: 'Clinical Evaluation', icon: 'Clinical Evaluation.png' },
-    { title: 'Referral to Hospital', icon: 'Referral to Hospital.png' },
+    // { title: 'Referral to Hospital', icon: 'Referral to Hospital.png' },
     { title: 'Master Data Management', icon: 'Master Data Management.png' },
    
   ];

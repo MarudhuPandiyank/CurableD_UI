@@ -14,6 +14,7 @@ const NewScreeningEnrollment: React.FC = () => {
   const [dob, setDob] = useState<Date | null>(null);
   const [address, setAddress] = useState('');
   const [streetId, setStreetId] = useState('');
+  const [isSaveButtonEnabled, setIsSaveButtonEnabled] = useState(false); // State for Save button
 
   const handleGenderChange = (value: string) => setGender(value);
 
@@ -22,13 +23,55 @@ const NewScreeningEnrollment: React.FC = () => {
     if (/^\d*$/.test(input)) setMobile(input); // Only numeric input
   };
 
+  // Enable Save button when Address and Street ID are filled
+  const handleAddressChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setAddress(e.target.value);
+    setIsSaveButtonEnabled(e.target.value.trim() !== '' && streetId.trim() !== '');
+  };
+
+  const handleStreetIdChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setStreetId(e.target.value);
+    setIsSaveButtonEnabled(address.trim() !== '' && e.target.value.trim() !== '');
+  };
+
+  const handleSave = async () => {
+    const token = localStorage.getItem('token');
+    const campId = localStorage.getItem('campId');
+
+    if (!token) {
+      alert('No token found. Please log in again.');
+      return;
+    }
+
+    const payload = {
+      address,
+      campId: parseInt(campId || '0', 10), // Convert campId to number
+      streetId: parseInt(streetId, 10) || 0, // Convert to number
+    };
+
+    try {
+      const response = await axios.post('http://13.234.4.214:8015/api/curable/saveCandidate', payload, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.status === 200) {
+        alert('Candidate saved successfully!');
+      }
+    } catch (error) {
+      console.error('Error saving candidate:', error);
+      alert('Failed to save candidate. Please try again.');
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Retrieve token and hospitalId from localStorage
     const token = localStorage.getItem('token');
     const campId = localStorage.getItem('campId');
-    const hospitalId = localStorage.getItem('hospitalId'); // Read hospitalId from localStorage
+    const hospitalId = localStorage.getItem('hospitalId');
 
     if (!token) {
       alert('No token found. Please log in again.');
@@ -46,9 +89,9 @@ const NewScreeningEnrollment: React.FC = () => {
       gender: gender.toUpperCase(),
       dob: dob ? dob.toISOString().split('T')[0] : null,
       address,
-      streetId: parseInt(streetId, 10) || 0, // Convert to number
-      hospitalId: parseInt(hospitalId, 10), // Add hospitalId to payload
-      campId
+      streetId: parseInt(streetId, 10) || 0,
+      hospitalId: parseInt(hospitalId, 10),
+      campId,
     };
 
     try {
@@ -62,12 +105,9 @@ const NewScreeningEnrollment: React.FC = () => {
       const data = response.data as { id: number; name: string };
 
       if (response.status === 200) {
-        // Store patientId and patientName in localStorage
         localStorage.setItem('patientId', data.id.toString());
-      
         localStorage.setItem('patientName', data.name);
 
-        // Navigate to the DiseaseSpecificDetails page
         navigate('/DiseaseSpecificDetails');
       }
     } catch (error) {
@@ -146,7 +186,7 @@ const NewScreeningEnrollment: React.FC = () => {
             <textarea
               placeholder="Enter Address"
               value={address}
-              onChange={(e) => setAddress(e.target.value)}
+              onChange={handleAddressChange}
             />
           </div>
 
@@ -156,14 +196,23 @@ const NewScreeningEnrollment: React.FC = () => {
               type="text"
               placeholder="Enter Street ID"
               value={streetId}
-              onChange={(e) => setStreetId(e.target.value)}
+              onChange={handleStreetIdChange}
             />
           </div>
 
           <center>
             <div className="buttons">
-              <button type="button" className="Finish-button">Save</button>
-              <button type="submit" className="Next-button">Enroll</button>
+              <button
+                type="button"
+                className="Finish-button"
+                onClick={handleSave}
+                disabled={!isSaveButtonEnabled} // Disable Save button if not enabled
+              >
+                Save
+              </button>
+              <button type="submit" className="Next-button">
+                Enroll
+              </button>
             </div>
           </center>
         </form>
