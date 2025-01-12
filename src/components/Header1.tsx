@@ -15,30 +15,32 @@ const Header: React.FC = () => {
     setIsRightSidebarOpen(false); // Close right sidebar when navigating
     navigate(path);
   };
+
   const handleLogout = () => {
     localStorage.removeItem('token'); // Clear the token
     navigate('/'); // Redirect to login page
   };
+
   return (
     <div>
-     <header className="header d-flex justify-content-between align-items-center p-3">
-  <span
-    className="menu-icon fas fa-bars"
-    onClick={() => setIsLeftSidebarOpen(true)}
-    aria-label="Open Left Sidebar"
-    style={{ color: '#003366' }} // Blue color for the menu icon
-  ></span>
-  <span className="title text-center flex-grow-1" style={{ fontSize: '20px', color: '#003366' }}>
-    <img src="./Curable Icons/PNG/Earth.png" style={{ height: '30px', width: '30px' }} alt="Earth Icon" />
-    Tenant Name
-  </span>
-  <span
-    className="account-icon fas fa-user-circle"
-    onClick={() => setIsRightSidebarOpen(true)}
-    aria-label="Account Settings"
-    style={{ color: '#003366' }} // Blue color for the user icon
-  ></span>
-</header>
+      <header className="header d-flex justify-content-between align-items-center p-3">
+        <span
+          className="menu-icon fas fa-bars"
+          onClick={() => setIsLeftSidebarOpen(true)}
+          aria-label="Open Left Sidebar"
+          style={{ color: '#003366' }} // Blue color for the menu icon
+        ></span>
+        <span className="title text-center flex-grow-1" style={{ fontSize: '20px', color: '#003366' }}>
+          <img src="./Curable Icons/PNG/Earth.png" style={{ height: '30px', width: '30px' }} alt="Earth Icon" />
+          Tenant Name
+        </span>
+        <span
+          className="account-icon fas fa-user-circle"
+          onClick={() => setIsRightSidebarOpen(true)}
+          aria-label="Account Settings"
+          style={{ color: '#003366' }} // Blue color for the user icon
+        ></span>
+      </header>
 
       {/* Left Sidebar */}
       <div className={`sidebar left ${isLeftSidebarOpen ? 'active' : ''}`}>
@@ -112,7 +114,7 @@ const Header: React.FC = () => {
           <button className="sidebar-btn" onClick={() => handleNavigation('/responsive-cancer-institute')}>
             <i className="fas fa-home"></i> Home
           </button>
-          <button className="sidebar-btn">
+          <button className="sidebar-btn" onClick={() => handleNavigation('/ProfileScreen')}>
             <i className="fas fa-user-edit"></i> Edit Profile
           </button>
           <button className="sidebar-btn" onClick={handleLogout}>

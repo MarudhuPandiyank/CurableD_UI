@@ -27,6 +27,7 @@ import ClinicSearchPage from './components/clinical/ClinicSearchPage';
 import ClinicalDetails from './components/ClinicalDetails';
 import DiseaseSpecificDetailsClinical from './components/DiseaseSpecificDetailsClinical';
 import PatientRegistrationSearch from './components/PatientRegistrationSearch';
+import ProfileScreen from './components/ProfileScreen';
 
 const App: React.FC = () => {
  
@@ -67,6 +68,7 @@ const App: React.FC = () => {
                 <Route path="/ClinicSearchPage" element={<ClinicSearchPage />} />
                 <Route path="/DiseaseSpecificDetailsClinical" element={<DiseaseSpecificDetailsClinical />} />
                 <Route path="/PatientRegistrationSearch" element={<PatientRegistrationSearch />} />
+                <Route path="/ProfileScreen" element={<ProfileScreen />} />
 
               </Routes>
             </AuthGuard>

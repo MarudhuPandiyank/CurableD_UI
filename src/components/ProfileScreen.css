@@ -1,0 +1,120 @@
+/* Center the entire page */
+.page-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #ffffff;
+    padding: 20px;
+    box-sizing: border-box;
+  }
+  
+  /* Profile Header and Icons */
+  .profile-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .account-icon1-wrapper {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .account-icon1 {
+    font-size: 100px;
+    color: #4b0082; /* Indigo */
+  }
+  
+  .edit-icon {
+    position: absolute;
+    bottom: 10px;
+    right: 25%;
+    background-color: white;
+    border-radius: 50%;
+    font-size: 20px;
+    color: #de3163; /* Pink */
+    padding: 5px;
+  }
+  
+  /* Form Styles */
+  .profile-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 100%;
+    max-width: 400px; /* Form width limit */
+    text-align: center;
+  }
+  
+  label {
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+  }
+  
+  input[type="text"],
+  input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid black;
+    border-radius: 20px;
+    background-color: #f5f5f5; /* Light gray */
+    text-align: center;
+    font-size: 14px;
+  }
+  
+  /* Password Field with Eye Icon */
+  .password-wrapper {
+    position: relative;
+  }
+  
+  .password-wrapper input {
+    width: 100%;
+    padding-right: 40px; /* Add padding to the right to make space for the icon */
+  }
+  .password-wrapper i {
+    position: absolute;
+    top: 50%;
+    right: 10px; /* Position the icon 10px from the right */
+    transform: translateY(-50%); /* Vertically center the icon */
+    cursor: pointer;
+  }
+  .password-wrapper .fa-eye {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    cursor: pointer;
+    font-size: 18px;
+    color: black;
+  }
+  
+  /* Update Button */
+  .update-button {
+    width: 100%;
+    padding: 12px;
+    background-color: #de3163; /* Pink */
+    color: white;
+    border: none;
+    border-radius: 20px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  
+  .update-button:hover {
+    background-color: #c02750; /* Darker pink on hover */
+  }
+  
+  /* Footer */
+  .powered-by {
+    margin-top: 20px;
+    font-size: 12px;
+    color: gray;
+    text-align: center;
+  }
+  
