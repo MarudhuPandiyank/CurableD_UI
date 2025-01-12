@@ -9,7 +9,7 @@ import ResourceAllocation from './ResourceAllocation';
 const ResourcePlanning: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { startDate, endDate, panchayatId,pincode } = location.state || {};
+  const { startDate, endDate, panchayatId,pincode, clinicName, clinicCode } = location.state || {};
   const [clickId, setClickId] = useState('');
 
   const [formData, setFormData] = useState({
@@ -19,8 +19,10 @@ const ResourcePlanning: React.FC = () => {
     noNurses: '',
     noDoctors: '',
   });
+  const hospitalId = localStorage.getItem('hospitalId');
 
   const [reviewData, setReviewData] = useState({
+   
     panchayatMasterId: panchayatId || 0, 
     outreachClinicStartDate: startDate || '',
     outreachClinicEndDate: endDate || '',
@@ -43,6 +45,9 @@ const ResourcePlanning: React.FC = () => {
   const { noProgramCoordinators, noCampcordinators, noSocialWorkers, noNurses, noDoctors } = formData;
   const requestData = {
     campDTO: {
+      name: clinicName || '',
+      campIdPrefix: clinicCode || '',
+      hospitalId,
       startDate: reviewData.outreachClinicStartDate,
       endDate: reviewData.outreachClinicEndDate,
       panchayatMasterId: reviewData.panchayatMasterId,

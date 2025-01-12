@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./ProfileScreen.css"; // Assuming the same CSS file
+import './HomePage.css';
 
 interface ProfileData {
   gender: string;

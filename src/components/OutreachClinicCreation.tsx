@@ -61,7 +61,7 @@ const OutreachClinicCreation: React.FC = () => {
     const [panchayatCode, setPanchayatCode] = useState('');
     const [panchayatId, setPanchayatId] = useState(0);
     const [clinicCode, setClinicCode] = useState('');
-    // Fetch states from API
+   
     useEffect(() => {
         const fetchStates = async () => {
             const token = localStorage.getItem('token');
@@ -175,7 +175,7 @@ const OutreachClinicCreation: React.FC = () => {
         }
     
         navigate('/resource-planning', {
-            state: { startDate, endDate, panchayatId,pincode }
+            state: { startDate, endDate, panchayatId, pincode, clinicName, clinicCode }
           });
     };
     return (
