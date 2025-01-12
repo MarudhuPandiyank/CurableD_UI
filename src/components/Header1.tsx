@@ -59,7 +59,7 @@ const Header: React.FC = () => {
             />
             Outreach Clinic
           </button>
-          <button className="sidebar-btn" onClick={() => handleNavigation('/NewScreeningEnrollment')}>
+          <button className="sidebar-btn" onClick={() => handleNavigation('/PatientRegistrationSearch')}>
             <img
               src="./HomeScreenIcons/PNG/Patient Registration.png"
               alt="Patient Registration Icon"

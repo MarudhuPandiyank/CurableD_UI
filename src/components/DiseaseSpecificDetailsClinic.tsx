@@ -15,6 +15,7 @@ interface FamilyMetricsParam {
 }
 
 interface ApiResponse {
+  id: number;
   testMetrics: {
     params: FamilyMetricsParam[];
   };
@@ -42,6 +43,8 @@ function DiseaseSpecificDetailsClinic() {
             Authorization: `Bearer ${token}`,
           },
         });
+        localStorage.setItem('diseaseTestMasterId', response.data.id.toString());
+
         setFormData(response.data.testMetrics.params); // Store dynamic form fields based on the API response
         console.log('Disease Test Master Data:', response.data);
       } catch (error) {
@@ -78,11 +81,14 @@ function DiseaseSpecificDetailsClinic() {
         selectedValues: selectedValue, // Assign the selected value to selectedValues
       };
     });
-
+    const diseaseTestMasterId = localStorage.getItem('diseaseTestMasterId');
+    const candidateId = localStorage.getItem('candidateId');
     const payload = {
+      diseaseTestMasterId: Number(diseaseTestMasterId),
+  candidateId: Number(candidateId),
       description: "Eligibility Metrics",
       diseaseTestId: 1,
-      eligibilityMetrics: {
+      testMetrics: {
         params: updatedFormData,
       },
       familyMedicalMetrics: null,
@@ -94,7 +100,8 @@ function DiseaseSpecificDetailsClinic() {
       medicalMetrics: null,
       name: "Eligibility Metrics",
       stage: localStorage.getItem('selectedStage'),
-      testMetrics: null,
+      type:1,
+     
     };
 
     try {

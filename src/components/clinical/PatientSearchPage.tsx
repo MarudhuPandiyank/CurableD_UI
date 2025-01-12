@@ -65,6 +65,7 @@ const PatientSearchPage: React.FC = () => {
           gender: patient.gender,
           mobileNo: patient.mobileNo,
           eligibleDiseases: patient.eligibleDiseases,
+          
         }));
         setPatients(patientData);
       } else {
@@ -80,12 +81,15 @@ const PatientSearchPage: React.FC = () => {
 
   const handlePatientClick = (patient: Patient) => {
     setSelectedPatient(patient);
-
+  
+    // Save patient id in local storage as candidateId
+    localStorage.setItem("candidateId", patient.id.toString());
+  
     // Check if eligibleDiseases exists and is an array
     if (patient.eligibleDiseases && Array.isArray(patient.eligibleDiseases)) {
       const stages = patient.eligibleDiseases.map((disease) => disease.stage);
       setStageList(stages);
-
+  
       // Set the first stage as the default selected stage
       if (stages.length > 0) {
         setSelectedStage(stages[0]);
@@ -153,6 +157,7 @@ const PatientSearchPage: React.FC = () => {
                   key={patient.id}
                   className={`patient-item ${
                     selectedPatient?.id === patient.id ? "selected" : ""
+                    
                   }`}
                   onClick={() => handlePatientClick(patient)}
                 >
@@ -162,6 +167,7 @@ const PatientSearchPage: React.FC = () => {
                     </div>
                     <div>
                       <strong>ID:</strong> {patient.id || "N/A"}
+                      
                     </div>
                     <div>
                       <strong>Age:</strong> {patient.age || "N/A"}
