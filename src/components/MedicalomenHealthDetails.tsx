@@ -82,14 +82,15 @@ const navigate = useNavigate();
       alert('Failed to submit data.');
     }
   };
-
+  const participant = localStorage.getItem('participant');
+  const registraionId = localStorage.getItem('registraionId');
   return (
     <div className="container2">
       <Header />
 
       <div className="participant-container">
-        <p>Participant: Sudha, 36/F</p>
-        <p>ID 123456890123456</p>
+        <p>Participant: {participant}</p>
+        <p>ID: {registraionId}</p>
       </div>
 
       <form className="clinic-form" onSubmit={handleSubmit}>

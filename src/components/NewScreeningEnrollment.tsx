@@ -15,7 +15,8 @@ const NewScreeningEnrollment: React.FC = () => {
   const [address, setAddress] = useState('');
   const [streetId, setStreetId] = useState('');
   const [isSaveButtonEnabled, setIsSaveButtonEnabled] = useState(false); // State for Save button
-
+  const [showModal, setShowModal] = useState(false);
+const [tag, setTag] = useState<string>('');
   const handleGenderChange = (value: string) => setGender(value);
 
   const handleMobileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -37,18 +38,19 @@ const NewScreeningEnrollment: React.FC = () => {
   const handleSave = async () => {
     const token = localStorage.getItem('token');
     const campId = localStorage.getItem('campId');
-
+  
     if (!token) {
       alert('No token found. Please log in again.');
       return;
     }
-
+  
     const payload = {
       address,
       campId: parseInt(campId || '0', 10), // Convert campId to number
       streetId: parseInt(streetId, 10) || 0, // Convert to number
+      reason, // Include reason directly in the payload
     };
-
+  
     try {
       const response = await axios.post('http://13.234.4.214:8015/api/curable/saveCandidate', payload, {
         headers: {
@@ -56,9 +58,9 @@ const NewScreeningEnrollment: React.FC = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-
+  
       if (response.status === 200) {
-        alert('Candidate saved successfully!');
+        navigate('/SuccessMessagePatient');
       }
     } catch (error) {
       console.error('Error saving candidate:', error);
@@ -102,12 +104,14 @@ const NewScreeningEnrollment: React.FC = () => {
         },
       });
 
-      const data = response.data as { id: number; name: string };
+      const data = response.data as { id: number; name: string,registraionId:string,age:number,gender:string };
 
       if (response.status === 200) {
         localStorage.setItem('patientId', data.id.toString());
         localStorage.setItem('patientName', data.name);
-
+        localStorage.setItem('registraionId', data.registraionId);
+        const participantValue = `${data.name} ${data.age}/${data.gender}`;
+        localStorage.setItem('participant', participantValue);
         navigate('/DiseaseSpecificDetails');
       }
     } catch (error) {
@@ -115,7 +119,34 @@ const NewScreeningEnrollment: React.FC = () => {
       alert('Failed to enroll. Please try again.');
     }
   };
+   
+  const openModal = () => {
+    setShowModal(true);
+  };
 
+  // Function to close modal
+  const closeModal = () => {
+    setShowModal(false);
+  };
+  const [reason, setReason] = useState<string>('');
+  const handleReasonChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { checked, value } = e.target;
+  
+    setReason((prevReason) => {
+      if (checked) {
+        // Add the option to the reason if it's checked
+        return prevReason ? `${prevReason}, ${value}` : value;
+      } else {
+        // Remove the option from the reason if it's unchecked
+        return prevReason
+          .split(', ')
+          .filter((option) => option !== value)
+          .join(', ');
+      }
+    });
+  };
+
+  
   return (
     <div>
       <div className="container2">
@@ -162,7 +193,7 @@ const NewScreeningEnrollment: React.FC = () => {
             </div>
           </div>
 
-          <div className="form-group">
+         
             <label style={{ color: 'darkblue' }}>Date of Birth*:</label>
             <div className="input-with-icon">
               <DatePicker
@@ -174,12 +205,25 @@ const NewScreeningEnrollment: React.FC = () => {
                 required
               />
               <img
-                src="/assets/Curable Icons/PNG/Calendar.png"
+                
+               src=" /assets/Calendar.png"
                 className="clinic-id-icon"
                 alt="calendar icon"
               />
             </div>
-          </div>
+         
+
+          {/* <div className="form-group">
+            <label style={{ color: 'darkblue' }}>Date of Birth*:</label>
+            <DatePicker
+                selected={dob}
+                onChange={(date: Date | null) => setDob(date)}
+                dateFormat="yyyy-MM-dd"
+                placeholderText="yyyy-MM-dd"
+                maxDate={new Date()}
+                required
+              />
+          </div> */}
 
           <div className="form-group">
             <label style={{ color: 'darkblue' }}>Address:</label>
@@ -199,14 +243,58 @@ const NewScreeningEnrollment: React.FC = () => {
               onChange={handleStreetIdChange}
             />
           </div>
+          {showModal && (
+  <div className="modal">
+    <div className="modal-content">
+      <h2>How would you like to tag this participant?</h2>
+      <div className="form-group">
+        <select value={tag} onChange={(e) => setTag(e.target.value)}>
+          <option value="Pre_register">Pre_register</option>
+          <option value="Options">Options</option>
+        </select>
+      </div>
 
+      {/* Conditionally render checkboxes based on tag selection */}
+      {tag === "Options" && (
+        <div className="checkbox-group">
+          <div className="checkbox-item">
+            <input
+              type="checkbox"
+              id="option1"
+              value="option1"
+              onChange={handleReasonChange}
+            />
+            <label htmlFor="option1">Option 1</label>
+          </div>
+          <div className="checkbox-item">
+            <input
+              type="checkbox"
+              id="option2"
+              value="option2"
+              onChange={handleReasonChange}
+            />
+            <label htmlFor="option2">Option 2</label>
+          </div>
+        </div>
+      )}
+
+      <div className="modal-buttons">
+        <button onClick={closeModal}>Close</button>
+        <button onClick={handleSave}>Save</button>
+      </div>
+    </div>
+  </div>
+)}
+
+
+   
           <center>
             <div className="buttons">
               <button
                 type="button"
                 className="Finish-button"
-                onClick={handleSave}
-                disabled={!isSaveButtonEnabled} // Disable Save button if not enabled
+                onClick={openModal}
+                
               >
                 Save
               </button>

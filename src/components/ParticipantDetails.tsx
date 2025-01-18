@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header1 from './Header1';
+import './ParticipantDetails.css';
+import axios from 'axios';
 
 const ParticipantDetails: React.FC = () => {
   const [houseType, setHouseType] = useState<string>('');
@@ -15,6 +17,18 @@ const ParticipantDetails: React.FC = () => {
   const [voterId, setVoterId] = useState<string>('');
   const [rationCard, setRationCard] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
+  const [showModal, setShowModal] = useState(false); // State for modal visibility
+  const [tag, setTag] = useState<string>(''); // State for the selected tag
+  const [duration, setDuration] = useState<string>(''); // State for duration
+  const [habitType, setHabitType] = useState<string>(''); // State for habit type
+  const [frequency, setFrequency] = useState<string>(''); // State for frequency per day
+  const [quit, setQuit] = useState<string>(''); // State for quit status
+  const [howLong, setHowLong] = useState<string>(''); // State for how long quit
+  const [habitTypes, setHabitTypes] = useState<string[]>([]);  // Store fetched habit types
+  const [selectedHabit, setSelectedHabit] = useState<string>('');  // Store selected habit
+  const [selectedHabitType, setSelectedHabitType] = useState<string>(''); // Store selected habit type
+  
+
 
   const navigate = useNavigate();
 
@@ -28,9 +42,20 @@ const ParticipantDetails: React.FC = () => {
 
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
+  
     const tobaccoUser = selectedToggle1 === 'yes';
-
+  
+    // Format the candidateHabitDTOs with the habit details
+    const candidateHabitDTOs = habits.map(habit => ({
+      candidateId: localStorage.getItem('patientId'),  // Assuming candidateId is 0, replace with actual logic if necessary
+      duration: tobaccoUser ? parseFloat(duration) || 0 : 0,  // Duration only if tobaccoUser is true
+      frequency: habit.frequency,
+      habits: habit.habit,
+      howLong: parseFloat(howLong) || 0,  // Assuming howLong is a number
+      quit: habit.quit === "yes",  // Assuming 'quit' is a string, handle accordingly
+      type: habit.habitType,
+    }));
+  
     const formData = {
       fatherName,
       spouseName,
@@ -43,20 +68,22 @@ const ParticipantDetails: React.FC = () => {
       rationCard,
       voterId,
       tobaccoUser,
+      duration: tobaccoUser ? parseFloat(duration) || 0 : null, // Include duration if tobaccoUser is 'yes'
       id: localStorage.getItem('patientId') || '',
+      candidateHabitDTOs,  // Include the new habit details array here
     };
-
+  
     const token = localStorage.getItem('token');
-
+  
     if (!token) {
       console.error('Token not found');
       alert('Session expired. Please log in again.');
       return;
     }
-
+  
     try {
       setIsLoading(true);
-
+  
       const response = await fetch('http://13.234.4.214:8015/api/curable/candidate', {
         method: 'POST',
         headers: {
@@ -65,7 +92,7 @@ const ParticipantDetails: React.FC = () => {
         },
         body: JSON.stringify(formData),
       });
-   
+  
       if (response.ok) {
         const data = await response.json();
         console.log('Success:', data);
@@ -82,18 +109,117 @@ const ParticipantDetails: React.FC = () => {
       setIsLoading(false);
     }
   };
+  
 
   const patientId = localStorage.getItem('patientId');
   const patientName = localStorage.getItem('patientName');
 
+  // Function to open modal
+  const openModal = () => {
+    setShowModal(true);
+  };
+
+  // Function to close modal
+  const closeModal = () => {
+    setShowModal(false);
+  };
+  const [hasTobaccoHabit, setHasTobaccoHabit] = useState("No");
+  // State to manage the list of habits
+  const [habits, setHabits] = useState([
+    { habit: "", habitType: "", frequency: "", quit: "" },
+  ]);
+  const [error, setError] = useState("");
+  // Add a new habit set
+  const addHabit = () => {
+    setHabits([
+      ...habits,
+      { habit: "", habitType: "", frequency: "", quit: "" },
+    ]);
+  };
+  // Handle input change
+  const handleInputChange = (
+    index: number,
+    field: string,
+    value: string
+  ) => {
+    const updatedHabits = [...habits];
+    updatedHabits[index] = { ...updatedHabits[index], [field]: value };
+    setHabits(updatedHabits);
+  };
+  // Handle form submission with validation
+  const handleSubmit = () => {
+    if (hasTobaccoHabit === "Yes") {
+      // Simple validation: Ensure no empty fields
+      for (let habit of habits) {
+        if (!habit.habit || !habit.habitType || !habit.frequency || !habit.quit) {
+          setError("Please fill in all fields for each habit.");
+          return;
+        }
+      }
+    }
+    setError(""); // Clear error message if all fields are valid
+    console.log("Submitted Habits:", habits);
+    console.log("Has Tobacco Habit:", hasTobaccoHabit);
+
+    // Optionally reset the form
+    setHabits([{ habit: "", habitType: "", frequency: "", quit: "" }]);
+    setHasTobaccoHabit("No");
+  };
+
+  const fetchHabitTypes = async (habit: string) => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        console.error('Token not found');
+        alert('Session expired. Please log in again.');
+        return;
+      }
+  
+      const response = await axios.get<string[]>(
+        `http://13.234.4.214:8015/api/curable/getHabitTypes/${habit}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+  
+      if (response.status === 200) {
+        setHabitTypes(response.data); // Now TypeScript knows that response.data is a string[] (array of strings)
+      } else {
+        console.error('Error:', response.statusText);
+        alert(`Error: ${response.statusText}`);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert('An error occurred while fetching habit types. Please try again.');
+    }
+  };
+  
+  const handleHabitChange = (index: number, habit: string) => {
+    // Update the habit for the selected index
+    const updatedHabits = [...habits];
+    updatedHabits[index].habit = habit;
+  
+    // Fetch habit types based on the selected habit
+    fetchHabitTypes(habit);
+  
+    // Update the habits state with the new selected habit
+    setHabits(updatedHabits);
+  };
+
+
+  
+  const participant = localStorage.getItem('participant');
+  const registraionId = localStorage.getItem('registraionId');
   return (
     <div className="container2">
       <Header1 />
       <div className="participant-container">
-        <p>Participant: {patientId}</p>
-        <p>ID: {patientName}</p>
+        <p>Participant: {participant}</p>
+        <p>ID: {registraionId}</p>
       </div>
-      <form className="clinic-form" onSubmit={handleFormSubmit}>
+      <div className="clinic-form" onSubmit={handleFormSubmit}>
         <h2>General Details</h2>
         <div className="form-group">
           <label htmlFor="father-name">Father Name:</label>
@@ -161,9 +287,7 @@ const ParticipantDetails: React.FC = () => {
         <div className="form-group">
           <label htmlFor="education">Education:</label>
           <select id="education" name="education" value={education} onChange={(e) => setEducation(e.target.value)}>
-            <option value="" disabled>
-              Select Education
-            </option>
+            <option value="" disabled>Select Education</option>
             <option value="primary">Primary</option>
             <option value="secondary">Secondary</option>
             <option value="graduate">Graduate</option>
@@ -173,9 +297,7 @@ const ParticipantDetails: React.FC = () => {
         <div className="form-group">
           <label htmlFor="occupation">Occupation:</label>
           <select id="occupation" name="occupation" value={occupation} onChange={(e) => setOccupation(e.target.value)}>
-            <option value="" disabled>
-              Select Occupation
-            </option>
+            <option value="" disabled>Select Occupation</option>
             <option value="farmer">Farmer</option>
             <option value="worker">Worker</option>
             <option value="professional">Professional</option>
@@ -216,38 +338,151 @@ const ParticipantDetails: React.FC = () => {
             placeholder="Enter Ration Card"
           />
         </div>
-        <h2>Social Habits</h2>
-        <div className="form-group">
-          <label>Tobacco/Alcohol Habits:</label>
-          <div className="toggle-group">
-            <button
-              type="button"
-              className={`toggle-btn ${selectedToggle1 === 'yes' ? 'yes-active' : ''}`}
-              onClick={() => toggleOption1('yes')}
-            >
-              Yes
-            </button>
-            <button
-              type="button"
-              className={`toggle-btn ${selectedToggle1 === 'no' ? 'no-active' : ''}`}
-              onClick={() => toggleOption1('no')}
-            >
-              No
-            </button>
+        <div>
+          <h3>Social Habits</h3>
+          <div>
+            <label>
+              Tobacco/Alcohol Habits:
+              <select
+                value={hasTobaccoHabit}
+                onChange={(e) => setHasTobaccoHabit(e.target.value)}
+              >
+                <option value="No">No</option>
+                <option value="Yes">Yes</option>
+              </select>
+            </label>
           </div>
+
+          {/* Show habits form only if Tobacco Habit is Yes */}
+          {hasTobaccoHabit === "Yes" && (
+  <>
+{habits.map((habit, index) => (
+  <div key={index} style={{ marginBottom: "1rem" }}>
+    <div>
+      <label>
+        Habits:
+        <select
+          value={habit.habit}
+          onChange={(e) => handleHabitChange(index, e.target.value)} // Call handleHabitChange
+        >
+          <option value="">Select Habit</option>
+          <option value="Tobacco">Tobacco</option>
+          <option value="Smoking">Smoking</option>
+          <option value="Alcohol">Alcohol</option>
+          <option value="Snuff">Snuff</option>
+          <option value="Others">Others</option>
+        </select>
+      </label>
+    </div>
+
+    <div>
+      <label>
+        Habit Type:
+        <select
+          value={habit.habitType}
+          onChange={(e) =>
+            handleInputChange(index, "habitType", e.target.value)
+          }
+        >
+          <option value="">Select Habit Type</option>
+          {habitTypes.map((habitType, i) => (
+            <option key={i} value={habitType}>
+              {habitType}
+            </option>
+          ))}
+        </select>
+      </label>
+    </div>
+
+    <div>
+      <label>
+        Frequency/Day:
+        <input
+          type="number"
+          value={habit.frequency}
+          onChange={(e) =>
+            handleInputChange(index, "frequency", e.target.value)
+          }
+        />
+      </label>
+    </div>
+
+    <div>
+      <label>
+        Quit:
+        <input
+          type="text"
+          value={habit.quit}
+          onChange={(e) =>
+            handleInputChange(index, "quit", e.target.value)
+          }
+        />
+      </label>
+    </div>
+
+    <hr />
+  </div>
+))}
+
+    <button className="submit-button1" onClick={addHabit}>Add Habit</button>
+  </>
+)}
+
+
+          {error && <p style={{ color: "red" }}>{error}</p>}
+
         </div>
+       
+
         <div className="buttons">
           <button type="button" className="submit-button1" onClick={handleFormSubmit} disabled={isLoading}>
             {isLoading ? 'Submitting...' : 'Finish'}
           </button>
-          <button type="submit" className="allocate-button" disabled={isLoading}>
+          <button type="submit" className="allocate-button" onClick={handleFormSubmit} disabled={isLoading}>
             {isLoading ? 'Submitting...' : 'Next'}
           </button>
         </div>
-      </form>
+      </div> 
+     
+     
+      {showModal && (
+        <div className="modal">
+          <div className="modal-content">
+            <h2>How would you like to tag this participant?</h2>
+            <div className="form-group">
+              <select value={tag} onChange={(e) => setTag(e.target.value)}>
+                <option value="Pre_register">Pre_register</option>
+                <option value="Options">Options</option>
+              </select>
+            </div>
+
+            {/* Conditionally render checkboxes based on tag selection */}
+            {tag === "Options" && (
+              <div className="checkbox-group">
+                <div className="checkbox-item">
+                  <input type="checkbox" id="option1" value="option1" />
+                  <label htmlFor="option1">Option 1</label>
+                </div>
+                <div className="checkbox-item">
+                  <input type="checkbox" id="option2" value="option2" />
+                  <label htmlFor="option2">Option 2</label>
+                </div>
+              </div>
+            )}
+
+            <div className="modal-buttons">
+              <button onClick={closeModal}>Close</button>
+              <button onClick={handleFormSubmit}>Save</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+   
+
       <div className="powered-container">
         <p className="powered-by">Powered By Curable</p>
-        <img src="/assets/Curable logo - rectangle with black text.png" alt="Curable Logo" className="curable-logo" />
+        <img src="/assets/logo.png" alt="Logo" className="logo" />
       </div>
     </div>
   );

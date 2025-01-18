@@ -121,13 +121,14 @@ function DiseaseSpecificDetails() {
 
   const patientId = localStorage.getItem('patientId');
   const patientName = localStorage.getItem('patientName');
-
+  const participant = localStorage.getItem('participant');
+  const registraionId = localStorage.getItem('registraionId');
   return (
     <div className="container2">
       <Header1 />
       <div className="participant-container">
-        <p>Participant: {patientId}</p>
-        <p>ID:{patientName}</p>
+        <p>Participant: {participant}</p>
+        <p>ID:{registraionId}</p>
       </div>
 
       {error && <div className="error-message">{error}</div>} {/* Display error message if there's an issue */}

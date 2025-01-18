@@ -431,12 +431,12 @@ h1 {
     font-size: 1.5em;
     color: #333;
 }
-
+/* 
 .react-datepicker__input-container {
   position: relative;
   display: inline-block;
-  width: 172%;
-}
+ 
+} */
 
 /* Media Queries */
 

@@ -1,110 +1,127 @@
-.page-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    background-color: #ffffff;
-    padding: 20px;
-    box-sizing: border-box;
-  }
-  
-  .profile-header {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-bottom: 20px;
-  }
-  
-  .account-icon1-wrapper {
-    position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  .account-icon1 {
-    font-size: 100px;
-    color: #4b0082; 
-  }
-  
-  .edit-icon {
-    position: absolute;
-    bottom: 10px;
-    right: 25%;
-    background-color: white;
-    border-radius: 50%;
-    font-size: 20px;
-    color: #de3163; 
-    padding: 5px;
-  }
-  
-  .profile-form {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    width: 100%;
-    max-width: 400px;
-    text-align: center;
-  }
-  
+/* Updated ProfilePage Specific Styles */
 
-  
-  input[type="text"],
-  input[type="password"] {
-    width: 100%;
-    padding: 10px;
-   
-    border-radius: 10px;
-    background-color: #f5f5f5;
-    
-    font-size: 14px;
+.profile-page-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+
+.profile-header-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.profile-account-icon-wrapper {
+  position: relative;
+}
+
+.profile-account-icon {
+  font-size: 100px;
+  color: #4b0082;
+}
+
+.profile-edit-icon {
+  position: absolute;
+  top: 70px;
+  left: 70px;
+  font-size: 20px;
+  color: #de3163;
+  cursor: pointer;
+}
+
+.profile-form-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 600px;
+  margin-top: 20px;
+}
+
+.profile-form-container label {
+  font-weight: bold;
+  margin: 10px 0 5px;
+}
+
+.profile-form-container input {
+  padding: 10px;
+  border-radius: 600px;
+  border: 1px solid #ccc;
+  margin-bottom: 20px;
+  background-color: #f5f5f5;
+  width: 100%;
+  font-size: 16px;
+}
+
+.profile-form-container input:focus {
+  outline: none;
+  border: 2px solid #de3163;
+  background-color: #fff;
+}
+
+.password-field-wrapper {
+  position: relative;
+}
+
+.password-field-wrapper i {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  cursor: pointer;
+  font-size: 18px;
+}
+
+.update-profile-button {
+  background-color: #de3163;
+  color: white;
+  padding: 12px 20px;
+  border-radius: 600px;
+  font-size: 18px;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  text-align: center;
+}
+
+.update-profile-button:hover {
+  background-color: #bf2652;
+  transition: background-color 0.3s ease;
+}
+
+.error-message {
+  color: red;
+  font-size: 14px;
+  text-align: center;
+  margin-top: -10px;
+}
+
+.profile-powered-container {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.profile-powered-by {
+  font-size: 14px;
+  color: #4b0082;
+}
+
+.profile-curable-logo {
+  width: 150px;
+  margin-top: 10px;
+}
+
+/* Add responsive media query if needed */
+@media (max-width: 768px) {
+  .profile-form-container {
+    max-width: 90%;
   }
   
-  .password-wrapper {
-    position: relative;
+  .profile-account-icon {
+    font-size: 80px;
   }
   
-  .password-wrapper input {
-    width: 100%;
-    padding-right: 40px; 
-  }
-  .password-wrapper i {
-    position: absolute;
-    top: 50%;
-    right: 10px;
-    transform: translateY(-50%); 
-    cursor: pointer;
-  }
-  /* .password-wrapper .fa-eye {
-    position: absolute;
-    top: 50%;
-    right: 10px;
-    transform: translateY(-50%);
-    cursor: pointer;
-    font-size: 18px;
-    color: black;
-  } */
-  
-  .update-button {
-    width: 100%;
-    padding: 12px;
-    background-color: #de3163; 
-    color: white;
-    border: none;
-    border-radius: 20px;
+  .profile-edit-icon {
     font-size: 16px;
-    cursor: pointer;
   }
-  
-  /* .update-button:hover {
-    background-color: #c02750;
-  } */
-  
-  /* .powered-by {
-    margin-top: 20px;
-    font-size: 12px;
-    color: gray;
-    text-align: center;
-  } */
-  
+}

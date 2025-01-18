@@ -80,10 +80,14 @@ const ClinicSearchPage: React.FC = () => {
           .flatMap((patient) => patient.eligibleDiseases.map((disease) => disease.stage))
           .filter((value, index, self) => self.indexOf(value) === index); // Remove duplicates
         setStageList(stages);
-
+        const diseaseTestIds = response.data
+        .flatMap((patient) => patient.eligibleDiseases.map((disease) => disease.diseaseTestId))
+        .filter((value, index, self) => self.indexOf(value) === index);
         // Set the first stage as the default selected stage
         if (stages.length > 0) {
           setSelectedStage(stages[0]);
+          localStorage.setItem("diseaseTestIds", JSON.stringify(diseaseTestIds[0]));
+
         }
       } else {
         setPatients([]);

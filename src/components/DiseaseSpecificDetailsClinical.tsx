@@ -30,12 +30,14 @@ function DiseaseSpecificDetails() {
     const fetchDiseaseTestMaster = async () => {
       try {
         const token = localStorage.getItem('token'); // Assuming token is stored in localStorage
+        const diseaseTestIds = localStorage.getItem('diseaseTestIds');
+
         if (!token) {
           setError('Token is missing. Please log in again.');
           return;
         }
 
-        const response = await axios.get<ApiResponse>(`http://13.234.4.214:8015/api/curable/getMetrics/ELIGIBILE`, {
+        const response = await axios.get<ApiResponse>(`http://13.234.4.214:8015/api/curable/getMetricsById/${diseaseTestIds}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },

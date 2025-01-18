@@ -65,7 +65,7 @@ const PatientSearchPage: React.FC = () => {
           gender: patient.gender,
           mobileNo: patient.mobileNo,
           eligibleDiseases: patient.eligibleDiseases,
-          
+         
         }));
         setPatients(patientData);
       } else {
@@ -88,11 +88,15 @@ const PatientSearchPage: React.FC = () => {
     // Check if eligibleDiseases exists and is an array
     if (patient.eligibleDiseases && Array.isArray(patient.eligibleDiseases)) {
       const stages = patient.eligibleDiseases.map((disease) => disease.stage);
+      const diseaseTestIds = patient.eligibleDiseases.map((disease) => disease.diseaseTestId);
+
       setStageList(stages);
   
       // Set the first stage as the default selected stage
       if (stages.length > 0) {
         setSelectedStage(stages[0]);
+        localStorage.setItem("diseaseTestIds", JSON.stringify(diseaseTestIds[0]));
+
       } else {
         setSelectedStage(null);
       }
@@ -104,7 +108,18 @@ const PatientSearchPage: React.FC = () => {
   };
 
   const handleStageChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedStageValue = event.target.value;
+
     setSelectedStage(event.target.value);
+
+    if (selectedPatient?.eligibleDiseases) {
+      const selectedDisease = selectedPatient.eligibleDiseases.find(
+        (disease) => disease.stage === selectedStageValue
+      );
+  
+      if (selectedDisease) {
+      }
+    }
   };
 
   const handleNext = () => {
@@ -116,6 +131,7 @@ const PatientSearchPage: React.FC = () => {
     const patientName = selectedPatient?.name || "";
     localStorage.setItem("selectedStage", selectedStage);
     localStorage.setItem("patientName", patientName);
+   
     navigate("/DiseaseSpecificDetailsClinic");
   };
 

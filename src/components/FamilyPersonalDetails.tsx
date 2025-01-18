@@ -1,17 +1,14 @@
-import React, { useEffect, useState } from 'react';
-import Header1 from './Header1';
-import './HomePage.css';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import './FamilyPersonalDetails.css';
 
-// Define types for API response
 interface FamilyMetricsParam {
   testName: string;
   subtestName: string;
   condition: string | null;
   valueType: string;
   values: string[];
-  selectedValues: string[]; // Add selectedValues to the structure
+  selectedValues: string[];
 }
 
 interface ApiResponse {
@@ -21,30 +18,27 @@ interface ApiResponse {
 }
 
 function FamilyPersonalDetails() {
-  const navigate = useNavigate();
-  const [formData, setFormData] = useState<FamilyMetricsParam[]>([]); // State to store dynamic form fields
-  const [error, setError] = useState<string | null>(null); // State to store error message
-  const [formValues, setFormValues] = useState<Record<string, string>[]>([{ }]); // Initialize with one form entry
+  const [formData, setFormData] = useState<FamilyMetricsParam[]>([]);
+  const [formValues, setFormValues] = useState<Record<string, string>[]>([{}]);
+  const [expandedMemberIndex, setExpandedMemberIndex] = useState<number | null>(0);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchFamilyPersonalMetrics = async () => {
       try {
-        const token = localStorage.getItem('token'); // Assuming token is stored in localStorage
+        const token = localStorage.getItem('token');
         if (!token) {
           setError('Token is missing. Please log in again.');
           return;
         }
 
-        const response = await axios.get<ApiResponse>(`http://13.234.4.214:8015/api/curable/getMetrics/FAMILY_PERSONAL`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+        const response = await axios.get<ApiResponse>('http://13.234.4.214:8015/api/curable/getMetrics/FAMILY_PERSONAL', {
+          headers: { Authorization: `Bearer ${token}` },
         });
-        setFormData(response.data.familyMetrics.params); // Store dynamic form fields based on the API response
-        console.log('Family Personal Metrics Data:', response.data);
+        setFormData(response.data.familyMetrics.params);
       } catch (error) {
-        console.error('Error fetching family personal metrics data:', error);
-        setError('Failed to load family personal metrics. Please try again.');
+        console.error('Error fetching family personal metrics:', error);
+        setError('Failed to load family personal metrics.');
       }
     };
 
@@ -61,42 +55,40 @@ function FamilyPersonalDetails() {
   };
 
   const handleAddMember = () => {
-    setFormValues((prevValues) => [...prevValues, {}]); // Add a new form to the formValues state
+    setFormValues((prevValues) => [...prevValues, {}]);
+  };
+
+  const handleDeleteMember = (index: number) => {
+    setFormValues((prevValues) => prevValues.filter((_, i) => i !== index));
+    if (expandedMemberIndex === index) setExpandedMemberIndex(null); // Collapse if the deleted member is expanded
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Construct the body of the POST request to match the desired structure
-    const updatedFormData = formValues.map((formValue, index) => {
-      const updatedFields = formData.map((field) => {
-        const selectedValue = formValue[field.testName] ? [formValue[field.testName]] : [];
-        return {
-          ...field,
-          selectedValues: selectedValue, // Assign the selected value to selectedValues
-        };
-      });
-      return updatedFields;
-    });
+    const updatedFormData = formValues.map((formValue) =>
+      formData.map((field) => ({
+        ...field,
+        selectedValues: formValue[field.testName] ? [formValue[field.testName]] : [],
+      }))
+    );
 
     const payload = {
-      description: "Family Personal Metrics",
+      description: 'Family Personal Metrics',
       diseaseTestId: 1,
-      familyMetrics: {
-        params: updatedFormData.flat(), // Flatten the array to send all the form data
-      },
+      familyMetrics: { params: updatedFormData.flat() },
       familyMedicalMetrics: null,
       eligibilityMetrics: null,
-      gender: "FEMALE", // You can dynamically adjust this if necessary
+      gender: 'FEMALE',
       genderValid: true,
       hospitalId: 1,
       id: 27,
       medicalMetrics: null,
-      name: "Family Personal Metrics",
-      stage: "FAMILY_PERSONAL",
+      name: 'Family Personal Metrics',
+      stage: 'FAMILY_PERSONAL',
       testMetrics: null,
       type: 1,
-      candidateId: Number(patientId),
+      candidateId: Number(localStorage.getItem('patientId')),
     };
 
     try {
@@ -107,16 +99,13 @@ function FamilyPersonalDetails() {
       }
 
       await axios.post('http://13.234.4.214:8015/api/curable/candidatehistory', payload, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
 
       console.log('Data submitted successfully!');
-      navigate('/FamilyMedicalDetails');
     } catch (error) {
       console.error('Error submitting data:', error);
-      setError('Failed to submit data. Please try again.');
+      setError('Failed to submit data.');
     }
   };
 
@@ -129,51 +118,123 @@ function FamilyPersonalDetails() {
 
   return (
     <div className="container2">
-      <Header1 />
       <div className="participant-container">
-        <p>Participant: {patientId}</p>
-        <p>ID: {patientName}</p>
+        <p>Participant: {patientName}</p>
+        <p>ID: {patientId}</p>
       </div>
 
-      {error && <div className="error-message">{error}</div>} {/* Display error message if there's an issue */}
+      {error && <div className="error-message">{error}</div>}
 
       <form className="clinic-form" onSubmit={handleSubmit}>
         <p>Family Personal Details</p>
 
-        {/* Dynamically render form fields for each member */}
-        {formValues.map((formValue, formIndex) => (
-          <div key={formIndex} className="family-member-form">
-            <p>Member {formIndex + 1}</p>
-            {formData.map((field, index) => (
-              <div key={index} className="form-group">
-                <label style={{ color: 'darkblue' }}>{field.testName}*:</label>
-
-                {field.valueType === 'SingleSelect' ? (
-                  <select
-                    id={field.testName.toLowerCase().replace(' ', '-')}
-                    name={field.testName.toLowerCase().replace(' ', '-')}
-                    value={formValue[field.testName] || ''}
-                    onChange={(e) => handleFieldChange(formIndex, field.testName, e.target.value)}
+        {formValues.map((_, formIndex) => (
+          <div key={formIndex} className="family-member-row">
+            {/* Collapsed View */}
+            {expandedMemberIndex !== formIndex && (
+              <div
+                className="member-name"
+                style={{
+                  cursor: 'pointer',
+                  padding: '10px',
+                  backgroundColor: '#f4f4f4',
+                  border: '1px solid #ccc',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                }}
+                onClick={() => setExpandedMemberIndex(formIndex)}
+              >
+                <span>Member {formIndex + 1}</span>
+                {formIndex === 0 && (
+                  <button
+                    type="button"
+                    style={{
+                      backgroundColor: 'red',
+                      color: 'white',
+                      border: 'none',
+                      padding: '5px',
+                      cursor: 'pointer',
+                    }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDeleteMember(formIndex);
+                    }}
                   >
-                    <option value="" disabled>Select {field.testName}</option>
-                    {field.values.map((value: string, idx: number) => (
-                      <option key={idx} value={value}>
-                        {value}
-                      </option>
-                    ))}
-                  </select>
-                ) : (
-                  <input
-                    type="text"
-                    id={field.testName.toLowerCase().replace(' ', '-')}
-                    name={field.testName.toLowerCase().replace(' ', '-')}
-                    value={formValue[field.testName] || ''}
-                    onChange={(e) => handleFieldChange(formIndex, field.testName, e.target.value)}
-                    placeholder={`Enter ${field.testName}`}
-                  />
+                    Delete
+                  </button>
                 )}
               </div>
-            ))}
+            )}
+
+            {/* Expanded View */}
+            {expandedMemberIndex === formIndex && (
+              <div className="family-member-form">
+                <div
+                  className="member-header"
+                  style={{
+                    cursor: 'pointer',
+                    padding: '10px',
+                    backgroundColor: '#e3e3e3',
+                    border: '1px solid #ccc',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                  }}
+                  onClick={() => setExpandedMemberIndex(null)}
+                >
+                  <span>Member {formIndex + 1} (Click to collapse)</span>
+                  <button
+                    type="button"
+                    style={{
+                      backgroundColor: 'red',
+                      color: 'white',
+                      border: 'none',
+                      padding: '5px',
+                      cursor: 'pointer',
+                    }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDeleteMember(formIndex);
+                    }}
+                  >
+                    Delete
+                  </button>
+                </div>
+
+                {formData.map((field, index) => (
+                  <div key={index} className="form-group">
+                    <label style={{ color: 'darkblue' }}>{field.testName}*:</label>
+                    {field.valueType === 'SingleSelect' ? (
+                      <select
+                        id={field.testName.toLowerCase().replace(' ', '-')}
+                        name={field.testName.toLowerCase().replace(' ', '-')}
+                        value={formValues[formIndex][field.testName] || ''}
+                        onChange={(e) => handleFieldChange(formIndex, field.testName, e.target.value)}
+                      >
+                        <option value="" disabled>
+                          Select {field.testName}
+                        </option>
+                        {field.values.map((value, idx) => (
+                          <option key={idx} value={value}>
+                            {value}
+                          </option>
+                        ))}
+                      </select>
+                    ) : (
+                      <input
+                        type="text"
+                        id={field.testName.toLowerCase().replace(' ', '-')}
+                        name={field.testName.toLowerCase().replace(' ', '-')}
+                        value={formValues[formIndex][field.testName] || ''}
+                        onChange={(e) => handleFieldChange(formIndex, field.testName, e.target.value)}
+                        placeholder={`Enter ${field.testName}`}
+                      />
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         ))}
 
@@ -181,19 +242,11 @@ function FamilyPersonalDetails() {
           <button type="button" className="Next-button" onClick={handleAddMember}>
             Add Member
           </button>
-          <button type="button" className="Finish-button">
-            Finish
-          </button>
           <button type="submit" className="Next-button">
             Next
           </button>
         </center>
       </form>
-
-      <div className="powered-container">
-        <p className="powered-by">Powered By Curable</p>
-        <img src="/assets/Curable logo - rectangle with black text.png" alt="Curable Logo" className="curable-logo" />
-      </div>
     </div>
   );
 }

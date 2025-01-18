@@ -25,6 +25,7 @@ const Login: React.FC = () => {
 
   interface AuthResponseData {
     hospitalId: string;
+    tenantName:string;
   }
 
   const handleSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -49,7 +50,9 @@ const Login: React.FC = () => {
 
         if (authResponse && authResponse.data) {
           const hospitalId = authResponse.data.hospitalId;
+          const tenantName = authResponse.data.tenantName;
           localStorage.setItem('hospitalId', hospitalId);
+          localStorage.setItem('tenantName', tenantName);
           navigate('/responsive-cancer-institute');
         } else {
           alert('User is not authorized');

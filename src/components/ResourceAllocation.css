@@ -46,11 +46,11 @@
 .form-group {
     margin-bottom: 15px;
 }
-.react-datepicker__input-container {
+/* .react-datepicker__input-container {
     position: relative;
     display: inline-block;
     width: 972%;
-  }
+  } */
   
 .label {
     font-size: 16px;

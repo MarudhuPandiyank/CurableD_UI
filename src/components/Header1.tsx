@@ -20,6 +20,7 @@ const Header: React.FC = () => {
     localStorage.removeItem('token'); // Clear the token
     navigate('/'); // Redirect to login page
   };
+  const tenantName = localStorage.getItem('tenantName');
 
   return (
     <div>
@@ -32,7 +33,7 @@ const Header: React.FC = () => {
         ></span>
         <span className="title text-center flex-grow-1" style={{ fontSize: '20px', color: '#003366' }}>
           <img src="./Curable Icons/PNG/Earth.png" style={{ height: '30px', width: '30px' }} alt="Earth Icon" />
-          Tenant Name
+         {tenantName}
         </span>
         <span
           className="account-icon fas fa-user-circle"

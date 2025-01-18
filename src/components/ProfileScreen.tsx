@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import "./ProfileScreen.css"; // Assuming the same CSS file
-import './HomePage.css';
+import "./ProfileScreen.css";
+import './HomePage.css'; // Assuming you are keeping it for other styles
 
 interface ProfileData {
   gender: string;
@@ -9,6 +9,7 @@ interface ProfileData {
   name: string;
   phoneNo: string;
   password: string;
+  keycloakUserId:string;
 }
 
 const ProfilePage: React.FC = () => {
@@ -16,7 +17,7 @@ const ProfilePage: React.FC = () => {
   const [gender, setGender] = useState<string>("");
   const [phoneNo, setPhoneNo] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-
+  const [keycloakUserId, setkeycloakUserId] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -41,11 +42,12 @@ const ProfilePage: React.FC = () => {
         );
 
         if (response.status === 200) {
-          const { gender, name, phoneNo, password } = response.data;
+          const { gender, name, phoneNo, password,keycloakUserId } = response.data;
           setName(name);
           setGender(gender);
           setPhoneNo(phoneNo);
           setPassword(password);
+          setkeycloakUserId(keycloakUserId);
         }
 
         setLoading(false);
@@ -59,8 +61,8 @@ const ProfilePage: React.FC = () => {
   }, []);
 
   const handlePasswordVisibility = () => {
-    const passwordField = document.querySelector<HTMLInputElement>(".password-wrapper input");
-    const eyeIcon = document.querySelector<HTMLElement>(".password-wrapper i");
+    const passwordField = document.querySelector<HTMLInputElement>(".password-field-wrapper input");
+    const eyeIcon = document.querySelector<HTMLElement>(".password-field-wrapper i");
 
     if (passwordField && eyeIcon) {
       if (passwordField.type === "password") {
@@ -90,6 +92,7 @@ const ProfilePage: React.FC = () => {
       phoneNo,
       yearsExp: 0,
       password,
+      keycloakUserId
     };
 
     try {
@@ -114,45 +117,45 @@ const ProfilePage: React.FC = () => {
   };
 
   return (
-    <div className="page-container">
-      <div className="profile-header">
-        <div className="account-icon1-wrapper">
-          <div className="account-icon1">
+    <div className="profile-page-container">
+      <div className="profile-header-container">
+        <div className="profile-account-icon-wrapper">
+          <div className="profile-account-icon">
             <i className="fa fa-user-circle"></i>
           </div>
-          <div className="edit-icon">
+          <div className="profile-edit-icon">
             <i className="fa fa-pencil"></i>
           </div>
         </div>
       </div>
-      <form className="profile-form">
+      <form className="profile-form-container">
         <label>Username:</label>
-        <input type="text" value={name } onChange={(e) => setName(e.target.value)} />
+        <input type="text" value={name} onChange={(e) => setName(e.target.value)} />
 
         <label>Gender:</label>
         <input type="text" value={gender} onChange={(e) => setGender(e.target.value)} />
 
         <label>Alternate Mobile Number:</label>
-        <input type="text" value={phoneNo } onChange={(e) => setPhoneNo(e.target.value)} />
+        <input type="text" value={phoneNo} onChange={(e) => setPhoneNo(e.target.value)} />
 
         <label>Change Password:</label>
-        <div className="password-wrapper">
-          <input type="password" value={password } onChange={(e) => setPassword(e.target.value)} />
+        <div className="password-field-wrapper">
+          <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
           <i className="fa fa-eye" onClick={handlePasswordVisibility}></i>
         </div>
 
-        <button type="button" className="update-button" onClick={handleUpdate}>
+        <button type="button" className="update-profile-button" onClick={handleUpdate}>
           Update
         </button>
       </form>
-      <div className="powered-container">
-          <p className="powered-by">Powered By Curable</p>
-          <img
-            src="/assets/Curable logo - rectangle with black text.png"
-            alt="Curable Logo"
-            className="curable-logo"
-          />
-        </div>
+      <div className="profile-powered-container">
+        <p className="profile-powered-by">Powered By Curable</p>
+        <img
+          src="/assets/Curable logo - rectangle with black text.png"
+          alt="Curable Logo"
+          className="profile-curable-logo"
+        />
+      </div>
     </div>
   );
 };
