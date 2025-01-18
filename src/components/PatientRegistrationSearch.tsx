@@ -75,8 +75,8 @@ const PatientRegistrationSearch: React.FC = () => {
 
       if (response.data.length > 0) {
         const clinicsData = response.data.map((clinicData) => {
-          const startDate = new Date(clinicData.startDate).toISOString();
-          const endDate = new Date(clinicData.endDate).toISOString();
+          const startDate = clinicData.startDate;
+          const endDate = clinicData.endDate;
           localStorage.setItem('campId', clinicData.campId);
           return {
             id: clinicData.campIdPrefix + clinicData.campId,

@@ -7,7 +7,7 @@ import Header from "../Header";
 interface Patient {
   id: number;
   name: string;
-  registrationId: string | null;
+  registraionId: string;
   age: number;
   gender: string;
   mobileNo: string;
@@ -60,7 +60,7 @@ const PatientSearchPage: React.FC = () => {
         const patientData = response.data.map((patient) => ({
           id: patient.id,
           name: patient.name,
-          registrationId: patient.registrationId,
+          registraionId: patient.registraionId,
           age: patient.age,
           gender: patient.gender,
           mobileNo: patient.mobileNo,
@@ -84,6 +84,8 @@ const PatientSearchPage: React.FC = () => {
   
     // Save patient id in local storage as candidateId
     localStorage.setItem("candidateId", patient.id.toString());
+    localStorage.setItem("ptName", patient.name.toString());
+    localStorage.setItem("registrationId", patient.registraionId);
   
     // Check if eligibleDiseases exists and is an array
     if (patient.eligibleDiseases && Array.isArray(patient.eligibleDiseases)) {
@@ -182,7 +184,7 @@ const PatientSearchPage: React.FC = () => {
                       <strong>Name:</strong> {patient.name}
                     </div>
                     <div>
-                      <strong>ID:</strong> {patient.id || "N/A"}
+                      <strong>ID:</strong> {patient.registraionId || "N/A"}
                       
                     </div>
                     <div>

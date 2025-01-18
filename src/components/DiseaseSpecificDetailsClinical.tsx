@@ -15,7 +15,7 @@ interface FamilyMetricsParam {
 }
 
 interface ApiResponse {
-  eligibilityMetrics: {
+  testMetrics: {
     params: FamilyMetricsParam[];
   };
 }
@@ -42,7 +42,7 @@ function DiseaseSpecificDetails() {
             Authorization: `Bearer ${token}`,
           },
         });
-        setFormData(response.data.eligibilityMetrics.params); // Store dynamic form fields based on the API response
+        setFormData(response.data.testMetrics.params); // Store dynamic form fields based on the API response
         console.log('Disease Test Master Data:', response.data);
       } catch (error) {
         console.error('Error fetching disease test master data:', error);
@@ -78,26 +78,47 @@ function DiseaseSpecificDetails() {
         selectedValues: selectedValue, // Assign the selected value to selectedValues
       };
     });
-
+    const diseaseTestMasterId = localStorage.getItem('diseaseTestIds');
+    const candidateId = localStorage.getItem('candidateId');
     const payload = {
-      description: "Eligibility Metrics",
+      diseaseTestMasterId: Number(diseaseTestMasterId),
+      candidateId: Number(candidateId),
+      description: 'Eligibility Metrics',
       diseaseTestId: 1,
-      eligibilityMetrics: {
+      testMetrics: {
         params: updatedFormData,
       },
       familyMedicalMetrics: null,
       familyMetrics: null,
-      gender: "FEMALE", // You can dynamically adjust this if necessary
+      gender: 'FEMALE', // Adjust dynamically if necessary
       genderValid: true,
-      hospitalId: 1,
-      id: 27,
+      hospitalId: localStorage.getItem('hospitalId'),
+      id: null,
       medicalMetrics: null,
-      name: "Eligibility Metrics",
-      stage: "ELIGIBILE",
-      testMetrics: null,
-      type:1,
-      candidateId: Number(patientId),
+      name: 'Eligibility Metrics',
+      stage: localStorage.getItem('selectedStage'),
+      type: 3,
     };
+
+    // const payload = {
+    //   description: "Eligibility Metrics",
+    //   diseaseTestId: 1,
+    //   eligibilityMetrics: {
+    //     params: updatedFormData,
+    //   },
+    //   familyMedicalMetrics: null,
+    //   familyMetrics: null,
+    //   gender: "FEMALE", // You can dynamically adjust this if necessary
+    //   genderValid: true,
+    //   hospitalId: 1,
+    //   id: 27,
+    //   medicalMetrics: null,
+    //   name: "Eligibility Metrics",
+    //   stage: "ELIGIBILE",
+    //   testMetrics: null,
+    //   type:1,
+    //   candidateId: Number(patientId),
+    // };
 
     try {
       const token = localStorage.getItem('token');
@@ -113,7 +134,7 @@ function DiseaseSpecificDetails() {
       });
 
       console.log('Data submitted successfully!');
-      navigate('/ClinicalDetails');
+      navigate('/SuccessMessageClinicalFInal');
      
     } catch (error) {
       console.error('Error submitting data:', error);
@@ -123,13 +144,14 @@ function DiseaseSpecificDetails() {
 
   const patientId = localStorage.getItem('patientId');
   const patientName = localStorage.getItem('patientName');
-
+  const registrationId = localStorage.getItem('registrationId');
+  const ptName = localStorage.getItem('ptName');
   return (
     <div className="container2">
       <Header1 />
       <div className="participant-container">
-        <p>Participant: {patientId}</p>
-        <p>ID:{patientName}</p>
+        <p>Participant: {ptName}</p>
+        <p>ID:{registrationId}</p>
       </div>
 
       {error && <div className="error-message">{error}</div>} {/* Display error message if there's an issue */}
@@ -170,8 +192,8 @@ function DiseaseSpecificDetails() {
         ))}
 
         <center className="buttons">
-          <button type="button" className="Finish-button">Finish</button>
-          <button type="submit" className="Next-button">Next</button>
+          {/* <button type="button" className="Finish-button">Finish</button> */}
+          <button type="submit" className="Finish-button">Finish</button>
         </center>
       </form>
 

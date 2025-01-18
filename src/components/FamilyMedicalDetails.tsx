@@ -113,7 +113,7 @@ function FamilyMedicalDetails() {
       });
 
       console.log('Data submitted successfully!');
-      navigate('/ParticipantDetails');
+      navigate('/SuccessMessagePRFinal');
     } catch (error) {
       console.error('Error submitting data:', error);
       setError('Failed to submit data. Please try again.');

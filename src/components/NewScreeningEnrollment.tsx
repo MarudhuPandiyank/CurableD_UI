@@ -260,21 +260,22 @@ const [tag, setTag] = useState<string>('');
           <div className="checkbox-item">
             <input
               type="checkbox"
-              id="option1"
-              value="option1"
+              id="Loor Locked"
+              value="Loor Locked"
               onChange={handleReasonChange}
             />
-            <label htmlFor="option1">Option 1</label>
+            <label htmlFor="Loor Locked">Loor Locked</label>
           </div>
           <div className="checkbox-item">
             <input
               type="checkbox"
-              id="option2"
-              value="option2"
+              id="Refused"
+              value="Refused"
               onChange={handleReasonChange}
             />
-            <label htmlFor="option2">Option 2</label>
+            <label htmlFor="Refused">Refused</label>
           </div>
+          
         </div>
       )}
 

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './FamilyPersonalDetails.css';
+import { useNavigate } from 'react-router-dom';
 
 interface FamilyMetricsParam {
   testName: string;
@@ -18,6 +19,7 @@ interface ApiResponse {
 }
 
 function FamilyPersonalDetails() {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState<FamilyMetricsParam[]>([]);
   const [formValues, setFormValues] = useState<Record<string, string>[]>([{}]);
   const [expandedMemberIndex, setExpandedMemberIndex] = useState<number | null>(0);
@@ -103,6 +105,7 @@ function FamilyPersonalDetails() {
       });
 
       console.log('Data submitted successfully!');
+      navigate('/FamilyMedicalDetails');
     } catch (error) {
       console.error('Error submitting data:', error);
       setError('Failed to submit data.');

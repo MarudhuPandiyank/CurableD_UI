@@ -148,7 +148,7 @@ const [tag, setTag] = useState<string>('');
       });
 
       console.log('Data submitted successfully!');
-      navigate('/ParticipantDetails');
+      navigate('/SuccessMessageScreeningFInal');
     } catch (error) {
       console.error('Error submitting data:', error);
       setError('Failed to submit data. Please try again.');
@@ -157,13 +157,15 @@ const [tag, setTag] = useState<string>('');
 
   const patientId = localStorage.getItem('patientId');
   const patientName = localStorage.getItem('patientName');
+  const registrationId = localStorage.getItem('registrationId');
+  const ptName = localStorage.getItem('ptName');
 
   return (
     <div className="container2">
       <Header1 />
       <div className="participant-container">
-        <p>Participant: {patientId}</p>
-        <p>ID: {patientName}</p>
+        <p>Participant: {ptName}</p>
+        <p>ID: {registrationId}</p>
       </div>
 
       {error && <div className="error-message">{error}</div>}
@@ -205,11 +207,11 @@ const [tag, setTag] = useState<string>('');
         ))}
 
         <center className="buttons">
-          <button type="button" className="Finish-button" onClick={handleFinishClick}>
+          {/* <button type="button" className="Finish-button" onClick={handleFinishClick}>
             Finish
-          </button>
+          </button> */}
           <button type="submit" className="Next-button">
-            Next
+            Finish
           </button>
         </center>
       </form>

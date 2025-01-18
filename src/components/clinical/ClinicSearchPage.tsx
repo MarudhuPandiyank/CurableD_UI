@@ -9,7 +9,7 @@ import Header from '../Header';
 interface Patient {
   id: number;
   name: string;
-  registrationId: string | null;
+  registraionId: string;
   age: number;
   gender: string;
   mobileNo: string;
@@ -67,7 +67,7 @@ const ClinicSearchPage: React.FC = () => {
         const patientData = response.data.map((patient) => ({
           id: patient.id,
           name: patient.name,
-          registrationId: patient.registrationId,
+          registraionId: patient.registraionId,
           age: patient.age,
           gender: patient.gender,
           mobileNo: patient.mobileNo,
@@ -84,11 +84,19 @@ const ClinicSearchPage: React.FC = () => {
         .flatMap((patient) => patient.eligibleDiseases.map((disease) => disease.diseaseTestId))
         .filter((value, index, self) => self.indexOf(value) === index);
         // Set the first stage as the default selected stage
+        const candidateIds = response.data
+        .flatMap((patient) => patient.eligibleDiseases.map((disease) => disease.candidateId))
+        .filter((value, index, self) => self.indexOf(value) === index);
         if (stages.length > 0) {
           setSelectedStage(stages[0]);
           localStorage.setItem("diseaseTestIds", JSON.stringify(diseaseTestIds[0]));
 
         }
+        if(candidateIds.length>0){
+          localStorage.setItem("candidateId", JSON.stringify(candidateIds[0]));
+        }
+       
+        
       } else {
         setPatients([]);
       }
@@ -154,7 +162,7 @@ const ClinicSearchPage: React.FC = () => {
                 <div key={patient.id} className="patient-item">
                   <div className="patient-box">
                     <div><strong>Name:</strong> {patient.name}</div>
-                    <div><strong>ID:</strong> {patient.id || 'N/A'}</div>
+                    <div><strong>ID:</strong> {patient.registraionId || 'N/A'}</div>
                     <div><strong>Age:</strong> {patient.age}</div>
                     <div><strong>Gender:</strong> {patient.gender}</div>
                     <div><strong>Mobile No:</strong> {patient.mobileNo}</div>

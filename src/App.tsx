@@ -29,6 +29,10 @@ import DiseaseSpecificDetailsClinical from './components/DiseaseSpecificDetailsC
 import PatientRegistrationSearch from './components/PatientRegistrationSearch';
 import ProfileScreen from './components/ProfileScreen';
 import SuccessMessagePatient from './components/SuccessMessagePatient';
+import SuccessMessagePRFinal from './components/SuccessMessagePRFinal';
+import SuccessMessageScreeningFInal from './components/SuccessMessageScreeningFInal';
+import SuccessMessageClinicalFInal from './components/SuccessMessageClinicalFInal';
+
 
 const App: React.FC = () => {
  
@@ -71,6 +75,9 @@ const App: React.FC = () => {
                 <Route path="/PatientRegistrationSearch" element={<PatientRegistrationSearch />} />
                 <Route path="/ProfileScreen" element={<ProfileScreen />} />
                 <Route path="/SuccessMessagePatient" element={<SuccessMessagePatient />} />
+                <Route path="/SuccessMessagePRFinal" element={<SuccessMessagePRFinal />} />
+                <Route path="/SuccessMessageScreeningFInal" element={<SuccessMessageScreeningFInal />} />
+                <Route path="/SuccessMessageClinicalFInal" element={<SuccessMessageClinicalFInal />} />
               </Routes>
             </AuthGuard>
           }
