@@ -1,0 +1,60 @@
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  width: 700px;
+  height:400px;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: center; /* Center-align buttons */
+  gap: 20px; /* Reduce the space between buttons */
+  margin-top: 25px;
+}
+
+.modal-buttons button {
+  width: 150px; /* Increase button width */
+  padding: 10px; /* Adjust padding if necessary */
+}
+
+.open-modal-btn {
+  margin-top: 20px;
+  padding: 10px;
+  background-color: #DE3163;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.open-modal-btn:hover {
+  background-color: #a92b56;
+}
+.checkbox-group {
+  margin-top: 5px;
+}
+
+.checkbox-item {
+  margin-bottom: 10px;
+}
+
+.checkbox-item input[type="checkbox"] {
+  margin-right: 10px;
+}
+
+.checkbox-item label {
+  font-size: 14px;
+}

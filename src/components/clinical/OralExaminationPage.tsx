@@ -3,6 +3,7 @@ import './OralExaminationPage.css';
 import Header from '../Header';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
+import Header1 from '../Header1';
 
 const OralExaminationPage: React.FC = () => {
   // States to store the form data
@@ -24,7 +25,7 @@ const OralExaminationPage: React.FC = () => {
 
   return (
     <div className="container2">
-      <Header />
+       <Header1 />
 
       <h2>Oral Examination - Sudha</h2>
 

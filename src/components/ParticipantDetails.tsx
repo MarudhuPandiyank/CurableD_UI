@@ -445,38 +445,7 @@ const ParticipantDetails: React.FC = () => {
       </div> 
      
      
-      {showModal && (
-        <div className="modal">
-          <div className="modal-content">
-            <h2>How would you like to tag this participant?</h2>
-            <div className="form-group">
-              <select value={tag} onChange={(e) => setTag(e.target.value)}>
-                <option value="Pre_register">Pre_register</option>
-                <option value="Options">Options</option>
-              </select>
-            </div>
-
-            {/* Conditionally render checkboxes based on tag selection */}
-            {tag === "Options" && (
-              <div className="checkbox-group">
-                <div className="checkbox-item">
-                  <input type="checkbox" id="option1" value="option1" />
-                  <label htmlFor="option1">Option 1</label>
-                </div>
-                <div className="checkbox-item">
-                  <input type="checkbox" id="option2" value="option2" />
-                  <label htmlFor="option2">Option 2</label>
-                </div>
-              </div>
-            )}
-
-            <div className="modal-buttons">
-              <button onClick={closeModal}>Close</button>
-              <button onClick={handleFormSubmit}>Save</button>
-            </div>
-          </div>
-        </div>
-      )}
+    
 
    
 

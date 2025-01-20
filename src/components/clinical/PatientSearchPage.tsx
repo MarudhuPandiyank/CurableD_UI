@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./PatientSearchPage.css";
 import Header from "../Header";
+import Header1 from "../Header1";
 
 interface Patient {
   id: number;
@@ -65,7 +66,6 @@ const PatientSearchPage: React.FC = () => {
           gender: patient.gender,
           mobileNo: patient.mobileNo,
           eligibleDiseases: patient.eligibleDiseases,
-         
         }));
         setPatients(patientData);
       } else {
@@ -81,29 +81,26 @@ const PatientSearchPage: React.FC = () => {
 
   const handlePatientClick = (patient: Patient) => {
     setSelectedPatient(patient);
-  
-    // Save patient id in local storage as candidateId
+
     localStorage.setItem("candidateId", patient.id.toString());
     localStorage.setItem("ptName", patient.name.toString());
     localStorage.setItem("registrationId", patient.registraionId);
-  
-    // Check if eligibleDiseases exists and is an array
+
     if (patient.eligibleDiseases && Array.isArray(patient.eligibleDiseases)) {
       const stages = patient.eligibleDiseases.map((disease) => disease.stage);
-      const diseaseTestIds = patient.eligibleDiseases.map((disease) => disease.diseaseTestId);
+      const diseaseTestIds = patient.eligibleDiseases.map(
+        (disease) => disease.diseaseTestId
+      );
 
       setStageList(stages);
-  
-      // Set the first stage as the default selected stage
+
       if (stages.length > 0) {
         setSelectedStage(stages[0]);
         localStorage.setItem("diseaseTestIds", JSON.stringify(diseaseTestIds[0]));
-
       } else {
         setSelectedStage(null);
       }
     } else {
-      // If eligibleDiseases is null or undefined, clear the stage list and selected stage
       setStageList([]);
       setSelectedStage(null);
     }
@@ -112,14 +109,15 @@ const PatientSearchPage: React.FC = () => {
   const handleStageChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedStageValue = event.target.value;
 
-    setSelectedStage(event.target.value);
+    setSelectedStage(selectedStageValue);
 
     if (selectedPatient?.eligibleDiseases) {
       const selectedDisease = selectedPatient.eligibleDiseases.find(
         (disease) => disease.stage === selectedStageValue
       );
-  
+
       if (selectedDisease) {
+        localStorage.setItem("diseaseTestIds", JSON.stringify(selectedDisease.diseaseTestId));
       }
     }
   };
@@ -133,13 +131,13 @@ const PatientSearchPage: React.FC = () => {
     const patientName = selectedPatient?.name || "";
     localStorage.setItem("selectedStage", selectedStage);
     localStorage.setItem("patientName", patientName);
-   
+
     navigate("/DiseaseSpecificDetailsClinic");
   };
 
   return (
     <div className="container10">
-      <Header />
+       <Header1 />
       <div className="title">
         <p className="search-patient-title">Screening</p>
       </div>
@@ -175,7 +173,6 @@ const PatientSearchPage: React.FC = () => {
                   key={patient.id}
                   className={`patient-item ${
                     selectedPatient?.id === patient.id ? "selected" : ""
-                    
                   }`}
                   onClick={() => handlePatientClick(patient)}
                 >
@@ -185,7 +182,6 @@ const PatientSearchPage: React.FC = () => {
                     </div>
                     <div>
                       <strong>ID:</strong> {patient.registraionId || "N/A"}
-                      
                     </div>
                     <div>
                       <strong>Age:</strong> {patient.age || "N/A"}

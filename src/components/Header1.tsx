@@ -76,22 +76,15 @@ const Header: React.FC = () => {
             />
             Screening
           </button>
-          <button className="sidebar-btn">
+          <button className="sidebar-btn" onClick={() => handleNavigation('/ClinicSearchPage')}>
             <img
-              src="./HomeScreenIcons/PNG/Survey.png"
+              src="./HomeScreenIcons/PNG/Clinical Evaluation.png"
               alt="Survey Icon"
               style={{ width: '20px', height: '20px', marginRight: '8px' }}
             />
-            Survey
+            Clinical Evaluation
           </button>
-          <button className="sidebar-btn">
-            <img
-              src="./HomeScreenIcons/PNG/Referral To Hospital.png"
-              alt="Referral to Hospital Icon"
-              style={{ width: '20px', height: '20px', marginRight: '8px' }}
-            />
-            Referral To Hospital
-          </button>
+        
           <button className="sidebar-btn">
             <img
               src="./HomeScreenIcons/PNG/Master Data Management.png"

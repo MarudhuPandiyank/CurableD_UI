@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import './ExaminationScreen.css';
 import Header from '../Header';
+import Header1 from '../Header1';
 
 const patients = [
   {
@@ -51,7 +52,7 @@ const ExaminationScreen: React.FC = () => {
 
   return (
     <div className="container2">
-      <Header />
+       <Header1 />
 
       {/* Patient ID Dropdown */}
       <div className="patient-info">

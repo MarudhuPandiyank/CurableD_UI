@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './FamilyPersonalDetails.css';
 import { useNavigate } from 'react-router-dom';
+import Header1 from './Header1';
 
 interface FamilyMetricsParam {
   testName: string;
@@ -121,6 +122,9 @@ function FamilyPersonalDetails() {
 
   return (
     <div className="container2">
+      
+       <Header1 />
+       
       <div className="participant-container">
         <p>Participant: {patientName}</p>
         <p>ID: {patientId}</p>

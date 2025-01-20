@@ -5,6 +5,7 @@ import { faChevronDown } from '@fortawesome/free-solid-svg-icons';
 import axios from 'axios';
 import './PatientSearchPage.css';
 import Header from '../Header';
+import Header1 from '../Header1';
 
 interface Patient {
   id: number;
@@ -125,7 +126,7 @@ const ClinicSearchPage: React.FC = () => {
 
   return (
     <div className="container10">
-      <Header />
+      <Header1 />
       <div className="title">
         <p className="search-patient-title">Clinical</p>
       </div>

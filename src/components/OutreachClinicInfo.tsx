@@ -4,6 +4,7 @@ import axios from 'axios';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Typography } from '@mui/material';
 import '../components/OutreachClinicInfo.css';
 import Header from './Header';
+import Header1 from './Header1';
 
 interface Clinic {
   id: string;
@@ -149,7 +150,7 @@ const OutreachClinicInfo: React.FC = () => {
 
   return (
     <div className="container2">
-      <Header />
+      <Header1 />
       <main className="content">
         <div className="search-container">
           <label>Search:</label>

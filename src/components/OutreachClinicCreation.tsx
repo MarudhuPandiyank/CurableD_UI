@@ -7,6 +7,7 @@ import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css"; 
 import { newDate } from 'react-datepicker/dist/date_utils';
 import ResourcePlanning from './ResourcePlanning';
+import Header1 from './Header1';
 
 
 const axiosInstance = axios.create({
@@ -72,10 +73,14 @@ const OutreachClinicCreation: React.FC = () => {
             }
 
             try {
-                const response = await axiosInstance.get<StateData[]>('http://13.234.4.214:8015/api/curable/statemaster');
-                setStates(response.data);
+                const response = await axios.get<StateData[]>('http://13.234.4.214:8015/api/curable/statemaster', {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+                setStates(response.data); // Response typed as `StateData[]`
             } catch (error) {
-                console.error('Error fetching states:', error);
+               
                 alert('Failed to fetch states. Please try again.');
             }
         };
@@ -181,7 +186,7 @@ const OutreachClinicCreation: React.FC = () => {
     return (
         <div className="container2">
             <form className="clinic-form" onSubmit={handleNextClick}>
-            <Header/>
+            <Header1 />
             <p className='title1' style={{ color: 'darkblue', fontWeight: 'bold', }}>Outreach Clinic Creation</p>
                 <label>
                     <span style={{color : "darkblue"}}>  Outreach Clinic Name:</span> <span style={{ color: 'darkred', fontWeight: 'bold', }}>*</span>
@@ -290,7 +295,7 @@ const OutreachClinicCreation: React.FC = () => {
                     wrapperClassName='DatePicker'
                     minDate={new Date()}
                 />
-                    <img src="./Curable Icons/PNG/Calendar.png" className="clinic-id-icon" alt="calendar icon" />
+                    <img src="./assets/Calendar.png" className="clinic-id-icon" alt="calendar icon" />
                 </div>
             </label>
 
@@ -309,7 +314,7 @@ const OutreachClinicCreation: React.FC = () => {
                     wrapperClassName='DatePicker'
                     minDate={startDate || new Date()}
                 />
-                    <img src="./Curable Icons/PNG/Calendar.png" className="clinic-id-icon" alt="calendar icon" />
+                    <img src="./assets/Calendar.png" className="clinic-id-icon" alt="calendar icon" />
                 </div>
             </label>
 

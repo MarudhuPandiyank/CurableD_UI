@@ -4,6 +4,7 @@ import './ResourceAllocation.css';
 import Header from './Header';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Select, { MultiValue, GroupBase } from 'react-select';
+import Header1 from './Header1';
 
 interface Admin {
   id: number;
@@ -158,7 +159,7 @@ const ResourceAllocation: React.FC = () => {
   return (
     <div className="container2">
       <form className="clinic-form" onSubmit={handleSubmit}>
-        <Header />
+      <Header1 />
         <p className="title1" style={{ color: 'darkblue', fontWeight: 'bold' }}>Resource Allocation</p>
 
         <div className="form-group">

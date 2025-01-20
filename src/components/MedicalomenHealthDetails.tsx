@@ -3,6 +3,7 @@ import Header from './Header';
 import './HomePage.css';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import Header1 from './Header1';
 
 const MedicalomenHealthDetails: React.FC = () => {
   const [selectedHistory, setSelectedHistory] = useState<string>('');
@@ -86,7 +87,7 @@ const navigate = useNavigate();
   const registraionId = localStorage.getItem('registraionId');
   return (
     <div className="container2">
-      <Header />
+       <Header1 />
 
       <div className="participant-container">
         <p>Participant: {participant}</p>
@@ -299,15 +300,15 @@ const navigate = useNavigate();
           </div>
         </fieldset>
 
-        {/* Form Actions */}
-        <center className="form-actions">
+        <div className="buttons">
           <button type="button" className="submit-button1">
             Finish
           </button>
           <button type="submit" className="allocate-button">
             Next
           </button>
-        </center>
+          </div>
+       
       </form>
     </div>
   );
