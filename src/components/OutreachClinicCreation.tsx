@@ -62,10 +62,10 @@ const OutreachClinicCreation: React.FC = () => {
     const [panchayatCode, setPanchayatCode] = useState('');
     const [panchayatId, setPanchayatId] = useState(0);
     const [clinicCode, setClinicCode] = useState('');
-   
+    const token = localStorage.getItem('token');
     useEffect(() => {
         const fetchStates = async () => {
-            const token = localStorage.getItem('token');
+            
             if (!token) {
                 console.error('No token found, redirecting to login.');
                 navigate('/');
@@ -96,13 +96,21 @@ const OutreachClinicCreation: React.FC = () => {
         setDistrict('');
         setTaluk('');
         setPanchayat('');
-
+    
         const selectedStateObj = states.find(s => s.name === selectedState);
         if (selectedStateObj) {
             setStateCode(selectedStateObj.code);
             setLoadingDistricts(true);
+    
             try {
-                const response = await axiosInstance.get<DistrictData[]>(`http://13.234.4.214:8015/api/curable/districtmaster/statemaster/${selectedStateObj.id}`);
+                const response = await axios.get<StateData[]>(
+                    `http://13.234.4.214:8015/api/curable/districtmaster/statemaster/${selectedStateObj.id}`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                    }
+                );
                 setDistricts(response.data);
             } catch (error) {
                 console.error('Error fetching districts:', error);
@@ -111,19 +119,28 @@ const OutreachClinicCreation: React.FC = () => {
             setLoadingDistricts(false);
         }
     };
+    
 
     // Handle district change and fetch taluks
     const handleDistrictChange = async (selectedDistrict: string) => {
         setDistrict(selectedDistrict);
         setTaluk('');
         setPanchayat('');
-
+    
         const selectedDistrictObj = districts.find(d => d.name === selectedDistrict);
         if (selectedDistrictObj) {
             setLoadingTaluks(true);
             setDistrictCode(selectedDistrictObj.code);
+            
             try {
-                const response = await axiosInstance.get<TalukData[]>(`http://13.234.4.214:8015/api/curable/taluqmaster/districtmaster/${selectedDistrictObj.id}`);
+                const response = await axios.get<TalukData[]>(
+                    `http://13.234.4.214:8015/api/curable/taluqmaster/districtmaster/${selectedDistrictObj.id}`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                    }
+                );
                 setTaluks(response.data);
             } catch (error) {
                 console.error('Error fetching taluks:', error);
@@ -132,18 +149,27 @@ const OutreachClinicCreation: React.FC = () => {
             setLoadingTaluks(false);
         }
     };
+    
 
     // Handle taluk change and fetch panchayats
     const handleTalukChange = async (selectedTaluk: string) => {
         setTaluk(selectedTaluk);
         setPanchayat('');
-
+    
         const selectedTalukObj = taluks.find(t => t.name === selectedTaluk);
         if (selectedTalukObj) {
             setTalukCode(selectedTalukObj.code);
             setLoadingPanchayats(true);
+    
             try {
-                const response = await axiosInstance.get<PanchayatData[]>(`http://13.234.4.214:8015/api/curable/panchayatmaster/taluqmaster/${selectedTalukObj.id}`);
+                const response = await axios.get<PanchayatData[]>(
+                    `http://13.234.4.214:8015/api/curable/panchayatmaster/taluqmaster/${selectedTalukObj.id}`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                    }
+                );
                 setPanchayats(response.data);
             } catch (error) {
                 console.error('Error fetching panchayats:', error);
@@ -152,6 +178,7 @@ const OutreachClinicCreation: React.FC = () => {
             setLoadingPanchayats(false);
         }
     };
+    
     const handlePanchayatChange = (selectedPanchayat: string) => {
         setPanchayat(selectedPanchayat);
         const selectedPanchayats = panchayats.find(t => t.name === selectedPanchayat);
