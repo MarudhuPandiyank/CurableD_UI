@@ -28,6 +28,7 @@ interface ApiResponse {
 }
 
 const ClinicSearchPage: React.FC = () => {
+  const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [patients, setPatients] = useState<Patient[]>([]);
   const [loading, setLoading] = useState(false);
@@ -108,7 +109,32 @@ const ClinicSearchPage: React.FC = () => {
       setLoading(false);
     }
   };
+  const handlePatientClick = (patient: Patient) => {
+    setSelectedPatient(patient);
 
+    localStorage.setItem("candidateId", patient.id.toString());
+    localStorage.setItem("ptName", patient.name.toString());
+    localStorage.setItem("registrationId", patient.registraionId);
+
+    if (patient.eligibleDiseases && Array.isArray(patient.eligibleDiseases)) {
+      const stages = patient.eligibleDiseases.map((disease) => disease.stage);
+      const diseaseTestIds = patient.eligibleDiseases.map(
+        (disease) => disease.diseaseTestId
+      );
+
+      setStageList(stages);
+
+      if (stages.length > 0) {
+        setSelectedStage(stages[0]);
+        localStorage.setItem("diseaseTestIds", JSON.stringify(diseaseTestIds[0]));
+      } else {
+        setSelectedStage(null);
+      }
+    } else {
+      setStageList([]);
+      setSelectedStage(null);
+    }
+  };
   const handleStageChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedStage(event.target.value);
   };
@@ -160,7 +186,14 @@ const ClinicSearchPage: React.FC = () => {
             {/* Display patient details as a list */}
             <div className="patient-list">
               {patients.map(patient => (
-                <div key={patient.id} className="patient-item">
+                 <div
+                 key={patient.id}
+                 className={`patient-item ${
+                   selectedPatient?.id === patient.id ? "selected" : ""
+                 }`}
+                 onClick={() => handlePatientClick(patient)}
+               >
+                  
                   <div className="patient-box">
                     <div><strong>Name:</strong> {patient.name}</div>
                     <div><strong>ID:</strong> {patient.registraionId || 'N/A'}</div>
