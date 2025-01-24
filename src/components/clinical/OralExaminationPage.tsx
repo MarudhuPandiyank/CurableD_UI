@@ -4,7 +4,10 @@ import Header from '../Header';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import Header1 from '../Header1';
-
+import { Calendar } from 'primereact/calendar';
+import 'primereact/resources/themes/saga-blue/theme.css'; // Theme
+import 'primereact/resources/primereact.min.css'; // Core CSS
+import 'primeicons/primeicons.css'; // Icons
 const OralExaminationPage: React.FC = () => {
   // States to store the form data
   const [oralScreeningDate, setOralScreeningDate] = useState<Date | null>(null);
@@ -31,31 +34,33 @@ const OralExaminationPage: React.FC = () => {
 
       {/* Oral Screening Date Section */}
       <div className="form-section">
-        <label htmlFor="oral-screening-date" className="form-label">
-          Oral Screening Date:
-        </label>
-        <div className="input-with-icon">
-          <DatePicker
-            selected={oralScreeningDate}
-            onChange={(date: Date | null) => setOralScreeningDate(date)}
-            dateFormat="yyyy-MM-dd"
-            placeholderText="yyyy-MM-dd"
-            maxDate={new Date()}
-            className="date-picker-input"
-            aria-label="Select oral screening date"
-            required
-          />
-          <img
-            src="./Curable Icons/PNG/Calendar.png"
-            className="clinic-id-icon"
-            alt="calendar icon"
-            onClick={() => {
-              const datePickerInput = document.querySelector('.date-picker-input') as HTMLInputElement | null;
-              datePickerInput?.focus();
-            }}
-          />
-        </div>
-      </div>
+  <label htmlFor="oral-screening-date" className="form-label">
+    Oral Screening Date:
+  </label>
+  <div className="input-with-icon">
+    <Calendar
+      value={oralScreeningDate}
+      onChange={(e) => setOralScreeningDate(e.value as Date | null)}
+      dateFormat="yy-mm-dd" // PrimeReact date format
+      placeholder="yyyy-mm-dd"
+      maxDate={new Date()}
+      className="1date-picker-input"
+      aria-label="Select oral screening date"
+      required
+      showIcon // This adds the calendar icon
+    />
+    <img
+      src="./Curable Icons/PNG/Calendar.png"
+      className="clinic-id-icon"
+      alt="calendar icon"
+      onClick={() => {
+        const calendarInput = document.querySelector('.p-inputtext') as HTMLInputElement | null;
+        calendarInput?.focus(); // Focus on the calendar input when the icon is clicked
+      }}
+    />
+  </div>
+</div>
+
 
       {/* Symptoms Section */}
       <div className="form-section">

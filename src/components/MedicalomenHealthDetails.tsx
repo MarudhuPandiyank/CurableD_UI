@@ -77,7 +77,7 @@ const navigate = useNavigate();
       );
       console.log('Response:', response.data);
       navigate('/FamilyPersonalDetails');
-      alert('Data submitted successfully!');
+     
     } catch (error) {
       console.error('Error submitting data:', error);
       alert('Failed to submit data.');

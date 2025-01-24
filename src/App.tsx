@@ -32,6 +32,7 @@ import SuccessMessagePatient from './components/SuccessMessagePatient';
 import SuccessMessagePRFinal from './components/SuccessMessagePRFinal';
 import SuccessMessageScreeningFInal from './components/SuccessMessageScreeningFInal';
 import SuccessMessageClinicalFInal from './components/SuccessMessageClinicalFInal';
+import DynamicScreen from './components/DynamicScreen';
 
 
 const App: React.FC = () => {
@@ -78,6 +79,7 @@ const App: React.FC = () => {
                 <Route path="/SuccessMessagePRFinal" element={<SuccessMessagePRFinal />} />
                 <Route path="/SuccessMessageScreeningFInal" element={<SuccessMessageScreeningFInal />} />
                 <Route path="/SuccessMessageClinicalFInal" element={<SuccessMessageClinicalFInal />} />
+                <Route path="/DynamicScreen" element={<DynamicScreen />} />
               </Routes>
             </AuthGuard>
           }

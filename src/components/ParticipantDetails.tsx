@@ -3,7 +3,13 @@ import { useNavigate } from 'react-router-dom';
 import Header1 from './Header1';
 import './ParticipantDetails.css';
 import axios from 'axios';
-
+interface Habit {
+  habit: string;
+  habitType: string;
+  frequency: string;
+  quit: string;
+  isOpen: boolean;
+}
 const ParticipantDetails: React.FC = () => {
   const [houseType, setHouseType] = useState<string>('');
   const [selectedToggle1, setSelectedToggle1] = useState<string | null>(null);
@@ -27,7 +33,7 @@ const ParticipantDetails: React.FC = () => {
   const [habitTypes, setHabitTypes] = useState<string[]>([]);  // Store fetched habit types
   const [selectedHabit, setSelectedHabit] = useState<string>('');  // Store selected habit
   const [selectedHabitType, setSelectedHabitType] = useState<string>(''); // Store selected habit type
-  
+
 
 
   const navigate = useNavigate();
@@ -42,9 +48,9 @@ const ParticipantDetails: React.FC = () => {
 
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-  
+
     const tobaccoUser = selectedToggle1 === 'yes';
-  
+
     // Format the candidateHabitDTOs with the habit details
     const candidateHabitDTOs = habits.map(habit => ({
       candidateId: localStorage.getItem('patientId'),  // Assuming candidateId is 0, replace with actual logic if necessary
@@ -55,7 +61,7 @@ const ParticipantDetails: React.FC = () => {
       quit: habit.quit === "yes",  // Assuming 'quit' is a string, handle accordingly
       type: habit.habitType,
     }));
-  
+
     const formData = {
       fatherName,
       spouseName,
@@ -72,18 +78,18 @@ const ParticipantDetails: React.FC = () => {
       id: localStorage.getItem('patientId') || '',
       candidateHabitDTOs,  // Include the new habit details array here
     };
-  
+
     const token = localStorage.getItem('token');
-  
+
     if (!token) {
       console.error('Token not found');
       alert('Session expired. Please log in again.');
       return;
     }
-  
+
     try {
       setIsLoading(true);
-  
+
       const response = await fetch('http://13.234.4.214:8015/api/curable/candidate', {
         method: 'POST',
         headers: {
@@ -92,7 +98,7 @@ const ParticipantDetails: React.FC = () => {
         },
         body: JSON.stringify(formData),
       });
-  
+
       if (response.ok) {
         const data = await response.json();
         console.log('Success:', data);
@@ -109,7 +115,7 @@ const ParticipantDetails: React.FC = () => {
       setIsLoading(false);
     }
   };
-  
+
 
   const patientId = localStorage.getItem('patientId');
   const patientName = localStorage.getItem('patientName');
@@ -125,15 +131,15 @@ const ParticipantDetails: React.FC = () => {
   };
   const [hasTobaccoHabit, setHasTobaccoHabit] = useState("No");
   // State to manage the list of habits
-  const [habits, setHabits] = useState([
-    { habit: "", habitType: "", frequency: "", quit: "" },
+  const [habits, setHabits] = useState<Habit[]>([
+    { habit: "", habitType: "", frequency: "", quit: "", isOpen: true }, // Default `isOpen: true`
   ]);
   const [error, setError] = useState("");
   // Add a new habit set
   const addHabit = () => {
     setHabits([
       ...habits,
-      { habit: "", habitType: "", frequency: "", quit: "" },
+      { habit: "", habitType: "", frequency: "", quit: "", isOpen: true }, // Default `isOpen: true`
     ]);
   };
   // Handle input change
@@ -162,7 +168,7 @@ const ParticipantDetails: React.FC = () => {
     console.log("Has Tobacco Habit:", hasTobaccoHabit);
 
     // Optionally reset the form
-    setHabits([{ habit: "", habitType: "", frequency: "", quit: "" }]);
+    setHabits([{ habit: "", habitType: "", frequency: "", quit: "", isOpen: true }]);
     setHasTobaccoHabit("No");
   };
 
@@ -174,7 +180,7 @@ const ParticipantDetails: React.FC = () => {
         alert('Session expired. Please log in again.');
         return;
       }
-  
+
       const response = await axios.get<string[]>(
         `http://13.234.4.214:8015/api/curable/getHabitTypes/${habit}`,
         {
@@ -183,7 +189,7 @@ const ParticipantDetails: React.FC = () => {
           },
         }
       );
-  
+
       if (response.status === 200) {
         setHabitTypes(response.data); // Now TypeScript knows that response.data is a string[] (array of strings)
       } else {
@@ -195,23 +201,35 @@ const ParticipantDetails: React.FC = () => {
       alert('An error occurred while fetching habit types. Please try again.');
     }
   };
-  
+
   const handleHabitChange = (index: number, habit: string) => {
     // Update the habit for the selected index
     const updatedHabits = [...habits];
     updatedHabits[index].habit = habit;
-  
+
     // Fetch habit types based on the selected habit
     fetchHabitTypes(habit);
-  
+
     // Update the habits state with the new selected habit
     setHabits(updatedHabits);
   };
 
 
-  
+
   const participant = localStorage.getItem('participant');
   const registraionId = localStorage.getItem('registraionId');
+
+  const toggleCollapse = (index: number) => {
+    const updatedHabits = [...habits];
+    updatedHabits[index].isOpen = !updatedHabits[index].isOpen;  // Toggle the collapse state
+    setHabits(updatedHabits);  // Update the state to reflect changes
+  };
+
+  const deleteHabit = (index: number) => {
+    const updatedHabits = habits.filter((_, i) => i !== index);
+    setHabits(updatedHabits);
+  };
+
   return (
     <div className="container2">
       <Header1 />
@@ -355,85 +373,83 @@ const ParticipantDetails: React.FC = () => {
 
           {/* Show habits form only if Tobacco Habit is Yes */}
           {hasTobaccoHabit === "Yes" && (
-  <>
-{habits.map((habit, index) => (
-  <div key={index} style={{ marginBottom: "1rem" }}>
-    <div>
-      <label>
-        Habits:
-        <select
-          value={habit.habit}
-          onChange={(e) => handleHabitChange(index, e.target.value)} // Call handleHabitChange
-        >
-          <option value="">Select Habit</option>
-          <option value="Tobacco">Tobacco</option>
-          <option value="Smoking">Smoking</option>
-          <option value="Alcohol">Alcohol</option>
-          <option value="Snuff">Snuff</option>
-          <option value="Others">Others</option>
-        </select>
-      </label>
-    </div>
+            <>
+              {habits.map((habit, index) => (
+                <div key={index} style={{ marginBottom: "1rem" }}>
+                  <button onClick={() => toggleCollapse(index)}>
+                    {habit.isOpen ? "Collapse" : "Expand"}
+                  </button>
 
-    <div>
-      <label>
-        Habit Type:
-        <select
-          value={habit.habitType}
-          onChange={(e) =>
-            handleInputChange(index, "habitType", e.target.value)
-          }
-        >
-          <option value="">Select Habit Type</option>
-          {habitTypes.map((habitType, i) => (
-            <option key={i} value={habitType}>
-              {habitType}
-            </option>
-          ))}
-        </select>
-      </label>
-    </div>
+                  {habit.isOpen && (
+                    <div>
+                      <div>
+                        <label>
+                          Habits:
+                          <select
+                            value={habit.habit}
+                            onChange={(e) => handleInputChange(index, "habit", e.target.value)}
+                          >
+                            <option value="">Select Habit</option>
+                            <option value="Tobacco">Tobacco</option>
+                            <option value="Smoking">Smoking</option>
+                            <option value="Alcohol">Alcohol</option>
+                            <option value="Snuff">Snuff</option>
+                            <option value="Others">Others</option>
+                          </select>
+                        </label>
+                      </div>
 
-    <div>
-      <label>
-        Frequency/Day:
-        <input
-          type="number"
-          value={habit.frequency}
-          onChange={(e) =>
-            handleInputChange(index, "frequency", e.target.value)
-          }
-        />
-      </label>
-    </div>
+                      <div>
+                        <label>
+                          Habit Type:
+                          <select
+                            value={habit.habitType}
+                            onChange={(e) => handleInputChange(index, "habitType", e.target.value)}
+                          >
+                            <option value="">Select Habit Type</option>
+                            {habitTypes.map((habitType, i) => (
+                              <option key={i} value={habitType}>
+                                {habitType}
+                              </option>
+                            ))}
+                          </select>
+                        </label>
+                      </div>
 
-    <div>
-      <label>
-        Quit:
-        <input
-          type="text"
-          value={habit.quit}
-          onChange={(e) =>
-            handleInputChange(index, "quit", e.target.value)
-          }
-        />
-      </label>
-    </div>
+                      <div>
+                        <label>
+                          Frequency/Day:
+                          <input
+                            type="number"
+                            value={habit.frequency}
+                            onChange={(e) => handleInputChange(index, "frequency", e.target.value)}
+                          />
+                        </label>
+                      </div>
 
-    <hr />
-  </div>
-))}
+                      <div>
+                        <label>
+                          Quit:
+                          <input
+                            type="text"
+                            value={habit.quit}
+                            onChange={(e) => handleInputChange(index, "quit", e.target.value)}
+                          />
+                        </label>
+                      </div>
 
-    <button className="submit-button1" onClick={addHabit}>Add Habit</button>
-  </>
-)}
+                      <hr />
+                    </div>
+                  )}
+                </div>
+              ))}
+              <button className="submit-button1" onClick={addHabit}>Add Habit</button>
+            </>
+          )}
 
 
           {error && <p style={{ color: "red" }}>{error}</p>}
-
         </div>
-       
-
         <div className="buttons">
           <button type="button" className="submit-button1" onClick={handleFormSubmit} disabled={isLoading}>
             {isLoading ? 'Submitting...' : 'Finish'}
@@ -442,13 +458,7 @@ const ParticipantDetails: React.FC = () => {
             {isLoading ? 'Submitting...' : 'Next'}
           </button>
         </div>
-      </div> 
-     
-     
-    
-
-   
-
+      </div>
       <div className="powered-container">
         <p className="powered-by">Powered By Curable</p>
         <img src="/assets/logo.png" alt="Logo" className="logo" />

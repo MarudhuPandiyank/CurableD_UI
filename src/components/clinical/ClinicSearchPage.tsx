@@ -89,7 +89,7 @@ const ClinicSearchPage: React.FC = () => {
         .flatMap((patient) => patient.eligibleDiseases.map((disease) => disease.candidateId))
         .filter((value, index, self) => self.indexOf(value) === index);
         if (stages.length > 0) {
-          setSelectedStage(stages[0]);
+          //setSelectedStage(stages[0]);
           localStorage.setItem("diseaseTestIds", JSON.stringify(diseaseTestIds[0]));
 
         }

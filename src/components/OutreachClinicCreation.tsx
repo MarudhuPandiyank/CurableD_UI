@@ -9,7 +9,10 @@ import { newDate } from 'react-datepicker/dist/date_utils';
 import ResourcePlanning from './ResourcePlanning';
 import Header1 from './Header1';
 
-
+import { Calendar } from 'primereact/calendar';
+import 'primereact/resources/themes/saga-blue/theme.css'; // Theme
+import 'primereact/resources/primereact.min.css'; // Core CSS
+import 'primeicons/primeicons.css'; // Iconsimport "react-datepicker/dist/react-datepicker.css"; 
 const axiosInstance = axios.create({
     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
 });
@@ -310,8 +313,14 @@ const OutreachClinicCreation: React.FC = () => {
                 <span style={{ color: 'darkblue' }}>Outreach Clinic Start Date:</span>
                 <span style={{ color: 'darkred', fontWeight: 'bold' }}>*</span>
                 <div className="input-with-icon">
-
-                <DatePicker
+                <Calendar
+            value={endDate}
+            onChange={(e) => setStartDate(e.value as Date | null)}
+            showIcon
+            minDate={startDate || new Date()}
+            placeholder="Select Start Date"
+          />
+                {/* <DatePicker
                     selected={startDate}
                     onChange={(date: Date | null) => setStartDate(date)}  // Update start date
                     onSelect={() => (document.activeElement as HTMLElement)?.blur()}  // Hide DatePicker popup on date select
@@ -321,7 +330,7 @@ const OutreachClinicCreation: React.FC = () => {
                     required
                     wrapperClassName='DatePicker'
                     minDate={new Date()}
-                />
+                /> */}
                     <img src="./assets/Calendar.png" className="clinic-id-icon" alt="calendar icon" />
                 </div>
             </label>
@@ -330,7 +339,7 @@ const OutreachClinicCreation: React.FC = () => {
                 <span style={{ color: 'darkblue' }}>Outreach Clinic End Date:</span>
                 <span style={{ color: 'darkred', fontWeight: 'bold' }}></span>
                 <div className="input-with-icon">
-                <DatePicker
+                {/* <DatePicker
                     selected={endDate}
                     onChange={(date: Date | null) => setEndDate(date)}  // Update end date
                     onSelect={() => (document.activeElement as HTMLElement)?.blur()}  // Hide DatePicker popup on date select
@@ -340,7 +349,14 @@ const OutreachClinicCreation: React.FC = () => {
                     required
                     wrapperClassName='DatePicker'
                     minDate={startDate || new Date()}
-                />
+                /> */}
+                <Calendar
+            value={endDate}
+            onChange={(e) => setEndDate(e.value as Date | null)}
+            showIcon
+            minDate={startDate || new Date()}
+            placeholder="Select End Date"
+          />
                     <img src="./assets/Calendar.png" className="clinic-id-icon" alt="calendar icon" />
                 </div>
             </label>

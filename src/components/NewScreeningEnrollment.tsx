@@ -7,7 +7,10 @@ import './NewScreeningEnrollment.css';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import { useNavigate } from 'react-router-dom';
-
+import { Calendar } from 'primereact/calendar';
+import 'primereact/resources/themes/saga-blue/theme.css'; // Theme
+import 'primereact/resources/primereact.min.css'; // Core CSS
+import 'primeicons/primeicons.css'; // Icons
 const NewScreeningEnrollment: React.FC = () => {
   const navigate = useNavigate();
   const [name, setName] = useState('');
@@ -197,10 +200,10 @@ const NewScreeningEnrollment: React.FC = () => {
     
          <label>
          <label style={{ color: 'darkblue' }}>Date of Birth*:</label>
-                         <span style={{ color: 'darkred', fontWeight: 'bold' }}>*</span>
+                         <span style={{ color: 'darkred', fontWeight: 'bold' }}></span>
                          <div className="input-with-icon">
          
-                         <DatePicker
+                         {/* <DatePicker
                           selected={dob}
                           onChange={(date: Date | null) => setDob(date)}
                             // onSelect={() => (document.activeElement as HTMLElement)?.blur()}  // Hide DatePicker popup on date select
@@ -210,41 +213,23 @@ const NewScreeningEnrollment: React.FC = () => {
                              required
                              wrapperClassName='DatePicker'
                              minDate={new Date()}
-                         />
+                         /> */}
+                          <Calendar
+  value={dob}
+  onChange={(e) => setDob(e.value as Date | null)} // Update the dob state
+  dateFormat="yy-mm-dd" // PrimeReact date format
+  placeholder="yyyy-mm-dd"
+  required
+  minDate={new Date()} // Set the minimum date to today
+  showIcon
+  className="git pull
+  1"
+/>
                              <img src="./assets/Calendar.png" className="clinic-id-icon" alt="calendar icon" />
                          </div>
                      </label>
-          <label style={{ color: 'darkblue' }}>Date of Birth*:</label>
-          
-          {/* <div className="input-with-icon">
-            <DatePicker
-              selected={dob}
-              onChange={(date: Date | null) => setDob(date)}
-              dateFormat="yyyy-MM-dd"
-              placeholderText="yyyy-MM-dd"
-              maxDate={new Date()}
-              required
-            />
-            <img
-
-              src=" /assets/Calendar.png"
-              className="clinic-id-icon"
-              alt="calendar icon"
-            />
-          </div> */}
-
-
-          {/* <div className="form-group">
-            <label style={{ color: 'darkblue' }}>Date of Birth*:</label>
-            <DatePicker
-                selected={dob}
-                onChange={(date: Date | null) => setDob(date)}
-                dateFormat="yyyy-MM-dd"
-                placeholderText="yyyy-MM-dd"
-                maxDate={new Date()}
-                required
-              />
-          </div> */}
+         
+        
 
           <div className="form-group">
             <label style={{ color: 'darkblue' }}>Address:</label>
@@ -315,26 +300,7 @@ const NewScreeningEnrollment: React.FC = () => {
                     </div>
                     
                   </div>
-                  // <div className="checkbox-group">
-                  //   <div className="checkbox-item">
-                  //     <input
-                  //       type="checkbox"
-                  //       id="LoorLocked"
-                  //       value="Loor Locked"
-                  //       onChange={handleReasonChange}
-                  //     />
-                  //     <label htmlFor="LoorLocked">Loor Locked</label>
-                  //   </div>
-                  //   <div className="checkbox-item">
-                  //     <input
-                  //       type="checkbox"
-                  //       id="Refused"
-                  //       value="Refused"
-                  //       onChange={handleReasonChange}
-                  //     />
-                  //     <label htmlFor="Refused">Refused</label>
-                  //   </div>
-                  // </div>
+                
                 )}
 
                 <div className="modal-buttons">

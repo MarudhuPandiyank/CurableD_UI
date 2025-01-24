@@ -5,7 +5,10 @@ import { faChevronLeft, faUserCircle, faEdit, faCalendarAlt } from '@fortawesome
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import './EditOutreachClinic.css';
-
+import { Calendar } from 'primereact/calendar';
+import 'primereact/resources/themes/saga-blue/theme.css'; // Theme
+import 'primereact/resources/primereact.min.css'; // Core CSS
+import 'primeicons/primeicons.css'; // Icons
 const EditOutreachClinic: React.FC = () => {
   const location = useLocation();
   const clinic = location.state;  // Getting the passed clinic data
@@ -115,25 +118,35 @@ const EditOutreachClinic: React.FC = () => {
           />
         </div>
         <div className="form-group">
-          <label className="label">Camp Start Date:</label>
-          <DatePicker
-            selected={isValidDate(startDate) ? startDate : null}  // Set valid date or null
-            onChange={(date) => setStartDate(date)}
-            placeholderText="Select Camp Start Date"
-            className="date-picker-input"
-          />
-          <FontAwesomeIcon icon={faCalendarAlt} className="date-icon" />
-        </div>
-        <div className="form-group">
-          <label className="label">Camp End Date:</label>
-          <DatePicker
-            selected={isValidDate(endDate) ? endDate : null}  // Set valid date or null
-            onChange={(date) => setEndDate(date)}
-            placeholderText="Select Camp End Date"
-            className="date-picker-input"
-          />
-          <FontAwesomeIcon icon={faCalendarAlt} className="date-icon" />
-        </div>
+  <label className="label">Camp Start Date:</label>
+  <div className="input-with-icon">
+    <Calendar
+      value={startDate}
+      onChange={(e) => setStartDate(e.value as Date | null)}  // Update startDate state
+      placeholder="Select Camp Start Date"
+      className="date-picker-input"
+      showIcon
+      minDate={new Date()} // Optional: Ensure start date is not in the past
+    />
+    <FontAwesomeIcon icon={faCalendarAlt} className="date-icon" />
+  </div>
+</div>
+
+<div className="form-group">
+  <label className="label">Camp End Date:</label>
+  <div className="input-with-icon">
+    <Calendar
+      value={endDate}
+      onChange={(e) => setEndDate(e.value as Date | null)}  // Update endDate state
+      placeholder="Select Camp End Date"
+      className="date-picker-input"
+      showIcon
+      minDate={new Date()} // Optional: Ensure end date is not in the past
+    />
+    <FontAwesomeIcon icon={faCalendarAlt} className="date-icon" />
+  </div>
+</div>
+
       </div>
 
       <button className="submit-button" onClick={handleSave}>Save Changes</button>
