@@ -115,6 +115,8 @@ function FamilyPersonalDetails() {
 
   const patientId = localStorage.getItem('patientId');
   const patientName = localStorage.getItem('patientName');
+  const participant = localStorage.getItem('participant');
+  const registraionId = localStorage.getItem('registraionId');
 
   if (!patientId || !patientName) {
     return <div className="error-message">Missing patient information. Please log in again.</div>;
@@ -124,16 +126,17 @@ function FamilyPersonalDetails() {
     <div className="container2">
       
        <Header1 />
+       <p style={{ color: 'darkblue', fontWeight: 'bold', }}>Family Personal Details</p>
        
       <div className="participant-container">
-        <p>Participant: {patientName}</p>
-        <p>ID: {patientId}</p>
+        <p>Participant: {participant}</p>
+        <p>ID: {registraionId}</p>
       </div>
 
       {error && <div className="error-message">{error}</div>}
 
       <form className="clinic-form" onSubmit={handleSubmit}>
-        <p>Family Personal Details</p>
+        {/* <p>Family Personal Details</p> */}
 
         {formValues.map((_, formIndex) => (
           <div key={formIndex} className="family-member-row">

@@ -233,12 +233,13 @@ const ParticipantDetails: React.FC = () => {
   return (
     <div className="container2">
       <Header1 />
+      <p style={{ color: 'darkblue', fontWeight: 'bold', }}>General Details</p>
       <div className="participant-container">
         <p>Participant: {participant}</p>
         <p>ID: {registraionId}</p>
       </div>
       <div className="clinic-form" onSubmit={handleFormSubmit}>
-        <h2>General Details</h2>
+        {/* <h2>General Details</h2> */}
         <div className="form-group">
           <label htmlFor="father-name">Father Name:</label>
           <input
@@ -387,7 +388,7 @@ const ParticipantDetails: React.FC = () => {
                           Habits:
                           <select
                             value={habit.habit}
-                            onChange={(e) => handleInputChange(index, "habit", e.target.value)}
+                            onChange={(e) => handleHabitChange(index, e.target.value)}
                           >
                             <option value="">Select Habit</option>
                             <option value="Tobacco">Tobacco</option>

@@ -21,6 +21,8 @@ interface Clinic {
   noNurses?: number;
   noProgramCoordinators?: number;
   noSocialWorkers?: number;
+  displayStartDate: string;
+  displayEndDate: string;
 }
 
 interface ClinicAPIResponse {
@@ -39,6 +41,8 @@ interface ClinicAPIResponse {
   noNurses?: number;
   noProgramCoordinators?: number;
   noSocialWorkers?: number;
+  displayStartDate: string;
+  displayEndDate: string;
 }
 
 const PatientRegistrationSearch: React.FC = () => {
@@ -80,7 +84,7 @@ const PatientRegistrationSearch: React.FC = () => {
           const endDate = clinicData.endDate;
           localStorage.setItem('campId', clinicData.campId);
           return {
-            id: clinicData.campIdPrefix + clinicData.campId,
+            id: clinicData.campIdPrefix,
             name: clinicData.campName,
             pincode: clinicData.pincode,
             state: clinicData.stateName,
@@ -94,6 +98,8 @@ const PatientRegistrationSearch: React.FC = () => {
             noNurses: clinicData.noNurses,
             noProgramCoordinators: clinicData.noProgramCoordinators,
             noSocialWorkers: clinicData.noSocialWorkers,
+            displayStartDate: clinicData.displayStartDate,
+            displayEndDate: clinicData.displayEndDate,
           };
         });
 
@@ -150,7 +156,8 @@ const PatientRegistrationSearch: React.FC = () => {
 
   return (
     <div className="container2">
-       <Header1 />
+       <Header/><br/>
+            <p style={{ color: 'darkblue', fontWeight: 'bold', }}>Patient Registration</p>
       <main className="content">
         <div className="search-container">
           <label>Search:</label>
@@ -209,10 +216,10 @@ const PatientRegistrationSearch: React.FC = () => {
                   <strong>Panchayat/Village Name:</strong> <span>{clinic.village}</span>
                 </p>
                 <p>
-                  <strong>Start Date:</strong> <span>{clinic.startDate}</span>
+                  <strong>Start Date:</strong> <span>{clinic.displayStartDate}</span>
                 </p>
                 <p>
-                  <strong>End Date:</strong> <span>{clinic.endDate}</span>
+                  <strong>End Date:</strong> <span>{clinic.displayEndDate}</span>
                 </p>
                 <div className="edit-button-container">
                   <button

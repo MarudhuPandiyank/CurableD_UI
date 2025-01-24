@@ -23,6 +23,7 @@ interface Clinic {
   noSocialWorkers?: number;
   displayStartDate: string;
   displayEndDate: string;
+  campIdPrefix : string;
 }
 
 interface ClinicAPIResponse {
@@ -81,10 +82,10 @@ const OutreachClinicInfo: React.FC = () => {
       if (response.data.length > 0) {
         const clinicsData = response.data.map((clinicData) => {
           const startDate = clinicData.startDate.replace(" ", "T") + "Z";
-          const endDate = clinicData.endDate.replace(" ", "T") + "Z";
+          const endDate = clinicData.endDate!=null ? clinicData.endDate.replace(" ", "T") + "Z":clinicData.endDate;
 
           return {
-            id: clinicData.campIdPrefix + clinicData.campId,
+            id: clinicData.campId,
             name: clinicData.campName,
             pincode: clinicData.pincode,
             state: clinicData.stateName,
@@ -100,6 +101,8 @@ const OutreachClinicInfo: React.FC = () => {
             noSocialWorkers: clinicData.noSocialWorkers,
             displayStartDate: clinicData.displayStartDate,
             displayEndDate: clinicData.displayEndDate,
+            campIdPrefix : clinicData.campIdPrefix,
+
           };
         });
 
@@ -136,6 +139,10 @@ const OutreachClinicInfo: React.FC = () => {
         noNurses: clinic.noNurses,
         noProgramCoordinators: clinic.noProgramCoordinators,
         noSocialWorkers: clinic.noSocialWorkers,
+        clinicName : clinic.name,
+        clinicCode : clinic.campIdPrefix,
+        id: clinic.id
+
       },
     });
   };
@@ -194,7 +201,7 @@ const OutreachClinicInfo: React.FC = () => {
             {filteredClinics.map((clinic) => (
               <div className="clinic-details" key={clinic.id}>
                 <p>
-                  <strong>Outreach Clinic ID:</strong> <span>{clinic.id}</span>
+                  <strong>Outreach Clinic ID:</strong> <span>{clinic.campIdPrefix}</span>
                 </p>
                 <p>
                   <strong>Outreach Clinic Name:</strong> <span>{clinic.name}</span>

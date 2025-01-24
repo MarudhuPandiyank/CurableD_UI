@@ -126,6 +126,13 @@ const NewScreeningEnrollment: React.FC = () => {
   };
 
   const openModal = () => {
+    if (!address.trim()) {
+
+      alert('Address cannot be empty. Enter the address and click on Save');
+
+      return;  // Prevent the save action
+
+    }
     setShowModal(true);
   };
 
@@ -220,7 +227,8 @@ const NewScreeningEnrollment: React.FC = () => {
   dateFormat="yy-mm-dd" // PrimeReact date format
   placeholder="yyyy-mm-dd"
   required
-  minDate={new Date()} // Set the minimum date to today
+ // minDate={new Date()} // Set the minimum date to today
+  maxDate={new Date()} // Set the minimum date to today
   showIcon
   className="git pull
   1"
@@ -243,7 +251,7 @@ const NewScreeningEnrollment: React.FC = () => {
           <div className="form-group">
             <label style={{ color: 'darkblue' }}>Street ID:</label>
             <input
-              type="text"
+              type="number"
               placeholder="Enter Street ID"
               value={streetId}
               onChange={handleStreetIdChange}
@@ -255,15 +263,25 @@ const NewScreeningEnrollment: React.FC = () => {
                 <h2>How would you like to tag this participant?</h2>
 
                 <div className="form-group">
-                  <select
-                    value={tag}
-                    onChange={(e) => setTag(e.target.value)}
-                  >
-                    <option value="Pre_register">Pre_register</option>
-                    <option value="Options">Options</option>
-                  </select>
-                </div>
-
+                
+    
+    <select
+      value={reason}  // The state that stores the selected reason
+      onChange={(e) => setReason(e.target.value)}  // Handle selection change
+    >
+      <option value="">Select Reason</option>  {/* Empty option to prompt selection */}
+      <option value="Refused">Refused</option>
+      <option value="Loor Locked">Loor Locked</option>
+      <option value="Work Daily Worker">Work Daily Worker</option>
+      <option value="Work Out Of Station">Work Out Of Station</option>
+      <option value="Out Of Station - Short Visit">Out Of Station - Short Visit</option>
+      <option value="Already Screened">Already Screened</option>
+      <option value="Settled OutStation">Settled OutStation</option>
+      <option value="Medical Reasons">Medical Reasons</option>
+    </select>
+  </div>
+                
+{/* 
                 {tag === "Options" && (
                   <div>
                     <div>
@@ -301,7 +319,7 @@ const NewScreeningEnrollment: React.FC = () => {
                     
                   </div>
                 
-                )}
+                )} */}
 
                 <div className="modal-buttons">
                   <button className="Finish-button"

@@ -23,7 +23,7 @@ interface SelectOption {
 const ResourceAllocation: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { startDate, endDate, panchayatId, pincode, noCampcordinators, noDoctors, noNurses, noProgramCoordinators, noSocialWorkers } = location.state || {};
+  const { startDate, endDate, panchayatId, pincode, noCampcordinators, noDoctors, noNurses, noProgramCoordinators, noSocialWorkers,clinicName,clinicCode,id } = location.state || {};
 
   const [formData, setFormData] = useState({
     programCoordinators: [] as Admin[],
@@ -44,7 +44,7 @@ const ResourceAllocation: React.FC = () => {
   const axiosInstance = axios.create({
     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
   });
-
+  const hospitalId=localStorage.getItem('hospitalId');
   useEffect(() => {
     const fetchStaffDetails = async () => {
       const token = localStorage.getItem('token');
@@ -112,6 +112,10 @@ const ResourceAllocation: React.FC = () => {
         noNurses,
         noProgramcordinators: noProgramCoordinators,
         noSocialworkers: noSocialWorkers,
+        name: clinicName || '',
+        campIdPrefix: clinicCode || '',
+        hospitalId,
+        id: id || null,
       },
       campStaffs: [
         ...programCoordinators.map((coordinator) => ({

@@ -234,7 +234,13 @@ const OutreachClinicCreation: React.FC = () => {
                         type="number"
                         placeholder="Enter Pincode"
                         value={pincode}
-                        onChange={(e) => setPincode(e.target.value)}
+                        onChange={(e) => {
+                            // Allow only numbers and limit to 6 characters
+                            const value = e.target.value;
+                            if (/^\d{0,6}$/.test(value)) {  // Regex allows only digits and up to 6 characters
+                                setPincode(value);
+                            }
+                        }}
                         required
                     />
                 </label>
@@ -377,10 +383,20 @@ const OutreachClinicCreation: React.FC = () => {
             <span style={{ color: 'darkred', fontWeight: 'bold' }}>*</span>
             <div className="input-with-icon">
                 <input
-                    type="text"
+                    type="number"
                     placeholder="Show 7 digit System ID"
-                    value={clinicCode} // Prefill with clinicId state
-                    readOnly // Make the field read-only
+                    value={clinicCode} 
+                    onChange={(e) => {
+                        // Allow only numbers and limit to 6 characters
+                        const value = e.target.value;
+                        if (/^\d{0,7}$/.test(value)) {  // Regex allows only digits and up to 6 characters
+                            setClinicCode(value);
+                        }
+                    }}
+                    required
+
+                     // Prefill with clinicId state
+                    //readOnly // Make the field read-only
                 />
                 <img
                     src="./Curable Icons/PNG/Group 1269.png"

@@ -25,7 +25,7 @@ const ResourcePlanning: React.FC = () => {
    
     panchayatMasterId: panchayatId || 0, 
     outreachClinicStartDate: startDate || '',
-    outreachClinicEndDate: endDate || '',
+    outreachClinicEndDate: endDate || null,
     noCampCoordinators: 0,
     noDoctors: 0,
     noNurses: 0,
@@ -97,7 +97,7 @@ const ResourcePlanning: React.FC = () => {
   
   const handleAllocateResources = () => {
 
-    navigate('/resource-allocation', { state: { startDate,endDate,panchayatId,pincode,noCampcordinators,noDoctors,noNurses,noProgramCoordinators,noSocialWorkers} });
+    navigate('/resource-allocation', { state: { startDate,endDate,panchayatId,pincode,noCampcordinators,noDoctors,noNurses,noProgramCoordinators,noSocialWorkers,clinicName,clinicCode} });
   };
   return (
     <div className="container2">

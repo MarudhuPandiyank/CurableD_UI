@@ -25,7 +25,9 @@ function DiseaseSpecificDetails() {
   const [formData, setFormData] = useState<FamilyMetricsParam[]>([]); // State to store dynamic form fields
   const [error, setError] = useState<string | null>(null); // State to store error message
   const [formValues, setFormValues] = useState<Record<string, string>>({}); // State to store the form values dynamically
-
+  const participantValue =localStorage.getItem('participant');
+   const gender=participantValue?.split('/')[1];
+  
   useEffect(() => {
     const fetchDiseaseTestMaster = async () => {
       try {
@@ -35,7 +37,7 @@ function DiseaseSpecificDetails() {
           return;
         }
 
-        const response = await axios.get<ApiResponse>(`http://13.234.4.214:8015/api/curable/getMetrics/ELIGIBILE`, {
+        const response = await axios.get<ApiResponse>(`http://13.234.4.214:8015/api/curable/getMetricsByGender/ELIGIBILE/${gender}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -126,6 +128,8 @@ function DiseaseSpecificDetails() {
   return (
     <div className="container2">
       <Header1 />
+      {/* <p style={{ color: 'darkblue', fontWeight: 'bold', }}>Disease Specific Details</p> */}
+      <p  style={{ color: 'darkblue', fontWeight: 'bold', }}>Disease Specific Details</p>
       <div className="participant-container">
         <p>Participant: {participant}</p>
         <p>ID:{registraionId}</p>
@@ -134,7 +138,7 @@ function DiseaseSpecificDetails() {
       {error && <div className="error-message">{error}</div>} {/* Display error message if there's an issue */}
 
       <form className="clinic-form" onSubmit={handleSubmit}>
-        <p>Disease Specific Details</p>
+        {/* <p>Disease Specific Details</p> */}
 
         {/* Dynamically render form fields based on the API response */}
         {formData.map((field, index) => (

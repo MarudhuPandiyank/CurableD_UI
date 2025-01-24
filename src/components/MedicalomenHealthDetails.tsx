@@ -84,10 +84,12 @@ const navigate = useNavigate();
     }
   };
   const participant = localStorage.getItem('participant');
+  const gender=participant?.split('/')[1];
   const registraionId = localStorage.getItem('registraionId');
   return (
     <div className="container2">
        <Header1 />
+       <p style={{ color: 'darkblue', fontWeight: 'bold', }}>Medical Details</p>
 
       <div className="participant-container">
         <p>Participant: {participant}</p>
@@ -97,7 +99,7 @@ const navigate = useNavigate();
       <form className="clinic-form" onSubmit={handleSubmit}>
         {/* Medical Details Section */}
         <fieldset>
-          <legend>Medical Details</legend>
+          {/* <legend>Medical Details</legend> */}
           <label>Medical History:</label>
           <select value={selectedHistory} onChange={(e) => setSelectedHistory(e.target.value)}>
             <option value="">Select Medical History</option>
@@ -181,7 +183,7 @@ const navigate = useNavigate();
         </fieldset>
 
         {/* Women's Health Section */}
-        <fieldset>
+        {gender === 'FEMALE' && (<fieldset>
           <legend>Women's Health</legend>
           <label>Age at Menarche:</label>
           <input
@@ -298,7 +300,8 @@ const navigate = useNavigate();
               No
             </button>
           </div>
-        </fieldset>
+        </fieldset>)}
+        
 
         <div className="buttons">
           <button type="button" className="submit-button1">
