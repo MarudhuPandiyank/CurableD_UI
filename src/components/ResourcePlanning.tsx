@@ -64,10 +64,10 @@ const ResourcePlanning: React.FC = () => {
     e.preventDefault();
   
   
-    if (!noProgramCoordinators || !noCampcordinators || !noSocialWorkers || !noNurses || !noDoctors) {
-      alert('Please fill out all required fields.');
-      return;
-    }
+    // if (!noProgramCoordinators || !noCampcordinators || !noSocialWorkers || !noNurses || !noDoctors) {
+    //   alert('Please fill out all required fields.');
+    //   return;
+    // }
   
 
   
@@ -111,7 +111,7 @@ const ResourcePlanning: React.FC = () => {
           name="noProgramCoordinators"
           value={formData.noProgramCoordinators}
           onChange={handleChange}
-          required
+          //required
         />
 
         <label> <span style={{ color: "darkblue" }}>Camp Co-ordinator:</span></label>
@@ -121,7 +121,7 @@ const ResourcePlanning: React.FC = () => {
           name="noCampcordinators"
           value={formData.noCampcordinators}
           onChange={handleChange}
-          required
+          //required
         />
 
         <label><span style={{ color: "darkblue" }}>Social Workers:</span></label>
@@ -131,7 +131,7 @@ const ResourcePlanning: React.FC = () => {
           name="noSocialWorkers"
           value={formData.noSocialWorkers}
           onChange={handleChange}
-          required
+          //required
         />
 
         <label><span style={{ color: "darkblue" }}>Nurses:</span></label>
@@ -141,7 +141,7 @@ const ResourcePlanning: React.FC = () => {
           name="noNurses"
           value={formData.noNurses}
           onChange={handleChange}
-          required
+          //required
         />
 
         <label><span style={{ color: "darkblue" }}>Doctors:</span></label>
@@ -151,7 +151,7 @@ const ResourcePlanning: React.FC = () => {
           name="noDoctors"
           value={formData.noDoctors}
           onChange={handleChange}
-          required
+          //required
         />
         <center>
           <button type="button" className="allocate-button" onClick={handleAllocateResources}>Allocate Resources</button>

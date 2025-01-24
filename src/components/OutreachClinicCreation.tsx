@@ -185,7 +185,7 @@ const OutreachClinicCreation: React.FC = () => {
         if (selectedPanchayats) {
             setPanchayatCode(selectedPanchayats.code);
             setPanchayatId(selectedPanchayats.id);
-            setClinicCode(`${stateCode}${districtCode}${talukCode}${panchayatCode}`);
+            setClinicCode(`${districtCode}${talukCode}${selectedPanchayats.code}`);
         }
         console.log(`Selected Panchayat: ${selectedPanchayat}`);
     };
@@ -195,13 +195,13 @@ const OutreachClinicCreation: React.FC = () => {
     const handleNextClick = (e: React.FormEvent) => {
         e.preventDefault();
     
-        if (!clinicName || !pincode || !state || !district || !taluk || !panchayat || !startDate || !endDate) {
+        if (!clinicName || !pincode || !state || !district || !taluk || !panchayat || !startDate ) {
             alert('Please fill out all required fields.');
             return;
         }
     
         // Validate that the end date is not before the start date
-        if (new Date(startDate) > new Date(endDate)) {
+        if (endDate!=null && new Date(startDate) > new Date(endDate)) {
             alert('End date cannot be before start date.');
             return;
         }
@@ -328,7 +328,7 @@ const OutreachClinicCreation: React.FC = () => {
 
             <label>
                 <span style={{ color: 'darkblue' }}>Outreach Clinic End Date:</span>
-                <span style={{ color: 'darkred', fontWeight: 'bold' }}>*</span>
+                <span style={{ color: 'darkred', fontWeight: 'bold' }}></span>
                 <div className="input-with-icon">
                 <DatePicker
                     selected={endDate}

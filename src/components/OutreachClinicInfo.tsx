@@ -21,6 +21,8 @@ interface Clinic {
   noNurses?: number;
   noProgramCoordinators?: number;
   noSocialWorkers?: number;
+  displayStartDate: string;
+  displayEndDate: string;
 }
 
 interface ClinicAPIResponse {
@@ -39,6 +41,8 @@ interface ClinicAPIResponse {
   noNurses?: number;
   noProgramCoordinators?: number;
   noSocialWorkers?: number;
+  displayStartDate: string;
+  displayEndDate: string;
 }
 
 const OutreachClinicInfo: React.FC = () => {
@@ -76,8 +80,8 @@ const OutreachClinicInfo: React.FC = () => {
 
       if (response.data.length > 0) {
         const clinicsData = response.data.map((clinicData) => {
-          const startDate = clinicData.startDate;
-          const endDate = clinicData.endDate;
+          const startDate = clinicData.startDate.replace(" ", "T") + "Z";
+          const endDate = clinicData.endDate.replace(" ", "T") + "Z";
 
           return {
             id: clinicData.campIdPrefix + clinicData.campId,
@@ -94,6 +98,8 @@ const OutreachClinicInfo: React.FC = () => {
             noNurses: clinicData.noNurses,
             noProgramCoordinators: clinicData.noProgramCoordinators,
             noSocialWorkers: clinicData.noSocialWorkers,
+            displayStartDate: clinicData.displayStartDate,
+            displayEndDate: clinicData.displayEndDate,
           };
         });
 
@@ -209,10 +215,10 @@ const OutreachClinicInfo: React.FC = () => {
                   <strong>Panchayat/Village Name:</strong> <span>{clinic.village}</span>
                 </p>
                 <p>
-                  <strong>Start Date:</strong> <span>{clinic.startDate}</span>
+                  <strong>Start Date:</strong> <span>{clinic.displayStartDate}</span>
                 </p>
                 <p>
-                  <strong>End Date:</strong> <span>{clinic.endDate}</span>
+                  <strong>End Date:</strong> <span>{clinic.displayEndDate}</span>
                 </p>
                 <div className="edit-button-container">
                   <button
