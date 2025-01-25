@@ -181,6 +181,8 @@ const NewScreeningEnrollment: React.FC = () => {
             <label style={{ color: 'darkblue' }}>Mobile Number*:</label>
             <input
               type="text"
+              inputMode="numeric" // Opens the numeric keyboard on mobile devices
+              pattern="[0-9]*" // Ensures only numeric input
               placeholder="Enter Mobile Number"
               value={mobile}
               onChange={handleMobileChange}
@@ -271,7 +273,7 @@ const NewScreeningEnrollment: React.FC = () => {
     >
       <option value="">Select Reason</option>  {/* Empty option to prompt selection */}
       <option value="Refused">Refused</option>
-      <option value="Loor Locked">Loor Locked</option>
+      <option value="Door Locked">Loor Locked</option>
       <option value="Work Daily Worker">Work Daily Worker</option>
       <option value="Work Out Of Station">Work Out Of Station</option>
       <option value="Out Of Station - Short Visit">Out Of Station - Short Visit</option>
