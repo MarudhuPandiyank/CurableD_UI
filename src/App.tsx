@@ -20,7 +20,7 @@ import TenantDetails from './components/TenantDetails';
 import PatientSearchPage from './components/clinical/PatientSearchPage';
 import ExaminationScreen from './components/clinical/ExaminationScreen';
 import OralExaminationPage from './components/clinical/OralExaminationPage';
-import DiseaseSpecificDetailsClinic from './components/DiseaseSpecificDetailsClinic';
+import DiseaseSpecificDetailsClinic from './components/DiseaseSpecificDetailsScreening';
 import FamilyPersonalDetails from './components/FamilyPersonalDetails';
 import FamilyMedicalDetails from './components/FamilyMedicalDetails';
 import ClinicSearchPage from './components/clinical/ClinicSearchPage';
@@ -33,6 +33,8 @@ import SuccessMessagePRFinal from './components/SuccessMessagePRFinal';
 import SuccessMessageScreeningFInal from './components/SuccessMessageScreeningFInal';
 import SuccessMessageClinicalFInal from './components/SuccessMessageClinicalFInal';
 import DynamicScreen from './components/DynamicScreen';
+
+import DiseaseSpecificDetailsScreening from './components/DiseaseSpecificDetailsScreening';
 
 
 const App: React.FC = () => {
@@ -66,7 +68,7 @@ const App: React.FC = () => {
                 <Route path="/PatientSearchPage" element={<PatientSearchPage />} />
                 <Route path="/ExaminationScreen" element={<ExaminationScreen />} />
                 <Route path="/OralExaminationPage" element={<OralExaminationPage />} />
-                <Route path="/DiseaseSpecificDetailsClinic" element={<DiseaseSpecificDetailsClinic />} />
+                <Route path="/DiseaseSpecificDetailsScreening" element={<DiseaseSpecificDetailsScreening />} />
                 <Route path="/FamilyPersonalDetails" element={<FamilyPersonalDetails />} />
                 <Route path="/FamilyMedicalDetails" element={<FamilyMedicalDetails />} />
                 <Route path="/responsive-cancer-institute" element={<ResponsiveCancerInstitute />} />

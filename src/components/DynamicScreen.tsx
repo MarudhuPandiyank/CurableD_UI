@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import Select, { MultiValue } from 'react-select';
+import './HomePage.css';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 interface SelectOption {
   value: string;
@@ -12,105 +14,56 @@ interface Condition {
   triggerValue: string;
 }
 
-interface Field {
+interface FamilyMetricsParam {
   testName: string;
   subtestName?: string;
   valueType: string;
   values: string[];
-  conditions?: Condition[];
-  selectedValues: [];
+  condition?: Condition[];
+  selectedValues: (string | SelectOption | SelectOption[])[];
 }
 
 interface ApiResponse {
   testMetrics: {
-    params: Field[];
+    params: FamilyMetricsParam[];
   };
 }
 
 const DynamicScreen: React.FC = () => {
-  const [formData, setFormData] = useState<Field[]>([]);
+  const [formData, setFormData] = useState<FamilyMetricsParam[]>([]);
   const [selectedValues, setSelectedValues] = useState<{ [key: string]: string | MultiValue<SelectOption> }>({});
   const [error, setError] = useState<string | null>(null);
-
-  // Example JSON data (you will replace this with the actual API response)
-  const jsonData: Field[] = [
-    
-    {
-      testName: 'Colposcopy',
-      subtestName: 'NONE',
-      valueType: 'SingleSelect',
-      values: ['Satisfactory', 'Unsatisfactory'],
-      conditions: [
-        {
-          enabledField: 'Image',
-          triggerValue: 'Satisfactory',
-        },{
-          enabledField: 'Cervical Clinical Examination',
-          triggerValue: 'Satisfactory',
-        },
-      ],
-      selectedValues: [],
-    },{
-      testName: 'Cervical Clinical Examination',
-      subtestName: 'NONE',
-      valueType: 'SingleSelect',
-      values: ['Yes', 'No'],
-      selectedValues: [],
-    },
-    {
-      testName: 'Image',
-      subtestName: 'Image',
-      valueType: 'MultiSelect',
-      values: [
-        'Normal',
-        'Squamous metaplasia',
-        'Inflammatory',
-        'CIN I',
-        'CIN II',
-        'CIN III',
-        'Ca in situ',
-        'Invasive cancer',
-        'Others',
-      ],
-      selectedValues: [],
-    },
-    {
-      testName: 'Colpo Guided Biopsy',
-      subtestName: 'NONE',
-      valueType: 'SingleSelect',
-      values: ['Yes', 'No'],
-      conditions: [
-        {
-          enabledField: 'Colpo Guided Biopsy Image',
-          triggerValue: 'Yes',
-        },
-      ],
-      selectedValues: [],
-    },
-    {
-      testName: 'Colpo Guided Biopsy Image',
-      subtestName: 'Image',
-      valueType: 'MultiSelect',
-      values: [
-        'Normal',
-        'Squamous metaplasia',
-        'Inflammatory',
-        'CIN I',
-        'CIN II',
-        'CIN III',
-        'Ca in situ',
-        'Glandular dysplasia',
-        'Squamous cell carcinoma',
-        'Adenocarcinoma',
-        'Inconclusive',
-      ],
-      selectedValues: [],
-    },
-  ];
+  const navigate = useNavigate();
 
   useEffect(() => {
-    // Assuming you're fetching this data from an API or another source
-    setFormData(jsonData);
+    const fetchDiseaseTestMaster = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const diseaseTestIds = localStorage.getItem('diseaseTestIds');
+
+        if (!token) {
+          setError('Token is missing. Please log in again.');
+          return;
+        }
+
+        const response = await axios.get<ApiResponse>(
+          `http://13.234.4.214:8015/api/curable/getMetricsById/${diseaseTestIds}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        setFormData(response.data.testMetrics.params);
+        console.log('Disease Test Master Data:', response.data);
+      } catch (error) {
+        console.error('Error fetching disease test master data:', error);
+        setError('Failed to load disease test data. Please try again.');
+      }
+    };
+
+    fetchDiseaseTestMaster();
   }, []);
 
   const handleChange = (fieldName: string, value: string | MultiValue<SelectOption>) => {
@@ -118,71 +71,137 @@ const DynamicScreen: React.FC = () => {
       ...prevState,
       [fieldName]: value,
     }));
+
+    // Update the selected values in formData
+    setFormData((prevFormData) =>
+      prevFormData.map((field) =>
+        field.testName === fieldName
+          ? {
+              ...field,
+              selectedValues: Array.isArray(value)
+                ? value.map((v) => (typeof v === 'object' ? v.value : v))
+                : [value],
+            }
+          : field
+      )
+    );
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const payload = {
+      params: formData.map((field) => ({
+        testName: field.testName,
+        subtestName: field.subtestName,
+        selectedValues: field.selectedValues,
+      })),
+    };
+
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        setError('Token is missing. Please log in again.');
+        return;
+      }
+
+      await axios.post('http://13.234.4.214:8015/api/curable/candidatehistory', payload, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      console.log('Data submitted successfully!');
+      navigate('/SuccessMessageScreeningFInal');
+    } catch (error) {
+      console.error('Error submitting data:', error);
+      setError('Failed to submit data. Please try again.');
+    }
   };
 
   return (
-    <form>
-      {formData.map((field) => {
-        if (field.valueType === 'SingleSelect') {
-          return (
-            <div key={field.testName}>
-              <label>{field.testName}:</label>
-              <select
-                value={selectedValues[field.testName] as string || ''}
-                onChange={(e) => handleChange(field.testName, e.target.value)}
-              >
-                <option value="">Select</option>
-                {field.values.map((value) => (
-                  <option key={value} value={value}>
-                    {value}
-                  </option>
-                ))}
-              </select>
+    <div className="container2">
+      <p>Disease Specific Details</p>
+      <div className="participant-container">
+        <p>Participant: {localStorage.getItem('ptName')}</p>
+        <p>ID: {localStorage.getItem('registrationId')}</p>
+      </div>
 
-              {/* Render dynamic fields based on conditions */}
-              {field.conditions?.map((condition) => (
-                selectedValues[field.testName] === condition.triggerValue && (
-                  <div key={condition.enabledField}>
-                    <label>{condition.enabledField}:</label>
-                    <Select
-                      isMulti
-                      name={condition.enabledField}
-                      value={selectedValues[condition.enabledField] as MultiValue<SelectOption> || []}
-                      options={
-                        jsonData
-                          .find((data) => data.testName === condition.enabledField)
-                          ?.values.map((value) => ({
-                            value,
-                            label: value,
-                          })) || [] // Default to empty array if no options found
-                      }
-                      onChange={(selectedOptions) =>
-                        handleChange(condition.enabledField, selectedOptions)
-                      }
-                      getOptionLabel={(e) => e.label} // Optional: customize label display
-                      placeholder="Select conditions"
-                    />
-                  </div>
-                )
-              ))}
-            </div>
-          );
-        }
-        if (field.valueType === 'Input') {
-          return (
-            <div key={field.testName}>
-              <label>{field.testName}:</label>
-              <input
-                type="text"
-                value={selectedValues[field.testName] as string || ''}
-                onChange={(e) => handleChange(field.testName, e.target.value)}
-              />
-            </div>
-          );
-        }
-        return null;
-      })}
-    </form>
+      <form className="clinic-form" onSubmit={handleSubmit}>
+        {formData.map((field) => {
+          if (field.valueType === 'SingleSelect') {
+            return (
+              <div key={field.testName}>
+                <label>{field.testName}:</label>
+                <select
+                  value={(selectedValues[field.testName] as string) || ''}
+                  onChange={(e) => handleChange(field.testName, e.target.value)}
+                >
+                  <option value="">Select</option>
+                  {field.values.map((value) => (
+                    <option key={value} value={value}>
+                      {value}
+                    </option>
+                  ))}
+                </select>
+
+                {/* Render dynamic fields based on conditions */}
+                {field.condition?.map((condition) => (
+                  selectedValues[field.testName] === condition.triggerValue && (
+                    <div key={condition.enabledField}>
+                      <label>{condition.enabledField}:</label>
+                      <Select
+                        isMulti
+                        name={condition.enabledField}
+                        value={(selectedValues[condition.enabledField] as MultiValue<SelectOption>) || []}
+                        options={
+                          formData
+                            .find((data) => data.testName === condition.enabledField)
+                            ?.values.map((value) => ({
+                              value,
+                              label: value,
+                            })) || []
+                        }
+                        onChange={(selectedOptions) =>
+                          handleChange(condition.enabledField, selectedOptions)
+                        }
+                        placeholder="Select conditions"
+                      />
+                    </div>
+                  )
+                ))}
+              </div>
+            );
+          }
+          if (field.valueType === 'Input') {
+            return (
+              <div key={field.testName}>
+                <label>{field.testName}:</label>
+                <input
+                  type="text"
+                  value={(selectedValues[field.testName] as string) || ''}
+                  onChange={(e) => handleChange(field.testName, e.target.value)}
+                />
+              </div>
+            );
+          }
+          return null;
+        })}
+        <center className="buttons">
+          <button type="submit" className="Finish-button">
+            Finish
+          </button>
+        </center>
+      </form>
+      <div className="powered-container">
+        <p className="powered-by">Powered By Curable</p>
+        <img
+          src="/assets/Curable logo - rectangle with black text.png"
+          alt="Curable Logo"
+          className="curable-logo"
+        />
+      </div>
+    </div>
   );
 };
 

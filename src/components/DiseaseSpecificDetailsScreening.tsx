@@ -4,14 +4,15 @@ import Header1 from './Header1';
 import './HomePage.css';
 import axios from 'axios';
 import './DiseaseSpecificDetailsClinic.css';
+
 // Define types for API response
 interface FamilyMetricsParam {
   testName: string;
   subtestName: string;
-  condition: string | null;
+  condition?: { enabledField: string; triggerValue: string }[];
   valueType: string;
   values: string[];
-  selectedValues: string[]; // Add selectedValues to the structure
+  selectedValues: string[];
 }
 
 interface ApiResponse {
@@ -21,13 +22,14 @@ interface ApiResponse {
   };
 }
 
-function DiseaseSpecificDetailsClinic() {
+function DiseaseSpecificDetailsScreening() {
   const [formData, setFormData] = useState<FamilyMetricsParam[]>([]); // State to store dynamic form fields
   const [error, setError] = useState<string | null>(null); // State to store error message
-  const [formValues, setFormValues] = useState<Record<string, string>>({}); // State to store the form values dynamically
+  const [formValues, setFormValues] = useState<Record<string, string>>({
+    Referral: 'No', // Default value for Referral
+  });
   const [showModal, setShowModal] = useState(false); // Modal visibility
   const [unfilledFields, setUnfilledFields] = useState<string[]>([]); // Non-mandatory fields that are not filled
-const [tag, setTag] = useState<string>('');
 
   const navigate = useNavigate();
 
@@ -53,7 +55,10 @@ const [tag, setTag] = useState<string>('');
         );
         localStorage.setItem('diseaseTestMasterId', response.data.id.toString());
 
-        setFormData(response.data.testMetrics.params); // Store dynamic form fields based on the API response
+        // Filter out 'Referred for' initially
+        const filteredData = response.data.testMetrics.params.filter(field => field.testName !== 'Referred for');
+        setFormData(filteredData); // Store dynamic form fields based on the API response
+
         console.log('Disease Test Master Data:', response.data);
       } catch (error) {
         console.error('Error fetching disease test master data:', error);
@@ -76,6 +81,29 @@ const [tag, setTag] = useState<string>('');
       ...prevValues,
       [testName]: value,
     }));
+
+    // Check for conditional fields and update formData accordingly
+    if (testName === 'Referral') {
+      if (value === 'Yes') {
+        const referredForField = formData.find(field => field.testName === 'Referred for');
+        if (!referredForField) {
+          setFormData((prevFormData) => [
+            ...prevFormData,
+            {
+              testName: 'Referred for',
+              subtestName: 'Referred for',
+              valueType: 'SingleSelect',
+              values: ['Toboco Counseling', 'Head & Neck at OPD at CI', 'Both'],
+              selectedValues: [],
+            },
+          ]);
+        }
+      } else {
+        setFormData((prevFormData) => 
+          prevFormData.filter(field => field.testName !== 'Referred for')
+        );
+      }
+    }
   };
 
   const handleFinishClick = () => {
@@ -105,7 +133,9 @@ const [tag, setTag] = useState<string>('');
 
     // Construct the body of the POST request to match the desired structure
     const updatedFormData = formData.map((field) => {
-      const selectedValue = formValues[field.testName] ? [formValues[field.testName]] : [];
+      const selectedValue = formValues[field.testName]
+        ? [formValues[field.testName]]
+        : [];
       return {
         ...field,
         selectedValues: selectedValue, // Assign the selected value to selectedValues
@@ -141,11 +171,15 @@ const [tag, setTag] = useState<string>('');
         return;
       }
 
-      await axios.post('http://13.234.4.214:8015/api/curable/candidatehistory', payload, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      await axios.post(
+        'http://13.234.4.214:8015/api/curable/candidatehistory',
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          }
+        }
+      );
 
       console.log('Data submitted successfully!');
       navigate('/SuccessMessageScreeningFInal');
@@ -207,9 +241,6 @@ const [tag, setTag] = useState<string>('');
         ))}
 
         <center className="buttons">
-          {/* <button type="button" className="Finish-button" onClick={handleFinishClick}>
-            Finish
-          </button> */}
           <button type="submit" className="Next-button">
             Finish
           </button>
@@ -219,22 +250,19 @@ const [tag, setTag] = useState<string>('');
       {showModal && (
         <div className="modal">
           <div className="modal-content">
-            <h2>              The following non-mandatory details are not filled. Are you sure you want to finish registration?
+            <h2>
+              The following non-mandatory details are not filled. Are you sure you want to finish registration?
             </h2>
-          
-
-          
 
             <div className="modal-buttons">
-              <button className="Finish-button">Close</button>
+              <button className="Finish-button" onClick={() => setShowModal(false)}>Close</button>
               <button className="Next-button" onClick={handleSubmit}>Save</button>
             </div>
           </div>
         </div>
       )}
 
-
-      <div className="powered-container">
+<div className="powered-container">
         <p className="powered-by">Powered By Curable</p>
         <img src="/assets/Curable logo - rectangle with black text.png" alt="Curable Logo" className="curable-logo" />
       </div>
@@ -242,4 +270,4 @@ const [tag, setTag] = useState<string>('');
   );
 }
 
-export default DiseaseSpecificDetailsClinic;
+export default DiseaseSpecificDetailsScreening;

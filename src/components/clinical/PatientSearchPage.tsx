@@ -132,7 +132,7 @@ const PatientSearchPage: React.FC = () => {
     localStorage.setItem("selectedStage", selectedStage);
     localStorage.setItem("patientName", patientName);
 
-    navigate("/DiseaseSpecificDetailsClinic");
+    navigate("/DiseaseSpecificDetailsScreening");
   };
 
   return (
