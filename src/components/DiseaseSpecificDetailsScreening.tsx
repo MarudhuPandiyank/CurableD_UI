@@ -197,6 +197,8 @@ function DiseaseSpecificDetailsScreening() {
   return (
     <div className="container2">
       <Header1 />
+     
+      <h1 style={{ color: 'darkblue' }}>Disease Specific Details</h1>
       <div className="participant-container">
         <p>Participant: {ptName}</p>
         <p>ID: {registrationId}</p>
@@ -205,7 +207,7 @@ function DiseaseSpecificDetailsScreening() {
       {error && <div className="error-message">{error}</div>}
 
       <form className="clinic-form" onSubmit={handleSubmit}>
-        <p>Disease Specific Details</p>
+       
 
         {formData.map((field, index) => (
           <div key={index} className="form-group">

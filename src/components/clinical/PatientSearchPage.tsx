@@ -139,7 +139,7 @@ const PatientSearchPage: React.FC = () => {
     <div className="container10">
        <Header1 />
       <div className="title">
-        <p className="search-patient-title">Screening</p>
+        <h1 style={{ color: 'darkblue' }}>Screening</h1>
       </div>
       <div className="search-section">
         <input

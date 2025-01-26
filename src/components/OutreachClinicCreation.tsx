@@ -217,7 +217,7 @@ const OutreachClinicCreation: React.FC = () => {
         <div className="container2">
             <form className="clinic-form" onSubmit={handleNextClick}>
             <Header1 />
-            <p className='title1' style={{ color: 'darkblue', fontWeight: 'bold', }}>Outreach Clinic Creation</p>
+            <h1 style={{ color: 'darkblue' }}>Outreach Clinic Creation</h1>
                 <label>
                     <span style={{color : "darkblue"}}>  Outreach Clinic Name:</span> <span style={{ color: 'darkred', fontWeight: 'bold', }}>*</span>
                     <input

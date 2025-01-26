@@ -94,7 +94,8 @@ const ClinicalDetails: React.FC = () => {
         <p>ID: {patientName}</p>
       </div>
       <form className="clinic-form" onSubmit={handleFormSubmit}>
-        <h2>General Details</h2>
+        
+        <h1 style={{ color: 'darkblue' }}>General Details</h1>
         <div className="form-group">
           <label htmlFor="father-name">Father Name:</label>
           <input

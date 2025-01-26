@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from './Header';
 import './HomePage.css';
+import Header1 from './Header1';
 const HomePage: React.FC = () => {
     const navigate = useNavigate();
 
@@ -15,8 +16,9 @@ const HomePage: React.FC = () => {
 console.log('test');
     return (
         <div className="container1">
-            <Header/><br/>
-            <p style={{ color: 'darkblue', fontWeight: 'bold', }}>Outreach Clinic</p>
+            <Header1/><br/>
+            <h1 style={{ color: 'darkblue' }}>Outreach Clinic</h1>
+          
             <main className="content">
                 <div className="button-container">
                     <button className="primary-button" onClick={() => navigate('/create-outreach-clinic')}>

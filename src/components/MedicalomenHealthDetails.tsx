@@ -89,7 +89,7 @@ const navigate = useNavigate();
   return (
     <div className="container2">
        <Header1 />
-       <p style={{ color: 'darkblue', fontWeight: 'bold', }}>Medical Details</p>
+       <h1 style={{ color: 'darkblue', fontWeight: 'bold', }}>Medical Details</h1>
 
       <div className="participant-container">
         <p>Participant: {participant}</p>

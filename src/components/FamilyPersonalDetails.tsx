@@ -27,6 +27,7 @@ function FamilyPersonalDetails() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    
     const fetchFamilyPersonalMetrics = async () => {
       try {
         const token = localStorage.getItem('token');
@@ -58,7 +59,9 @@ function FamilyPersonalDetails() {
   };
 
   const handleAddMember = () => {
+    setExpandedMemberIndex(null)
     setFormValues((prevValues) => [...prevValues, {}]);
+    setExpandedMemberIndex(formValues.length)
   };
 
   const handleDeleteMember = (index: number) => {
@@ -123,11 +126,11 @@ function FamilyPersonalDetails() {
   }
 
   return (
-    <div className="container2">
-      
-       <Header1 />
-       <p style={{ color: 'darkblue', fontWeight: 'bold', }}>Family Personal Details</p>
-       
+    <div >
+
+      <Header1 />
+      <p style={{ color: 'darkblue', fontWeight: 'bold', }}>Family Personal Details</p>
+
       <div className="participant-container">
         <p>Participant: {participant}</p>
         <p>ID: {registraionId}</p>
@@ -155,25 +158,31 @@ function FamilyPersonalDetails() {
                 }}
                 onClick={() => setExpandedMemberIndex(formIndex)}
               >
-                <span>Member {formIndex + 1}</span>
-                {formIndex === 0 && (
+                 {/* <span>Member {formIndex + 1} </span> */}
+                <span>{formValues[formIndex][formData[0].testName]? formValues[formIndex][formData[0].testName]:"Member"}</span>
+                
+                <i onClick={(e) => {
+                  e.stopPropagation();
+                  handleDeleteMember(formIndex);
+                }} className="fa-solid fa-trash-can float-end"></i>
+                {/* {formIndex === 0 && (
                   <button
-                    type="button"
-                    style={{
-                      backgroundColor: 'red',
-                      color: 'white',
-                      border: 'none',
-                      padding: '5px',
-                      cursor: 'pointer',
-                    }}
+                    // type="button"
+                    // style={{
+                    //   backgroundColor: 'red',
+                    //   color: 'white',
+                    //   border: 'none',
+                    //   padding: '5px',
+                    //   cursor: 'pointer',
+                    // }}
                     onClick={(e) => {
                       e.stopPropagation();
                       handleDeleteMember(formIndex);
                     }}
                   >
                     Delete
-                  </button>
-                )}
+                  </button> */}
+                {/* )} */}
               </div>
             )}
 
@@ -193,8 +202,15 @@ function FamilyPersonalDetails() {
                   }}
                   onClick={() => setExpandedMemberIndex(null)}
                 >
-                  <span>Member {formIndex + 1} (Click to collapse)</span>
-                  <button
+                  {/* <span>Member {formIndex + 1} (Click to collapse)</span> */}
+                  <span>{formValues[formIndex][formData[0]?.testName]? formValues[formIndex][formData[0].testName]+" Click to collapse":"Member Click to collapse"}</span>
+                  {/* {formData[formIndex].testName} */}
+                  {/* <span>{formValues[formIndex][formData[0].testName]} {formIndex + 1} (Click to collapse)</span> */}
+                  <i onClick={(e) => {
+                    e.stopPropagation();
+                    handleDeleteMember(formIndex);
+                  }} className="fa-solid fa-trash-can float-end"></i>
+                  {/* <button
                     type="button"
                     style={{
                       backgroundColor: 'red',
@@ -209,7 +225,7 @@ function FamilyPersonalDetails() {
                     }}
                   >
                     Delete
-                  </button>
+                  </button> */}
                 </div>
 
                 {formData.map((field, index) => (

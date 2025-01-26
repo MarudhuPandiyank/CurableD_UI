@@ -164,8 +164,8 @@ const ResourceAllocation: React.FC = () => {
     <div className="container2">
       <form className="clinic-form" onSubmit={handleSubmit}>
       <Header1 />
-        <p className="title1" style={{ color: 'darkblue', fontWeight: 'bold' }}>Resource Allocation</p>
-
+        
+        <h1 style={{ color: 'darkblue' }}>Resource Allocation</h1>
         <div className="form-group">
           <label className="label">Program Co-ordinator:</label>
           <Select<SelectOption, true, GroupBase<SelectOption>>

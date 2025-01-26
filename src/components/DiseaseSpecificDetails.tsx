@@ -126,10 +126,11 @@ function DiseaseSpecificDetails() {
   const participant = localStorage.getItem('participant');
   const registraionId = localStorage.getItem('registraionId');
   return (
-    <div className="container2">
+    <div className="container21">
       <Header1 />
       {/* <p style={{ color: 'darkblue', fontWeight: 'bold', }}>Disease Specific Details</p> */}
-      <p  style={{ color: 'darkblue', fontWeight: 'bold', }}>Disease Specific Details</p>
+     
+      <h1 style={{ color: 'darkblue' }}>Disease Specific Details</h1>
       <div className="participant-container">
         <p>Participant: {participant}</p>
         <p>ID:{registraionId}</p>

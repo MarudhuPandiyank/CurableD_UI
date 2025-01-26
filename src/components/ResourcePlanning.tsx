@@ -5,6 +5,7 @@ import './HomePage.css';
 import Header from './Header';
 import SuccessMessage from './SuccessMessage';
 import ResourceAllocation from './ResourceAllocation';
+import Header1 from './Header1';
 
 const ResourcePlanning: React.FC = () => {
   const navigate = useNavigate();
@@ -100,9 +101,10 @@ const ResourcePlanning: React.FC = () => {
     navigate('/resource-allocation', { state: { startDate,endDate,panchayatId,pincode,noCampcordinators,noDoctors,noNurses,noProgramCoordinators,noSocialWorkers,clinicName,clinicCode} });
   };
   return (
-    <div className="container2">
-      <Header />
-      <p className='title1' style={{ color: 'darkblue', fontWeight: 'bold',marginTop:'10px'  }}>Resource Planning</p>
+     /*not uswcontainer21*/
+    <div className="container21">
+       <Header1 />
+      <h1 style={{ color: 'darkblue' }}>Resource Planning</h1>
       <form className="clinic-form" onSubmit={handleSubmit}>
         <label><span style={{ color: "darkblue" }}>Program Co-ordinator:</span> </label>
         <input
@@ -153,6 +155,7 @@ const ResourcePlanning: React.FC = () => {
           onChange={handleChange}
           //required
         />
+  
         <center>
           <button type="button" className="allocate-button" onClick={handleAllocateResources}>Allocate Resources</button>
           <button type="submit" className="submit-button1" disabled={loading}>

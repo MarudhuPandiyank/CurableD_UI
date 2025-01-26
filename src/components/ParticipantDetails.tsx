@@ -137,6 +137,10 @@ const ParticipantDetails: React.FC = () => {
   const [error, setError] = useState("");
   // Add a new habit set
   const addHabit = () => {
+    habits.map((habit, index) => {
+      if (habit.isOpen)
+        habits[index].isOpen = false;
+    });
     setHabits([
       ...habits,
       { habit: "", habitType: "", frequency: "", quit: "", isOpen: true }, // Default `isOpen: true`
@@ -221,19 +225,30 @@ const ParticipantDetails: React.FC = () => {
 
   const toggleCollapse = (index: number) => {
     const updatedHabits = [...habits];
-    updatedHabits[index].isOpen = !updatedHabits[index].isOpen;  // Toggle the collapse state
+    if (updatedHabits[index]) {
+
+      updatedHabits[index].isOpen = !updatedHabits[index].isOpen;  // Toggle the collapse state
+    }
     setHabits(updatedHabits);  // Update the state to reflect changes
   };
 
+
   const deleteHabit = (index: number) => {
-    const updatedHabits = habits.filter((_, i) => i !== index);
-    setHabits(updatedHabits);
+    alert("Are u sure ");
+    if (habits.length != 1) {
+      // toggleCollapse(habits.length-1);
+      habits.splice(index, 1);
+    } else {
+      alert("Last index not delete");
+    }
+    //  const updatedHabits = habits.filter((_, i) => i !== index);
+    setHabits(habits);
   };
 
   return (
     <div className="container2">
       <Header1 />
-      <p style={{ color: 'darkblue', fontWeight: 'bold', }}>General Details</p>
+      <h1 style={{ color: 'darkblue', fontWeight: 'bold', }}>General Details</h1>
       <div className="participant-container">
         <p>Participant: {participant}</p>
         <p>ID: {registraionId}</p>
@@ -372,14 +387,17 @@ const ParticipantDetails: React.FC = () => {
             </label>
           </div>
 
-          {/* Show habits form only if Tobacco Habit is Yes */}
           {hasTobaccoHabit === "Yes" && (
             <>
               {habits.map((habit, index) => (
-                <div key={index} style={{ marginBottom: "1rem" }}>
-                  <button onClick={() => toggleCollapse(index)}>
-                    {habit.isOpen ? "Collapse" : "Expand"}
-                  </button>
+                <div key={index} style={{ marginBottom: "1rem" }} >
+                  <div onClick={() => toggleCollapse(index)} style={{ cursor: "pointer" }} className="habits m-2">
+                    {/* <strong>{habit.habit || "Select Habit"}{index}</strong> */}
+                    {habit.habit || "Select Habit"}{index}
+
+                    {/* <span className=''>del</span> */}
+                    <i onClick={() => deleteHabit(index)} className="fa-solid fa-trash-can float-end"></i>
+                  </div>
 
                   {habit.isOpen && (
                     <div>
@@ -448,7 +466,6 @@ const ParticipantDetails: React.FC = () => {
             </>
           )}
 
-
           {error && <p style={{ color: "red" }}>{error}</p>}
         </div>
         <div className="buttons">
@@ -460,9 +477,13 @@ const ParticipantDetails: React.FC = () => {
           </button>
         </div>
       </div>
-      <div className="powered-container">
-        <p className="powered-by">Powered By Curable</p>
-        <img src="/assets/logo.png" alt="Logo" className="logo" />
+      <div className="profile-powered-container">
+        <p className="profile-powered-by">Powered By Curable</p>
+        <img
+          src="/assets/Curable logo - rectangle with black text.png"
+          alt="Curable Logo"
+          className="profile-curable-logo"
+        />
       </div>
     </div>
   );

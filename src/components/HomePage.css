@@ -276,7 +276,20 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     font-size: 14px;
     background-color: #f9f9f9;
 }
-
+.fa-solid{
+  /* line-height: 1.5 !important; */
+  color: #d774ad;
+  font-size: x-large;
+}
+.habits{
+  width: 99.5% !important;
+  padding: 10px !important;
+  margin-top: 5px !important;
+  border: 1px solid #ddd !important;
+  border-radius: 10px !important;
+  /* font-size: 14px; */
+  background-color: #f9f9f9 !important;
+}
 
 input[type="date"] {
     padding: 8px;
