@@ -22,11 +22,13 @@ interface ApiResponse {
 
 function DiseaseSpecificDetails() {
   const navigate = useNavigate();
+  const [showModal, setShowModal] = useState(false);
   const [formData, setFormData] = useState<FamilyMetricsParam[]>([]); // State to store dynamic form fields
   const [error, setError] = useState<string | null>(null); // State to store error message
   const [formValues, setFormValues] = useState<Record<string, string>>({}); // State to store the form values dynamically
   const participantValue =localStorage.getItem('participant');
    const gender=participantValue?.split('/')[1];
+   
   
   useEffect(() => {
     const fetchDiseaseTestMaster = async () => {
@@ -59,7 +61,15 @@ function DiseaseSpecificDetails() {
       [testName]: value,
     }));
   };
+  const openModal = () => {
+  
+    setShowModal(true);
+  };
 
+  // Function to close modal
+  const closeModal = () => {
+    setShowModal(false);
+  };
   const handleSelectChange = (testName: string, value: string) => {
     setFormValues((prevValues) => ({
       ...prevValues,
@@ -67,6 +77,60 @@ function DiseaseSpecificDetails() {
     }));
   };
 
+  //  navigate('/SuccessMessagePRFinal');
+
+  const handleSubmitFinish = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    // Construct the body of the POST request to match the desired structure
+    const updatedFormData = formData.map((field) => {
+      const selectedValue = formValues[field.testName] ? [formValues[field.testName]] : [];
+      return {
+        ...field,
+        selectedValues: selectedValue, // Assign the selected value to selectedValues
+      };
+    });
+
+    const payload = {
+      description: "Eligibility Metrics",
+      diseaseTestId: 1,
+      eligibilityMetrics: {
+        params: updatedFormData,
+      },
+      familyMedicalMetrics: null,
+      familyMetrics: null,
+      gender: "FEMALE", // You can dynamically adjust this if necessary
+      genderValid: true,
+      hospitalId: 1,
+      id: 27,
+      medicalMetrics: null,
+      name: "Eligibility Metrics",
+      stage: "ELIGIBILE",
+      testMetrics: null,
+      type:1,
+      candidateId: Number(patientId),
+    };
+
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        setError('Token is missing. Please log in again.');
+        return;
+      }
+
+      await axios.post(`${config.appURL}/curable/candidatehistory`, payload, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      console.log('Data submitted successfully!');
+      navigate('/SuccessMessagePRFinal');     
+    } catch (error) {
+      console.error('Error submitting data:', error);
+      setError('Failed to submit data. Please try again.');
+    }
+  };
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -172,10 +236,37 @@ function DiseaseSpecificDetails() {
             )}
           </div>
         ))}
+{showModal && (
+            <div className="modal">
+              <div className="modal-content">
+                <h1>Non mandatory fields are not provided</h1>
+                <h1>Are you sure you want to finish registration?</h1>
+
+                <div className="form-group">
+               
+  </div>
+
+                <div className="modal-buttons">
+                  <button className="Finish-button"
+                    type="button"
+                    onClick={handleSubmitFinish}
+                  >
+                    Yes
+                  </button>
+                  <button className="Next-button"
+                    type="button"
+                    onClick={closeModal}
+                  >
+                    No
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
 
         <center className="buttons">
-          <button type="button" className="Finish-button">Finish</button>
-          <button type="submit" className="Next-button">Next</button>
+          <button type="button" className="Next-button"  onClick={openModal} >Finish</button>
+          <button type="submit" className="Finish-button">Next</button>
         </center>
       </form>
 

@@ -283,46 +283,6 @@ const NewScreeningEnrollment: React.FC = () => {
       <option value="Medical Reasons">Medical Reasons</option>
     </select>
   </div>
-                
-{/* 
-                {tag === "Options" && (
-                  <div>
-                    <div>
-                      <input type="checkbox" />
-                      <p style={{ marginTop: '-26px' }}> Refused </p>
-                    </div>
-                    <div>
-                      <input type="checkbox" />
-                      <p style={{ marginTop: '-26px' }}> Loor Locked</p>
-                    </div>
-                    <div>
-                      <input type="checkbox" />
-                      <p style={{ marginTop: '-26px' }}> Work Daily Worker</p>
-                    </div>
-                    <div>
-                      <input type="checkbox" />
-                      <p style={{ marginTop: '-26px' }}> Work Out Of Station</p>
-                    </div>
-                    <div>
-                      <input type="checkbox" />
-                      <p style={{ marginTop: '-26px' }}> Out Of Station - Short Visit</p>
-                    </div>
-                    <div>
-                      <input type="checkbox" />
-                      <p style={{ marginTop: '-26px' }}> Already Screened</p>
-                    </div>
-                    <div>
-                      <input type="checkbox" />
-                      <p style={{ marginTop: '-26px' }}> Settled OutStation</p>
-                    </div>
-                    <div>
-                      <input type="checkbox" />
-                      <p style={{ marginTop: '-26px' }}> Medical Reasons</p>
-                    </div>
-                    
-                  </div>
-                
-                )} */}
 
                 <div className="modal-buttons">
                   <button className="Finish-button"
