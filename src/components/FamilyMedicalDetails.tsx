@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react'; 
 import Header1 from './Header1';
 import './HomePage.css';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import config from '../config';  // Import the config file
-// Define types for API response
+import config from '../config';
+
 interface FamilyMedicalParam {
   testName: string;
   subtestName: string;
@@ -20,11 +20,12 @@ interface ApiResponse {
   };
 }
 
-function FamilyMedicalDetails() {
+const FamilyMedicalDetails: React.FC = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState<FamilyMedicalParam[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [formValues, setFormValues] = useState<Record<string, string>[]>([{}]);
+  const [expandedIndex, setExpandedIndex] = useState<number>(0); // State to track expanded member
 
   useEffect(() => {
     const fetchFamilyMedicalMetrics = async () => {
@@ -63,29 +64,37 @@ function FamilyMedicalDetails() {
 
   const handleAddMember = () => {
     setFormValues((prevValues) => [...prevValues, {}]);
+    setExpandedIndex(formValues.length); // Set the new member as expanded
+  };
+
+  const handleToggleExpand = (index: number) => {
+    setExpandedIndex(index); // Toggle the expanded state
+  };
+
+  const handleDeleteMember = (index: number) => {
+    const updatedFormValues = formValues.filter((_, i) => i !== index);
+    setFormValues(updatedFormValues);
+
+    if (expandedIndex === index) {
+      setExpandedIndex(0); // Collapse if the deleted member was expanded
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const updatedFormData = formValues.map((formValue, index) => {
-      const updatedFields = formData.map((field) => {
-        const selectedValue = formValue[field.testName] ? [formValue[field.testName]] : [];
-        return {
-          ...field,
-          selectedValues: selectedValue,
-        };
-      });
-      return updatedFields;
-    });
+    const updatedFormData = formValues.map((formValue) =>
+      formData.map((field) => ({
+        ...field,
+        selectedValues: formValue[field.testName] ? [formValue[field.testName]] : [],
+      }))
+    );
 
     const payload = {
       description: 'Family Medical Metrics',
       diseaseTestId: 1,
       familyMetrics: null,
-      familyMedicalMetrics: {
-        params: updatedFormData.flat(),
-      },
+      familyMedicalMetrics: { params: updatedFormData.flat() },
       eligibilityMetrics: null,
       gender: 'FEMALE',
       genderValid: true,
@@ -107,9 +116,7 @@ function FamilyMedicalDetails() {
       }
 
       await axios.post(`${config.appURL}/curable/candidatehistory`, payload, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
 
       console.log('Data submitted successfully!');
@@ -123,7 +130,7 @@ function FamilyMedicalDetails() {
   const patientId = localStorage.getItem('patientId');
   const patientName = localStorage.getItem('patientName');
   const participant = localStorage.getItem('participant');
-  const registraionId = localStorage.getItem('registraionId');
+  const registrationId = localStorage.getItem('registrationId');
   if (!patientId || !patientName) {
     return <div className="error-message">Missing patient information. Please log in again.</div>;
   }
@@ -131,52 +138,69 @@ function FamilyMedicalDetails() {
   return (
     <div className="container2">
       <Header1 />
-      <p style={{ color: 'darkblue', fontWeight: 'bold', }}>Family Medical Details</p>
+      <p style={{ color: 'darkblue', fontWeight: 'bold' }}>Family Medical Details</p>
       <div className="participant-container">
         <p>Participant: {participant}</p>
-        <p>ID: {registraionId}</p>
+        <p>ID: {registrationId}</p>
       </div>
 
       {error && <div className="error-message">{error}</div>}
 
       <form className="clinic-form" onSubmit={handleSubmit}>
-        {/* <p>Family Medical Details</p> */}
-
         {formValues.map((formValue, formIndex) => (
           <div key={formIndex} className="family-member-form">
-            <p>Member {formIndex + 1}</p>
-            {formData.map((field, index) => (
-              <div key={index} className="form-group">
-                <label style={{ color: 'darkblue' }}>{field.testName}*:</label>
+            <p onClick={() => handleToggleExpand(formIndex)} style={{
+                    cursor: 'pointer',
+                    padding: '10px',
+                    backgroundColor: '#e3e3e3',
+                    border: '1px solid #ccc',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                  }}>
+             {formValue.relationName || `Relation ${formIndex + 1}`}
+              <i onClick={(e) => {
+                    e.stopPropagation();
+                    handleDeleteMember(formIndex);
+                  }} className="fa-solid fa-trash-can float-end"></i>
+            
+            </p>
+            {expandedIndex === formIndex && (
+              <div className="form-fields">
+                {formData.map((field, index) => (
+                  <div key={index} className="form-group">
+                    <label style={{ color: 'darkblue' }}>{field.testName}*:</label>
 
-                {field.valueType === 'SingleSelect' ? (
-                  <select
-                    id={field.testName.toLowerCase().replace(' ', '-')}
-                    name={field.testName.toLowerCase().replace(' ', '-')}
-                    value={formValue[field.testName] || ''}
-                    onChange={(e) => handleFieldChange(formIndex, field.testName, e.target.value)}
-                  >
-                    <option value="" disabled>
-                      Select {field.testName}
-                    </option>
-                    {field.values.map((value, idx) => (
-                      <option key={idx} value={value}>
-                        {value}
-                      </option>
-                    ))}
-                  </select>
-                ) : (
-                  <input
-                    type="text"
-                    id={field.testName.toLowerCase().replace(' ', '-')}
-                    name={field.testName.toLowerCase().replace(' ', '-')}
-                    value={formValue[field.testName] || ''}
-                    onChange={(e) => handleFieldChange(formIndex, field.testName, e.target.value)}
-                    placeholder={`Enter ${field.testName}`}
-                  />
-                )}
+                    {field.valueType === 'SingleSelect' ? (
+                      <select
+                        id={field.testName.toLowerCase().replace(' ', '-')}
+                        name={field.testName.toLowerCase().replace(' ', '-')}
+                        value={formValue[field.testName] || ''}
+                        onChange={(e) => handleFieldChange(formIndex, field.testName, e.target.value)}
+                      >
+                        <option value="" disabled>
+                          Select {field.testName}
+                        </option>
+                        {field.values.map((value, idx) => (
+                          <option key={idx} value={value}>
+                            {value}
+                          </option>
+                        ))}
+                      </select>
+                    ) : (
+                      <input
+                        type="text"
+                        id={field.testName.toLowerCase().replace(' ', '-')}
+                        name={field.testName.toLowerCase().replace(' ', '-')}
+                        value={formValue[field.testName] || ''}
+                        onChange={(e) => handleFieldChange(formIndex, field.testName, e.target.value)}
+                        placeholder={`Enter ${field.testName}`}
+                      />
+                    )}
+                  </div>
+                ))}
               </div>
-            ))}
+            )}
           </div>
         ))}
 
@@ -196,6 +220,6 @@ function FamilyMedicalDetails() {
       </div>
     </div>
   );
-}
+};
 
 export default FamilyMedicalDetails;
