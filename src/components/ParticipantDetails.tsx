@@ -12,6 +12,7 @@ interface Habit {
   isOpen: boolean;
 }
 const ParticipantDetails: React.FC = () => {
+  
   const [houseType, setHouseType] = useState<string>('');
   const [selectedToggle1, setSelectedToggle1] = useState<string | null>(null);
   const [education, setEducation] = useState<string>('');
@@ -47,7 +48,7 @@ const ParticipantDetails: React.FC = () => {
     setSelectedToggle1(option);
   };
 
-  const handleFormSubmit = async (e: React.FormEvent) => {
+  const handleFormSubmit = async (e: React.FormEvent,navigateTo: string) => {
     e.preventDefault();
 
     const tobaccoUser = selectedToggle1 === 'yes';
@@ -103,7 +104,8 @@ const ParticipantDetails: React.FC = () => {
       if (response.ok) {
         const data = await response.json();
         console.log('Success:', data);
-        navigate('/MedicalomenHealthDetails');
+        navigate(navigateTo);
+        //navigate('/MedicalomenHealthDetails');
       } else {
         const errorData = await response.json();
         console.error('Error:', errorData);
@@ -254,7 +256,7 @@ const ParticipantDetails: React.FC = () => {
         <p>Participant: {participant}</p>
         <p>ID: {registraionId}</p>
       </div>
-      <div className="clinic-form" onSubmit={handleFormSubmit}>
+      <div className="clinic-form" onSubmit={(e) => handleFormSubmit(e, '/MedicalomenHealthDetails')} >
         {/* <h2>General Details</h2> */}
         <div className="form-group">
           <label htmlFor="father-name">Father Name:</label>
@@ -467,13 +469,40 @@ const ParticipantDetails: React.FC = () => {
             </>
           )}
 
+{showModal && (
+            <div className="modal">
+              <div className="modal-content">
+                <h1>Non mandatory fields are not provided</h1>
+                <h1>Are you sure you want to finish registration?</h1>
+
+                <div className="form-group">
+               
+  </div>
+
+                <div className="modal-buttons">
+                  <button className="Finish-button"
+                    type="button"
+                    onClick={(e) => handleFormSubmit(e, '/SuccessMessagePRFinal')}
+                  >
+                    Yes
+                  </button>
+                  <button className="Next-button"
+                    type="button"
+                    onClick={closeModal}
+                  >
+                    No
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+
           {error && <p style={{ color: "red" }}>{error}</p>}
         </div>
         <div className="buttons">
-          <button type="button" className="submit-button1" onClick={handleFormSubmit} disabled={isLoading}>
-            {isLoading ? 'Submitting...' : 'Finish'}
-          </button>
-          <button type="submit" className="allocate-button" onClick={handleFormSubmit} disabled={isLoading}>
+        <button type="button" className="Next-button"  onClick={openModal} >Finish</button>
+          <button type="submit" className="Finish-button" onClick={(e) => handleFormSubmit(e, '/MedicalomenHealthDetails')} disabled={isLoading}>
             {isLoading ? 'Submitting...' : 'Next'}
           </button>
         </div>

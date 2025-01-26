@@ -26,6 +26,7 @@ const MedicalomenHealthDetails: React.FC = () => {
   const [selectedContraception, setSelectedContraception] = useState<string>('');
   const [selectedBreastFedMonths, setSelectedBreastFedMonths] = useState<string>('');
   const [selectedToggle2, setSelectedToggle2] = useState<string | null>(null);
+  const [showModal, setShowModal] = useState(false); // State for modal visibility
 const navigate = useNavigate();
   const toggleOption = (option: string) => {
     setSelectedToggle(option);
@@ -36,8 +37,16 @@ const navigate = useNavigate();
   const toggleOption2 = (option: string) => {
     setSelectedToggle2(option);
   };
+  // Function to open modal
+  const openModal = () => {
+    setShowModal(true);
+  };
 
-  const handleSubmit = async (event: React.FormEvent) => {
+  // Function to close modal
+  const closeModal = () => {
+    setShowModal(false);
+  };
+  const handleSubmit = async (event: React.FormEvent ,navigateTo: string) => {
     event.preventDefault();
     const patientId = localStorage.getItem('patientId');
     const payload = {
@@ -76,7 +85,8 @@ const navigate = useNavigate();
         }
       );
       console.log('Response:', response.data);
-      navigate('/FamilyPersonalDetails');
+      navigate(navigateTo);
+      //navigate('/FamilyPersonalDetails');
      
     } catch (error) {
       console.error('Error submitting data:', error);
@@ -96,7 +106,7 @@ const navigate = useNavigate();
         <p>ID: {registraionId}</p>
       </div>
 
-      <form className="clinic-form" onSubmit={handleSubmit}>
+      <form className="clinic-form" onSubmit={(e) => handleSubmit(e, '/FamilyPersonalDetails')}>
         {/* Medical Details Section */}
         <fieldset>
           {/* <legend>Medical Details</legend> */}
@@ -302,12 +312,38 @@ const navigate = useNavigate();
           </div>
         </fieldset>)}
         
+        {showModal && (
+            <div className="modal">
+              <div className="modal-content">
+                <h1>Non mandatory fields are not provided</h1>
+                <h1>Are you sure you want to finish registration?</h1>
 
+                <div className="form-group">
+               
+  </div>
+
+                <div className="modal-buttons">
+                  <button className="Finish-button"
+                    type="button"
+                    onClick={(e) => handleSubmit(e, '/SuccessMessagePRFinal')}
+                  >
+                    Yes
+                  </button>
+                  <button className="Next-button"
+                    type="button"
+                    onClick={closeModal}
+                  >
+                    No
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
         <div className="buttons">
-          <button type="button" className="submit-button1">
+          <button type="button" className="Next-button" onClick={openModal}>
             Finish
           </button>
-          <button type="submit" className="allocate-button">
+          <button type="submit" className="Finish-button">
             Next
           </button>
           </div>

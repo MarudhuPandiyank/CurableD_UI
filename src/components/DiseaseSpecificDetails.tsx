@@ -78,8 +78,7 @@ function DiseaseSpecificDetails() {
   };
 
   //  navigate('/SuccessMessagePRFinal');
-
-  const handleSubmitFinish = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent,navigateTo: string) => {
     e.preventDefault();
 
     // Construct the body of the POST request to match the desired structure
@@ -125,59 +124,8 @@ function DiseaseSpecificDetails() {
       });
 
       console.log('Data submitted successfully!');
-      navigate('/SuccessMessagePRFinal');     
-    } catch (error) {
-      console.error('Error submitting data:', error);
-      setError('Failed to submit data. Please try again.');
-    }
-  };
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    // Construct the body of the POST request to match the desired structure
-    const updatedFormData = formData.map((field) => {
-      const selectedValue = formValues[field.testName] ? [formValues[field.testName]] : [];
-      return {
-        ...field,
-        selectedValues: selectedValue, // Assign the selected value to selectedValues
-      };
-    });
-
-    const payload = {
-      description: "Eligibility Metrics",
-      diseaseTestId: 1,
-      eligibilityMetrics: {
-        params: updatedFormData,
-      },
-      familyMedicalMetrics: null,
-      familyMetrics: null,
-      gender: "FEMALE", // You can dynamically adjust this if necessary
-      genderValid: true,
-      hospitalId: 1,
-      id: 27,
-      medicalMetrics: null,
-      name: "Eligibility Metrics",
-      stage: "ELIGIBILE",
-      testMetrics: null,
-      type:1,
-      candidateId: Number(patientId),
-    };
-
-    try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        setError('Token is missing. Please log in again.');
-        return;
-      }
-
-      await axios.post(`${config.appURL}/curable/candidatehistory`, payload, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      console.log('Data submitted successfully!');
-      navigate('/ParticipantDetails');
+      navigate(navigateTo);
+     // navigate('/ParticipantDetails');
      
     } catch (error) {
       console.error('Error submitting data:', error);
@@ -202,7 +150,7 @@ function DiseaseSpecificDetails() {
 
       {error && <div className="error-message">{error}</div>} {/* Display error message if there's an issue */}
 
-      <form className="clinic-form" onSubmit={handleSubmit}>
+      <form className="clinic-form" onSubmit={(e) => handleSubmit(e, '/ParticipantDetails')}>
         {/* <p>Disease Specific Details</p> */}
 
         {/* Dynamically render form fields based on the API response */}
@@ -249,7 +197,7 @@ function DiseaseSpecificDetails() {
                 <div className="modal-buttons">
                   <button className="Finish-button"
                     type="button"
-                    onClick={handleSubmitFinish}
+                    onClick={(e) => handleSubmit(e, '/SuccessMessagePRFinal')}
                   >
                     Yes
                   </button>

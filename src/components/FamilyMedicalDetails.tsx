@@ -213,6 +213,7 @@ const FamilyMedicalDetails: React.FC = () => {
           </button>
         </center>
       </form>
+      
 
       <div className="powered-container">
         <p className="powered-by">Powered By Curable</p>
