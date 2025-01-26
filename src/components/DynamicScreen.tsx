@@ -30,7 +30,7 @@ interface ApiResponse {
 
 const App: React.FC = () => {
   const navigate = useNavigate();
-
+  const diseaseTestIds = localStorage.getItem('diseaseTestIds');
   const [paramsObject, setParamsObject] = useState<{ params: Param[] }>({ params: [] });
   const [processingTestName, setProcessingTestName] = useState('');
   const [processingValue, setProcessingValue] = useState('');
@@ -59,7 +59,6 @@ const App: React.FC = () => {
     const fetchDiseaseTestMaster = async () => {
       try {
         const token = localStorage.getItem('token'); // Assuming token is stored in localStorage
-        const diseaseTestIds = localStorage.getItem('diseaseTestIds');
 
         const response = await axios.get<ApiResponse>(
           `${config.appURL}/curable/getMetricsById/${diseaseTestIds}`,
@@ -177,23 +176,24 @@ const App: React.FC = () => {
         selectedValues: selectedValue, // Assign the selected value to selectedValues
       };
     });
-
+    const candidateId = localStorage.getItem('candidateId');
     const payload = {
-      description: "Eligibility Metrics",
+      candidateId: Number(candidateId),
+      diseaseTestMasterId: Number(diseaseTestIds),
+      description: "Test Metrics",
       diseaseTestId: 1,
-      eligibilityMetrics: {
+      testMetrics: {
         params: updatedFormData,
       },
       familyMedicalMetrics: null,
       familyMetrics: null,
-      gender: "FEMALE", // You can dynamically adjust this if necessary
       genderValid: true,
       hospitalId: 1,
-      id: 27,
+      id: null,
       medicalMetrics: null,
-      name: "Eligibility Metrics",
+      name: "Test Metrics",
       stage: localStorage.getItem('selectedStage'),
-      testMetrics: null,
+      type: 3,
     };
 
     try {
@@ -210,7 +210,7 @@ const App: React.FC = () => {
       });
 
       console.log('Data submitted successfully!');
-      navigate('/SuccessMessageScreeningFInal');
+      navigate('/SuccessMessageClinicalFInal');
     } catch (error) {
       console.error('Error submitting data:', error);
 
@@ -330,8 +330,8 @@ const App: React.FC = () => {
 
           })}
         <center className="buttons">
-          <button type="button" className="Finish-button">Finish</button>
-          <button type="submit" className="Next-button">Next</button>
+          
+          <button type="submit" className="Finish-button">Finish</button>
         </center>
       </form>
       <div className="powered-container">
