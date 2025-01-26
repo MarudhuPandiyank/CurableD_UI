@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import './ResetPassword.css';
 import LockIcon from '@mui/icons-material/Lock';
 import MailIcon from '@mui/icons-material/Mail';
-
+import config from '../config';  // Import the config file
 const ResetPassword: React.FC = () => {
   const [email, setEmail] = useState('');
   const [newPassword, setNewPassword] = useState(''); // State for new password

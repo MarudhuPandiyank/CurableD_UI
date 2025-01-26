@@ -5,7 +5,7 @@ import MailIcon from '@mui/icons-material/Mail';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
-
+import config from '../config';  // Import the config file
 const Login: React.FC = () => {
   const navigate = useNavigate();
   const [userName, setEmail] = useState('');
@@ -31,9 +31,9 @@ const Login: React.FC = () => {
   const handleSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); // Prevent default form submission
 
-    try {
+    try {  
       const response = await axios.post<AuthResponse>(
-        'http://13.234.4.214:8015/token/authenticate',
+        `${config.gatewayURL}/authenticate`,
         { userName, password }
       );
 
@@ -42,7 +42,7 @@ const Login: React.FC = () => {
         localStorage.setItem('userName', userName);
 
         const authResponse = await axios.get<AuthResponseData>(
-          `http://13.234.4.214:8015/api/curable/authorizeUserRequest/${userName}`,
+          `${config.appURL}/curable/authorizeUserRequest/${userName}`,
           {
             headers: { Authorization: `Bearer ${response.data.token}` },
           }
@@ -69,7 +69,7 @@ const Login: React.FC = () => {
   const handleForgotPassword = async () => {
     try {
       const response = await axios.post(
-        'http://13.234.4.214:8015/token/forgotPassword',
+        `${config.gatewayURL}/forgotPassword`,
         {
           userName,
           password: newPassword,

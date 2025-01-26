@@ -4,7 +4,7 @@ import './HomePage.css';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import Header1 from './Header1';
-
+import config from '../config'; 
 const MedicalomenHealthDetails: React.FC = () => {
   const [selectedHistory, setSelectedHistory] = useState<string>('');
   const [bloodPressure, setBloodPressure] = useState<string>('');
@@ -68,7 +68,7 @@ const navigate = useNavigate();
     try {
       const token = localStorage.getItem('token');
       const response = await axios.post(
-        'http://13.234.4.214:8015/api/curable/createMedicalHistory',
+        `${config.appURL}/curable/createMedicalHistory`,
         payload,{
           headers: {
             Authorization: `Bearer ${token}`,

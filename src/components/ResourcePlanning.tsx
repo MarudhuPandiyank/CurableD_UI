@@ -6,7 +6,7 @@ import Header from './Header';
 import SuccessMessage from './SuccessMessage';
 import ResourceAllocation from './ResourceAllocation';
 import Header1 from './Header1';
-
+import config from '../config'; 
 const ResourcePlanning: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -79,7 +79,7 @@ const ResourcePlanning: React.FC = () => {
     });
   
     try {
-      const response = await axiosInstance.post<string>('http://13.234.4.214:8015/api/curable/newcamp', requestData);
+      const response = await axiosInstance.post<string>(`${config.appURL}/curable/newcamp`, requestData);
   
       if (response.status === 200) {
         navigate('/success-message', {

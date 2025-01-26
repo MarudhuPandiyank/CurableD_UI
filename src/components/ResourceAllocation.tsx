@@ -5,7 +5,7 @@ import Header from './Header';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Select, { MultiValue, GroupBase } from 'react-select';
 import Header1 from './Header1';
-
+import config from '../config'; 
 interface Admin {
   id: number;
   name: string;
@@ -56,7 +56,7 @@ const ResourceAllocation: React.FC = () => {
 
       try {
         const response = await axiosInstance.get<HospitalStaffResponse>(
-          `http://13.234.4.214:8015/api/curable/hospitalstaffdetails/${localStorage.getItem('hospitalId')}`
+          `${config.appURL}/curable/hospitalstaffdetails/${localStorage.getItem('hospitalId')}`
         );
 
         setDropdownData({
@@ -147,7 +147,7 @@ const ResourceAllocation: React.FC = () => {
     };
 
     try {
-      const response = await axiosInstance.post<string>('http://13.234.4.214:8015/api/curable/newcamp', requestDataFinal);
+      const response = await axiosInstance.post<string>(`${config.appURL}/curable/newcamp`, requestDataFinal);
 
       if (response.status === 200) {
         navigate('/success-message', { state: { clickId: response.data } });

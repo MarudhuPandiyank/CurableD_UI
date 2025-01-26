@@ -3,7 +3,7 @@ import Header1 from './Header1';
 import './HomePage.css';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-
+import config from '../config';  // Import the config file
 // Define types for API response
 interface FamilyMedicalParam {
   testName: string;
@@ -35,7 +35,7 @@ function FamilyMedicalDetails() {
           return;
         }
 
-        const response = await axios.get<ApiResponse>(`http://13.234.4.214:8015/api/curable/getMetrics/FAMILY_MEDICAL`, {
+        const response = await axios.get<ApiResponse>(`${config.appURL}/curable/getMetrics/FAMILY_MEDICAL`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -106,7 +106,7 @@ function FamilyMedicalDetails() {
         return;
       }
 
-      await axios.post('http://13.234.4.214:8015/api/curable/candidatehistory', payload, {
+      await axios.post(`${config.appURL}/curable/candidatehistory`, payload, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

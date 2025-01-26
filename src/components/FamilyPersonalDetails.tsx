@@ -3,7 +3,7 @@ import axios from 'axios';
 import './FamilyPersonalDetails.css';
 import { useNavigate } from 'react-router-dom';
 import Header1 from './Header1';
-
+import config from '../config'; 
 interface FamilyMetricsParam {
   testName: string;
   subtestName: string;
@@ -36,7 +36,7 @@ function FamilyPersonalDetails() {
           return;
         }
 
-        const response = await axios.get<ApiResponse>('http://13.234.4.214:8015/api/curable/getMetrics/FAMILY_PERSONAL', {
+        const response = await axios.get<ApiResponse>(`${config.appURL}/curable/getMetrics/FAMILY_PERSONAL`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setFormData(response.data.familyMetrics.params);
@@ -104,7 +104,7 @@ function FamilyPersonalDetails() {
         return;
       }
 
-      await axios.post('http://13.234.4.214:8015/api/curable/candidatehistory', payload, {
+      await axios.post(`${config.appURL}/curable/candidatehistory`, payload, {
         headers: { Authorization: `Bearer ${token}` },
       });
 

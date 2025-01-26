@@ -5,7 +5,7 @@ import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Typography }
 import '../components/OutreachClinicInfo.css';
 import Header from './Header';
 import Header1 from './Header1';
-
+import config from '../config';  // Import the config file
 interface Clinic {
   id: string;
   name: string;
@@ -74,7 +74,7 @@ const OutreachClinicInfo: React.FC = () => {
 
     try {
       const response = await axios.post<ClinicAPIResponse[]>(
-        'http://13.234.4.214:8015/api/curable/activecamp',
+        `${config.appURL}/curable/activecamp`,
         { search: searchInput, userId: 1 },
         { headers: { Authorization: `Bearer ${token}` } }
       );

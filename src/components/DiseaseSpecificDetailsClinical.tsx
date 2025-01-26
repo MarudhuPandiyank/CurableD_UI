@@ -4,6 +4,7 @@ import './HomePage.css';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import Select, { MultiValue } from 'react-select';
+import config from '../config'; 
 
 // Define types for API response
 interface Condition {

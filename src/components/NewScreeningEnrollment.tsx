@@ -3,7 +3,7 @@ import axios from 'axios';
 import Header1 from './Header1';
 import './HomePage.css';
 import './NewScreeningEnrollment.css';
-
+import config from '../config';  // Import the config file
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
 import { useNavigate } from 'react-router-dom';
@@ -11,6 +11,7 @@ import { Calendar } from 'primereact/calendar';
 import 'primereact/resources/themes/saga-blue/theme.css'; // Theme
 import 'primereact/resources/primereact.min.css'; // Core CSS
 import 'primeicons/primeicons.css'; // Icons
+
 const NewScreeningEnrollment: React.FC = () => {
   const navigate = useNavigate();
   const [name, setName] = useState('');
@@ -57,7 +58,7 @@ const NewScreeningEnrollment: React.FC = () => {
     };
 
     try {
-      const response = await axios.post('http://13.234.4.214:8015/api/curable/saveCandidate', payload, {
+      const response = await axios.post(`${config.appURL}/curable/saveCandidate`, payload, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
@@ -102,7 +103,7 @@ const NewScreeningEnrollment: React.FC = () => {
     };
 
     try {
-      const response = await axios.post('http://13.234.4.214:8015/api/curable/candidate', payload, {
+      const response = await axios.post(`${config.appURL}/curable/candidate`, payload, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,

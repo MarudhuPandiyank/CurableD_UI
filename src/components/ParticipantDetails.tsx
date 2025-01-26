@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Header1 from './Header1';
 import './ParticipantDetails.css';
 import axios from 'axios';
+import config from '../config'; 
 interface Habit {
   habit: string;
   habitType: string;
@@ -90,7 +91,7 @@ const ParticipantDetails: React.FC = () => {
     try {
       setIsLoading(true);
 
-      const response = await fetch('http://13.234.4.214:8015/api/curable/candidate', {
+      const response = await fetch(`${config.appURL}/curable/candidate`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -186,7 +187,7 @@ const ParticipantDetails: React.FC = () => {
       }
 
       const response = await axios.get<string[]>(
-        `http://13.234.4.214:8015/api/curable/getHabitTypes/${habit}`,
+        `${config.appURL}/curable/getHabitTypes/${habit}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

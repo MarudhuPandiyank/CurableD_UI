@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./ProfileScreen.css";
 import './HomePage.css'; // Assuming you are keeping it for other styles
-
+import config from '../config';  // Import the config file
 interface ProfileData {
   gender: string;
   id: number;
@@ -32,7 +32,7 @@ const ProfilePage: React.FC = () => {
 
       try {
         const response = await axios.get<ProfileData>(
-          "http://13.234.4.214:8015/api/curable/hospitalemployee/1",
+          "${config.appURL}/curable/hospitalemployee/1",
           {
             headers: {
               "Content-Type": "application/json",
@@ -97,7 +97,7 @@ const ProfilePage: React.FC = () => {
 
     try {
       const response = await axios.post(
-        "http://13.234.4.214:8015/api/curable/hospitalemployee",
+        "${config.appURL}/curable/hospitalemployee",
         payload,
         {
           headers: {

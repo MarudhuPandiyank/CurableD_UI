@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronLeft, faUserCircle } from '@fortawesome/free-solid-svg-icons';
 import './ResponsiveCancerInstitute.css';
-
+import config from '../config';  // Import the config file
 const Header: React.FC = () => {
   const navigate = useNavigate();
   const [isRightSidebarOpen, setIsRightSidebarOpen] = useState(false);

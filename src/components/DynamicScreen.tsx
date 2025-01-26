@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Header1 from './Header1';
 import Select from 'react-select';
-
+import config from '../config'; 
 interface Condition {
   enabledField: string;
   triggerValue: string;
@@ -62,7 +62,7 @@ const App: React.FC = () => {
         const diseaseTestIds = localStorage.getItem('diseaseTestIds');
 
         const response = await axios.get<ApiResponse>(
-          `http://13.234.4.214:8015/api/curable/getMetricsById/${diseaseTestIds}`,
+          `${config.appURL}/curable/getMetricsById/${diseaseTestIds}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -203,7 +203,7 @@ const App: React.FC = () => {
         return;
       }
 
-      await axios.post('http://13.234.4.214:8015/api/curable/candidatehistory', payload, {
+      await axios.post(`${config.appURL}/curable/candidatehistory`, payload, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

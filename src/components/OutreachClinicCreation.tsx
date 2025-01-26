@@ -8,7 +8,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { newDate } from 'react-datepicker/dist/date_utils';
 import ResourcePlanning from './ResourcePlanning';
 import Header1 from './Header1';
-
+import config from '../config'; 
 import { Calendar } from 'primereact/calendar';
 import 'primereact/resources/themes/saga-blue/theme.css'; // Theme
 import 'primereact/resources/primereact.min.css'; // Core CSS
@@ -76,7 +76,7 @@ const OutreachClinicCreation: React.FC = () => {
             }
 
             try {
-                const response = await axios.get<StateData[]>('http://13.234.4.214:8015/api/curable/statemaster', {
+                const response = await axios.get<StateData[]>(`${config.appURL}/curable/statemaster`, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
@@ -107,7 +107,7 @@ const OutreachClinicCreation: React.FC = () => {
     
             try {
                 const response = await axios.get<StateData[]>(
-                    `http://13.234.4.214:8015/api/curable/districtmaster/statemaster/${selectedStateObj.id}`,
+                    `${config.appURL}/curable/districtmaster/statemaster/${selectedStateObj.id}`,
                     {
                         headers: {
                             Authorization: `Bearer ${token}`,
@@ -137,7 +137,7 @@ const OutreachClinicCreation: React.FC = () => {
             
             try {
                 const response = await axios.get<TalukData[]>(
-                    `http://13.234.4.214:8015/api/curable/taluqmaster/districtmaster/${selectedDistrictObj.id}`,
+                    `${config.appURL}/curable/taluqmaster/districtmaster/${selectedDistrictObj.id}`,
                     {
                         headers: {
                             Authorization: `Bearer ${token}`,
@@ -166,7 +166,7 @@ const OutreachClinicCreation: React.FC = () => {
     
             try {
                 const response = await axios.get<PanchayatData[]>(
-                    `http://13.234.4.214:8015/api/curable/panchayatmaster/taluqmaster/${selectedTalukObj.id}`,
+                    `${config.appURL}/curable/panchayatmaster/taluqmaster/${selectedTalukObj.id}`,
                     {
                         headers: {
                             Authorization: `Bearer ${token}`,

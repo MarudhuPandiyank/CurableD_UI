@@ -4,7 +4,7 @@ import Header1 from './Header1';
 import './HomePage.css';
 import axios from 'axios';
 import './DiseaseSpecificDetailsClinic.css';
-
+import config from '../config'; 
 // Define types for API response
 interface FamilyMetricsParam {
   testName: string;
@@ -46,7 +46,7 @@ function DiseaseSpecificDetailsScreening() {
         }
 
         const response = await axios.get<ApiResponse>(
-          `http://13.234.4.214:8015/api/curable/getMetricsById/${diseaseTestIds}`,
+          `${config.appURL}/curable/getMetricsById/${diseaseTestIds}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -172,7 +172,7 @@ function DiseaseSpecificDetailsScreening() {
       }
 
       await axios.post(
-        'http://13.234.4.214:8015/api/curable/candidatehistory',
+        `${config.appURL}/curable/candidatehistory`,
         payload,
         {
           headers: {

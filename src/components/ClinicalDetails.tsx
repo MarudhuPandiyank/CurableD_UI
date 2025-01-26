@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header1 from './Header1';
-
+import config from '../config'; 
 const ClinicalDetails: React.FC = () => {
   const [houseType, setHouseType] = useState<string>('');
   const [selectedToggle1, setSelectedToggle1] = useState<string | null>(null);
@@ -57,7 +57,7 @@ const ClinicalDetails: React.FC = () => {
     try {
       setIsLoading(true);
 
-      const response = await fetch('http://13.234.4.214:8015/api/curable/candidate', {
+      const response = await fetch(`${config.appURL}/curable/candidate`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

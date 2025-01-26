@@ -4,6 +4,7 @@ import axios from "axios";
 import "./PatientSearchPage.css";
 import Header from "../Header";
 import Header1 from "../Header1";
+import config from '../../config'; 
 
 interface Patient {
   id: number;
@@ -44,7 +45,7 @@ const ClinicSearchPage: React.FC = () => {
 
     try {
       const response = await axios.post<Patient[]>(
-        "http://13.234.4.214:8015/api/curable/getCandidatesList",
+        `${config.appURL}/curable/getCandidatesList`,
         {
           hospitalId: Number(hospitalId),
           search: searchQuery,
