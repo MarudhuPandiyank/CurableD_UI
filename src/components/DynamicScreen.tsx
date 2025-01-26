@@ -2,8 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Header1 from './Header1';
-import Select from 'react-select';
+import Select, { MultiValue } from 'react-select';
 import config from '../config'; 
+
 interface Condition {
   enabledField: string;
   triggerValue: string;
@@ -35,26 +36,12 @@ const App: React.FC = () => {
   const [processingTestName, setProcessingTestName] = useState('');
   const [processingValue, setProcessingValue] = useState('');
   const [dependentList, setDependentList] = useState<string[]>([]);
-  const [isDependent, setIsDependent] = useState(false);
+  const [isDependent, setIsDependent] = useState<Record<string, boolean>>({}); // Updated this line
   const [formValues, setFormValues] = useState<Record<string, string[]>>({}); // Store selected values for each test
   const [multiParam, setMultiParam] = useState<readonly ColourOption[]>([
     { value: '', label: 'Select values' } // Default option
   ]);
-  // let multiParam: readonly ColourOption[]=[
-  //   { value: 'ocean', label: 'Ocean'},
-  // ];
-  //  const colourOptions: readonly ColourOption[] = [
-  //   { value: 'ocean', label: 'Ocean'},
-  //   { value: 'blue', label: 'Blue' },
-  //   { value: 'purple', label: 'Purple'},
-  //   { value: 'red', label: 'Red' },
-  //   { value: 'orange', label: 'Orange' },
-  //   { value: 'yellow', label: 'Yellow' },
-  //   { value: 'green', label: 'Green'},
-  //   { value: 'forest', label: 'Forest'},
-  //   { value: 'slate', label: 'Slate'},
-  //   { value: 'silver', label: 'Silver'},
-  // ];
+ 
   useEffect(() => {
     const fetchDiseaseTestMaster = async () => {
       try {
@@ -73,7 +60,7 @@ const App: React.FC = () => {
           (field: Param) => field.testName !== 'Referred for'
         );
         console.log('filteredData',filteredData);
-        const mappedData: ColourOption[]  = filteredData.map((drp) => ({
+        const mappedData: ColourOption[] = filteredData.map((drp) => ({
           value: drp.testName,  // Assuming 'color' is the relevant property in filteredData
           label: drp.testName,  // You can adjust this if needed
         }));
@@ -82,9 +69,7 @@ const App: React.FC = () => {
         setParamsObject({ params: filteredData }); // Store dynamic form fields based on the API response
 
         console.log('Disease Test Master Data:', response.data);
-        // if(response.data){
-        //   response.data['testMetrics']['params'].map
-        // }
+       
       } catch (error) {
         console.error('Error fetching disease test master data:', error);
       }
@@ -154,16 +139,21 @@ const App: React.FC = () => {
 
     const triggerValues = testNameTriggerValueMap.get(testName) || [];
     if (triggerValues.includes(valueToSet)) {
-      setIsDependent(true);
+      setIsDependent((prevState) => ({
+        ...prevState,
+        [testName]: true,
+      }));
     } else {
       const filteredDependentList = dependentList.filter(
-        (item) => !updatedDependentList.includes(item)
+        (item) => !updatedDependentList.includes(item) || item === testName
       );
       setDependentList(filteredDependentList);
-      setIsDependent(true);
+      setIsDependent((prevState) => ({
+        ...prevState,
+        [testName]: false,
+      }));
     }
   };
-
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -193,8 +183,8 @@ const App: React.FC = () => {
       medicalMetrics: null,
       name: "Test Metrics",
       stage: localStorage.getItem('selectedStage'),
-      type: 3,
-    };
+      type: 3,
+    };
 
     try {
       const token = localStorage.getItem('token');
@@ -217,120 +207,80 @@ const App: React.FC = () => {
     }
   };
 
-
   const patientId = localStorage.getItem('patientId');
   const patientName = localStorage.getItem('patientName');
   const registrationId = localStorage.getItem('registrationId');
   const ptName = localStorage.getItem('ptName');
+
+  const renderField = (param: Param, key: string) => {
+    return (
+      <div key={key} className="form-group">
+        <p>{param.testName}</p>
+        {param.valueType === 'SingleSelect' && (
+          <select
+            onChange={e =>
+              handleSelectionChange(param.testName, e.target.value) // Updated this line
+            }
+            defaultValue=""
+          >
+            <option value="" disabled>
+              Select a value
+            </option>
+            {param.values.map(value => (
+              <option key={value} value={value}>
+                {value}
+              </option>
+            ))}
+          </select>
+        )}
+        {param.valueType === 'Multi Select' && (
+          <Select
+            isMulti
+            name={param.testName}
+            options={multiParam}
+            onChange={(option: MultiValue<ColourOption>) => handleSelectionChange(param.testName, option.map(opt => opt.value))} // Updated this line
+            className="basic-multi-select"
+          />
+        )}
+        {param.valueType === 'Input' && (
+          <input type="text" placeholder="Enter value" />
+        )}
+      </div>
+    );
+  };
+
+  const getTestFieldsInline = () => {
+    return independentList.map((testName) => {
+      const param = paramsMap.get(testName);
+      if (!param) return null;
+
+      const dependentFields = (testNameWithEnabledFieldMap.get(testName) || [])
+        .map((dependentTestName) => {
+          const dependentParam = paramsMap.get(dependentTestName);
+          if (!dependentParam) return null;
+          return renderField(dependentParam, dependentTestName);
+        });
+
+      return (
+        <div key={testName} className="form-inline-group">
+          {renderField(param, testName)}
+          {isDependent[testName] && dependentFields}
+        </div>
+      );
+    });
+  };
+
   return (
     <div className="container2">
       <Header1 />
-
       <h1 style={{ color: 'darkblue' }}>Clinical</h1>
       <div className="participant-container">
         <p>Participant: {ptName}</p>
         <p>ID: {registrationId}</p>
       </div>
       <form className="clinic-form" onSubmit={handleSubmit}>
-        {independentList.map(testName => {
-          const param = paramsMap.get(testName);
-          return (
-            param && (
-              <div key={testName} className="form-group">
-                <p>{param.testName}</p>
-                {param.valueType === 'SingleSelect' && (
-                  <select
-                    onChange={e =>
-                      handleSelectionChange(testName, e.target.value)
-                    }
-                    defaultValue=""
-                  >
-                    <option value="" disabled>
-                      Select a value
-                    </option>
-                    {param.values.map(value => (
-                      <option key={value} value={value} className="form-group">
-                        {value}
-                      </option>
-                    ))}
-                  </select>
-                )}
-                {param.valueType === 'Multi Select' && (
-                  <select multiple defaultValue={[]}>
-                    <option value="" disabled>
-                      Select values
-                    </option>
-                    {param.values.map(value => (
-                      <option key={value} value={value} className="form-group">
-                        {value}
-                      </option>
-                    ))}
-                  </select>
-                )}
-                {param.valueType === 'Input' && (
-                  <input type="text" placeholder="Enter value" />
-                )}
-              </div>
-            )
-          );
-        })}
-        {isDependent &&
-          dependentList.map(testName => {
-            const param = paramsMap.get(testName);
-            return (
-              param && (
-                <div key={testName} className="form-group">
-                  <h3>{param.testName}</h3>
-                  {param.valueType === 'SingleSelect' && (
-                    <select
-                      onChange={e =>
-                        handleSelectionChange(testName, e.target.value)
-                      }
-                      defaultValue=""
-                    >
-                      <option value="" disabled>
-                        Select a value
-                      </option>
-                      {param.values.map(value => (
-                        <option key={value} value={value}>
-                          {value}
-                        </option>
-                      ))}
-                    </select>
-                  )}
-                  {param.valueType === 'Multi Select' && (
-                    
-                    // <select multiple value={selectedValues} onChange={handleMulSelectionChange} defaultValue={[]}>
-                    //   <option value="" disabled>
-                    //     Select values
-                    //   </option>
-                    //   {param.values.map(value => (
-                    //     <option key={value} value={value}  className="form-group">
-                    //       {value}
-                    //     </option>
-                    //   ))}
-                    // </select>
-                    <Select
-                     
-                      isMulti
-                      name="colors"
-                      
-                      // options={param.values}
-                      options={multiParam}
-                      className="basic-multi-select"
-                      // classNamePrefix="select"
-                    />
-                  )}
-                  {param.valueType === 'Input' && (
-                    <input type="text" placeholder="Enter value" className="form-group" />
-                  )}
-                </div>
-              )
-            );
-
-          })}
+        {getTestFieldsInline()}
         <center className="buttons">
-          
           <button type="submit" className="Finish-button">Finish</button>
         </center>
       </form>
@@ -338,8 +288,6 @@ const App: React.FC = () => {
         <p className="powered-by">Powered By Curable</p>
         <img src="/assets/Curable logo - rectangle with black text.png" alt="Curable Logo" className="curable-logo" />
       </div>
-
-
     </div>
   );
 };
