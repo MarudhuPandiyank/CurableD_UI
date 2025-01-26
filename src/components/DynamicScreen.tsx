@@ -1,50 +1,44 @@
-import React, { useState, useEffect } from 'react';
-import Select, { MultiValue } from 'react-select';
-import './HomePage.css';
-import axios from 'axios';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-
-interface SelectOption {
-  value: string;
-  label: string;
-}
+import axios from 'axios';
+import Header1 from './Header1';
 
 interface Condition {
   enabledField: string;
   triggerValue: string;
 }
 
-interface FamilyMetricsParam {
+interface Param {
   testName: string;
   subtestName?: string;
   valueType: string;
   values: string[];
+  selectedValues: string[];
   condition?: Condition[];
-  selectedValues: (string | SelectOption | SelectOption[])[];
 }
 
 interface ApiResponse {
+  id: number;
   testMetrics: {
-    params: FamilyMetricsParam[];
+    params: Param[];
   };
 }
 
-const DynamicScreen: React.FC = () => {
-  const [formData, setFormData] = useState<FamilyMetricsParam[]>([]);
-  const [selectedValues, setSelectedValues] = useState<{ [key: string]: string | MultiValue<SelectOption> }>({});
-  const [error, setError] = useState<string | null>(null);
+const App: React.FC = () => {
   const navigate = useNavigate();
+
+  const [paramsObject, setParamsObject] = useState<{ params: Param[] }>({ params: [] });
+  const [processingTestName, setProcessingTestName] = useState('');
+  const [processingValue, setProcessingValue] = useState('');
+  const [dependentList, setDependentList] = useState<string[]>([]);
+  const [isDependent, setIsDependent] = useState(false);
+  const [formValues, setFormValues] = useState<Record<string, string[]>>({}); // Store selected values for each test
 
   useEffect(() => {
     const fetchDiseaseTestMaster = async () => {
       try {
-        const token = localStorage.getItem('token');
+        const token = localStorage.getItem('token'); // Assuming token is stored in localStorage
         const diseaseTestIds = localStorage.getItem('diseaseTestIds');
-
-        if (!token) {
-          setError('Token is missing. Please log in again.');
-          return;
-        }
 
         const response = await axios.get<ApiResponse>(
           `http://13.234.4.214:8015/api/curable/getMetricsById/${diseaseTestIds}`,
@@ -55,154 +49,257 @@ const DynamicScreen: React.FC = () => {
           }
         );
 
-        setFormData(response.data.testMetrics.params);
+        const filteredData = response.data.testMetrics.params.filter(
+          (field: Param) => field.testName !== 'Referred for'
+        );
+        setParamsObject({ params: filteredData }); // Store dynamic form fields based on the API response
+
         console.log('Disease Test Master Data:', response.data);
       } catch (error) {
         console.error('Error fetching disease test master data:', error);
-        setError('Failed to load disease test data. Please try again.');
       }
     };
 
     fetchDiseaseTestMaster();
   }, []);
 
-  const handleChange = (fieldName: string, value: string | MultiValue<SelectOption>) => {
-    setSelectedValues((prevState) => ({
-      ...prevState,
-      [fieldName]: value,
+  const listOfTestNames = paramsObject.params.map(param => param.testName);
+
+  const listOfEnabledFields = paramsObject.params
+    .filter(param => param.condition)
+    .flatMap(param => param.condition!.map(cond => cond.enabledField));
+
+  const independentList = listOfTestNames.filter(
+    testName => !listOfEnabledFields.includes(testName)
+  );
+
+  const paramsMap = new Map<string, Param>();
+  paramsObject.params.forEach(param => paramsMap.set(param.testName, param));
+
+  const testNameWithEnabledFieldMap = new Map<string, string[]>();
+  paramsObject.params.forEach(param => {
+    if (param.condition) {
+      param.condition.forEach(cond => {
+        if (!testNameWithEnabledFieldMap.has(param.testName)) {
+          testNameWithEnabledFieldMap.set(param.testName, []);
+        }
+        testNameWithEnabledFieldMap.get(param.testName)!.push(cond.enabledField);
+      });
+    }
+  });
+
+  const testNameTriggerValueMap = new Map<string, string[]>();
+  paramsObject.params.forEach(param => {
+    if (param.condition) {
+      param.condition.forEach(cond => {
+        if (!testNameTriggerValueMap.has(param.testName)) {
+          testNameTriggerValueMap.set(param.testName, []);
+        }
+        testNameTriggerValueMap.get(param.testName)!.push(cond.triggerValue);
+      });
+    }
+  });
+
+  const handleSelectionChange = (testName: string, selectedValue: string | string[]) => {
+    setProcessingTestName(testName);
+  
+    // If selectedValue is an array, take the first value or join them into a string
+    const valueToSet = Array.isArray(selectedValue) ? selectedValue[0] : selectedValue;
+  
+    // Set the value
+    setProcessingValue(valueToSet);
+  
+    // Update formValues with the selected value
+    setFormValues((prevFormValues) => ({
+      ...prevFormValues,
+      [testName]: Array.isArray(selectedValue) ? selectedValue : [selectedValue], // Ensure selectedValue is always an array
     }));
-
-    // Update the selected values in formData
-    setFormData((prevFormData) =>
-      prevFormData.map((field) =>
-        field.testName === fieldName
-          ? {
-              ...field,
-              selectedValues: Array.isArray(value)
-                ? value.map((v) => (typeof v === 'object' ? v.value : v))
-                : [value],
-            }
-          : field
-      )
-    );
+  
+    let updatedDependentList: string[] = [];
+    if (testNameWithEnabledFieldMap.has(testName)) {
+      updatedDependentList = testNameWithEnabledFieldMap.get(testName) || [];
+      const mergedDependentList = Array.from(new Set([...dependentList, ...updatedDependentList]));
+      setDependentList(mergedDependentList);
+    }
+  
+    const triggerValues = testNameTriggerValueMap.get(testName) || [];
+    if (triggerValues.includes(valueToSet)) {
+      setIsDependent(true);
+    } else {
+      const filteredDependentList = dependentList.filter(
+        (item) => !updatedDependentList.includes(item)
+      );
+      setDependentList(filteredDependentList);
+      setIsDependent(true);
+    }
   };
-
+  
+  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
+  
+    // Construct the body of the POST request to match the desired structure
+    const updatedFormData = paramsObject.params.map((field) => {
+      const selectedValue = formValues[field.testName] || []; // Use the selected value from formValues
+      return {
+        ...field,
+        selectedValues: selectedValue, // Assign the selected value to selectedValues
+      };
+    });
+  
     const payload = {
-      params: formData.map((field) => ({
-        testName: field.testName,
-        subtestName: field.subtestName,
-        selectedValues: field.selectedValues,
-      })),
+      description: "Eligibility Metrics",
+      diseaseTestId: 1,
+      eligibilityMetrics: {
+        params: updatedFormData,
+      },
+      familyMedicalMetrics: null,
+      familyMetrics: null,
+      gender: "FEMALE", // You can dynamically adjust this if necessary
+      genderValid: true,
+      hospitalId: 1,
+      id: 27,
+      medicalMetrics: null,
+      name: "Eligibility Metrics",
+      stage: localStorage.getItem('selectedStage'),
+      testMetrics: null,
     };
-
+  
     try {
       const token = localStorage.getItem('token');
       if (!token) {
-        setError('Token is missing. Please log in again.');
+       
         return;
       }
-
+  
       await axios.post('http://13.234.4.214:8015/api/curable/candidatehistory', payload, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-
+  
       console.log('Data submitted successfully!');
-      navigate('/SuccessMessageScreeningFInal');
+      navigate('/ParticipantDetails');
     } catch (error) {
       console.error('Error submitting data:', error);
-      setError('Failed to submit data. Please try again.');
+    
     }
   };
-
+  
+  
+  const patientId = localStorage.getItem('patientId');
+  const patientName = localStorage.getItem('patientName');
+  const registrationId = localStorage.getItem('registrationId');
+  const ptName = localStorage.getItem('ptName');
   return (
     <div className="container2">
-      <p>Disease Specific Details</p>
-      <div className="participant-container">
-        <p>Participant: {localStorage.getItem('ptName')}</p>
-        <p>ID: {localStorage.getItem('registrationId')}</p>
-      </div>
-
-      <form className="clinic-form" onSubmit={handleSubmit}>
-        {formData.map((field) => {
-          if (field.valueType === 'SingleSelect') {
-            return (
-              <div key={field.testName}>
-                <label>{field.testName}:</label>
+       <Header1 />
+     
+     <h1 style={{ color: 'darkblue' }}>Clinical</h1>
+     <div className="participant-container">
+       <p>Participant: {ptName}</p>
+       <p>ID: {registrationId}</p>
+     </div>
+     <form className="clinic-form" onSubmit={handleSubmit}>
+      {independentList.map(testName => {
+        const param = paramsMap.get(testName);
+        return (
+          param && (
+            <div key={testName} className="form-group">
+              <h3>{param.testName}</h3>
+              {param.valueType === 'SingleSelect' && (
                 <select
-                  value={(selectedValues[field.testName] as string) || ''}
-                  onChange={(e) => handleChange(field.testName, e.target.value)}
+                  onChange={e =>
+                    handleSelectionChange(testName, e.target.value)
+                  }
+                  defaultValue=""
                 >
-                  <option value="">Select</option>
-                  {field.values.map((value) => (
+                  <option value="" disabled>
+                    Select a value
+                  </option>
+                  {param.values.map(value => (
                     <option key={value} value={value}>
                       {value}
                     </option>
                   ))}
                 </select>
-
-                {/* Render dynamic fields based on conditions */}
-                {field.condition?.map((condition) => (
-                  selectedValues[field.testName] === condition.triggerValue && (
-                    <div key={condition.enabledField}>
-                      <label>{condition.enabledField}:</label>
-                      <Select
-                        isMulti
-                        name={condition.enabledField}
-                        value={(selectedValues[condition.enabledField] as MultiValue<SelectOption>) || []}
-                        options={
-                          formData
-                            .find((data) => data.testName === condition.enabledField)
-                            ?.values.map((value) => ({
-                              value,
-                              label: value,
-                            })) || []
-                        }
-                        onChange={(selectedOptions) =>
-                          handleChange(condition.enabledField, selectedOptions)
-                        }
-                        placeholder="Select conditions"
-                      />
-                    </div>
-                  )
-                ))}
+              )}
+              {param.valueType === 'Multi Select' && (
+                <select multiple defaultValue={[]}>
+                  <option value="" disabled>
+                    Select values
+                  </option>
+                  {param.values.map(value => (
+                    <option key={value} value={value}>
+                      {value}
+                    </option>
+                  ))}
+                </select>
+              )}
+              {param.valueType === 'Input' && (
+                <input type="text" placeholder="Enter value" />
+              )}
+            </div>
+          )
+        );
+      })}
+      {isDependent &&
+        dependentList.map(testName => {
+          const param = paramsMap.get(testName);
+          return (
+            param && (
+              <div key={testName} className="form-group">
+                <h3>{param.testName}</h3>
+                {param.valueType === 'SingleSelect' && (
+                  <select
+                    onChange={e =>
+                      handleSelectionChange(testName, e.target.value)
+                    }
+                    defaultValue=""
+                  >
+                    <option value="" disabled>
+                      Select a value
+                    </option>
+                    {param.values.map(value => (
+                      <option key={value} value={value}>
+                        {value}
+                      </option>
+                    ))}
+                  </select>
+                )}
+                {param.valueType === 'Multi Select' && (
+                  <select multiple defaultValue={[]}>
+                    <option value="" disabled>
+                      Select values
+                    </option>
+                    {param.values.map(value => (
+                      <option key={value} value={value}>
+                        {value}
+                      </option>
+                    ))}
+                  </select>
+                )}
+                {param.valueType === 'Input' && (
+                  <input type="text" placeholder="Enter value" className="form-group" />
+                )}
               </div>
-            );
-          }
-          if (field.valueType === 'Input') {
-            return (
-              <div key={field.testName}>
-                <label>{field.testName}:</label>
-                <input
-                  type="text"
-                  value={(selectedValues[field.testName] as string) || ''}
-                  onChange={(e) => handleChange(field.testName, e.target.value)}
-                />
-              </div>
-            );
-          }
-          return null;
+            )
+          );
+          
         })}
-        <center className="buttons">
-          <button type="submit" className="Finish-button">
-            Finish
-          </button>
+          <center className="buttons">
+          <button type="button" className="Finish-button">Finish</button>
+          <button type="submit" className="Next-button">Next</button>
         </center>
       </form>
-      <div className="powered-container">
+        <div className="powered-container">
         <p className="powered-by">Powered By Curable</p>
-        <img
-          src="/assets/Curable logo - rectangle with black text.png"
-          alt="Curable Logo"
-          className="curable-logo"
-        />
+        <img src="/assets/Curable logo - rectangle with black text.png" alt="Curable Logo" className="curable-logo" />
       </div>
+   
+   
     </div>
   );
 };
 
-export default DynamicScreen;
+export default App;
