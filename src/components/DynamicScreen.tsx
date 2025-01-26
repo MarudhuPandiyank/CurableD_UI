@@ -237,7 +237,7 @@ const App: React.FC = () => {
           return (
             param && (
               <div key={testName} className="form-group">
-                <h3>{param.testName}</h3>
+                <p>{param.testName}</p>
                 {param.valueType === 'SingleSelect' && (
                   <select
                     onChange={e =>
