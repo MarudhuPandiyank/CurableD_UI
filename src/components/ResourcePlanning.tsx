@@ -155,13 +155,18 @@ const ResourcePlanning: React.FC = () => {
           onChange={handleChange}
           //required
         />
-  
-        <center>
-          <button type="button" className="allocate-button" onClick={handleAllocateResources}>Allocate Resources</button>
-          <button type="submit" className="submit-button1" disabled={loading}>
-            {loading ? 'Submitting...' : 'Submit'}
-          </button>
-        </center>
+   <center>
+            <div className="buttons">
+              <button
+                type="button"
+                className="Finish-extrawidtgh-button"
+                onClick={handleAllocateResources}>Allocate Resources</button>
+              <button type="submit" className="Next-extrawidtgh-button">
+              {loading ? 'Submitting...' : 'Submit'}
+              </button>
+            </div>
+          </center>
+      
       </form>
     </div>
   );

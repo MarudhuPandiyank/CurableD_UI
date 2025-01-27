@@ -201,15 +201,16 @@ const FamilyMedicalDetails: React.FC = () => {
                 ))}
               </div>
             )}
+            <button type="button" className="Next-button" onClick={handleAddMember}>
+            Add Member
+          </button>
           </div>
         ))}
 
         <center className="buttons">
-          <button type="button" className="Next-button" onClick={handleAddMember}>
-            Add Member
-          </button>
+          
           <button type="submit" className="Next-button">
-            Next
+            Finish
           </button>
         </center>
       </form>

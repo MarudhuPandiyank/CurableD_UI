@@ -242,26 +242,26 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     color: #333; /* Text color */
   }
   .owned-active {
-    background-color: #28a745; /* Green for Owned */
-    color: white;
-    border-color: #28a745;
+    background-color: #d774ad; /* Green for Owned */
+    color: black;
+    border-color: #d774ad;
   }
   
   .rental-active {
-    background-color: #007bff; /* Blue for Rental */
+    background-color: #d774ad; /* Blue for Rental */
     color: white;
-    border-color: #007bff;
+    border-color: #d774ad ;
   }
   /* Specific styling when 'Yes' is selected */
   .yes-active {
-    background-color: green;
+    background-color: #d774ad;
     color: white;
   }
 
   
   /* Specific styling when 'No' is selected */
   .no-active {
-    background-color: red;
+    background-color: #d774ad;
     color: white;
   }
   
@@ -354,10 +354,38 @@ input[type="date"] {
   font-size: 16px;
   cursor: pointer;
   transition: all 0.3s ease;
+ 
 }
 
 .Finish-button:hover {
   background-color: #d774ad; /* Darker pink on hover */
+}
+
+.Finish-extrawidtgh-button {
+  padding: 10px 50px;
+  border: none;
+  background-color: #d774ad; /* Pink background for 'Next' */
+  color: white; /* White text color */
+  border-radius: 10px; /* Rounded corners */
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 200px !important;
+  height:60px !important;
+ 
+}
+
+.Next-extrawidtgh-button {
+  padding: 10px 50px;
+  border: 2px solid #d774ad; /* Pink border color */
+  background-color: white; /* White background for 'Finish' */
+  color: #d774ad; /* Pink text color */
+  border-radius: 10px; /* Rounded corners */
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 200px !important;
+  height:60px !important;
 }
 /* ------------------------- */
 .social-habits-container {

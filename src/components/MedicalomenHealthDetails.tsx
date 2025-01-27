@@ -117,55 +117,76 @@ const navigate = useNavigate();
             <option value="History2">History 2</option>
           </select>
 
-          <label>Blood Pressure:</label>
-          <input
-            type="text"
-            placeholder="Enter Blood Pressure"
-            value={bloodPressure}
-            onChange={(e) => setBloodPressure(e.target.value)}
-          />
+          <div className="form-group">
+  <label>Blood Pressure:</label>
+  <input
+    type="text"
+    placeholder="Enter Blood Pressure"
+    value={bloodPressure}
+    onChange={(e) => {
+      // Allow only numeric input, or you can extend the logic to allow special characters like '/' or '-'
+      const value = e.target.value.replace(/[^0-9-]/g, '');
+      setBloodPressure(value);
+    }}
+  />
 
-          <label>Pulse Rate:</label>
-          <input
-            type="text"
-            placeholder="Enter Pulse Rate"
-            value={pulseRate}
-            onChange={(e) => setPulseRate(e.target.value)}
-          />
+  <label>Pulse Rate:</label>
+  <input
+    type="text"
+    placeholder="Enter Pulse Rate"
+    value={pulseRate}
+    onChange={(e) => {
+      // Allow only numeric input
+      const value = e.target.value.replace(/[^0-9]/g, '');
+      setPulseRate(value);
+    }}
+  />
 
-          <label>Weight (Kgs):</label>
-          <input
-            type="text"
-            placeholder="Enter Weight (Kgs)"
-            value={weight}
-            onChange={(e) => setWeight(e.target.value)}
-          />
+  <label>Weight (Kgs):</label>
+  <input
+    type="text"
+    placeholder="Enter Weight (Kgs)"
+    value={weight}
+    onChange={(e) => {
+      // Allow only numeric input for weight
+      const value = e.target.value.replace(/[^0-9.]/g, ''); // Allow numbers and decimal points
+      setWeight(value);
+    }}
+  />
+</div>
+
 
           <label>Previous History of Surgery:</label>
           <div className="toggle-group">
             <button
               type="button"
-              className={`toggle-btn ${selectedToggle === 'yes' ? 'yes-active' : ''}`}
+               className={`gender-btn ${selectedToggle === 'yes' ? 'yes-active' : ''}`}
               onClick={() => toggleOption('yes')}
             >
               Yes
             </button>
             <button
               type="button"
-              className={`toggle-btn ${selectedToggle === 'no' ? 'no-active' : ''}`}
+               className={`gender-btn ${selectedToggle === 'no' ? 'no-active' : ''}`}
               onClick={() => toggleOption('no')}
             >
               No
             </button>
           </div>
 
-          <label>Height (cms):</label>
-          <input
-            type="text"
-            placeholder="Enter Height (cms)"
-            value={height}
-            onChange={(e) => setHeight(e.target.value)}
-          />
+          <div className="form-group">
+  <label>Height (cms):</label>
+  <input
+    type="text"
+    placeholder="Enter Height (cms)"
+    value={height}
+    onChange={(e) => {
+      // Allow only numeric input for height
+      const value = e.target.value.replace(/[^0-9]/g, ''); // Remove non-numeric characters
+      setHeight(value);
+    }}
+  />
+</div>
 
           <label>SpO2:</label>
           <input
@@ -239,21 +260,33 @@ const navigate = useNavigate();
             onChange={(e) => setTotalPregnancies(e.target.value)}
           />
 
-          <label>Age at First Child:</label>
-          <input
-            type="text"
-            placeholder="Enter Age at First Child"
-            value={ageAtFirstChild}
-            onChange={(e) => setAgeAtFirstChild(e.target.value)}
-          />
+<div className="form-group">
+  <label>Age at First Child:</label>
+  <input
+    type="text"
+    placeholder="Enter Age at First Child"
+    value={ageAtFirstChild}
+    onChange={(e) => {
+      // Allow only numeric input for age
+      const value = e.target.value.replace(/[^0-9]/g, ''); // Remove non-numeric characters
+      setAgeAtFirstChild(value);
+    }}
+  />
+</div>
 
-          <label>Age at Last Child:</label>
-          <input
-            type="text"
-            placeholder="Enter Age of Last Child"
-            value={ageAtLastChild}
-            onChange={(e) => setAgeAtLastChild(e.target.value)}
-          />
+<div className="form-group">
+  <label>Age at Last Child:</label>
+  <input
+    type="text"
+    placeholder="Enter Age of Last Child"
+    value={ageAtLastChild}
+    onChange={(e) => {
+      // Allow only numeric input for age
+      const value = e.target.value.replace(/[^0-9]/g, ''); // Remove non-numeric characters
+      setAgeAtLastChild(value);
+    }}
+  />
+</div>
 
           <label>Are You Currently Pregnant?</label>
           <div className="toggle-group">

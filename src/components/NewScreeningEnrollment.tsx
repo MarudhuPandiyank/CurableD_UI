@@ -179,18 +179,23 @@ const NewScreeningEnrollment: React.FC = () => {
           </div>
 
           <div className="form-group">
-            <label style={{ color: 'darkblue' }}>Mobile Number:</label>
-            <input
-              type="text"
-              inputMode="numeric" // Opens the numeric keyboard on mobile devices
-              pattern="[0-9]*" // Ensures only numeric input
-              placeholder="Enter Mobile Number"
-              value={mobile}
-              onChange={handleMobileChange}
-              maxLength={10}
-              required
-            />
-          </div>
+  <label style={{ color: 'darkblue' }}>Mobile Number:</label>
+  <input
+    type="text" // Use text to apply maxLength
+    inputMode="numeric" // Numeric keyboard on mobile
+    pattern="[0-9]*" // Ensure only numeric input
+    placeholder="Enter Mobile Number"
+    value={mobile}
+    onChange={(e) => {
+      const value = e.target.value.replace(/\D/g, ''); // Allow only numeric input
+      if (value.length <= 10) {
+        setMobile(value); // Update state only if length is <= 10
+      }
+    }}
+    required
+  />
+</div>
+
 
           <div className="form-group">
             <label style={{ color: 'darkblue' }}>Gender:</label>
@@ -309,7 +314,7 @@ const NewScreeningEnrollment: React.FC = () => {
             <div className="buttons">
               <button
                 type="button"
-                className="Finish-button"
+                className="Finish-extrawidtgh-button"
                 onClick={openModal}
 
               >

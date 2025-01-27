@@ -281,40 +281,48 @@ const ParticipantDetails: React.FC = () => {
           />
         </div>
         <div className="form-group">
-          <label htmlFor="alt-mobile">Alt Mobile No:</label>
-          <input
-            type="text"
-            id="alt-mobile"
-            name="alt-mobile"
-            value={altMobile}
-            onChange={(e) => setAltMobile(e.target.value)}
-            placeholder="Enter Alt Mobile No"
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="income">Monthly Income:</label>
-          <input
-            type="text"
-            id="income"
-            name="income"
-            value={income}
-            onChange={(e) => setIncome(e.target.value)}
-            placeholder="Enter Monthly Income"
-          />
-        </div>
+  <label htmlFor="alt-mobile">Alt Mobile No:</label>
+  <input
+    type="text" // Use text to handle controlled length
+    id="alt-mobile"
+    name="alt-mobile"
+    value={altMobile}
+    onChange={(e) => {
+      const value = e.target.value.replace(/\D/g, ''); // Remove non-numeric characters
+      if (value.length <= 10) {
+        setAltMobile(value); // Update state only if the length is <= 10
+      }
+    }}
+    placeholder="Enter Alt Mobile No"
+  />
+</div>
+<div className="form-group">
+  <label htmlFor="income">Monthly Income:</label>
+  <input
+    type="text" // Use text to handle controlled input sanitization
+    id="income"
+    name="income"
+    value={income}
+    onChange={(e) => {
+      const value = e.target.value.replace(/\D/g, ''); // Remove non-numeric characters
+      setIncome(value);
+    }}
+    placeholder="Enter Monthly Income"
+  />
+</div>
         <div className="form-group">
           <label>Type of House:</label>
           <div className="toggle-group">
             <button
               type="button"
-              className={`toggle-btn ${houseType === 'Owned' ? 'owned-active' : ''}`}
+              className={`gender-btn ${houseType === 'Owned' ? 'owned-active' : ''}`}
               onClick={() => toggleOption(setHouseType, 'Owned')}
             >
               Owned
             </button>
             <button
               type="button"
-              className={`toggle-btn ${houseType === 'Rental' ? 'rental-active' : ''}`}
+              className={`gender-btn ${houseType === 'Rental' ? 'rental-active' : ''}`}
               onClick={() => toggleOption(setHouseType, 'Rental')}
             >
               Rental
@@ -343,38 +351,52 @@ const ParticipantDetails: React.FC = () => {
         </div>
         <h2>ID Proof</h2>
         <div className="form-group">
-          <label htmlFor="aadhaar">Aadhaar Number:</label>
-          <input
-            type="text"
-            id="aadhaar"
-            name="aadhaar"
-            value={aadhaar}
-            onChange={(e) => setAadhaar(e.target.value)}
-            placeholder="Enter Aadhaar Number"
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="voter-id">Voter ID:</label>
-          <input
-            type="text"
-            id="voter-id"
-            name="voter-id"
-            value={voterId}
-            onChange={(e) => setVoterId(e.target.value)}
-            placeholder="Enter Voter ID"
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="ration-card">Ration Card:</label>
-          <input
-            type="text"
-            id="ration-card"
-            name="ration-card"
-            value={rationCard}
-            onChange={(e) => setRationCard(e.target.value)}
-            placeholder="Enter Ration Card"
-          />
-        </div>
+  <label htmlFor="aadhaar">Aadhaar Number:</label>
+  <input
+    type="text"
+    id="aadhaar"
+    name="aadhaar"
+    value={aadhaar}
+    onChange={(e) => {
+      const value = e.target.value.replace(/\D/g, '').slice(0, 12); // Remove non-numeric and limit to 12 digits
+      setAadhaar(value);
+    }}
+    placeholder="Enter Aadhaar Number"
+    maxLength={12} // Restrict to 12 characters
+  />
+</div>
+<div className="form-group">
+  <label htmlFor="voter-id">Voter ID:</label>
+  <input
+    type="text"
+    id="voter-id"
+    name="voter-id"
+    value={voterId}
+    onChange={(e) => {
+      // Allow only alphanumeric characters (letters and numbers) and limit the length to, e.g., 12 characters
+      const value = e.target.value.replace(/[^a-zA-Z0-9]/g, '').slice(0, 12); // Keep only alphanumeric and limit length
+      setVoterId(value);
+    }}
+    placeholder="Enter Voter ID"
+    maxLength={12} // Restrict input to 12 characters
+  />
+</div>
+<div className="form-group">
+  <label htmlFor="ration-card">Ration Card:</label>
+  <input
+    type="text"
+    id="ration-card"
+    name="ration-card"
+    value={rationCard}
+    onChange={(e) => {
+      // Allow only alphanumeric characters (letters and numbers) and limit length to 15
+      const value = e.target.value.replace(/[^a-zA-Z0-9]/g, '').slice(0, 15); // Modify the length if needed
+      setRationCard(value);
+    }}
+    placeholder="Enter Ration Card"
+    maxLength={15} // Limit input to 15 characters (adjust based on your format)
+  />
+</div>
         <div>
           <h3>Social Habits</h3>
           <div>
@@ -465,7 +487,7 @@ const ParticipantDetails: React.FC = () => {
                   )}
                 </div>
               ))}
-              <button className="submit-button1" onClick={addHabit}>Add Habit</button>
+              <button  className="Next-button" onClick={addHabit}>Add Habit</button>
             </>
           )}
 

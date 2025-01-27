@@ -125,6 +125,52 @@ function FamilyPersonalDetails() {
     return <div className="error-message">Missing patient information. Please log in again.</div>;
   }
 
+  const handleFinish = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const updatedFormData = formValues.map((formValue) =>
+      formData.map((field) => ({
+        ...field,
+        selectedValues: formValue[field.testName] ? [formValue[field.testName]] : [],
+      }))
+    );
+
+    const payload = {
+      description: 'Family Personal Metrics',
+      diseaseTestId: 1,
+      familyMetrics: { params: updatedFormData.flat() },
+      familyMedicalMetrics: null,
+      eligibilityMetrics: null,
+      gender: 'FEMALE',
+      genderValid: true,
+      hospitalId: 1,
+      id: 27,
+      medicalMetrics: null,
+      name: 'Family Personal Metrics',
+      stage: 'FAMILY_PERSONAL',
+      testMetrics: null,
+      type: 1,
+      candidateId: Number(localStorage.getItem('patientId')),
+    };
+
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        setError('Token is missing. Please log in again.');
+        return;
+      }
+
+      await axios.post(`${config.appURL}/curable/candidatehistory`, payload, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      console.log('Data submitted successfully!');
+      navigate('/SuccessMessagePRFinal');
+    } catch (error) {
+      console.error('Error submitting data:', error);
+      setError('Failed to submit data.');
+    }
+  };
   return (
     <div >
 
@@ -165,24 +211,7 @@ function FamilyPersonalDetails() {
                   e.stopPropagation();
                   handleDeleteMember(formIndex);
                 }} className="fa-solid fa-trash-can float-end"></i>
-                {/* {formIndex === 0 && (
-                  <button
-                    // type="button"
-                    // style={{
-                    //   backgroundColor: 'red',
-                    //   color: 'white',
-                    //   border: 'none',
-                    //   padding: '5px',
-                    //   cursor: 'pointer',
-                    // }}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleDeleteMember(formIndex);
-                    }}
-                  >
-                    Delete
-                  </button> */}
-                {/* )} */}
+               
               </div>
             )}
 
@@ -204,28 +233,11 @@ function FamilyPersonalDetails() {
                 >
                   {/* <span>Member {formIndex + 1} (Click to collapse)</span> */}
                   <span>{formValues[formIndex][formData[0]?.testName]? formValues[formIndex][formData[0].testName]+" Click to collapse":"Member Click to collapse"}</span>
-                  {/* {formData[formIndex].testName} */}
-                  {/* <span>{formValues[formIndex][formData[0].testName]} {formIndex + 1} (Click to collapse)</span> */}
-                  <i onClick={(e) => {
+                    <i onClick={(e) => {
                     e.stopPropagation();
                     handleDeleteMember(formIndex);
                   }} className="fa-solid fa-trash-can float-end"></i>
-                  {/* <button
-                    type="button"
-                    style={{
-                      backgroundColor: 'red',
-                      color: 'white',
-                      border: 'none',
-                      padding: '5px',
-                      cursor: 'pointer',
-                    }}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleDeleteMember(formIndex);
-                    }}
-                  >
-                    Delete
-                  </button> */}
+                 
                 </div>
 
                 {formData.map((field, index) => (
@@ -261,12 +273,16 @@ function FamilyPersonalDetails() {
                 ))}
               </div>
             )}
+            <button type="button" className="Next-button" onClick={handleAddMember}>
+            Add Member
+          </button>
           </div>
         ))}
 
         <center className="buttons">
-          <button type="button" className="Next-button" onClick={handleAddMember}>
-            Add Member
+          
+          <button type="button" className="Finish-button" onClick={handleFinish}>
+            Finish
           </button>
           <button type="submit" className="Next-button">
             Next
