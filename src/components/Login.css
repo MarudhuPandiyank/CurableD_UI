@@ -123,7 +123,6 @@ h2 {
 .forgot-password:hover {
   color: #e69500;
 }
-
 .powered-container {
   display: flex;
   align-items: center;
@@ -134,10 +133,12 @@ h2 {
 .powered-by {
   font-weight: bold;
   color: #000;
-  margin-right: 10px;
+  margin-right: 10px;  /* Space between text and logo */
 }
 
 .curable-logo {
   width: 100px;
-  height: auto;
+  height: auto;  /* Maintains aspect ratio */
+  display: inline-block; /* Ensures the logo is treated as a block within the flex container */
+  vertical-align: middle; /* Aligns the image in the middle of the line */
 }

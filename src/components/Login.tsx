@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import config from '../config';  // Import the config file
+
 const Login: React.FC = () => {
   const navigate = useNavigate();
   const [userName, setEmail] = useState('');
@@ -13,6 +14,7 @@ const Login: React.FC = () => {
   const [isForgotPassword, setIsForgotPassword] = useState(false);
   const [newPassword, setNewPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState(''); // State for error messages
 
   interface AuthResponse {
     id: string | null;
@@ -25,13 +27,14 @@ const Login: React.FC = () => {
 
   interface AuthResponseData {
     hospitalId: string;
-    tenantName:string;
+    tenantName: string;
   }
 
   const handleSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); // Prevent default form submission
+    setError(''); // Clear error message before attempting to sign in
 
-    try {  
+    try {
       const response = await axios.post<AuthResponse>(
         `${config.gatewayURL}/authenticate`,
         { userName, password }
@@ -55,14 +58,14 @@ const Login: React.FC = () => {
           localStorage.setItem('tenantName', tenantName);
           navigate('/responsive-cancer-institute');
         } else {
-          alert('User is not authorized');
+          setError('User is not authorized');
         }
       } else {
-        alert('Invalid email or password');
+        setError('Invalid password! Retry or click forgot password');
       }
     } catch (error) {
       console.error('Error during login or authorization:', error);
-      alert('An error occurred. Please try again.');
+      setError('An error occurred. Please try again.');
     }
   };
 
@@ -188,14 +191,16 @@ const Login: React.FC = () => {
         )}
       </form>
 
+     
+      {error && <div style={{ marginTop: '20px' }}><p className="error-message">{error}</p></div>}
       <div className="powered-container">
-        <p className="powered-by">Powered By Curable</p>
-        <img
-          src="/assets/Curable logo - rectangle with black text.png"
-          alt="Curable Logo"
-          className="curable-logo"
-        />
-      </div>
+  <p className="powered-by">Powered By Curable</p>
+  <img
+    src="/assets/Curable logo - rectangle with black text.png"
+    alt="Curable Logo"
+    className="curable-logo"
+  />
+</div>
     </div>
   );
 };

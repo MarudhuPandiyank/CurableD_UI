@@ -29,17 +29,17 @@ const Header: React.FC = () => {
           className="menu-icon fas fa-bars"
           onClick={() => setIsLeftSidebarOpen(true)}
           aria-label="Open Left Sidebar"
-          style={{ color: '#003366' }} // Blue color for the menu icon
+          style={{ color: '#003366', cursor: 'pointer' }} // Blue color for the menu icon
         ></span>
         <span className="title text-center flex-grow-1" style={{ fontSize: '20px', color: '#003366' }}>
-          <img src="./Curable Icons/PNG/Earth.png" style={{ height: '30px', width: '30px' }} alt="Earth Icon" />
+          <img src="./Curable Icons/PNG/Earth.png" style={{ height: '2git px', width: '28x' }} alt="Earth Icon" />
          {tenantName}
         </span>
         <span
           className="account-icon fas fa-user-circle"
           onClick={() => setIsRightSidebarOpen(true)}
           aria-label="Account Settings"
-          style={{ color: '#003366' }} // Blue color for the user icon
+          style={{ color: '#003366', cursor: 'pointer' }}// Blue color for the user icon
         ></span>
       </header>
 
