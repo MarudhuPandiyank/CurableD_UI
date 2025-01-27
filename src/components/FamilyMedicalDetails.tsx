@@ -169,7 +169,7 @@ const FamilyMedicalDetails: React.FC = () => {
               <div className="form-fields">
                 {formData.map((field, index) => (
                   <div key={index} className="form-group">
-                    <label style={{ color: 'darkblue' }}>{field.testName}*:</label>
+                    <label style={{ color: 'darkblue' }}>{field.testName}:</label>
 
                     {field.valueType === 'SingleSelect' ? (
                       <select

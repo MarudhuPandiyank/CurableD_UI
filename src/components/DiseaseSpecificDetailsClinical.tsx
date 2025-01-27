@@ -178,7 +178,7 @@ const DiseaseSpecificDetails: React.FC = () => {
 
         {formData.map((field, index) => (
           <div key={index} className="form-group">
-            <label style={{ color: 'darkblue' }}>{field.testName}*:</label>
+            <label style={{ color: 'darkblue' }}>{field.testName}:</label>
 
             {field.valueType === 'SingleSelect' ? (
               <select

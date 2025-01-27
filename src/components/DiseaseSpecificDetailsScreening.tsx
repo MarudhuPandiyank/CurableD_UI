@@ -1,49 +1,51 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Header1 from './Header1';
-import './HomePage.css';
 import axios from 'axios';
-import './DiseaseSpecificDetailsClinic.css';
+import Header1 from './Header1';
+import Select, { MultiValue } from 'react-select';
 import config from '../config'; 
-// Define types for API response
-interface FamilyMetricsParam {
+
+interface Condition {
+  enabledField: string;
+  triggerValue: string;
+}
+interface ColourOption {
+  value: string;
+  label: string;
+}
+interface Param {
   testName: string;
-  subtestName: string;
-  condition?: { enabledField: string; triggerValue: string }[];
+  subtestName?: string;
   valueType: string;
   values: string[];
   selectedValues: string[];
+  condition?: Condition[];
 }
 
 interface ApiResponse {
   id: number;
   testMetrics: {
-    params: FamilyMetricsParam[];
+    params: Param[];
   };
 }
 
-function DiseaseSpecificDetailsScreening() {
-  const [formData, setFormData] = useState<FamilyMetricsParam[]>([]); // State to store dynamic form fields
-  const [error, setError] = useState<string | null>(null); // State to store error message
-  const [formValues, setFormValues] = useState<Record<string, string>>({
-    Referral: 'No', // Default value for Referral
-  });
-  const [showModal, setShowModal] = useState(false); // Modal visibility
-  const [unfilledFields, setUnfilledFields] = useState<string[]>([]); // Non-mandatory fields that are not filled
-
+const App: React.FC = () => {
   const navigate = useNavigate();
-
+  const diseaseTestIds = localStorage.getItem('diseaseTestIds');
+  const [paramsObject, setParamsObject] = useState<{ params: Param[] }>({ params: [] });
+  const [processingTestName, setProcessingTestName] = useState('');
+  const [processingValue, setProcessingValue] = useState('');
+  const [dependentList, setDependentList] = useState<string[]>([]);
+  const [isDependent, setIsDependent] = useState<Record<string, boolean>>({}); // Updated this line
+  const [formValues, setFormValues] = useState<Record<string, string[]>>({}); // Store selected values for each test
+  const [multiParam, setMultiParam] = useState<readonly ColourOption[]>([
+    { value: '', label: 'Select values' } // Default option
+  ]);
+ 
   useEffect(() => {
     const fetchDiseaseTestMaster = async () => {
       try {
         const token = localStorage.getItem('token'); // Assuming token is stored in localStorage
-        const selectedStage = localStorage.getItem('selectedStage');
-        const diseaseTestIds = localStorage.getItem('diseaseTestIds');
-
-        if (!token) {
-          setError('Token is missing. Please log in again.');
-          return;
-        }
 
         const response = await axios.get<ApiResponse>(
           `${config.appURL}/curable/getMetricsById/${diseaseTestIds}`,
@@ -53,139 +55,155 @@ function DiseaseSpecificDetailsScreening() {
             },
           }
         );
-        localStorage.setItem('diseaseTestMasterId', response.data.id.toString());
 
-        // Filter out 'Referred for' initially
-        const filteredData = response.data.testMetrics.params.filter(field => field.testName !== 'Referred for');
-        setFormData(filteredData); // Store dynamic form fields based on the API response
+        const filteredData = response.data.testMetrics.params.filter(
+          (field: Param) => field.testName !== 'Referred for'
+        );
+        console.log('filteredData',filteredData);
+        const mappedData: ColourOption[] = filteredData.map((drp) => ({
+          value: drp.testName,  // Assuming 'color' is the relevant property in filteredData
+          label: drp.testName,  // You can adjust this if needed
+        }));
+        
+        setMultiParam(mappedData);
+        setParamsObject({ params: filteredData }); // Store dynamic form fields based on the API response
 
         console.log('Disease Test Master Data:', response.data);
+       
       } catch (error) {
         console.error('Error fetching disease test master data:', error);
-        setError('Failed to load disease test data. Please try again.');
       }
     };
 
     fetchDiseaseTestMaster();
   }, []);
 
-  const handleInputChange = (testName: string, value: string) => {
-    setFormValues((prevValues) => ({
-      ...prevValues,
-      [testName]: value,
-    }));
-  };
+  const listOfTestNames = paramsObject.params.map(param => param.testName);
 
-  const handleSelectChange = (testName: string, value: string) => {
-    setFormValues((prevValues) => ({
-      ...prevValues,
-      [testName]: value,
-    }));
+  const listOfEnabledFields = paramsObject.params
+    .filter(param => param.condition)
+    .flatMap(param => param.condition!.map(cond => cond.enabledField));
 
-    // Check for conditional fields and update formData accordingly
-    if (testName === 'Referral') {
-      if (value === 'Yes') {
-        const referredForField = formData.find(field => field.testName === 'Referred for');
-        if (!referredForField) {
-          setFormData((prevFormData) => [
-            ...prevFormData,
-            {
-              testName: 'Referred for',
-              subtestName: 'Referred for',
-              valueType: 'SingleSelect',
-              values: ['Toboco Counseling', 'Head & Neck at OPD at CI', 'Both'],
-              selectedValues: [],
-            },
-          ]);
+  const independentList = listOfTestNames.filter(
+    testName => !listOfEnabledFields.includes(testName)
+  );
+
+  const paramsMap = new Map<string, Param>();
+  paramsObject.params.forEach(param => paramsMap.set(param.testName, param));
+
+  const testNameWithEnabledFieldMap = new Map<string, string[]>();
+  paramsObject.params.forEach(param => {
+    if (param.condition) {
+      param.condition.forEach(cond => {
+        if (!testNameWithEnabledFieldMap.has(param.testName)) {
+          testNameWithEnabledFieldMap.set(param.testName, []);
         }
-      } else {
-        setFormData((prevFormData) => 
-          prevFormData.filter(field => field.testName !== 'Referred for')
-        );
-      }
+        testNameWithEnabledFieldMap.get(param.testName)!.push(cond.enabledField);
+      });
     }
-  };
+  });
 
-  const handleFinishClick = () => {
-    // Check for unfilled fields
-    const unfilled = formData
-      .filter((field) => !formValues[field.testName]) // Find fields with no value
-      .map((field) => field.testName);
+  const testNameTriggerValueMap = new Map<string, string[]>();
+  paramsObject.params.forEach(param => {
+    if (param.condition) {
+      param.condition.forEach(cond => {
+        if (!testNameTriggerValueMap.has(param.testName)) {
+          testNameTriggerValueMap.set(param.testName, []);
+        }
+        testNameTriggerValueMap.get(param.testName)!.push(cond.triggerValue);
+      });
+    }
+  });
 
-    setUnfilledFields(unfilled);
+  const handleSelectionChange = (testName: string, selectedValue: string | string[]) => {
+    setProcessingTestName(testName);
 
-    if (unfilled.length > 0) {
-      setShowModal(true); // Show modal if there are unfilled fields
+    // If selectedValue is an array, take the first value or join them into a string
+    const valueToSet = Array.isArray(selectedValue) ? selectedValue[0] : selectedValue;
+
+    // Set the value
+    setProcessingValue(valueToSet);
+
+    // Update formValues with the selected value
+    setFormValues((prevFormValues) => ({
+      ...prevFormValues,
+      [testName]: Array.isArray(selectedValue) ? selectedValue : [selectedValue], // Ensure selectedValue is always an array
+    }));
+
+    let updatedDependentList: string[] = [];
+    if (testNameWithEnabledFieldMap.has(testName)) {
+      updatedDependentList = testNameWithEnabledFieldMap.get(testName) || [];
+      const mergedDependentList = Array.from(new Set([...dependentList, ...updatedDependentList]));
+      setDependentList(mergedDependentList);
+    }
+
+    const triggerValues = testNameTriggerValueMap.get(testName) || [];
+    if (triggerValues.includes(valueToSet)) {
+      setIsDependent((prevState) => ({
+        ...prevState,
+        [testName]: true,
+      }));
     } else {
-      // No unfilled fields, proceed with registration
-      handleConfirmFinish();
+      const filteredDependentList = dependentList.filter(
+        (item) => !updatedDependentList.includes(item) || item === testName
+      );
+      setDependentList(filteredDependentList);
+      setIsDependent((prevState) => ({
+        ...prevState,
+        [testName]: false,
+      }));
     }
-  };
-
-  const handleConfirmFinish = () => {
-    setShowModal(false);
-    console.log('Proceeding with registration...');
-    navigate('/ParticipantDetails');
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     // Construct the body of the POST request to match the desired structure
-    const updatedFormData = formData.map((field) => {
-      const selectedValue = formValues[field.testName]
-        ? [formValues[field.testName]]
-        : [];
+    const updatedFormData = paramsObject.params.map((field) => {
+      const selectedValue = formValues[field.testName] || []; // Use the selected value from formValues
       return {
         ...field,
         selectedValues: selectedValue, // Assign the selected value to selectedValues
       };
     });
-
-    const diseaseTestMasterId = localStorage.getItem('diseaseTestMasterId');
     const candidateId = localStorage.getItem('candidateId');
     const payload = {
-      diseaseTestMasterId: Number(diseaseTestMasterId),
       candidateId: Number(candidateId),
-      description: 'Eligibility Metrics',
+      diseaseTestMasterId: Number(diseaseTestIds),
+      description: "Test Metrics",
       diseaseTestId: 1,
       testMetrics: {
         params: updatedFormData,
       },
       familyMedicalMetrics: null,
       familyMetrics: null,
-      gender: 'FEMALE', // Adjust dynamically if necessary
       genderValid: true,
       hospitalId: 1,
-      id: 27,
+      id: null,
       medicalMetrics: null,
-      name: 'Eligibility Metrics',
+      name: "Test Metrics",
       stage: localStorage.getItem('selectedStage'),
-      type: 1,
-    };
+      type: 1,
+    };
 
     try {
       const token = localStorage.getItem('token');
       if (!token) {
-        setError('Token is missing. Please log in again.');
+
         return;
       }
 
-      await axios.post(
-        `${config.appURL}/curable/candidatehistory`,
-        payload,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          }
-        }
-      );
+      await axios.post(`${config.appURL}/curable/candidatehistory`, payload, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       console.log('Data submitted successfully!');
-      navigate('/SuccessMessageScreeningFInal');
+      navigate('/ParticipantDetails');
     } catch (error) {
       console.error('Error submitting data:', error);
-      setError('Failed to submit data. Please try again.');
+
     }
   };
 
@@ -194,82 +212,84 @@ function DiseaseSpecificDetailsScreening() {
   const registrationId = localStorage.getItem('registrationId');
   const ptName = localStorage.getItem('ptName');
 
+  const renderField = (param: Param, key: string) => {
+    return (
+      <div key={key} className="form-group">
+        <p>{param.testName}</p>
+        {param.valueType === 'SingleSelect' && (
+          <select
+            onChange={e =>
+              handleSelectionChange(param.testName, e.target.value) // Updated this line
+            }
+            defaultValue=""
+          >
+            <option value="" disabled>
+              Select a value
+            </option>
+            {param.values.map(value => (
+              <option key={value} value={value}>
+                {value}
+              </option>
+            ))}
+          </select>
+        )}
+        {param.valueType === 'Multi Select' && (
+          <Select
+            isMulti
+            name={param.testName}
+            options={multiParam}
+            onChange={(option: MultiValue<ColourOption>) => handleSelectionChange(param.testName, option.map(opt => opt.value))} // Updated this line
+            className="basic-multi-select"
+          />
+        )}
+        {param.valueType === 'Input' && (
+          <input type="text" placeholder="Enter value" />
+        )}
+      </div>
+    );
+  };
+
+  const getTestFieldsInline = () => {
+    return independentList.map((testName) => {
+      const param = paramsMap.get(testName);
+      if (!param) return null;
+
+      const dependentFields = (testNameWithEnabledFieldMap.get(testName) || [])
+        .map((dependentTestName) => {
+          const dependentParam = paramsMap.get(dependentTestName);
+          if (!dependentParam) return null;
+          return renderField(dependentParam, dependentTestName);
+        });
+
+      return (
+        <div key={testName} className="form-inline-group">
+          {renderField(param, testName)}
+          {isDependent[testName] && dependentFields}
+        </div>
+      );
+    });
+  };
+
   return (
     <div className="container2">
       <Header1 />
-     
       <h1 style={{ color: 'darkblue' }}>Disease Specific Details</h1>
       <div className="participant-container">
         <p>Participant: {ptName}</p>
         <p>ID: {registrationId}</p>
       </div>
-
-      {error && <div className="error-message">{error}</div>}
-
       <form className="clinic-form" onSubmit={handleSubmit}>
-       
-
-        {formData.map((field, index) => (
-          <div key={index} className="form-group">
-            <label style={{ color: 'darkblue' }}>{field.testName}*:</label>
-
-            {field.valueType === 'SingleSelect' ? (
-              <select
-                id={field.testName.toLowerCase().replace(' ', '-')}
-                name={field.testName.toLowerCase().replace(' ', '-')}
-                value={formValues[field.testName] || ''}
-                onChange={(e) => handleSelectChange(field.testName, e.target.value)}
-              >
-                <option value="" disabled>
-                  Select {field.testName}
-                </option>
-                {field.values.map((value: string, idx: number) => (
-                  <option key={idx} value={value}>
-                    {value}
-                  </option>
-                ))}
-              </select>
-            ) : (
-              <input
-                type="text"
-                id={field.testName.toLowerCase().replace(' ', '-')}
-                name={field.testName.toLowerCase().replace(' ', '-')}
-                value={formValues[field.testName] || ''}
-                onChange={(e) => handleInputChange(field.testName, e.target.value)}
-                placeholder={`Enter ${field.testName}`}
-              />
-            )}
-          </div>
-        ))}
-
+        {getTestFieldsInline()}
         <center className="buttons">
-          <button type="submit" className="Next-button">
-            Finish
-          </button>
+          <button type="submit" className="Finish-button">Finish</button>
         </center>
       </form>
-
-      {showModal && (
-        <div className="modal">
-          <div className="modal-content">
-            <h2>
-              The following non-mandatory details are not filled. Are you sure you want to finish registration?
-            </h2>
-
-            <div className="modal-buttons">
-              <button className="Finish-button" onClick={() => setShowModal(false)}>Close</button>
-              <button className="Next-button" onClick={handleSubmit}>Save</button>
-            </div>
-          </div>
-        </div>
-      )}
-
-<div className="powered-container">
+      <div className="powered-container">
         <p className="powered-by">Powered By Curable</p>
         <img src="/assets/Curable logo - rectangle with black text.png" alt="Curable Logo" className="curable-logo" />
       </div>
     </div>
   );
-}
+};
 
-export default DiseaseSpecificDetailsScreening;
+export default App;

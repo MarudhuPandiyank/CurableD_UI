@@ -230,7 +230,7 @@ function FamilyPersonalDetails() {
 
                 {formData.map((field, index) => (
                   <div key={index} className="form-group">
-                    <label style={{ color: 'darkblue' }}>{field.testName}*:</label>
+                    <label style={{ color: 'darkblue' }}>{field.testName}:</label>
                     {field.valueType === 'SingleSelect' ? (
                       <select
                         id={field.testName.toLowerCase().replace(' ', '-')}
