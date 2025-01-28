@@ -32,8 +32,7 @@ const Header: React.FC = () => {
           style={{ color: '#003366', cursor: 'pointer' }} // Blue color for the menu icon
         ></span>
         <span className="title text-center flex-grow-1" style={{ fontSize: '20px', color: '#003366' }}>
-          <img src="./Curable Icons/PNG/Earth.png" style={{ height: '2git px', width: '28x' }} alt="Earth Icon" />
-         {tenantName}
+        <img src="./Curable Icons/PNG/Earth.png" style={{ height: '30px', width: '30px' }} alt="Earth Icon" />         {tenantName}
         </span>
         <span
           className="account-icon fas fa-user-circle"
@@ -43,79 +42,79 @@ const Header: React.FC = () => {
         ></span>
       </header>
 
-      {/* Left Sidebar */}
       <div className={`sidebar left ${isLeftSidebarOpen ? 'active' : ''}`}>
-        <div className="sidebar-header d-flex align-items-center">
-          <button className="close-btn" onClick={() => setIsLeftSidebarOpen(false)}>
-            <FontAwesomeIcon icon={faChevronLeft} /> Back
-          </button>
-          <h6>Menu</h6>
-        </div>
-        <div className="sidebar-content p-3">
-          <button className="sidebar-btn" onClick={() => handleNavigation('/HomePage')}>
-            <img
-              src="./HomeScreenIcons/PNG/Outreach Clinic.png"
-              alt="Outreach Clinic Icon"
-              style={{ width: '20px', height: '20px', marginRight: '8px' }}
-            />
-            Outreach Clinic
-          </button>
-          <button className="sidebar-btn" onClick={() => handleNavigation('/PatientRegistrationSearch')}>
-            <img
-              src="./HomeScreenIcons/PNG/Patient Registration.png"
-              alt="Patient Registration Icon"
-              style={{ width: '20px', height: '20px', marginRight: '8px' }}
-            />
-            Patient Registration
-          </button>
-          <button className="sidebar-btn" onClick={() => handleNavigation('/PatientSearchPage')}>
-            <img
-              src="./HomeScreenIcons/PNG/Screening.png"
-              alt="Screening Icon"
-              style={{ width: '20px', height: '20px', marginRight: '8px' }}
-            />
-            Screening
-          </button>
-          <button className="sidebar-btn" onClick={() => handleNavigation('/ClinicSearchPage')}>
-            <img
-              src="./HomeScreenIcons/PNG/Clinical Evaluation.png"
-              alt="Survey Icon"
-              style={{ width: '20px', height: '20px', marginRight: '8px' }}
-            />
-            Clinical Evaluation
-          </button>
-        
-          <button className="sidebar-btn">
-            <img
-              src="./HomeScreenIcons/PNG/Master Data Management.png"
-              alt="Master Data Management Icon"
-              style={{ width: '20px', height: '20px', marginRight: '8px' }}
-            />
-            Master Data Management
-          </button>
-        </div>
-      </div>
+  <div className="sidebar-header d-flex align-items-center">
+    <button className="close-btn" onClick={() => setIsLeftSidebarOpen(false)}>
+      <FontAwesomeIcon icon={faChevronLeft} /> Back
+    </button>
+    <h6>Menu</h6>
+  </div>
+  <div className="sidebar-content p-3">
+    <button className="sidebar-btn" onClick={() => handleNavigation('/HomePage')}>
+      <img
+        src="./HomeScreenIcons/PNG/Outreach Clinic.png"
+        alt="Outreach Clinic Icon"
+        style={{ width: '10px', height: '10px', marginRight: '8px' }}
+      />
+      Outreach Clinic
+    </button>
+    <button className="sidebar-btn" onClick={() => handleNavigation('/PatientRegistrationSearch')}>
+      <img
+        src="./HomeScreenIcons/PNG/Patient Registration.png"
+        alt="Patient Registration Icon"
+        style={{ width: '30px', height: '30px', marginRight: '8px' }}
+      />
+      Patient Registration
+    </button>
+    <button className="sidebar-btn" onClick={() => handleNavigation('/PatientSearchPage')}>
+      <img
+        src="./HomeScreenIcons/PNG/Screening.png"
+        alt="Screening Icon"
+        style={{ width: '20px', height: '20px', marginRight: '8px' }}
+      />
+      Screening
+    </button>
+    <button className="sidebar-btn" onClick={() => handleNavigation('/ClinicSearchPage')}>
+      <img
+        src="./HomeScreenIcons/PNG/Clinical Evaluation.png"
+        alt="Survey Icon"
+        style={{ width: '20px', height: '20px', marginRight: '8px' }}
+      />
+      Clinical Evaluation
+    </button>
+    <button className="sidebar-btn">
+      <img
+        src="./HomeScreenIcons/PNG/Master Data Management.png"
+        alt="Master Data Management Icon"
+        style={{ width: '20px', height: '20px', marginRight: '8px' }}
+      />
+      Master Data Management
+    </button>
+  </div>
+</div>
+
 
       {/* Right Sidebar */}
       <div className={`sidebar right ${isRightSidebarOpen ? 'active' : ''}`}>
-        <div className="sidebar-header d-flex align-items-center">
-          <button className="close-btn" onClick={() => setIsRightSidebarOpen(false)}>
-            <FontAwesomeIcon icon={faChevronLeft} /> Back
-          </button>
-          <h6>{userName}</h6>
-        </div>
-        <div className="sidebar-content p-3">
-          <button className="sidebar-btn" onClick={() => handleNavigation('/responsive-cancer-institute')}>
-            <i className="fas fa-home"></i> Home
-          </button>
-          <button className="sidebar-btn" onClick={() => handleNavigation('/ProfileScreen')}>
-            <i className="fas fa-user-edit"></i> Edit Profile
-          </button>
-          <button className="sidebar-btn" onClick={handleLogout}>
-            <i className="fas fa-sign-out-alt"></i> Log Out
-          </button>
-        </div>
-      </div>
+  <div className="sidebar-header d-flex align-items-center">
+    <button className="close-btn" onClick={() => setIsRightSidebarOpen(false)}>
+      <FontAwesomeIcon icon={faChevronLeft} /> Back
+    </button>
+    <h6>{userName}</h6>
+  </div>
+  <div className="sidebar-content p-3">
+    <button className="sidebar-btn" onClick={() => handleNavigation('/responsive-cancer-institute')}>
+      <i className="fas fa-home"></i> Home
+    </button>
+    <button className="sidebar-btn" onClick={() => handleNavigation('/ProfileScreen')}>
+      <i className="fas fa-user-edit"></i> Edit Profile
+    </button>
+    <button className="sidebar-logout" onClick={handleLogout}>
+  <i className="fas fa-sign-out-alt"></i> Log Out
+</button>
+  </div>
+</div>
+
     </div>
   );
 };

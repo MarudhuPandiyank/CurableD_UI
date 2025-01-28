@@ -33,7 +33,7 @@
 .open-modal-btn {
   margin-top: 20px;
   padding: 10px;
-  background-color: #DE3163;
+  background-color: #d774ad;
   color: white;
   border: none;
   border-radius: 5px;
@@ -41,7 +41,7 @@
 }
 
 .open-modal-btn:hover {
-  background-color: #a92b56;
+  background-color: #d774ad;
 }
 .checkbox-group {
   margin-top: 5px;

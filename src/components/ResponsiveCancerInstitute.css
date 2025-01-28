@@ -40,7 +40,22 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-}
+  }
+  
+  /* Change the color of all icons in the left sidebar to #00308F and text color to black */
+  .sidebar.left .sidebar-btn img {
+    filter: brightness(0) saturate(100%) invert(15%) sepia(93%) saturate(3300%) hue-rotate(180deg) brightness(92%) contrast(120%);
+  }
+  
+  .sidebar.left .sidebar-btn {
+    color: black; /* Change text color to black */
+  }
+  
+  .sidebar.left .sidebar-btn:hover {
+    background-color: #dcdcdc; /* Hover effect for sidebar buttons */
+  }
+  
+  
 
 /* Sidebar Header Styling */
 .sidebar-header {
@@ -114,23 +129,27 @@
     padding: 10px;
     margin: 5px 20px;
     font-size: 15px;
-    background-color: #DE3163;
+    background-color: #d774ad;
     color: white;
-    border-radius: 100px;
-    width: calc(100% - 40px);
-    text-align: left;
+    border-radius: 20px; /* Adjusting border-radius */
+    width: 40%; /* Reduced width for the logout button to half its current size */
+    text-align: center; /* Centering the text */
     border: none;
     cursor: pointer;
     display: flex;
     align-items: center;
-}
-
-/* Hover effects for buttons */
-.sidebar-btn:hover,
-.sidebar-logout:hover {
-    background-color: #dcdcdc;
-}
-
+    justify-content: center; /* Center content horizontally */
+    position: absolute; /* Position at the bottom */
+    bottom: 20px; /* 20px from the bottom of the sidebar */
+    right: 20px; /* Move the button to the right end */
+    gap: 10px; /* Add space between icon and text */
+  }
+  
+  /* Hover effect for logout button */
+  .sidebar-logout:hover {
+    background-color: #d774ad;
+  }
+  
 /* Active Sidebar State */
 .sidebar.active {
     left: 0;

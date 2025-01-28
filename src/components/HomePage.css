@@ -153,7 +153,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
 /* Form field styling */
 .clinic-form label {
-    color: darkblue;
+    color: black;
     padding: 0.5rem;
     display: block;
     font-size: 14px;
@@ -231,7 +231,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   .participant-container {
     width: 100%; /* Set width to 50% */
     margin: 0 auto; /* Center the container horizontally */
-    background-color: #f8f9fa; /* Light gray background */
+    background-color: #f2f4f4; /* Light gray background */
     padding: 15px 20px; /* Padding for content */
     text-align: center; /* Center text */
     margin-bottom: 20px; /* Bottom margin for spacing */

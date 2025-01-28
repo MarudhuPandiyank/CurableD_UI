@@ -3,9 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Typography } from '@mui/material';
 import '../components/OutreachClinicInfo.css';
-import Header from './Header';
 import Header1 from './Header1';
 import config from '../config';  // Import the config file
+
 interface Clinic {
   id: string;
   name: string;
@@ -156,8 +156,8 @@ const PatientRegistrationSearch: React.FC = () => {
 
   return (
     <div className="container2">
-       <Header/><br/>
-            <p style={{ color: 'darkblue', fontWeight: 'bold', }}>Patient Registration</p>
+       <Header1/><br/>
+            <h1 style={{ color: 'darkblue', fontWeight: 'bold', }}>Patient Registration</h1>
       <main className="content">
         <div className="search-container">
           <label>Search:</label>
@@ -173,7 +173,7 @@ const PatientRegistrationSearch: React.FC = () => {
             </button>
           </div>
         </div>
-
+       
         {message && <div className="message">{message}</div>}
 
         {hasDuplicateNames && (

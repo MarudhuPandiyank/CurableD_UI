@@ -255,14 +255,14 @@ const OutreachClinicInfo: React.FC = () => {
               onClick={handleCreateClinic}
               variant="contained"
               color="primary"
-              style={{ backgroundColor: '#e91e63', color: 'white' }}
+              style={{ backgroundColor: '#d774ad', color: 'white' }}
             >
               Yes
             </Button>
             <Button
               onClick={handleCloseNoClinicDialog}
               variant="outlined"
-              style={{ color: '#e91e63', borderColor: '#e91e63' }}
+              style={{ color: '#d774ad', borderColor: '#e91e63' }}
             >
               No
             </Button>

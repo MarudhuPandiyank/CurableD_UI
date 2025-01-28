@@ -160,6 +160,12 @@ const PatientSearchPage: React.FC = () => {
         </button>
       </div>
 
+
+
+
+
+      
+
       {loading && <p>Loading patients...</p>}
       {error && <p className="error">{error}</p>}
 

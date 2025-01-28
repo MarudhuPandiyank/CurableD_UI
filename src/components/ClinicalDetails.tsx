@@ -217,7 +217,7 @@ const ClinicalDetails: React.FC = () => {
             placeholder="Enter Ration Card"
           />
         </div>
-        <h2>Social Habits</h2>
+        <h1>Social Habits</h1>
         <div className="form-group">
           <label>Tobacco/Alcohol Habits:</label>
           <div className="toggle-group">

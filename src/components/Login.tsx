@@ -58,14 +58,14 @@ const Login: React.FC = () => {
           localStorage.setItem('tenantName', tenantName);
           navigate('/responsive-cancer-institute');
         } else {
-          setError('User is not authorized');
+          setError('Invalid password! Retry or click forgot password');
         }
       } else {
         setError('Invalid password! Retry or click forgot password');
       }
     } catch (error) {
       console.error('Error during login or authorization:', error);
-      setError('An error occurred. Please try again.');
+      setError('Invalid password! Retry or click forgot password');
     }
   };
 
@@ -160,7 +160,7 @@ const Login: React.FC = () => {
                 className="password-toggle-icon"
                 onClick={() => setShowPassword((prev) => !prev)}
               >
-                {showPassword ? <VisibilityOff /> : <Visibility />}
+                {showPassword ? <Visibility /> : <VisibilityOff />}
               </span>
             </div>
           </div>
@@ -194,13 +194,14 @@ const Login: React.FC = () => {
      
       {error && <div style={{ marginTop: '20px' }}><p className="error-message">{error}</p></div>}
       <div className="powered-container">
-  <p className="powered-by">Powered By Curable</p>
+  <span className="powered-by">Powered By</span>
   <img
-    src="/assets/Curable logo - rectangle with black text.png"
+    src={`${process.env.PUBLIC_URL}/assets/Curable logo - rectangle with black text.png`}
     alt="Curable Logo"
     className="curable-logo"
   />
 </div>
+
     </div>
   );
 };

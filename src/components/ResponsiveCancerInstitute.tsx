@@ -61,8 +61,9 @@ const ResponsiveCancerInstitute: React.FC = () => {
                 alt={box.title}
                 style={{ width: '50px', height: '50px', marginBottom: '10px' }}
               />
-              {box.title}
-              <img src="./Curable Icons/PNG/Info Circle.png" className="info-icon" alt="Info Icon" style={{ height: '25px', width: '25px' }} />
+                         <div style={{ color: 'black' }}>{box.title}</div> {/* Change text color to black */}
+
+             
             </div>
           ))}
         </div>
