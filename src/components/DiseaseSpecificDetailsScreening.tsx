@@ -243,27 +243,14 @@ const App: React.FC = () => {
             ))}
           </select>
         )}
-  {param.valueType === 'Multi Select' && (
-          <select
-           multiple
-           
-            onChange={e =>
-              handleSelectionChange1(e,param.testName)
-              //handleSelectionChange(param.testName, e.target.value) // Updated this line
-            }
-            
-
-            defaultValue=""
-          >
-            <option value="" disabled>
-              Select a value
-            </option>
-            {param.values.map(value => (
-              <option key={value} value={value}>
-                {value}
-              </option>
-            ))}
-          </select>
+        {param.valueType === 'Multi Select' && (
+          <Select
+            isMulti
+            name={param.testName}
+            options={param.values.map((value) => ({ value, label: value }))}
+            onChange={(option: MultiValue<ColourOption>) => handleSelectionChange(param.testName, option.map(opt => opt.value))} // Updated this line
+            className="basic-multi-select"
+          />
         )}
         {param.valueType === 'Input' && (
           <input type="text" placeholder="Enter value" />
@@ -271,6 +258,7 @@ const App: React.FC = () => {
       </div>
     );
   };
+  
 
   const getTestFieldsInline = () => {
     return independentList.map((testName) => {

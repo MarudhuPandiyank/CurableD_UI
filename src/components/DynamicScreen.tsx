@@ -237,7 +237,7 @@ const App: React.FC = () => {
           <Select
             isMulti
             name={param.testName}
-            options={multiParam}
+            options={param.values.map((value) => ({ value, label: value }))}
             onChange={(option: MultiValue<ColourOption>) => handleSelectionChange(param.testName, option.map(opt => opt.value))} // Updated this line
             className="basic-multi-select"
           />
@@ -248,6 +248,7 @@ const App: React.FC = () => {
       </div>
     );
   };
+  
 
   const getTestFieldsInline = () => {
     return independentList.map((testName) => {
