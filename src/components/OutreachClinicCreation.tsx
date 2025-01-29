@@ -219,7 +219,7 @@ const OutreachClinicCreation: React.FC = () => {
             <Header1 />
             <h1 style={{ color: 'darkblue' }}>Outreach Clinic Creation</h1>
                 <label>
-                    <span style={{color : "darkblue"}}>  Outreach Clinic Name:</span> <span style={{ color: 'darkred', fontWeight: 'bold', }}></span>
+                    <span style={{color : "darkblue"}}>  Outreach Clinic Name*:</span> <span style={{ color: 'darkred', fontWeight: 'bold', }}></span>
                     <input
                         type="text"
                         placeholder="Enter Outreach Clinic Name"
@@ -229,7 +229,7 @@ const OutreachClinicCreation: React.FC = () => {
                     />
                 </label>
                 <label>
-                    <span style={{color : "darkblue"}}>Pincode:</span><span style={{ color: 'darkred', fontWeight: 'bold', }}></span>
+                    <span style={{color : "darkblue"}}>Pincode*:</span><span style={{ color: 'darkred', fontWeight: 'bold', }}></span>
                     <input
                         type="number"
                         placeholder="Enter Pincode"
@@ -245,7 +245,7 @@ const OutreachClinicCreation: React.FC = () => {
                     />
                 </label>
                 <label>
-                    <span style={{color : "darkblue"}}>State Name:</span><span style={{ color: 'darkred', fontWeight: 'bold', }}></span>
+                    <span style={{color : "darkblue"}}>State Name*:</span><span style={{ color: 'darkred', fontWeight: 'bold', }}></span>
                     <select value={state} onChange={(e) => handleStateChange(e.target.value)} required>
                         <option value="">Select State</option>
                         {states.map((state) => (
@@ -256,7 +256,7 @@ const OutreachClinicCreation: React.FC = () => {
                     </select>
                 </label>
                 <label>
-                    <span style={{color : "darkblue"}}>District Name:</span><span style={{ color: 'darkred', fontWeight: 'bold', }}></span>
+                    <span style={{color : "darkblue"}}>District Name*:</span><span style={{ color: 'darkred', fontWeight: 'bold', }}></span>
                     <select value={district} onChange={(e) => handleDistrictChange(e.target.value)} required disabled={!state || loadingDistricts}>
                         <option value="">Select District</option>
                         {districts.map((district) => (
@@ -267,7 +267,7 @@ const OutreachClinicCreation: React.FC = () => {
                     </select>
                 </label>
                 <label>
-                    <span style={{color : "darkblue"}}>Taluk Name:</span><span style={{ color: 'darkred', fontWeight: 'bold', }}></span>
+                    <span style={{color : "darkblue"}}>Taluk Name*:</span><span style={{ color: 'darkred', fontWeight: 'bold', }}></span>
                     <select value={taluk} onChange={(e) => handleTalukChange(e.target.value)} required disabled={!district || loadingTaluks}>
                         <option value="">Select Taluk</option>
                         {taluks.map((taluk) => (
@@ -289,7 +289,7 @@ const OutreachClinicCreation: React.FC = () => {
                     </select>
                 </label> */}
                <label htmlFor="panchayat-select">
-    <span style={{ color: 'darkblue' }}>Panchayat/Village Name:</span>
+    <span style={{ color: 'darkblue' }}>Panchayat/Village Name*:</span>
     <span style={{ color: 'darkred', fontWeight: 'bold' }}></span>
     <select
         id="panchayat-select"
@@ -316,7 +316,7 @@ const OutreachClinicCreation: React.FC = () => {
 
 
 <label>
-                <span style={{ color: 'darkblue' }}>Outreach Clinic Start Date:</span>
+                <span style={{ color: 'darkblue' }}>Outreach Clinic Start Date*:</span>
                 <span style={{ color: 'darkred', fontWeight: 'bold' }}></span>
                 <div className="input-with-icon">
                 <Calendar
@@ -379,7 +379,7 @@ const OutreachClinicCreation: React.FC = () => {
                 </label> */}
 
 <label>
-            <span style={{ color: 'darkblue' }}>Outreach Clinic ID:</span>
+            <span style={{ color: 'darkblue' }}>Outreach Clinic ID*:</span>
             <span style={{ color: 'darkred', fontWeight: 'bold' }}></span>
             <div className="input-with-icon">
                 <input

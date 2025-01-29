@@ -168,7 +168,7 @@ const NewScreeningEnrollment: React.FC = () => {
           <h1 style={{ color: 'darkblue' }}>New Screening Enrollment</h1>
 
           <div className="form-group">
-            <label style={{ color: 'darkblue' }}>Name:</label>
+            <label style={{ color: 'darkblue' }}>Name*:</label>
             <input
               type="text"
               placeholder="Enter Name"
@@ -179,7 +179,7 @@ const NewScreeningEnrollment: React.FC = () => {
           </div>
 
           <div className="form-group">
-  <label style={{ color: 'darkblue' }}>Mobile Number:</label>
+  <label style={{ color: 'darkblue' }}>Mobile Number*:</label>
   <input
     type="text" // Use text to apply maxLength
     inputMode="numeric" // Numeric keyboard on mobile
@@ -198,7 +198,7 @@ const NewScreeningEnrollment: React.FC = () => {
 
 
           <div className="form-group">
-            <label style={{ color: 'darkblue' }}>Gender:</label>
+            <label style={{ color: 'darkblue' }}>Gender*:</label>
             <div className="gender-group">
               {['Male', 'Female', 'Other'].map((value) => (
                 <button
@@ -208,13 +208,16 @@ const NewScreeningEnrollment: React.FC = () => {
                   onClick={() => handleGenderChange(value)}
                 >
                   {value}
+                  
                 </button>
+                
               ))}
+              
             </div>
           </div>
     
          <label>
-         <label style={{ color: 'darkblue' }}>Date of Birth:</label>
+         <label style={{ color: 'darkblue' }}>Date of Birth*:</label>
                          <span style={{ color: 'darkred', fontWeight: 'bold' }}></span>
                          <div className="input-with-icon">
          

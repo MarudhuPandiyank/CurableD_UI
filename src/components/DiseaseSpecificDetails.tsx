@@ -156,21 +156,24 @@ function DiseaseSpecificDetails() {
         {/* Dynamically render form fields based on the API response */}
         {formData.map((field, index) => (
           <div key={index} className="form-group">
-            <label style={{ color: 'darkblue' }}>{field.testName}:</label>
+            <label style={{ color: 'darkblue' }}>{field.testName}*:</label>
 
             {field.valueType === 'SingleSelect' ? (
               <select
                 id={field.testName.toLowerCase().replace(' ', '-')}
                 name={field.testName.toLowerCase().replace(' ', '-')}
                 value={formValues[field.testName] || ''}
+                required
                 onChange={(e) => handleSelectChange(field.testName, e.target.value)}
               >
                 <option value="" disabled>Select {field.testName}</option>
+                
                 {field.values.map((value: string, idx: number) => (
                   <option key={idx} value={value}>
                     {value}
                   </option>
                 ))}
+
               </select>
             ) : (
               <input
@@ -178,6 +181,7 @@ function DiseaseSpecificDetails() {
                 id={field.testName.toLowerCase().replace(' ', '-')}
                 name={field.testName.toLowerCase().replace(' ', '-')}
                 value={formValues[field.testName] || ''}
+                required
                 onChange={(e) => handleInputChange(field.testName, e.target.value)}
                 placeholder={`Enter ${field.testName}`}
               />
