@@ -56,9 +56,10 @@ const App: React.FC = () => {
           }
         );
 
-        const filteredData = response.data.testMetrics.params.filter(
-          (field: Param) => field.testName !== 'Referred for'
-        );
+        // const filteredData = response.data.testMetrics.params.filter(
+        //   (field: Param) => field.testName !== 'Referred for'
+        // );
+        const filteredData = response.data.testMetrics.params
         console.log('filteredData',filteredData);
         const mappedData: ColourOption[] = filteredData.map((drp) => ({
           value: drp.testName,  // Assuming 'color' is the relevant property in filteredData
@@ -200,7 +201,7 @@ const App: React.FC = () => {
       });
 
       console.log('Data submitted successfully!');
-      navigate('/ParticipantDetails');
+      navigate('/SuccessMessageScreeningFInal');
     } catch (error) {
       console.error('Error submitting data:', error);
 
