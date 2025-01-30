@@ -20,11 +20,11 @@ const ProfilePage: React.FC = () => {
   const [keycloakUserId, setkeycloakUserId] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-
+  const userId = localStorage.getItem("userId");
   useEffect(() => {
     const fetchProfileData = async () => {
       const token = localStorage.getItem("token");
-
+      
       if (!token) {
         alert("No token found. Please log in again.");
         return;
@@ -32,7 +32,7 @@ const ProfilePage: React.FC = () => {
 
       try {
         const response = await axios.get<ProfileData>(
-          "${config.appURL}/curable/hospitalemployee/1",
+          `${config.appURL}/curable/hospitalemployee/${userId}`,
           {
             headers: {
               "Content-Type": "application/json",
@@ -87,7 +87,7 @@ const ProfilePage: React.FC = () => {
 
     const payload = {
       gender: gender.toUpperCase(),
-      id: 1,
+      id: Number(userId),
       name,
       phoneNo,
       yearsExp: 0,
@@ -97,7 +97,7 @@ const ProfilePage: React.FC = () => {
 
     try {
       const response = await axios.post(
-        "${config.appURL}/curable/hospitalemployee",
+        `${config.appURL}/curable/hospitalemployee`,
         payload,
         {
           headers: {
