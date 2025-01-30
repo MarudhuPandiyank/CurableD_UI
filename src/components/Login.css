@@ -134,7 +134,7 @@ h2 {
   white-space: nowrap; /* Prevents wrapping of text or logo */
 }
 
-//* Parent container for alignment */
+/* Parent container for alignment */
 .powered-container {
   display: flex; /* Use flexbox for alignment */
   align-items: center; /* Vertically center items */
