@@ -124,7 +124,7 @@ const ProfilePage: React.FC = () => {
             <i className="fa fa-user-circle"></i>
           </div>
           <div className="profile-edit-icon">
-            <i className="fa fa-pencil"></i>
+            
           </div>
         </div>
       </div>
@@ -143,13 +143,14 @@ const ProfilePage: React.FC = () => {
           <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
           <i className="fa fa-eye" onClick={handlePasswordVisibility}></i>
         </div>
-
-        <button type="button" className="update-profile-button" onClick={handleUpdate}>
+        <center className="buttons">
+        <button type="button" className="Finish-button" onClick={handleUpdate}>
           Update
         </button>
+        </center>
       </form>
       <div className="profile-powered-container">
-        <p className="profile-powered-by">Powered By Curable</p>
+        <p className="profile-powered-by">Powered By </p>
         <img
           src="/assets/Curable logo - rectangle with black text.png"
           alt="Curable Logo"
