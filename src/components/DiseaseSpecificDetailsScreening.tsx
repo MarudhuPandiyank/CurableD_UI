@@ -36,12 +36,11 @@ const App: React.FC = () => {
   const [processingTestName, setProcessingTestName] = useState('');
   const [processingValue, setProcessingValue] = useState('');
   const [dependentList, setDependentList] = useState<string[]>([]);
-  const [isDependent, setIsDependent] = useState<Record<string, boolean>>({}); // Updated this line
-  const [formValues, setFormValues] = useState<Record<string, string[]>>({}); // Store selected values for each test
-  const [multiParam, setMultiParam] = useState<readonly ColourOption[]>([
-    { value: '', label: 'Select values' } // Default option
-  ]);
- 
+  const [isDependent, setIsDependent] = useState<Record<string, boolean>>({});
+  const [formValues, setFormValues] = useState<Record<string, string[]>>({});
+  const [multiParam, setMultiParam] = useState<readonly ColourOption[]>([{ value: '', label: 'Select values' }]);
+  const [independentList, setIndependentList] = useState<string[]>([]); // Initialize independentList state
+
   useEffect(() => {
     const fetchDiseaseTestMaster = async () => {
       try {
@@ -56,10 +55,8 @@ const App: React.FC = () => {
           }
         );
 
-        // const filteredData = response.data.testMetrics.params.filter(
-        //   (field: Param) => field.testName !== 'Referred for'
-        // );
-        const filteredData = response.data.testMetrics.params
+       // const filteredData =  [{"testName":"Cervical Screening","subtestName":"NONE","condition":[{"enabledField":"Screening HR-HPV DNA","triggerValue":"Done"}],"valueType":"SingleSelect","values":["Done","Not Done"],"selectedValues":[]},{"testName":"Screening HR-HPV DNA","subtestName":"HR-HPV DNA","condition":[{"enabledField":"Screening Report Date","triggerValue":"Yes"}],"valueType":"SingleSelect","values":["Yes","No"],"selectedValues":[]},{"testName":"Screening Report Date","subtestName":"Report Date","valueType":"Input","values":[],"selectedValues":[]}];
+         const filteredData = response.data.testMetrics.params
         console.log('filteredData',filteredData);
         const mappedData: ColourOption[] = filteredData.map((drp) => ({
           value: drp.testName,  // Assuming 'color' is the relevant property in filteredData
@@ -69,6 +66,16 @@ const App: React.FC = () => {
         setMultiParam(mappedData);
         setParamsObject({ params: filteredData }); // Store dynamic form fields based on the API response
 
+        const listOfTestNames = filteredData.map(param => param.testName);
+        const listOfEnabledFields = filteredData
+          .filter(param => param.condition)
+          .flatMap(param => param.condition!.map(cond => cond.enabledField));
+
+        const initialIndependentList = listOfTestNames.filter(
+          testName => !listOfEnabledFields.includes(testName)
+        );
+
+        setIndependentList(initialIndependentList); // Initialize independentList
         console.log('Disease Test Master Data:', response.data);
        
       } catch (error) {
@@ -78,16 +85,6 @@ const App: React.FC = () => {
 
     fetchDiseaseTestMaster();
   }, []);
-
-  const listOfTestNames = paramsObject.params.map(param => param.testName);
-
-  const listOfEnabledFields = paramsObject.params
-    .filter(param => param.condition)
-    .flatMap(param => param.condition!.map(cond => cond.enabledField));
-
-  const independentList = listOfTestNames.filter(
-    testName => !listOfEnabledFields.includes(testName)
-  );
 
   const paramsMap = new Map<string, Param>();
   paramsObject.params.forEach(param => paramsMap.set(param.testName, param));
@@ -115,46 +112,6 @@ const App: React.FC = () => {
       });
     }
   });
-
-  const handleSelectionChange = (testName: string, selectedValue: string | string[]) => {
-    setProcessingTestName(testName);
-
-    // If selectedValue is an array, take the first value or join them into a string
-    const valueToSet = Array.isArray(selectedValue) ? selectedValue[0] : selectedValue;
-
-    // Set the value
-    setProcessingValue(valueToSet);
-
-    // Update formValues with the selected value
-    setFormValues((prevFormValues) => ({
-      ...prevFormValues,
-      [testName]: Array.isArray(selectedValue) ? selectedValue : [selectedValue], // Ensure selectedValue is always an array
-    }));
-
-    let updatedDependentList: string[] = [];
-    if (testNameWithEnabledFieldMap.has(testName)) {
-      updatedDependentList = testNameWithEnabledFieldMap.get(testName) || [];
-      const mergedDependentList = Array.from(new Set([...dependentList, ...updatedDependentList]));
-      setDependentList(mergedDependentList);
-    }
-
-    const triggerValues = testNameTriggerValueMap.get(testName) || [];
-    if (triggerValues.includes(valueToSet)) {
-      setIsDependent((prevState) => ({
-        ...prevState,
-        [testName]: true,
-      }));
-    } else {
-      const filteredDependentList = dependentList.filter(
-        (item) => !updatedDependentList.includes(item) || item === testName
-      );
-      setDependentList(filteredDependentList);
-      setIsDependent((prevState) => ({
-        ...prevState,
-        [testName]: false,
-      }));
-    }
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -207,16 +164,7 @@ const App: React.FC = () => {
 
     }
   };
-  const handleSelectionChange1 = (e: React.ChangeEvent<HTMLSelectElement> ,testName: string) => {
-    // Get selected options
-    const selectedValues = Array.from(e.target.selectedOptions, (option) => option.value);
-
-    // Update state with the selected values
-    setFormValues((prevFormValues) => ({
-      ...prevFormValues,
-      [testName]: Array.isArray(selectedValues) ? selectedValues : [selectedValues], // Ensure selectedValue is always an array
-    }));
-  };
+ 
   const patientId = localStorage.getItem('patientId');
   const patientName = localStorage.getItem('patientName');
   const registrationId = localStorage.getItem('registrationId');
@@ -259,19 +207,62 @@ const App: React.FC = () => {
     );
   };
   
-
+  const handleSelectionChange = (testName: string, selectedValue: string | string[]) => {
+    setProcessingTestName(testName);
+  
+    const valueToSet = Array.isArray(selectedValue) ? selectedValue[0] : selectedValue;
+    setProcessingValue(valueToSet);
+  
+    setFormValues((prevFormValues) => ({
+      ...prevFormValues,
+      [testName]: Array.isArray(selectedValue) ? selectedValue : [selectedValue],
+    }));
+  
+    let updatedDependentList: Set<string> = new Set(dependentList); // Initialize Set for unique values
+    let updatedIndependentList: Set<string> = new Set(independentList); // Initialize Set for unique values
+  
+    if (testNameWithEnabledFieldMap.has(testName)) {
+      const newDependentList = testNameWithEnabledFieldMap.get(testName) || [];
+      newDependentList.forEach(dependentField => {
+        updatedDependentList.add(dependentField);
+        updatedIndependentList.add(dependentField);
+      });
+    }
+  
+    const triggerValues = testNameTriggerValueMap.get(testName) || [];
+    if (triggerValues.includes(valueToSet)) {
+      setIsDependent((prevState) => ({
+        ...prevState,
+        [testName]: true,
+      }));
+    } else {
+      const filteredDependentList = dependentList.filter(
+        (item) => !Array.from(updatedDependentList).includes(item)
+      );
+      updatedDependentList = new Set(filteredDependentList); // Convert filtered list back to Set
+      setDependentList(Array.from(updatedDependentList));
+      setIsDependent((prevState) => ({
+        ...prevState,
+        [testName]: false,
+      }));
+    }
+  
+    setIndependentList(Array.from(updatedIndependentList)); // Convert Set to Array
+    setDependentList(Array.from(updatedDependentList)); // Convert Set to Array
+  };
+  
   const getTestFieldsInline = () => {
     return independentList.map((testName) => {
       const param = paramsMap.get(testName);
       if (!param) return null;
-
+  
       const dependentFields = (testNameWithEnabledFieldMap.get(testName) || [])
         .map((dependentTestName) => {
           const dependentParam = paramsMap.get(dependentTestName);
           if (!dependentParam) return null;
-          return renderField(dependentParam, dependentTestName);
+        // return renderField(dependentParam, dependentTestName);//not needed
         });
-
+  
       return (
         <div key={testName} className="form-inline-group">
           {renderField(param, testName)}
@@ -280,6 +271,7 @@ const App: React.FC = () => {
       );
     });
   };
+  
 
   return (
     <div className="container2">
