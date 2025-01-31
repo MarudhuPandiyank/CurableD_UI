@@ -4,6 +4,8 @@ import Header1 from './Header1';
 import './ParticipantDetails.css';
 import axios from 'axios';
 import config from '../config'; 
+import './NewScreeningEnrollment.css';
+
 interface Habit {
   habit: string;
   habitType: string;
@@ -492,10 +494,10 @@ const ParticipantDetails: React.FC = () => {
           )}
 
 {showModal && (
-            <div className="modal">
-              <div className="modal-content">
-                <h1>Non mandatory fields are not provided</h1>
-                <h1>Are you sure you want to finish registration?</h1>
+           <div className="custom-modal">
+    <div className="custom-modal-content">
+                <h1 style={{ marginTop: '130px', textAlign: 'center', color: 'darkblue' }}>Non mandatory fields are not provided Are you sure you want to finish registration?</h1>
+                
 
                 <div className="form-group">
                

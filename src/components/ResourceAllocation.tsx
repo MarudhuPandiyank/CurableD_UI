@@ -94,13 +94,21 @@ const ResourceAllocation: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
+  
     const { programCoordinators, campCoordinators, socialWorkers, nurses, doctors } = formData;
-    if (!programCoordinators.length || !campCoordinators.length || !socialWorkers.length || !nurses.length || !doctors.length) {
-      alert('Please fill out all required fields.');
+  
+    // Allow submission if at least one field has data
+    if (
+      programCoordinators.length === 0 &&
+      campCoordinators.length === 0 &&
+      socialWorkers.length === 0 &&
+      nurses.length === 0 &&
+      doctors.length === 0
+    ) {
+      alert('Please select at least one field before submitting.');
       return;
     }
-
+  
     const requestDataFinal = {
       campDTO: {
         startDate,
@@ -145,10 +153,10 @@ const ResourceAllocation: React.FC = () => {
         })),
       ],
     };
-
+  
     try {
       const response = await axiosInstance.post<string>(`${config.appURL}/curable/newcamp`, requestDataFinal);
-
+  
       if (response.status === 200) {
         navigate('/success-message', { state: { clickId: response.data } });
       } else {
@@ -159,6 +167,7 @@ const ResourceAllocation: React.FC = () => {
       alert('Something went wrong, please try again later.');
     }
   };
+  
 
   return (
     <div className="container2">
@@ -237,18 +246,19 @@ const ResourceAllocation: React.FC = () => {
         </div>
 
         <button
-          className="submit-button"
-          type="submit"
-          disabled={
-            !formData.programCoordinators.length ||
-            !formData.campCoordinators.length ||
-            !formData.socialWorkers.length ||
-            !formData.nurses.length ||
-            !formData.doctors.length
-          }
-        >
-          Submit
-        </button>
+  className="submit-button"
+  type="submit"
+  disabled={
+    formData.programCoordinators.length === 0 &&
+    formData.campCoordinators.length === 0 &&
+    formData.socialWorkers.length === 0 &&
+    formData.nurses.length === 0 &&
+    formData.doctors.length === 0
+  }
+>
+  Submit
+</button>
+
       </form>
     </div>
   );

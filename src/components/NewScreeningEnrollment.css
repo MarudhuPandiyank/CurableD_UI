@@ -58,3 +58,81 @@
 .checkbox-item label {
   font-size: 14px;
 }
+
+.custom-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+}
+
+.custom-modal-content {
+  background: white;
+  padding: 30px;
+  border-radius: 10px;
+  width: 700px;
+  height: 400px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.custom-modal-title {
+  text-align: center;
+  font-size: 22px;
+  font-weight: bold;
+  width: 100%;
+  margin-top: 10px;
+}
+
+.custom-form-group {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-top: 60px;  /* Moves the select box lower */
+}
+
+.custom-select {
+  width: 80%;
+  padding: 12px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  font-size: 16px;
+  background-color: #f9f9f9;
+}
+
+.custom-modal-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  width: 100%;
+  margin-top: auto;
+  padding-bottom: 20px;
+}
+
+.custom-modal-button {
+  width: 150px;
+  padding: 12px;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.custom-close-button {
+  background: white;
+  color: #d774ad;
+}
+
+.custom-save-button {
+  background: #d774ad;
+  color: white;
+}

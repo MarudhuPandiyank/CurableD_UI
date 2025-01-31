@@ -269,46 +269,48 @@ const NewScreeningEnrollment: React.FC = () => {
             />
           </div>
           {showModal && (
-            <div className="modal">
-              <div className="modal-content">
-                <h2>How would you like to tag this participant?</h2>
+  <div className="custom-modal">
+    <div className="custom-modal-content">
+      <h2 className="custom-modal-title">How would you like to tag this participant?</h2>
 
-                <div className="form-group">
-                
-    
-    <select
-      value={reason}  // The state that stores the selected reason
-      onChange={(e) => setReason(e.target.value)}  // Handle selection change
-    >
-      <option value="">Select Reason</option>  {/* Empty option to prompt selection */}
-      <option value="Refused">Refused</option>
-      <option value="Door Locked">Door Locked</option>
-      <option value="Work Daily Worker">Work Daily Worker</option>
-      <option value="Work Out Of Station">Work Out Of Station</option>
-      <option value="Out Of Station - Short Visit">Out Of Station - Short Visit</option>
-      <option value="Already Screened">Already Screened</option>
-      <option value="Settled OutStation">Settled OutStation</option>
-      <option value="Medical Reasons">Medical Reasons</option>
-    </select>
+      <div className="custom-form-group">
+        <select 
+          className="custom-select" 
+          value={reason} 
+          onChange={(e) => setReason(e.target.value)}
+        >
+          <option value="">Select Reason</option>
+          <option value="Refused">Refused</option>
+          <option value="Door Locked">Door Locked</option>
+          <option value="Work Daily Worker">Work Daily Worker</option>
+          <option value="Work Out Of Station">Work Out Of Station</option>
+          <option value="Out Of Station - Short Visit">Out Of Station - Short Visit</option>
+          <option value="Already Screened">Already Screened</option>
+          <option value="Settled OutStation">Settled OutStation</option>
+          <option value="Medical Reasons">Medical Reasons</option>
+        </select>
+      </div>
+
+      <div className="custom-modal-buttons">
+        <button 
+          className="Next-button" 
+          type="button" 
+          onClick={closeModal}
+        >
+          Close
+        </button>
+        <button 
+          className="custom-modal-button custom-save-button" 
+          type="button" 
+          onClick={handleSave}
+        >
+          Save
+        </button>
+      </div>
+    </div>
   </div>
+)}
 
-                <div className="modal-buttons">
-                  <button className="Finish-button"
-                    type="button"
-                    onClick={closeModal}
-                  >
-                    Close
-                  </button>
-                  <button className="Next-button"
-                    type="button"
-                    onClick={handleSave}
-                  >
-                    Save
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
 
 
 

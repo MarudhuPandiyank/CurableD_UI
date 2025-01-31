@@ -55,7 +55,6 @@ const App: React.FC = () => {
           }
         );
 
-       // const filteredData =  [{"testName":"Cervical Screening","subtestName":"NONE","condition":[{"enabledField":"Screening HR-HPV DNA","triggerValue":"Done"}],"valueType":"SingleSelect","values":["Done","Not Done"],"selectedValues":[]},{"testName":"Screening HR-HPV DNA","subtestName":"HR-HPV DNA","condition":[{"enabledField":"Screening Report Date","triggerValue":"Yes"}],"valueType":"SingleSelect","values":["Yes","No"],"selectedValues":[]},{"testName":"Screening Report Date","subtestName":"Report Date","valueType":"Input","values":[],"selectedValues":[]}];
          const filteredData = response.data.testMetrics.params
         console.log('filteredData',filteredData);
         const mappedData: ColourOption[] = filteredData.map((drp) => ({
@@ -209,27 +208,30 @@ const App: React.FC = () => {
   
   const handleSelectionChange = (testName: string, selectedValue: string | string[]) => {
     setProcessingTestName(testName);
-  
+    
     const valueToSet = Array.isArray(selectedValue) ? selectedValue[0] : selectedValue;
     setProcessingValue(valueToSet);
-  
+    
     setFormValues((prevFormValues) => ({
       ...prevFormValues,
       [testName]: Array.isArray(selectedValue) ? selectedValue : [selectedValue],
     }));
-  
+    
     let updatedDependentList: Set<string> = new Set(dependentList); // Initialize Set for unique values
     let updatedIndependentList: Set<string> = new Set(independentList); // Initialize Set for unique values
-  
+    
     if (testNameWithEnabledFieldMap.has(testName)) {
       const newDependentList = testNameWithEnabledFieldMap.get(testName) || [];
+      
+      // Only add dependent fields if the selected value matches the triggerValue
       newDependentList.forEach(dependentField => {
-        updatedDependentList.add(dependentField);
-        updatedIndependentList.add(dependentField);
+        if (testNameTriggerValueMap.get(testName)?.includes(valueToSet)) {
+          updatedDependentList.add(dependentField);
+          updatedIndependentList.add(dependentField);
+        }
       });
     }
   
-    
     const triggerValues = testNameTriggerValueMap.get(testName) || [];
     if (triggerValues.includes(valueToSet)) {
       setIsDependent((prevState) => ({
@@ -247,10 +249,11 @@ const App: React.FC = () => {
         [testName]: false,
       }));
     }
-  
+    
     setIndependentList(Array.from(updatedIndependentList)); // Convert Set to Array
     setDependentList(Array.from(updatedDependentList)); // Convert Set to Array
   };
+  
   
   const getTestFieldsInline = () => {
     return independentList.map((testName) => {
@@ -261,17 +264,22 @@ const App: React.FC = () => {
         .map((dependentTestName) => {
           const dependentParam = paramsMap.get(dependentTestName);
           if (!dependentParam) return null;
-        // return renderField(dependentParam, dependentTestName);//not needed
+          if (isDependent[dependentTestName]) {
+            return renderField(dependentParam, dependentTestName);
+          }
+          return null;
         });
   
       return (
         <div key={testName} className="form-inline-group">
           {renderField(param, testName)}
-          {isDependent[testName] && dependentFields}
+          {dependentFields}
         </div>
       );
     });
   };
+  
+  
   
 
   return (

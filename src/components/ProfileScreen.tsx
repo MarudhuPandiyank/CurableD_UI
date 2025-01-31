@@ -3,6 +3,7 @@ import axios from "axios";
 import "./ProfileScreen.css";
 import './HomePage.css'; // Assuming you are keeping it for other styles
 import config from '../config';  // Import the config file
+import Header1 from "./Header1";
 interface ProfileData {
   gender: string;
   id: number;
@@ -67,12 +68,15 @@ const ProfilePage: React.FC = () => {
     if (passwordField && eyeIcon) {
       if (passwordField.type === "password") {
         passwordField.type = "text";
+      
         eyeIcon.classList.remove("fa-eye");
         eyeIcon.classList.add("fa-eye-slash");
+       
       } else {
         passwordField.type = "password";
         eyeIcon.classList.remove("fa-eye-slash");
         eyeIcon.classList.add("fa-eye");
+       
       }
     }
   };
@@ -117,7 +121,13 @@ const ProfilePage: React.FC = () => {
   };
 
   return (
-    <div className="profile-page-container">
+    <>
+    <div style={{marginTop:'20px'}}>
+    <Header1 />
+    </div>
+    
+      <div className="profile-page-container">
+      
       <div className="profile-header-container">
         <div className="profile-account-icon-wrapper">
           <div className="profile-account-icon">
@@ -158,6 +168,8 @@ const ProfilePage: React.FC = () => {
         />
       </div>
     </div>
+    </>
+  
   );
 };
 

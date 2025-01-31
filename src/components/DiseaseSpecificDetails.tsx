@@ -4,6 +4,8 @@ import './HomePage.css';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import config from '../config'; 
+import './NewScreeningEnrollment.css';
+
 // Define types for API response
 interface FamilyMetricsParam {
   testName: string;
@@ -137,6 +139,16 @@ function DiseaseSpecificDetails() {
   const patientName = localStorage.getItem('patientName');
   const participant = localStorage.getItem('participant');
   const registraionId = localStorage.getItem('registraionId');
+  const [isMandatoryFieldsValid, setIsMandatoryFieldsValid] = useState(true); // State to track if mandatory fields are valid
+
+  const checkMandatoryFields = () => {
+    return formData.every((field) => {
+      if (field.condition !== null) {  // Assuming condition is used to mark if a field is mandatory
+        return formValues[field.testName] && formValues[field.testName].trim() !== '';  // Check if value is filled
+      }
+      return true;  // If condition is null, consider it as optional
+    });
+  };
   return (
     <div className="container21">
       <Header1 />
@@ -189,11 +201,11 @@ function DiseaseSpecificDetails() {
           </div>
         ))}
 {showModal && (
-            <div className="modal">
-              <div className="modal-content">
-                <h1>Non mandatory fields are not provided</h1>
-                <h1>Are you sure you want to finish registration?</h1>
-
+            <div className="custom-modal">
+    <div className="custom-modal-content">
+    <h1 style={{ marginTop: '130px', textAlign: 'center', color: 'darkblue' }}>
+        Non-mandatory fields are not provided. Are you sure you want to finish registration?
+      </h1>
                 <div className="form-group">
                
   </div>
@@ -216,10 +228,22 @@ function DiseaseSpecificDetails() {
             </div>
           )}
 
-        <center className="buttons">
-          <button type="button" className="Next-button"  onClick={openModal} >Finish</button>
-          <button type="submit" className="Finish-button">Next</button>
-        </center>
+<center className="buttons">
+        <button
+          type="button"
+          className="Next-button"
+          onClick={openModal}
+          disabled={!checkMandatoryFields()}  // Disable if mandatory fields are missing
+        >
+          Finish
+        </button>
+        {!isMandatoryFieldsValid && (
+          <div className="validation-message" style={{ color: 'red', fontWeight: 'bold', marginTop: '10px' }}>
+            Please fill all mandatory fields before proceeding.
+          </div>
+        )}
+        <button type="submit" className="Finish-button">Next</button>
+      </center>
       </form>
 
       <div className="powered-container">
