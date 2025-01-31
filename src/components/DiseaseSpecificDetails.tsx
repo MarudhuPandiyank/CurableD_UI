@@ -6,14 +6,13 @@ import { useNavigate } from 'react-router-dom';
 import config from '../config'; 
 import './NewScreeningEnrollment.css';
 
-// Define types for API response
 interface FamilyMetricsParam {
   testName: string;
   subtestName: string;
   condition: string | null;
   valueType: string;
   values: string[];
-  selectedValues: string[]; // Add selectedValues to the structure
+  selectedValues: string[];
 }
 
 interface ApiResponse {
@@ -25,17 +24,19 @@ interface ApiResponse {
 function DiseaseSpecificDetails() {
   const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);
-  const [formData, setFormData] = useState<FamilyMetricsParam[]>([]); // State to store dynamic form fields
-  const [error, setError] = useState<string | null>(null); // State to store error message
-  const [formValues, setFormValues] = useState<Record<string, string>>({}); // State to store the form values dynamically
-  const participantValue =localStorage.getItem('participant');
-   const gender=participantValue?.split('/')[1];
-   
-  
+  const [formData, setFormData] = useState<FamilyMetricsParam[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const [formValues, setFormValues] = useState<Record<string, string>>({});
+  const [loading, setLoading] = useState(true);
+  const [validationError, setValidationError] = useState<string | null>(null);
+
+  const participantValue = localStorage.getItem('participant');
+  const gender = participantValue?.split('/')[1];
+
   useEffect(() => {
     const fetchDiseaseTestMaster = async () => {
       try {
-        const token = localStorage.getItem('token'); // Assuming token is stored in localStorage
+        const token = localStorage.getItem('token');
         if (!token) {
           setError('Token is missing. Please log in again.');
           return;
@@ -46,16 +47,18 @@ function DiseaseSpecificDetails() {
             Authorization: `Bearer ${token}`,
           },
         });
-        setFormData(response.data.eligibilityMetrics.params); // Store dynamic form fields based on the API response
+        setFormData(response.data.eligibilityMetrics.params);
         console.log('Disease Test Master Data:', response.data);
       } catch (error) {
         console.error('Error fetching disease test master data:', error);
         setError('Failed to load disease test data. Please try again.');
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchDiseaseTestMaster();
-  }, []);
+  }, [gender]);
 
   const handleInputChange = (testName: string, value: string) => {
     setFormValues((prevValues) => ({
@@ -63,15 +66,20 @@ function DiseaseSpecificDetails() {
       [testName]: value,
     }));
   };
+
   const openModal = () => {
-  
-    setShowModal(true);
+    if (Object.keys(formValues).length < formData.length) {
+      setValidationError('Please fill in all mandatory fields.');
+    } else {
+      setValidationError(null);
+      setShowModal(true);
+    }
   };
 
-  // Function to close modal
   const closeModal = () => {
     setShowModal(false);
   };
+
   const handleSelectChange = (testName: string, value: string) => {
     setFormValues((prevValues) => ({
       ...prevValues,
@@ -79,16 +87,14 @@ function DiseaseSpecificDetails() {
     }));
   };
 
-  //  navigate('/SuccessMessagePRFinal');
-  const handleSubmit = async (e: React.FormEvent,navigateTo: string) => {
+  const handleSubmit = async (e: React.FormEvent, navigateTo: string) => {
     e.preventDefault();
 
-    // Construct the body of the POST request to match the desired structure
     const updatedFormData = formData.map((field) => {
       const selectedValue = formValues[field.testName] ? [formValues[field.testName]] : [];
       return {
         ...field,
-        selectedValues: selectedValue, // Assign the selected value to selectedValues
+        selectedValues: selectedValue,
       };
     });
 
@@ -100,7 +106,7 @@ function DiseaseSpecificDetails() {
       },
       familyMedicalMetrics: null,
       familyMetrics: null,
-      gender: "FEMALE", // You can dynamically adjust this if necessary
+      gender: "FEMALE",
       genderValid: true,
       hospitalId: 1,
       id: 27,
@@ -108,7 +114,7 @@ function DiseaseSpecificDetails() {
       name: "Eligibility Metrics",
       stage: "ELIGIBILE",
       testMetrics: null,
-      type:1,
+      type: 1,
       candidateId: Number(patientId),
     };
 
@@ -127,8 +133,6 @@ function DiseaseSpecificDetails() {
 
       console.log('Data submitted successfully!');
       navigate(navigateTo);
-     // navigate('/ParticipantDetails');
-     
     } catch (error) {
       console.error('Error submitting data:', error);
       setError('Failed to submit data. Please try again.');
@@ -136,40 +140,28 @@ function DiseaseSpecificDetails() {
   };
 
   const patientId = localStorage.getItem('patientId');
-  const patientName = localStorage.getItem('patientName');
-  const participant = localStorage.getItem('participant');
   const registraionId = localStorage.getItem('registraionId');
-  const [isMandatoryFieldsValid, setIsMandatoryFieldsValid] = useState(true); // State to track if mandatory fields are valid
 
-  const checkMandatoryFields = () => {
-    return formData.every((field) => {
-      if (field.condition !== null) {  // Assuming condition is used to mark if a field is mandatory
-        return formValues[field.testName] && formValues[field.testName].trim() !== '';  // Check if value is filled
-      }
-      return true;  // If condition is null, consider it as optional
-    });
-  };
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <div className="container21">
       <Header1 />
-      {/* <p style={{ color: 'darkblue', fontWeight: 'bold', }}>Disease Specific Details</p> */}
-     
       <h1 style={{ color: 'darkblue' }}>Disease Specific Details</h1>
       <div className="participant-container">
-        <p>Participant: {participant}</p>
-        <p>ID:{registraionId}</p>
+        <p>Participant: {participantValue}</p>
+        <p>ID: {registraionId}</p>
       </div>
 
-      {error && <div className="error-message">{error}</div>} {/* Display error message if there's an issue */}
+      {error && <div className="error-message">{error}</div>}
+      {validationError && <div className="validation-error" style={{ color: 'red' }}>{validationError}</div>}
 
       <form className="clinic-form" onSubmit={(e) => handleSubmit(e, '/ParticipantDetails')}>
-        {/* <p>Disease Specific Details</p> */}
-
-        {/* Dynamically render form fields based on the API response */}
         {formData.map((field, index) => (
           <div key={index} className="form-group">
             <label style={{ color: 'darkblue' }}>{field.testName}*:</label>
-
             {field.valueType === 'SingleSelect' ? (
               <select
                 id={field.testName.toLowerCase().replace(' ', '-')}
@@ -179,13 +171,9 @@ function DiseaseSpecificDetails() {
                 onChange={(e) => handleSelectChange(field.testName, e.target.value)}
               >
                 <option value="" disabled>Select {field.testName}</option>
-                
                 {field.values.map((value: string, idx: number) => (
-                  <option key={idx} value={value}>
-                    {value}
-                  </option>
+                  <option key={idx} value={value}>{value}</option>
                 ))}
-
               </select>
             ) : (
               <input
@@ -200,50 +188,32 @@ function DiseaseSpecificDetails() {
             )}
           </div>
         ))}
-{showModal && (
-            <div className="custom-modal">
-    <div className="custom-modal-content">
-    <h1 style={{ marginTop: '130px', textAlign: 'center', color: 'darkblue' }}>
-        Non-mandatory fields are not provided. Are you sure you want to finish registration?
-      </h1>
-                <div className="form-group">
-               
-  </div>
 
-                <div className="modal-buttons">
-                  <button className="Finish-button"
-                    type="button"
-                    onClick={(e) => handleSubmit(e, '/SuccessMessagePRFinal')}
-                  >
-                    Yes
-                  </button>
-                  <button className="Next-button"
-                    type="button"
-                    onClick={closeModal}
-                  >
-                    No
-                  </button>
-                </div>
+        {showModal && (
+          <div className="custom-modal">
+            <div className="custom-modal-content">
+              <h1 style={{ marginTop: '130px', textAlign: 'center', color: 'darkblue' }}>
+                Non-mandatory fields are not provided. Are you sure you want to finish registration?
+              </h1>
+              <div className="modal-buttons">
+                <button className="Finish-button" type="button" onClick={(e) => handleSubmit(e, '/SuccessMessagePRFinal')}>Yes</button>
+                <button className="Next-button" type="button" onClick={closeModal}>No</button>
               </div>
             </div>
-          )}
-
-<center className="buttons">
-        <button
-          type="button"
-          className="Next-button"
-          onClick={openModal}
-          disabled={!checkMandatoryFields()}  // Disable if mandatory fields are missing
-        >
-          Finish
-        </button>
-        {!isMandatoryFieldsValid && (
-          <div className="validation-message" style={{ color: 'red', fontWeight: 'bold', marginTop: '10px' }}>
-            Please fill all mandatory fields before proceeding.
           </div>
         )}
-        <button type="submit" className="Finish-button">Next</button>
-      </center>
+
+        <center className="buttons">
+          <button type="button" className="Next-button" onClick={openModal}>Finish</button>
+          <button type="submit" className="Finish-button" onClick={(e) => {
+            if (Object.keys(formValues).length < formData.length) {
+              setValidationError('Please fill in all mandatory fields.');
+              e.preventDefault();
+            } else {
+              setValidationError(null);
+            }
+          }}>Next</button>
+        </center>
       </form>
 
       <div className="powered-container">
