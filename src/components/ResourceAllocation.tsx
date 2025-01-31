@@ -158,7 +158,7 @@ const ResourceAllocation: React.FC = () => {
       const response = await axiosInstance.post<string>(`${config.appURL}/curable/newcamp`, requestDataFinal);
   
       if (response.status === 200) {
-        navigate('/success-message', { state: { clickId: response.data } });
+        navigate('/success-messageEdit', { state: { clickId: response.data } });
       } else {
         alert('Failed to submit data.');
       }

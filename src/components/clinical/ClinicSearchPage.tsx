@@ -202,7 +202,7 @@ const ClinicSearchPage: React.FC = () => {
           </div>
 
           <div className="stage-dropdown">
-            <label className="select-label">Screening</label>
+            <label className="select-label">Clinical</label>
             <select
               value={selectedStage || ""}
               onChange={handleStageChange}

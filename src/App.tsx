@@ -33,6 +33,7 @@ import SuccessMessagePRFinal from './components/SuccessMessagePRFinal';
 import SuccessMessageScreeningFInal from './components/SuccessMessageScreeningFInal';
 import SuccessMessageClinicalFInal from './components/SuccessMessageClinicalFInal';
 import DynamicScreen from './components/DynamicScreen';
+import SuccessMessageEdit from './components/SuccessMessageEdit';
 
 import DiseaseSpecificDetailsScreening from './components/DiseaseSpecificDetailsScreening';
 
@@ -56,6 +57,7 @@ const App: React.FC = () => {
                 <Route path="/create-outreach-clinic" element={<OutreachClinicCreation />} />
                 <Route path="/resource-planning" element={<ResourcePlanning />} /> 
                 <Route path="/success-message" element={<SuccessMessage />} />
+                <Route path="/success-messageEdit" element={<SuccessMessageEdit />} />
                 <Route path="/outreach-clinic-info" element={<OutreachClinicInfo />} />
                 <Route path="/EditOutreachClinic" element={<EditOutreachClinic />} />
                 <Route path="/resource-allocation" element={<ResourceAllocation />} />

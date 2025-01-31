@@ -214,7 +214,7 @@ const navigate = useNavigate();
         </fieldset>
 
         {/* Women's Health Section */}
-        {gender === 'FEMALE' && (<fieldset>
+        {(gender === 'FEMALE' || gender === 'OTHER') && (<fieldset>
           <legend>Women's Health</legend>
           <label>Age at Menarche:</label>
           <input
