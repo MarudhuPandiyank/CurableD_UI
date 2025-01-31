@@ -113,8 +113,16 @@ const navigate = useNavigate();
           <label>Medical History:</label>
           <select value={selectedHistory} onChange={(e) => setSelectedHistory(e.target.value)}>
             <option value="">Select Medical History</option>
-            <option value="History1">History 1</option>
-            <option value="History2">History 2</option>
+            <option value="History1">Nil</option>
+            <option value="History2">Diabetes</option>
+            <option value="History3">Hypertension</option>
+            <option value="History4">Asthma</option>
+            <option value="History5">Tuberculosis</option>
+            <option value="History6">Stroke/Myocardial Infarction</option>
+            <option value="History7">Settled Thyroid</option>
+            <option value="History8">Cancer</option>
+            <option value="History9">Epilepsy</option>
+            <option value="History10">Others</option>
           </select>
 
           <div className="form-group">
@@ -230,8 +238,9 @@ const navigate = useNavigate();
             onChange={(e) => setSelectedLastMenstruation(e.target.value)}
           >
             <option value="">Select</option>
-            <option value="LastMenstruation1">Option 1</option>
-            <option value="LastMenstruation2">Option 2</option>
+            <option value="LastMenstruation1">Less than 12 months ago</option>
+            <option value="LastMenstruation2">More than 12 months ago</option>
+            <option value="LastMenstruation3">Surgical menopause</option>
           </select>
 
           <label>Abnormal Bleeding/Vaginal Issues:</label>
@@ -240,8 +249,12 @@ const navigate = useNavigate();
             onChange={(e) => setSelectedBleedingIssues(e.target.value)}
           >
             <option value="">Select</option>
-            <option value="Issue1">Issue 1</option>
-            <option value="Issue2">Issue 2</option>
+            <option value="Issue1">None</option>
+            <option value="Issue2">Post Menoposal Bleeding</option>
+            <option value="Issue3">Post Coital Bleeding</option>
+            <option value="Issue4">Inter Menstrual Bleeding</option>
+            <option value="Issue4">DUB</option>
+            <option value="Issue5">Others</option>
           </select>
 
           <label>Age at Marriage:</label>
@@ -312,8 +325,11 @@ const navigate = useNavigate();
             onChange={(e) => setSelectedContraception(e.target.value)}
           >
             <option value="">Select</option>
-            <option value="Contraception1">Contraception 1</option>
-            <option value="Contraception2">Contraception 2</option>
+            <option value="Contraception1">Nil</option>
+            <option value="Contraception2">Condom</option>
+            <option value="Contraception3">Pil</option>
+            <option value="Contraception4">Tubectomy</option>
+            <option value="Contraception5">Others</option>
           </select>
 
           <label>Breast Fed (How Many Months?):</label>
@@ -322,8 +338,10 @@ const navigate = useNavigate();
             onChange={(e) => setSelectedBreastFedMonths(e.target.value)}
           >
             <option value="">Select</option>
-            <option value="Month1">1 Month</option>
-            <option value="Month2">2 Months</option>
+            <option value="Month1">Nil</option>
+            <option value="Month2">&lt; 6 Months</option>
+            <option value="Month3">6-12 Months</option>
+            <option value="Month4">&gt; 12 Months</option>
           </select>
 
           <label>Have You Ever Undergone Breast/Cervix Screening?</label>
