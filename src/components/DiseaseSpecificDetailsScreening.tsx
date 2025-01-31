@@ -1,45 +1,37 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import Header1 from './Header1';
-import Select, { MultiValue } from 'react-select';
-import config from '../config'; 
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import config from '../config';
+import Header1 from "./Header1";
+
+interface Field {
+  testName: string;
+  subtestName: string;
+  condition?: Condition[];
+  valueType: string;
+  values: string[];
+  selectedValues?: string[];
+}
 
 interface Condition {
   enabledField: string;
   triggerValue: string;
 }
-interface ColourOption {
-  value: string;
-  label: string;
-}
-interface Param {
-  testName: string;
-  subtestName?: string;
-  valueType: string;
-  values: string[];
-  selectedValues: string[];
-  condition?: Condition[];
-}
 
 interface ApiResponse {
   id: number;
   testMetrics: {
-    params: Param[];
+    params: Field[];
   };
 }
 
 const App: React.FC = () => {
+  const [selectedValues, setSelectedValues] = useState<{ [key: string]: string }>({});
+  const [hiddenFields, setHiddenFields] = useState<string[]>([]);
+  const [fieldData, setFieldData] = useState<Field[]>([]);
+  
   const navigate = useNavigate();
   const diseaseTestIds = localStorage.getItem('diseaseTestIds');
-  const [paramsObject, setParamsObject] = useState<{ params: Param[] }>({ params: [] });
-  const [processingTestName, setProcessingTestName] = useState('');
-  const [processingValue, setProcessingValue] = useState('');
-  const [dependentList, setDependentList] = useState<string[]>([]);
-  const [isDependent, setIsDependent] = useState<Record<string, boolean>>({});
-  const [formValues, setFormValues] = useState<Record<string, string[]>>({});
-  const [multiParam, setMultiParam] = useState<readonly ColourOption[]>([{ value: '', label: 'Select values' }]);
-  const [independentList, setIndependentList] = useState<string[]>([]); // Initialize independentList state
 
   useEffect(() => {
     const fetchDiseaseTestMaster = async () => {
@@ -55,98 +47,75 @@ const App: React.FC = () => {
           }
         );
 
-         const filteredData = response.data.testMetrics.params
-        console.log('filteredData',filteredData);
-        const mappedData: ColourOption[] = filteredData.map((drp) => ({
-          value: drp.testName,  // Assuming 'color' is the relevant property in filteredData
-          label: drp.testName,  // You can adjust this if needed
-        }));
-        
-        setMultiParam(mappedData);
-        setParamsObject({ params: filteredData }); // Store dynamic form fields based on the API response
+        const filteredData = response.data.testMetrics.params;
+        setFieldData(filteredData); // Set the fetched data to fieldData state
 
-        const listOfTestNames = filteredData.map(param => param.testName);
-        const listOfEnabledFields = filteredData
-          .filter(param => param.condition)
-          .flatMap(param => param.condition!.map(cond => cond.enabledField));
+        // Optionally, you can set hiddenFields based on the conditions in filteredData
+        const hidden = new Set<string>();
+        filteredData.forEach((field) => {
+          field.condition?.forEach((cond) => {
+            hidden.add(cond.enabledField);
+          });
+        });
+        setHiddenFields(Array.from(hidden));
 
-        const initialIndependentList = listOfTestNames.filter(
-          testName => !listOfEnabledFields.includes(testName)
-        );
-
-        setIndependentList(initialIndependentList); // Initialize independentList
-        console.log('Disease Test Master Data:', response.data);
-       
       } catch (error) {
         console.error('Error fetching disease test master data:', error);
       }
     };
 
-    fetchDiseaseTestMaster();
-  }, []);
-
-  const paramsMap = new Map<string, Param>();
-  paramsObject.params.forEach(param => paramsMap.set(param.testName, param));
-
-  const testNameWithEnabledFieldMap = new Map<string, string[]>();
-  paramsObject.params.forEach(param => {
-    if (param.condition) {
-      param.condition.forEach(cond => {
-        if (!testNameWithEnabledFieldMap.has(param.testName)) {
-          testNameWithEnabledFieldMap.set(param.testName, []);
-        }
-        testNameWithEnabledFieldMap.get(param.testName)!.push(cond.enabledField);
-      });
+    if (diseaseTestIds) {
+      fetchDiseaseTestMaster();
     }
-  });
+  }, [diseaseTestIds]);
 
-  const testNameTriggerValueMap = new Map<string, string[]>();
-  paramsObject.params.forEach(param => {
-    if (param.condition) {
-      param.condition.forEach(cond => {
-        if (!testNameTriggerValueMap.has(param.testName)) {
-          testNameTriggerValueMap.set(param.testName, []);
-        }
-        testNameTriggerValueMap.get(param.testName)!.push(cond.triggerValue);
-      });
-    }
-  });
+  const handleSelectChange = (testName: string, value: string) => {
+    setSelectedValues({ ...selectedValues, [testName]: value });
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+    const fieldsToShow = new Set<string>(hiddenFields);
 
-    // Construct the body of the POST request to match the desired structure
-    const updatedFormData = paramsObject.params.map((field) => {
-      const selectedValue = formValues[field.testName] || []; // Use the selected value from formValues
-      return {
-        ...field,
-        selectedValues: selectedValue, // Assign the selected value to selectedValues
-      };
+    fieldData.forEach((field) => {
+      if (field.testName === testName) {
+        field.condition?.forEach((cond) => {
+          if (cond.triggerValue === value) {
+            fieldsToShow.delete(cond.enabledField);
+          } else {
+            fieldsToShow.add(cond.enabledField);
+          }
+        });
+      }
     });
-    const candidateId = localStorage.getItem('candidateId');
+
+    setHiddenFields(Array.from(fieldsToShow));
+  };
+
+  const handleFinish = async () => {
     const payload = {
-      candidateId: Number(candidateId),
-      diseaseTestMasterId: Number(diseaseTestIds),
-      description: "Test Metrics",
+      description: "Eligibility Metrics",
       diseaseTestId: 1,
-      testMetrics: {
-        params: updatedFormData,
-      },
       familyMedicalMetrics: null,
       familyMetrics: null,
+      gender: "FEMALE", // You can dynamically adjust this if necessary
       genderValid: true,
       hospitalId: 1,
-      id: null,
+      id: 27,
       medicalMetrics: null,
-      name: "Test Metrics",
+      name: "Eligibility Metrics",
       stage: localStorage.getItem('selectedStage'),
-      type: 1,
-    };
+      testMetrics: null,
+      eligibilityMetrics: {
+        params: fieldData.map((field) => ({
+          testName: field.testName,
+          subtestName: field.subtestName,
+          selectedValues: selectedValues[field.testName] ? [selectedValues[field.testName]] : [],
+        })),
+      },
+    };
 
     try {
       const token = localStorage.getItem('token');
       if (!token) {
-
+        console.error("Token is missing");
         return;
       }
 
@@ -157,150 +126,65 @@ const App: React.FC = () => {
       });
 
       console.log('Data submitted successfully!');
-      navigate('/SuccessMessageScreeningFInal');
+      navigate('/SuccessMessageClinicalFInal');
     } catch (error) {
       console.error('Error submitting data:', error);
-
     }
   };
- 
   const patientId = localStorage.getItem('patientId');
   const patientName = localStorage.getItem('patientName');
-  const registrationId = localStorage.getItem('registrationId');
-  const ptName = localStorage.getItem('ptName');
-
-  const renderField = (param: Param, key: string) => {
-    return (
-      <div key={key} className="form-group">
-        <p>{param.testName}</p>
-        {param.valueType === 'SingleSelect' && (
-          <select
-            onChange={e =>
-              handleSelectionChange(param.testName, e.target.value) // Updated this line
-            }
-            defaultValue=""
-          >
-            <option value="" disabled>
-              Select a value
-            </option>
-            {param.values.map(value => (
-              <option key={value} value={value}>
-                {value}
-              </option>
-            ))}
-          </select>
-        )}
-        {param.valueType === 'Multi Select' && (
-          <Select
-            isMulti
-            name={param.testName}
-            options={param.values.map((value) => ({ value, label: value }))}
-            onChange={(option: MultiValue<ColourOption>) => handleSelectionChange(param.testName, option.map(opt => opt.value))} // Updated this line
-            className="basic-multi-select"
-          />
-        )}
-        {param.valueType === 'Input' && (
-          <input type="text" placeholder="Enter value" />
-        )}
-      </div>
-    );
-  };
-  
-  const handleSelectionChange = (testName: string, selectedValue: string | string[]) => {
-    setProcessingTestName(testName);
-    
-    const valueToSet = Array.isArray(selectedValue) ? selectedValue[0] : selectedValue;
-    setProcessingValue(valueToSet);
-    
-    setFormValues((prevFormValues) => ({
-      ...prevFormValues,
-      [testName]: Array.isArray(selectedValue) ? selectedValue : [selectedValue],
-    }));
-    
-    let updatedDependentList: Set<string> = new Set(dependentList); // Initialize Set for unique values
-    let updatedIndependentList: Set<string> = new Set(independentList); // Initialize Set for unique values
-    
-    if (testNameWithEnabledFieldMap.has(testName)) {
-      const newDependentList = testNameWithEnabledFieldMap.get(testName) || [];
-      
-      // Only add dependent fields if the selected value matches the triggerValue
-      newDependentList.forEach(dependentField => {
-        if (testNameTriggerValueMap.get(testName)?.includes(valueToSet)) {
-          updatedDependentList.add(dependentField);
-          updatedIndependentList.add(dependentField);
-        }
-      });
-    }
-  
-    const triggerValues = testNameTriggerValueMap.get(testName) || [];
-    if (triggerValues.includes(valueToSet)) {
-      setIsDependent((prevState) => ({
-        ...prevState,
-        [testName]: true,
-      }));
-    } else {
-      const filteredDependentList = dependentList.filter(
-        (item) => !Array.from(updatedDependentList).includes(item)
-      );
-      updatedDependentList = new Set(filteredDependentList); // Convert filtered list back to Set
-      setDependentList(Array.from(updatedDependentList));
-      setIsDependent((prevState) => ({
-        ...prevState,
-        [testName]: false,
-      }));
-    }
-    
-    setIndependentList(Array.from(updatedIndependentList)); // Convert Set to Array
-    setDependentList(Array.from(updatedDependentList)); // Convert Set to Array
-  };
-  
-  
-  const getTestFieldsInline = () => {
-    return independentList.map((testName) => {
-      const param = paramsMap.get(testName);
-      if (!param) return null;
-  
-      const dependentFields = (testNameWithEnabledFieldMap.get(testName) || [])
-        .map((dependentTestName) => {
-          const dependentParam = paramsMap.get(dependentTestName);
-          if (!dependentParam) return null;
-          if (isDependent[dependentTestName]) {
-            return renderField(dependentParam, dependentTestName);
-          }
-          return null;
-        });
-  
-      return (
-        <div key={testName} className="form-inline-group">
-          {renderField(param, testName)}
-          {dependentFields}
-        </div>
-      );
-    });
-  };
-  
-  
-  
 
   return (
     <div className="container2">
       <Header1 />
-      <h1 style={{ color: 'darkblue' }}>Disease Specific Details</h1>
       <div className="participant-container">
-        <p>Participant: {ptName}</p>
-        <p>ID: {registrationId}</p>
+        <p>Participant: {patientId}</p>
+        <p>ID: {patientName}</p>
       </div>
-      <form className="clinic-form" onSubmit={handleSubmit}>
-        {getTestFieldsInline()}
-        <center className="buttons">
-          <button type="submit" className="Finish-button">Finish</button>
-        </center>
-      </form>
-      <div className="powered-container">
+      <div className="clinic-form" >
+       
+        <h1 style={{ color: 'darkblue' }}>Disease Specific Details</h1>
+      {fieldData.map((field) =>
+        !hiddenFields.includes(field.testName) && (
+          <div key={field.testName} className="form-group">
+<h3 className="form-group" style={{ fontSize: "15px" }}>{field.testName}</h3>
+{field.valueType === "SingleSelect" && (
+              <select
+                value={selectedValues[field.testName] || ""}
+                onChange={(e) => handleSelectChange(field.testName, e.target.value)}
+              >
+                <option value="" disabled>Select an option</option>
+                {field.values.map((value) => (
+                  <option key={value} value={value}>
+                    {value}
+                  </option>
+                ))}
+              </select>
+            )}
+            {field.valueType === "Input" && (
+              <input
+              
+                type="text"
+                value={selectedValues[field.testName] || ""}
+                onChange={(e) => handleSelectChange(field.testName, e.target.value)}
+              />
+            )}
+          </div>
+        )
+      )}
+
+      {/* Add the Finish button */}
+      <center className="buttons">
+        <button className="Finish-button" onClick={handleFinish}>Finish</button>
+      </center>
+    </div>
+    
+    <div className="powered-container">
         <p className="powered-by">Powered By Curable</p>
         <img src="/assets/Curable logo - rectangle with black text.png" alt="Curable Logo" className="curable-logo" />
       </div>
     </div>
+    
   );
 };
 
