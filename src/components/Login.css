@@ -123,16 +123,7 @@ h2 {
 .forgot-password:hover {
   color: #e69500;
 }
-/* Parent container for alignment */
-.powered-container {
-  display: inline-flex; /* Ensures text and image are in a single line */
-  align-items: center; /* Aligns items vertically */
-  justify-content: center; /* Centers content horizontally */
-  gap: 10px; /* Adds space between "Powered By" and logo */
-  text-align: center; /* Ensures proper alignment */
-  width: 100%; /* Makes the container responsive */
-  white-space: nowrap; /* Prevents wrapping of text or logo */
-}
+
 
 /* Parent container for alignment */
 .powered-container {
@@ -143,7 +134,6 @@ h2 {
   text-align: center; /* Center text within the container */
 }
 
-/* Styling for "Powered By" text */
 .powered-by {
   font-weight: bold;
   color: #000;
@@ -151,9 +141,36 @@ h2 {
   margin: 0;
 }
 
-/* Styling for the logo */
 .curable-logo {
   width: 100px; /* Adjust logo size as needed */
   height: auto; /* Maintain aspect ratio */
 }
 
+.footer-container {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+ 
+  padding: 10px 0;
+
+  text-align: center;
+}
+
+.footer-content {
+  display: flex; /* Use flexbox for alignment */
+  align-items: center; /* Vertically center items */
+  justify-content: center; /* Horizontally center items */
+  gap: 10px; /* Add space between text and logo */
+}
+
+.footer-text {
+  font-weight: bold;
+  color: #000;
+  font-size: 16px;
+  margin: 0;
+}
+
+.footer-logo {
+  width: 100px; /* Adjust logo size as needed */
+  height: auto; /* Maintain aspect ratio */
+}

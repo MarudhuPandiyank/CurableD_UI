@@ -197,14 +197,12 @@ const Login: React.FC = () => {
 
      
       {error && <div style={{ marginTop: '20px' }}><p className="error-message">{error}</p></div>}
-      <div className="powered-container">
-  <span className="powered-by">Powered By</span>
-  <img
-    src={`${process.env.PUBLIC_URL}/assets/Curable logo - rectangle with black text.png`}
-    alt="Curable Logo"
-    className="curable-logo"
-  />
-</div>
+      <footer className="footer-container">
+        <div className="footer-content">
+          <p className="footer-text">Powered By Curable</p>
+          <img src="/assets/Curable logo - rectangle with black text.png" alt="Curable Logo" className="footer-logo" />
+        </div>
+      </footer>
 
     </div>
   );

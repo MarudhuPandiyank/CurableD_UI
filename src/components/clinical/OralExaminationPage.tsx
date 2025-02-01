@@ -129,6 +129,12 @@ const OralExaminationPage: React.FC = () => {
           Complete Oral Examination
         </button>
       </center>
+      <footer className="footer-container">
+        <div className="footer-content">
+          <p className="footer-text">Powered By Curable</p>
+          <img src="/assets/Curable logo - rectangle with black text.png" alt="Curable Logo" className="footer-logo" />
+        </div>
+      </footer>
     </div>
   );
 };

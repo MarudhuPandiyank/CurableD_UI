@@ -70,14 +70,12 @@ const ResetPassword: React.FC = () => {
         </button>
       </form>
 
-      <div className="powered-container">
-        <p className="powered-by">Powered By Curable</p>
-        <img
-          src="/assets/Curable logo - rectangle with black text.png" // Your curable logo file path here
-          alt="Curable Logo"
-          className="curable-logo"
-        />
-      </div>
+      <footer className="footer-container">
+        <div className="footer-content">
+          <p className="footer-text">Powered By Curable</p>
+          <img src="/assets/Curable logo - rectangle with black text.png" alt="Curable Logo" className="footer-logo" />
+        </div>
+      </footer>
     </div>
   );
 };

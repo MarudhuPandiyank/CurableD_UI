@@ -5,6 +5,7 @@ import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Typography }
 import '../components/OutreachClinicInfo.css';
 import Header1 from './Header1';
 import config from '../config';  // Import the config file
+import './Common.css';
 
 interface Clinic {
   id: string;
@@ -156,23 +157,27 @@ const PatientRegistrationSearch: React.FC = () => {
 
   return (
     <div className="container2">
-       <Header1/><br/>
+        <Header1 />
             <h1 style={{ color: 'darkblue', fontWeight: 'bold', }}>Patient Registration</h1>
       <main className="content">
-        <div className="search-container">
-          <label>Search:</label>
-          <div className="search-input-container">
-            <input
-              type="text"
-              placeholder="Enter Clinic ID or Name"
-              value={searchInput}
-              onChange={(e) => setSearchInput(e.target.value)}
-            />
-            <button className="search-button" onClick={handleSearch} disabled={loading}>
-              {loading ? 'Searching...' : 'Search'}
-            </button>
-          </div>
-        </div>
+      <div className="search-section">
+      <div className="full-width-search-section">
+  <div className="full-width-search-input-container">
+    <input
+      className="full-width-search-input"
+      type="text"
+      placeholder="Enter Clinic ID or Name"
+      value={searchInput}
+      onChange={(e) => setSearchInput(e.target.value)}
+    />
+    <button className="full-width-search-button" onClick={handleSearch} disabled={loading}>
+      {loading ? 'Searching...' : 'Search'}
+    </button>
+  </div>
+</div>
+
+</div>
+
        
         {message && <div className="message">{message}</div>}
 
@@ -249,20 +254,26 @@ const PatientRegistrationSearch: React.FC = () => {
               onClick={handleCreateClinic}
               variant="contained"
               color="primary"
-              style={{ backgroundColor: '#e91e63', color: 'white' }}
+              style={{ backgroundColor: '#d774ad', color: 'white' }}
             >
               Yes
             </Button>
             <Button
               onClick={handleCloseNoClinicDialog}
               variant="outlined"
-              style={{ color: '#e91e63', borderColor: '#e91e63' }}
+              style={{ color: '#d774ad', borderColor: '#d774ad' }}
             >
               No
             </Button>
           </DialogActions>
         </Dialog>
       </main>
+      <footer className="footer-container">
+        <div className="footer-content">
+          <p className="footer-text">Powered By Curable</p>
+          <img src="/assets/Curable logo - rectangle with black text.png" alt="Curable Logo" className="footer-logo" />
+        </div>
+      </footer>
     </div>
   );
 };

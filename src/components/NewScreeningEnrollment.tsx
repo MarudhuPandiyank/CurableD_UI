@@ -11,6 +11,7 @@ import { Calendar } from 'primereact/calendar';
 import 'primereact/resources/themes/saga-blue/theme.css'; // Theme
 import 'primereact/resources/primereact.min.css'; // Core CSS
 import 'primeicons/primeicons.css'; // Icons
+import './Common.css';
 
 const NewScreeningEnrollment: React.FC = () => {
   const navigate = useNavigate();
@@ -164,11 +165,11 @@ const NewScreeningEnrollment: React.FC = () => {
     <div>
       <div className="container2">
         <Header1 />
-        <form className="clinic-form" onSubmit={handleSubmit}>
-          <h1 style={{ color: 'darkblue' }}>New Screening Enrollment</h1>
+        <form className="clinic-details-form" onSubmit={handleSubmit}>
+          <h1 className="new-screening-title">New Screening Enrollment</h1>
 
           <div className="form-group">
-            <label style={{ color: 'darkblue' }}>Name*:</label>
+            <label style={{ color: 'black' }}>Name*:</label>
             <input
               type="text"
               placeholder="Enter Name"
@@ -179,7 +180,7 @@ const NewScreeningEnrollment: React.FC = () => {
           </div>
 
           <div className="form-group">
-  <label style={{ color: 'darkblue' }}>Mobile Number*:</label>
+  <label style={{ color: 'black' }}>Mobile Number*:</label>
   <input
     type="text" // Use text to apply maxLength
     inputMode="numeric" // Numeric keyboard on mobile
@@ -198,7 +199,7 @@ const NewScreeningEnrollment: React.FC = () => {
 
 
           <div className="form-group">
-            <label style={{ color: 'darkblue' }}>Gender*:</label>
+            <label style={{ color: 'black' }}>Gender*:</label>
             <div className="gender-group">
               {['Male', 'Female', 'Other'].map((value) => (
                 <button
@@ -216,42 +217,28 @@ const NewScreeningEnrollment: React.FC = () => {
             </div>
           </div>
     
-         <label>
-         <label style={{ color: 'darkblue' }}>Date of Birth*:</label>
-                         <span style={{ color: 'darkred', fontWeight: 'bold' }}></span>
-                         <div className="input-with-icon">
-         
-                         {/* <DatePicker
-                          selected={dob}
-                          onChange={(date: Date | null) => setDob(date)}
-                            // onSelect={() => (document.activeElement as HTMLElement)?.blur()}  // Hide DatePicker popup on date select
-                            // onClickOutside={() => (document.activeElement as HTMLElement)?.blur()}  // Hide DatePicker popup when clicked outside
-                             dateFormat="yyyy-MM-dd"
-                              placeholderText="yyyy-MM-dd"
-                             required
-                             wrapperClassName='DatePicker'
-                             minDate={new Date()}
-                         /> */}
-                          <Calendar
-  value={dob}
-  onChange={(e) => setDob(e.value as Date | null)} // Update the dob state
-  dateFormat="yy-mm-dd" // PrimeReact date format
-  placeholder="yyyy-mm-dd"
-  required
- // minDate={new Date()} // Set the minimum date to today
-  maxDate={new Date()} // Set the minimum date to today
-  showIcon
-  className="git pull
-  1"
-/>
-                             <img src="./assets/Calendar.png" className="clinic-id-icon" alt="calendar icon" />
-                         </div>
-                     </label>
+          <label>
+  <label style={{ color: 'black' }}>Date of Birth*:</label>
+  <span style={{ color: 'darkred', fontWeight: 'bold' }}></span>
+  <div className="input-with-icon">
+    <Calendar
+      value={dob}
+      onChange={(e) => setDob(e.value as Date | null)} // Update the dob state
+      dateFormat="yy-mm-dd" // PrimeReact date format
+      placeholder="yyyy-mm-dd"
+      required
+      maxDate={new Date()} // Set the minimum date to today
+     
+    />
+    <img src="./assets/Calendar.png" className="clinic-id-icon" alt="calendar icon" />
+  </div>
+</label>
+
          
         
 
           <div className="form-group">
-            <label style={{ color: 'darkblue' }}>Address:</label>
+            <label style={{ color: 'black' }}>Address:</label>
             <textarea
               placeholder="Enter Address"
               value={address}
@@ -260,7 +247,7 @@ const NewScreeningEnrollment: React.FC = () => {
           </div>
 
           <div className="form-group">
-            <label style={{ color: 'darkblue' }}>Street ID:</label>
+            <label style={{ color: 'black' }}>Street ID:</label>
             <input
               type="number"
               placeholder="Enter Street ID"
@@ -319,26 +306,24 @@ const NewScreeningEnrollment: React.FC = () => {
             <div className="buttons">
               <button
                 type="button"
-                className="Finish-extrawidtgh-button"
+                className="Next-button"
                 onClick={openModal}
 
               >
                 Save
               </button>
-              <button type="submit" className="Next-button">
+              <button type="submit" className="Finish-button">
                 Enroll
               </button>
             </div>
           </center>
         </form>
-        <div className="powered-container">
-          <p className="powered-by">Powered By Curable</p>
-          <img
-            src="/assets/Curable logo - rectangle with black text.png"
-            alt="Curable Logo"
-            className="curable-logo"
-          />
+        <footer className="footer-container">
+        <div className="footer-content">
+          <p className="footer-text">Powered By Curable</p>
+          <img src="/assets/Curable logo - rectangle with black text.png" alt="Curable Logo" className="footer-logo" />
         </div>
+      </footer>
       </div>
     </div>
   );

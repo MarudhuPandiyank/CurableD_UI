@@ -4,6 +4,7 @@ import axios from 'axios';
 import Header1 from './Header1';
 import Select, { MultiValue } from 'react-select';
 import config from '../config'; 
+import './Common.css';
 
 interface Condition {
   enabledField: string;
@@ -274,21 +275,24 @@ const App: React.FC = () => {
   return (
     <div className="container2">
       <Header1 />
-      <h1 style={{ color: 'darkblue' }}>Clinical</h1>
-      <div className="participant-container">
-        <p>Participant: {ptName}</p>
-        <p>ID: {registrationId}</p>
+    
+      <div className="participant-info-container">
+        <p className="participant-info-text">Participant: {ptName}</p>
+        <p className="participant-info-text">ID: {registrationId}</p>
       </div>
+      <h1 style={{ color: 'darkblue' }}>Clinical</h1>
       <form className="clinic-form" onSubmit={handleSubmit}>
         {getTestFieldsInline()}
         <center className="buttons">
           <button type="submit" className="Finish-button">Finish</button>
         </center>
       </form>
-      <div className="powered-container">
-        <p className="powered-by">Powered By Curable</p>
-        <img src="/assets/Curable logo - rectangle with black text.png" alt="Curable Logo" className="curable-logo" />
-      </div>
+      <footer className="footer-container">
+        <div className="footer-content">
+          <p className="footer-text">Powered By Curable</p>
+          <img src="/assets/Curable logo - rectangle with black text.png" alt="Curable Logo" className="footer-logo" />
+        </div>
+      </footer>
     </div>
   );
 };

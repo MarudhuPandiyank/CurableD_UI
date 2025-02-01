@@ -1,4 +1,7 @@
-/* Base Styles */
+
+  
+  
+
 .container10 {
     display: flex;
     flex-direction: column;
@@ -280,12 +283,16 @@ select::-ms-expand {
     }
 
     .patient-box {
-        flex-direction: column;
+        display: flex;
+        flex-direction: column; /* Switch to column layout */
         align-items: flex-start;
         padding: 15px;
         height: auto;
     }
 
+    .patient-box > div {
+        margin-bottom: 5px; /* Add space between each row */
+    }
     .divider {
         font-size: 14px; /* Adjust font size for mobile */
         margin: 15px 0;
@@ -369,4 +376,6 @@ select::-ms-expand {
         justify-content: space-between;
         align-items: center;
     }
+
+    
 }

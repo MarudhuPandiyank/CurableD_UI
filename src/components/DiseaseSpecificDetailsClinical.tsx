@@ -245,14 +245,12 @@ const DiseaseSpecificDetails: React.FC = () => {
         </center>
       </form>
 
-      <div className="powered-container">
-        <p className="powered-by">Powered By Curable</p>
-        <img
-          src="/assets/Curable logo - rectangle with black text.png"
-          alt="Curable Logo"
-          className="curable-logo"
-        />
-      </div>
+      <footer className="footer-container">
+        <div className="footer-content">
+          <p className="footer-text">Powered By Curable</p>
+          <img src="/assets/Curable logo - rectangle with black text.png" alt="Curable Logo" className="footer-logo" />
+        </div>
+      </footer>
     </div>
   );
 };

@@ -175,12 +175,12 @@ function FamilyPersonalDetails() {
     <div >
 
       <Header1 />
-      <p style={{ color: 'darkblue', fontWeight: 'bold', }}>Family Personal Details</p>
 
       <div className="participant-container">
         <p>Participant: {participant}</p>
         <p>ID: {registraionId}</p>
       </div>
+      <p style={{ color: 'darkblue', fontWeight: 'bold', }}>Family Personal Details</p>
 
       {error && <div className="error-message">{error}</div>}
 
@@ -273,12 +273,13 @@ function FamilyPersonalDetails() {
                 ))}
               </div>
             )}
-            <button type="button" className="Next-button" onClick={handleAddMember}>
-            Add Member
-          </button>
+           
           </div>
         ))}
-
+         <div className="button-container">
+ <button type="button" className="Next-button" onClick={handleAddMember}>
+            Add Member
+          </button>    </div>
         <center className="buttons">
           
           <button type="button" className="Finish-button" onClick={handleFinish}>
@@ -289,6 +290,12 @@ function FamilyPersonalDetails() {
           </button>
         </center>
       </form>
+      <footer className="footer-container">
+        <div className="footer-content">
+          <p className="footer-text">Powered By Curable</p>
+          <img src="/assets/Curable logo - rectangle with black text.png" alt="Curable Logo" className="footer-logo" />
+        </div>
+      </footer>
     </div>
   );
 }

@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import config from '../config';
 import Header1 from "./Header1";
 import Select, { MultiValue } from 'react-select';
+import './Common.css';
 interface Field {
   testName: string;
   subtestName: string;
@@ -139,67 +140,86 @@ const App: React.FC = () => {
       console.error('Error submitting data:', error);
     }
   };
+  const [titleName, setTitleName] = useState("Disease Specific Details");
+
   const patientId = localStorage.getItem('patientId');
   const patientName = localStorage.getItem('patientName');
+
+  useEffect(() => {
+    const selectedStage = localStorage.getItem("selectedStage");
+  
+    if (selectedStage === "Breast screening Test") {
+      setTitleName("Breast Screening");
+    } else if (selectedStage === "Oral Screening Test") {
+      setTitleName("Oral Screening");
+    } else if (selectedStage === "Cervical Screening Test") {
+      setTitleName("Cervical Screening");
+    } else {
+      setTitleName("Disease Specific Details");
+    }
+  }, []);
+  
+
 
   return (
     <div className="container2">
       <Header1 />
-      <div className="participant-container">
-        <p>Participant: {patientId}</p>
-        <p>ID: {patientName}</p>
+      <div className="participant-info-container">
+        <p className="participant-info-text"><strong>Participant:</strong> {patientId}</p>
+        <p className="participant-info-text"><strong>ID:</strong> {patientName}</p>
       </div>
-      <div className="clinic-form" >
-       
-        <h1 style={{ color: 'darkblue' }}>Disease Specific Details</h1>
-      {fieldData.map((field) =>
-        !hiddenFields.includes(field.testName) && (
-          <div key={field.testName} className="form-group">
-<h3 className="form-group" style={{ fontSize: "15px" }}>{field.testName}</h3>
-{field.valueType === "SingleSelect" && (
-              <select
-                value={selectedValues[field.testName] || ""}
-                onChange={(e) => handleSelectChange(field.testName, e.target.value)}
-              >
-                <option value="" disabled>Select an option</option>
-                {field.values.map((value) => (
-                  <option key={value} value={value}>
-                    {value}
-                  </option>
-                ))}
-              </select>
-            )}
-             {field.valueType === 'Multi Select' && (
-          <Select
-            isMulti
-            name={field.testName}
-            options={field.values.map((value) => ({ value, label: value }))}
-            onChange={(option: MultiValue<ColourOption>) => handleSelectChange(field.testName, option.map(opt => opt.value))} // Updated this line
-            className="basic-multi-select"
-          />
-        )}
-            {field.valueType === "Input" && (
-              <input
-              
-                type="text"
-                value={selectedValues[field.testName] || ""}
-                onChange={(e) => handleSelectChange(field.testName, e.target.value)}
-              />
-            )}
-          </div>
-        )
-      )}
+      <div className="clinic-details-form">
+        <h1 style={{ color: 'darkblue' }}>{titleName}</h1>
+        {fieldData.map((field) =>
+          !hiddenFields.includes(field.testName) && (
+            <div key={field.testName} className="form-group">
+              <h3 className="form-group" style={{ fontSize: "15px" }}>{field.testName}</h3>
+              {field.valueType === "SingleSelect" && (
+                <select
+                  value={selectedValues[field.testName] || ""}
+                  onChange={(e) => handleSelectChange(field.testName, e.target.value)}
+                >
+                  <option value="" disabled>Select an option</option>
+                  {field.values.map((value) => (
+                    <option key={value} value={value}>
+                      {value}
+                    </option>
+                  ))}
+                </select>
+              )}
+              {field.valueType === 'Multi Select' && (
+                <Select
+                  isMulti
+                  name={field.testName}
+                  options={field.values.map((value) => ({ value, label: value }))}
+                  onChange={(option: MultiValue<ColourOption>) => handleSelectChange(field.testName, option.map(opt => opt.value))} // Updated this line
+                 className="form-group"
+                />
+              )}
+              {field.valueType === "Input" && (
+                <input
 
-      {/* Add the Finish button */}
-      <center className="buttons">
-        <button className="Finish-button" onClick={handleFinish}>Finish</button>
-      </center>
-    </div>
-    
-    <div className="powered-container">
-        <p className="powered-by">Powered By Curable</p>
-        <img src="/assets/Curable logo - rectangle with black text.png" alt="Curable Logo" className="curable-logo" />
+                  type="text"
+                  value={selectedValues[field.testName] || ""}
+                  onChange={(e) => handleSelectChange(field.testName, e.target.value)}
+                />
+              )}
+            </div>
+          )
+        )}
+
+        {/* Add the Finish button */}
+        <center className="buttons">
+          <button className="Finish-button" onClick={handleFinish}>Finish</button>
+        </center>
       </div>
+    
+    <footer className="footer-container">
+        <div className="footer-content">
+          <p className="footer-text">Powered By Curable</p>
+          <img src="/assets/Curable logo - rectangle with black text.png" alt="Curable Logo" className="footer-logo" />
+        </div>
+      </footer>
     </div>
     
   );

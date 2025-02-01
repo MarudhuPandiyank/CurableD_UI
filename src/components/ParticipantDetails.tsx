@@ -5,6 +5,7 @@ import './ParticipantDetails.css';
 import axios from 'axios';
 import config from '../config'; 
 import './NewScreeningEnrollment.css';
+import './Common.css';
 
 interface Habit {
   habit: string;
@@ -253,11 +254,12 @@ const ParticipantDetails: React.FC = () => {
   return (
     <div className="container2">
       <Header1 />
-      <h1 style={{ color: 'darkblue', fontWeight: 'bold', }}>General Details</h1>
+      
       <div className="participant-container">
-        <p>Participant: {participant}</p>
-        <p>ID: {registraionId}</p>
+        <p className="participant-info-text">Participant: {participant}</p>
+        <p className="participant-info-text">ID: {registraionId}</p>
       </div>
+      <h1 style={{ color: 'darkblue', fontWeight: 'bold', }}>General Details</h1>
       <div className="clinic-form" onSubmit={(e) => handleFormSubmit(e, '/MedicalomenHealthDetails')} >
         {/* <h2>General Details</h2> */}
         <div className="form-group">
@@ -400,7 +402,7 @@ const ParticipantDetails: React.FC = () => {
   />
 </div>
         <div>
-          <h3>Social Habits</h3>
+          <h2>Social Habits</h2>
           <div>
             <label>
               Tobacco/Alcohol Habits:
@@ -420,7 +422,7 @@ const ParticipantDetails: React.FC = () => {
                 <div key={index} style={{ marginBottom: "1rem" }} >
                   <div onClick={() => toggleCollapse(index)} style={{ cursor: "pointer" }} className="habits m-2">
                     {/* <strong>{habit.habit || "Select Habit"}{index}</strong> */}
-                    {habit.habit || "Select Habit"}{index}
+                    {habit.habit || "Select Habit"}
 
                     {/* <span className=''>del</span> */}
                     <i onClick={() => deleteHabit(index)} className="fa-solid fa-trash-can float-end"></i>
@@ -489,7 +491,9 @@ const ParticipantDetails: React.FC = () => {
                   )}
                 </div>
               ))}
-              <button  className="Next-button" onClick={addHabit}>Add Habit</button>
+             <div className="button-container">
+  <button className="Next-button" onClick={addHabit}>Add Habit</button>
+</div>
             </>
           )}
 
@@ -527,18 +531,16 @@ const ParticipantDetails: React.FC = () => {
         <div className="buttons">
         <button type="button" className="Next-button"  onClick={openModal} >Finish</button>
           <button type="submit" className="Finish-button" onClick={(e) => handleFormSubmit(e, '/MedicalomenHealthDetails')} disabled={isLoading}>
-            {isLoading ? 'Submitting...' : 'Next'}
+            { 'Next'}
           </button>
         </div>
       </div>
-      <div className="profile-powered-container">
-        <p className="profile-powered-by">Powered By Curable</p>
-        <img
-          src="/assets/Curable logo - rectangle with black text.png"
-          alt="Curable Logo"
-          className="profile-curable-logo"
-        />
-      </div>
+      <footer className="footer-container">
+        <div className="footer-content">
+          <p className="footer-text">Powered By Curable</p>
+          <img src="/assets/Curable logo - rectangle with black text.png" alt="Curable Logo" className="footer-logo" />
+        </div>
+      </footer>
     </div>
   );
 };

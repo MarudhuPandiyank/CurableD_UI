@@ -130,6 +130,7 @@ const PatientSearchPage: React.FC = () => {
 
     const patientName = selectedPatient?.name || "";
     localStorage.setItem("selectedStage", selectedStage);
+   
     localStorage.setItem("patientName", patientName);
 
     navigate("/DiseaseSpecificDetailsScreening");
@@ -146,7 +147,7 @@ const PatientSearchPage: React.FC = () => {
           id="search"
           type="text"
           className="search-input"
-          placeholder="Search..."
+          placeholder="Search by Patient name/id/mobile"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           aria-label="Search patient"
@@ -231,6 +232,12 @@ const PatientSearchPage: React.FC = () => {
       )}
 
       {patients.length === 0 && !loading && <p>No patients found.</p>}
+      <footer className="footer-container">
+        <div className="footer-content">
+          <p className="footer-text">Powered By Curable</p>
+          <img src="/assets/Curable logo - rectangle with black text.png" alt="Curable Logo" className="footer-logo" />
+        </div>
+      </footer>
     </div>
   );
 };

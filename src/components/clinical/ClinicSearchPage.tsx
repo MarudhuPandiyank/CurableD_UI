@@ -228,6 +228,12 @@ const ClinicSearchPage: React.FC = () => {
       )}
 
       {patients.length === 0 && !loading && <p>No patients found.</p>}
+      <footer className="footer-container">
+        <div className="footer-content">
+          <p className="footer-text">Powered By Curable</p>
+          <img src="/assets/Curable logo - rectangle with black text.png" alt="Curable Logo" className="footer-logo" />
+        </div>
+      </footer>
     </div>
   );
 };

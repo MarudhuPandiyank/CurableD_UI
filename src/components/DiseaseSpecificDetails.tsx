@@ -5,6 +5,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import config from '../config'; 
 import './NewScreeningEnrollment.css';
+import './Common.css';
 
 interface FamilyMetricsParam {
   testName: string;
@@ -149,18 +150,19 @@ function DiseaseSpecificDetails() {
   return (
     <div className="container21">
       <Header1 />
-      <h1 style={{ color: 'darkblue' }}>Disease Specific Details</h1>
+     
       <div className="participant-container">
-        <p>Participant: {participantValue}</p>
-        <p>ID: {registraionId}</p>
+      <p className="participant-info-text"><strong>Participant:</strong> {participantValue}</p>
+      <p className="participant-info-text"><strong>ID:</strong> {registraionId}</p>
+      
       </div>
-
+      <h1 style={{ color: 'darkblue' }}>Disease Specific Details</h1>
       {error && <div className="error-message">{error}</div>}
       {validationError && <div className="validation-error" style={{ color: 'red' }}>{validationError}</div>}
 
       <form className="clinic-form" onSubmit={(e) => handleSubmit(e, '/ParticipantDetails')}>
         {formData.map((field, index) => (
-          <div key={index} className="form-group">
+          <div key={index} className="form-item">
             <label style={{ color: 'darkblue' }}>{field.testName}*:</label>
             {field.valueType === 'SingleSelect' ? (
               <select
@@ -216,10 +218,12 @@ function DiseaseSpecificDetails() {
         </center>
       </form>
 
-      <div className="powered-container">
-        <p className="powered-by">Powered By Curable</p>
-        <img src="/assets/Curable logo - rectangle with black text.png" alt="Curable Logo" className="curable-logo" />
-      </div>
+      <footer className="footer-container">
+        <div className="footer-content">
+          <p className="footer-text">Powered By Curable</p>
+          <img src="/assets/Curable logo - rectangle with black text.png" alt="Curable Logo" className="footer-logo" />
+        </div>
+      </footer>
     </div>
   );
 }
