@@ -3,7 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import config from '../config';
 import Header1 from "./Header1";
-
+import Select, { MultiValue } from 'react-select';
 interface Field {
   testName: string;
   subtestName: string;
@@ -12,7 +12,10 @@ interface Field {
   values: string[];
   selectedValues?: string[];
 }
-
+interface ColourOption {
+  value: string;
+  label: string;
+}
 interface Condition {
   enabledField: string;
   triggerValue: string;
@@ -26,7 +29,7 @@ interface ApiResponse {
 }
 
 const App: React.FC = () => {
-  const [selectedValues, setSelectedValues] = useState<{ [key: string]: string }>({});
+  const [selectedValues, setSelectedValues] = useState<{ [key: string]: string | string[] }>({});
   const [hiddenFields, setHiddenFields] = useState<string[]>([]);
   const [fieldData, setFieldData] = useState<Field[]>([]);
   
@@ -69,8 +72,9 @@ const App: React.FC = () => {
     }
   }, [diseaseTestIds]);
 
-  const handleSelectChange = (testName: string, value: string) => {
-    setSelectedValues({ ...selectedValues, [testName]: value });
+
+  const handleSelectChange = (testName: string, value: string | string[]) => {
+    setSelectedValues({ ...selectedValues, [testName]: value});
 
     const fieldsToShow = new Set<string>(hiddenFields);
 
@@ -88,9 +92,12 @@ const App: React.FC = () => {
 
     setHiddenFields(Array.from(fieldsToShow));
   };
+  const candidateId = localStorage.getItem('candidateId');
 
   const handleFinish = async () => {
     const payload = {
+      candidateId: Number(candidateId),
+      diseaseTestMasterId: Number(diseaseTestIds),
       description: "Eligibility Metrics",
       diseaseTestId: 1,
       familyMedicalMetrics: null,
@@ -98,12 +105,13 @@ const App: React.FC = () => {
       gender: "FEMALE", // You can dynamically adjust this if necessary
       genderValid: true,
       hospitalId: 1,
-      id: 27,
+      id: null,
       medicalMetrics: null,
       name: "Eligibility Metrics",
       stage: localStorage.getItem('selectedStage'),
-      testMetrics: null,
-      eligibilityMetrics: {
+      eligibilityMetrics: null,
+      type:1,
+      testMetrics: {
         params: fieldData.map((field) => ({
           testName: field.testName,
           subtestName: field.subtestName,
@@ -126,7 +134,7 @@ const App: React.FC = () => {
       });
 
       console.log('Data submitted successfully!');
-      navigate('/SuccessMessageClinicalFInal');
+      navigate('/SuccessMessageScreeningFInal');
     } catch (error) {
       console.error('Error submitting data:', error);
     }
@@ -161,6 +169,15 @@ const App: React.FC = () => {
                 ))}
               </select>
             )}
+             {field.valueType === 'Multi Select' && (
+          <Select
+            isMulti
+            name={field.testName}
+            options={field.values.map((value) => ({ value, label: value }))}
+            onChange={(option: MultiValue<ColourOption>) => handleSelectChange(field.testName, option.map(opt => opt.value))} // Updated this line
+            className="basic-multi-select"
+          />
+        )}
             {field.valueType === "Input" && (
               <input
               
