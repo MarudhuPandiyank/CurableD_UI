@@ -75,6 +75,29 @@ const ResourceAllocation: React.FC = () => {
     fetchStaffDetails();
   }, [navigate]);
 
+  useEffect(() => {
+    const fetchStaffDetails = async () => {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        console.error('No token found, redirecting to login.');
+        navigate('/');
+        return;
+      }
+      try {
+        let response;
+        if (id) {
+          response = await axiosInstance.get(`${config.appURL}/curable/campstaffdetails/${id}`);
+          console.log('Camp Staff Details:', response.data); // Debugging output
+        }
+      } catch (error) {
+        console.error('Error fetching staff details:', error);
+        alert('Failed to fetch staff details. Please try again.');
+      }
+    };
+    fetchStaffDetails();
+  }, [navigate, id]);
+  
+
   const handleMultiSelectChange = (name: string) => (selectedOptions: MultiValue<SelectOption>) => {
     setFormData((prevData) => ({
       ...prevData,

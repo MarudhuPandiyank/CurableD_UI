@@ -147,13 +147,11 @@ h2 {
 }
 
 .footer-container {
-  position: fixed;
-  bottom: 0;
-  width: 100%;
- 
-  padding: 10px 0;
-
-  text-align: center;
+  display: flex; /* Use flexbox for alignment */
+  align-items: center; /* Vertically center items */
+  justify-content: center; /* Horizontally center items */
+  gap: 10px; /* Add space between text and logo */
+  text-align: center; /* Center text within the container */
 }
 
 .footer-content {
@@ -161,6 +159,7 @@ h2 {
   align-items: center; /* Vertically center items */
   justify-content: center; /* Horizontally center items */
   gap: 10px; /* Add space between text and logo */
+ 
 }
 
 .footer-text {

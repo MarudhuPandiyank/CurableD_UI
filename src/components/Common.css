@@ -113,11 +113,11 @@
   .clinic-id-icon {
     margin-left: 10px;
   }
-  .button-container {
+  /* .button-container {
     display: flex;
     justify-content: flex-end;
-    width: 100%; /* Ensure the container takes the full width */
-  }
+    width: 100%; 
+  } */
   .form-item {
     margin-bottom: 15px;
     position: relative;

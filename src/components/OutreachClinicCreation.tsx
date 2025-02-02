@@ -4,11 +4,11 @@ import './HomePage.css';
 import axios from 'axios';
 import Header from './Header';
 import DatePicker from 'react-datepicker';
-import "react-datepicker/dist/react-datepicker.css"; 
+import "react-datepicker/dist/react-datepicker.css";
 import { newDate } from 'react-datepicker/dist/date_utils';
 import ResourcePlanning from './ResourcePlanning';
 import Header1 from './Header1';
-import config from '../config'; 
+import config from '../config';
 import { Calendar } from 'primereact/calendar';
 import 'primereact/resources/themes/saga-blue/theme.css'; // Theme
 import 'primereact/resources/primereact.min.css'; // Core CSS
@@ -21,25 +21,25 @@ interface StateData {
     code: string;
     id: number;
     name: string;
-  }
+}
 
-  interface DistrictData {
+interface DistrictData {
     code: string;
     id: number;
     name: string;
-  }
+}
 
-  interface TalukData {
+interface TalukData {
     code: string;
     id: number;
     name: string;
-  }
+}
 
-  interface PanchayatData {
+interface PanchayatData {
     code: string;
     id: number;
     name: string;
-  }
+}
 
 const OutreachClinicCreation: React.FC = () => {
     const navigate = useNavigate();
@@ -51,7 +51,7 @@ const OutreachClinicCreation: React.FC = () => {
     const [taluk, setTaluk] = useState('');
     const [panchayat, setPanchayat] = useState('');
     const [startDate, setStartDate] = useState<Date | null>(null);  // Use Date | null
-    const [endDate, setEndDate] = useState<Date | null>(null);  
+    const [endDate, setEndDate] = useState<Date | null>(null);
     const [states, setStates] = useState<StateData[]>([]);
     const [districts, setDistricts] = useState<DistrictData[]>([]);
     const [taluks, setTaluks] = useState<TalukData[]>([]);
@@ -68,7 +68,7 @@ const OutreachClinicCreation: React.FC = () => {
     const token = localStorage.getItem('token');
     useEffect(() => {
         const fetchStates = async () => {
-            
+
             if (!token) {
                 console.error('No token found, redirecting to login.');
                 navigate('/');
@@ -83,7 +83,7 @@ const OutreachClinicCreation: React.FC = () => {
                 });
                 setStates(response.data); // Response typed as `StateData[]`
             } catch (error) {
-               
+
                 alert('Failed to fetch states. Please try again.');
             }
         };
@@ -91,7 +91,7 @@ const OutreachClinicCreation: React.FC = () => {
         fetchStates();
     }, [navigate]);
 
-    
+
 
     // Handle state change and fetch districts
     const handleStateChange = async (selectedState: string) => {
@@ -99,12 +99,12 @@ const OutreachClinicCreation: React.FC = () => {
         setDistrict('');
         setTaluk('');
         setPanchayat('');
-    
+
         const selectedStateObj = states.find(s => s.name === selectedState);
         if (selectedStateObj) {
             setStateCode(selectedStateObj.code);
             setLoadingDistricts(true);
-    
+
             try {
                 const response = await axios.get<StateData[]>(
                     `${config.appURL}/curable/districtmaster/statemaster/${selectedStateObj.id}`,
@@ -122,19 +122,19 @@ const OutreachClinicCreation: React.FC = () => {
             setLoadingDistricts(false);
         }
     };
-    
+
 
     // Handle district change and fetch taluks
     const handleDistrictChange = async (selectedDistrict: string) => {
         setDistrict(selectedDistrict);
         setTaluk('');
         setPanchayat('');
-    
+
         const selectedDistrictObj = districts.find(d => d.name === selectedDistrict);
         if (selectedDistrictObj) {
             setLoadingTaluks(true);
             setDistrictCode(selectedDistrictObj.code);
-            
+
             try {
                 const response = await axios.get<TalukData[]>(
                     `${config.appURL}/curable/taluqmaster/districtmaster/${selectedDistrictObj.id}`,
@@ -152,18 +152,18 @@ const OutreachClinicCreation: React.FC = () => {
             setLoadingTaluks(false);
         }
     };
-    
+
 
     // Handle taluk change and fetch panchayats
     const handleTalukChange = async (selectedTaluk: string) => {
         setTaluk(selectedTaluk);
         setPanchayat('');
-    
+
         const selectedTalukObj = taluks.find(t => t.name === selectedTaluk);
         if (selectedTalukObj) {
             setTalukCode(selectedTalukObj.code);
             setLoadingPanchayats(true);
-    
+
             try {
                 const response = await axios.get<PanchayatData[]>(
                     `${config.appURL}/curable/panchayatmaster/taluqmaster/${selectedTalukObj.id}`,
@@ -181,7 +181,7 @@ const OutreachClinicCreation: React.FC = () => {
             setLoadingPanchayats(false);
         }
     };
-    
+
     const handlePanchayatChange = (selectedPanchayat: string) => {
         setPanchayat(selectedPanchayat);
         const selectedPanchayats = panchayats.find(t => t.name === selectedPanchayat);
@@ -192,34 +192,34 @@ const OutreachClinicCreation: React.FC = () => {
         }
         console.log(`Selected Panchayat: ${selectedPanchayat}`);
     };
-    
-    
+
+
     // Handle form submission
     const handleNextClick = (e: React.FormEvent) => {
         e.preventDefault();
-    
-        if (!clinicName || !pincode || !state || !district || !taluk || !panchayat || !startDate ) {
+
+        if (!clinicName || !pincode || !state || !district || !taluk || !panchayat || !startDate) {
             alert('Please fill out all required fields.');
             return;
         }
-    
+
         // Validate that the end date is not before the start date
-        if (endDate!=null && new Date(startDate) > new Date(endDate)) {
+        if (endDate != null && new Date(startDate) > new Date(endDate)) {
             alert('End date cannot be before start date.');
             return;
         }
-    
+
         navigate('/resource-planning', {
             state: { startDate, endDate, panchayatId, pincode, clinicName, clinicCode }
-          });
+        });
     };
     return (
         <div className="container2">
             <form className="clinic-form" onSubmit={handleNextClick}>
-            <Header1 />
-            <h1 style={{ color: 'darkblue' }}>Outreach Clinic Creation</h1>
+                <Header1 />
+                <h1 style={{ color: 'darkblue' }}>Outreach Clinic Creation</h1>
                 <label>
-                    <span style={{color : "darkblue"}}>  Outreach Clinic Name*:</span> <span style={{ color: 'darkred', fontWeight: 'bold', }}></span>
+                    <span style={{ color: "darkblue" }}>  Outreach Clinic Name*:</span> <span style={{ color: 'darkred', fontWeight: 'bold', }}></span>
                     <input
                         type="text"
                         placeholder="Enter Outreach Clinic Name"
@@ -229,7 +229,7 @@ const OutreachClinicCreation: React.FC = () => {
                     />
                 </label>
                 <label>
-                    <span style={{color : "darkblue"}}>Pincode*:</span><span style={{ color: 'darkred', fontWeight: 'bold', }}></span>
+                    <span style={{ color: "darkblue" }}>Pincode*:</span><span style={{ color: 'darkred', fontWeight: 'bold', }}></span>
                     <input
                         type="number"
                         placeholder="Enter Pincode"
@@ -245,7 +245,7 @@ const OutreachClinicCreation: React.FC = () => {
                     />
                 </label>
                 <label>
-                    <span style={{color : "darkblue"}}>State Name*:</span><span style={{ color: 'darkred', fontWeight: 'bold', }}></span>
+                    <span style={{ color: "darkblue" }}>State Name*:</span><span style={{ color: 'darkred', fontWeight: 'bold', }}></span>
                     <select value={state} onChange={(e) => handleStateChange(e.target.value)} required>
                         <option value="">Select State</option>
                         {states.map((state) => (
@@ -256,7 +256,7 @@ const OutreachClinicCreation: React.FC = () => {
                     </select>
                 </label>
                 <label>
-                    <span style={{color : "darkblue"}}>District Name*:</span><span style={{ color: 'darkred', fontWeight: 'bold', }}></span>
+                    <span style={{ color: "darkblue" }}>District Name*:</span><span style={{ color: 'darkred', fontWeight: 'bold', }}></span>
                     <select value={district} onChange={(e) => handleDistrictChange(e.target.value)} required disabled={!state || loadingDistricts}>
                         <option value="">Select District</option>
                         {districts.map((district) => (
@@ -267,7 +267,7 @@ const OutreachClinicCreation: React.FC = () => {
                     </select>
                 </label>
                 <label>
-                    <span style={{color : "darkblue"}}>Taluk Name*:</span><span style={{ color: 'darkred', fontWeight: 'bold', }}></span>
+                    <span style={{ color: "darkblue" }}>Taluk Name*:</span><span style={{ color: 'darkred', fontWeight: 'bold', }}></span>
                     <select value={taluk} onChange={(e) => handleTalukChange(e.target.value)} required disabled={!district || loadingTaluks}>
                         <option value="">Select Taluk</option>
                         {taluks.map((taluk) => (
@@ -288,45 +288,45 @@ const OutreachClinicCreation: React.FC = () => {
                         ))}
                     </select>
                 </label> */}
-               <label htmlFor="panchayat-select">
-    <span style={{ color: 'darkblue' }}>Panchayat/Village Name*:</span>
-    <span style={{ color: 'darkred', fontWeight: 'bold' }}></span>
-    <select
-        id="panchayat-select"
-        value={panchayat}
-        onChange={(e) => handlePanchayatChange(e.target.value)}
-        required
-        disabled={!taluk || loadingPanchayats}
-    >
-        {loadingPanchayats ? (
-            <option value="">Loading Panchayats...</option>
-        ) : (
-            <>
-                <option value="">Select Panchayat/Village</option>
-                {panchayats.map((panchayat, index) => (
-                    <option key={index} value={panchayat.name}>
-                        {panchayat.name}
-                    </option>
-                ))}
-            </>
-        )}
-    </select>
-</label>
+                <label htmlFor="panchayat-select">
+                    <span style={{ color: 'darkblue' }}>Panchayat/Village Name*:</span>
+                    <span style={{ color: 'darkred', fontWeight: 'bold' }}></span>
+                    <select
+                        id="panchayat-select"
+                        value={panchayat}
+                        onChange={(e) => handlePanchayatChange(e.target.value)}
+                        required
+                        disabled={!taluk || loadingPanchayats}
+                    >
+                        {loadingPanchayats ? (
+                            <option value="">Loading Panchayats...</option>
+                        ) : (
+                            <>
+                                <option value="">Select Panchayat/Village</option>
+                                {panchayats.map((panchayat, index) => (
+                                    <option key={index} value={panchayat.name}>
+                                        {panchayat.name}
+                                    </option>
+                                ))}
+                            </>
+                        )}
+                    </select>
+                </label>
 
 
 
-<label>
-                <span style={{ color: 'darkblue' }}>Outreach Clinic Start Date*:</span>
-                <span style={{ color: 'darkred', fontWeight: 'bold' }}></span>
-                <div className="input-with-icon">
-                <Calendar
-            value={endDate}
-            onChange={(e) => setStartDate(e.value as Date | null)}
-            showIcon
-            minDate={startDate || new Date()}
-            placeholder="Select Start Date"
-          />
-                {/* <DatePicker
+                <label>
+                    <span style={{ color: 'darkblue' }}>Outreach Clinic Start Date*:</span>
+                    <span style={{ color: 'darkred', fontWeight: 'bold' }}></span>
+                    <div className="input-with-icon">
+                        <Calendar
+                            value={endDate}
+                            onChange={(e) => setStartDate(e.value as Date | null)}
+                          //  showIcon
+                            minDate={startDate || new Date()}
+                            placeholder="Select Start Date"
+                        />
+                        {/* <DatePicker
                     selected={startDate}
                     onChange={(date: Date | null) => setStartDate(date)}  // Update start date
                     onSelect={() => (document.activeElement as HTMLElement)?.blur()}  // Hide DatePicker popup on date select
@@ -337,15 +337,15 @@ const OutreachClinicCreation: React.FC = () => {
                     wrapperClassName='DatePicker'
                     minDate={new Date()}
                 /> */}
-                    <img src="./assets/Calendar.png" className="clinic-id-icon" alt="calendar icon" />
-                </div>
-            </label>
+                        <img src="./assets/Calendar.png" className="clinic-id-icon" alt="calendar icon" />
+                    </div>
+                </label>
 
-            <label>
-                <span style={{ color: 'darkblue' }}>Outreach Clinic End Date:</span>
-                <span style={{ color: 'darkred', fontWeight: 'bold' }}></span>
-                <div className="input-with-icon">
-                {/* <DatePicker
+                <label>
+                    <span style={{ color: 'darkblue' }}>Outreach Clinic End Date:</span>
+                    <span style={{ color: 'darkred', fontWeight: 'bold' }}></span>
+                    <div className="input-with-icon">
+                        {/* <DatePicker
                     selected={endDate}
                     onChange={(date: Date | null) => setEndDate(date)}  // Update end date
                     onSelect={() => (document.activeElement as HTMLElement)?.blur()}  // Hide DatePicker popup on date select
@@ -356,16 +356,16 @@ const OutreachClinicCreation: React.FC = () => {
                     wrapperClassName='DatePicker'
                     minDate={startDate || new Date()}
                 /> */}
-                <Calendar
-            value={endDate}
-            onChange={(e) => setEndDate(e.value as Date | null)}
-            showIcon
-            minDate={startDate || new Date()}
-            placeholder="Select End Date"
-          />
-                    <img src="./assets/Calendar.png" className="clinic-id-icon" alt="calendar icon" />
-                </div>
-            </label>
+                        <Calendar
+                            value={endDate}
+                            onChange={(e) => setEndDate(e.value as Date | null)}
+                           // showIcon
+                            minDate={startDate || new Date()}
+                            placeholder="Select End Date"
+                        />
+                        <img src="./assets/Calendar.png" className="clinic-id-icon" alt="calendar icon" />
+                    </div>
+                </label>
 
 
 
@@ -378,43 +378,44 @@ const OutreachClinicCreation: React.FC = () => {
                     </div>
                 </label> */}
 
-<label>
-            <span style={{ color: 'darkblue' }}>Outreach Clinic ID*:</span>
-            <span style={{ color: 'darkred', fontWeight: 'bold' }}></span>
-            <div className="input-with-icon">
-                <input
-                    type="number"
-                    placeholder="Show 7 digit System ID"
-                    value={clinicCode} 
-                    onChange={(e) => {
-                        // Allow only numbers and limit to 6 characters
-                        const value = e.target.value;
-                        if (/^\d{0,7}$/.test(value)) {  // Regex allows only digits and up to 6 characters
-                            setClinicCode(value);
-                        }
-                    }}
-                    required
+                <label>
+                    <span style={{ color: 'darkblue' }}>Outreach Clinic ID*:</span>
+                    <span style={{ color: 'darkred', fontWeight: 'bold' }}></span>
+                    <div className="input-with-icon">
+                        <input
+                            type="number"
+                            placeholder="Show 7 digit System ID"
+                            value={clinicCode}
+                            onChange={(e) => {
+                                // Allow only numbers and limit to 6 characters
+                                const value = e.target.value;
+                                if (/^\d{0,7}$/.test(value)) {  // Regex allows only digits and up to 6 characters
+                                    setClinicCode(value);
+                                }
+                            }}
+                            required
 
-                     // Prefill with clinicId state
-                    //readOnly // Make the field read-only
-                />
-                <img
-                    src="./Curable Icons/PNG/Group 1269.png"
-                    className="clinic-id-icon"
-                    alt="Clinic ID Icon"
-                />
-            </div>
-        </label>
+                        // Prefill with clinicId state
+                        //readOnly // Make the field read-only
+                        />
+                        <img
+                            src="./Curable Icons/PNG/Group 1269.png"
+                            className="clinic-id-icon"
+                            alt="Clinic ID Icon"
+                        />
+                    </div>
+                </label>
                 <center><button type="submit" className="submit-button1">
                     Next
                 </button></center>
             </form>
-            <footer className="footer-container">
-        <div className="footer-content">
-          <p className="footer-text">Powered By Curable</p>
-          <img src="/assets/Curable logo - rectangle with black text.png" alt="Curable Logo" className="footer-logo" />
-        </div>
-      </footer>
+        
+            <div className="footer-container">
+                <div className="footer-content">
+                    <p className="footer-text">Powered By Curable</p>
+                    <img src="/assets/Curable logo - rectangle with black text.png" alt="Curable Logo" className="footer-logo" />
+                </div>
+            </div>
         </div>
     );
 };
