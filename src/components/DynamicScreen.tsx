@@ -280,7 +280,7 @@ const App: React.FC = () => {
         <p className="participant-info-text">Participant: {ptName}</p>
         <p className="participant-info-text">ID: {registrationId}</p>
       </div>
-      <h1 style={{ color: 'darkblue' }}>Clinical</h1>
+      <h1 style={{ color: 'darkblue' }}>Clinical examination</h1>
       <form className="clinic-form" onSubmit={handleSubmit}>
         {getTestFieldsInline()}
         <center className="buttons">

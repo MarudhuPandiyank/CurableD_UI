@@ -29,10 +29,10 @@ const Header: React.FC = () => {
           className="menu-icon fas fa-bars"
           onClick={() => setIsLeftSidebarOpen(true)}
           aria-label="Open Left Sidebar"
-          style={{ color: '#003366', cursor: 'pointer' }} // Blue color for the menu icon
-        ></span>
+          style={{ color: '#003366', cursor: 'pointer',marginTop:-12 }}        ></span>
         <span className="title text-center flex-grow-1" style={{ fontSize: '20px', color: '#003366' }}>
-        <img src="./Curable Icons/PNG/Earth.png" style={{ height: '30px', width: '30px' }} alt="Earth Icon" />         {tenantName}
+        <img src="./Curable Icons/PNG/Earth.png" style={{ height: '30px', width: '30px',marginTop:-7 }} alt="Earth Icon" />        
+        {tenantName}
         </span>
         <span
           className="account-icon fas fa-user-circle"
@@ -54,7 +54,7 @@ const Header: React.FC = () => {
       <img
         src="./HomeScreenIcons/PNG/Outreach Clinic.png"
         alt="Outreach Clinic Icon"
-        style={{ width: '10px', height: '10px', marginRight: '8px' }}
+        style={{ width: '20px', height: '20px', marginRight: '8px' }}
       />
       Outreach Clinic
     </button>
@@ -62,7 +62,7 @@ const Header: React.FC = () => {
       <img
         src="./HomeScreenIcons/PNG/Patient Registration.png"
         alt="Patient Registration Icon"
-        style={{ width: '30px', height: '30px', marginRight: '8px' }}
+        style={{ width: '20px', height: '20px', marginRight: '8px' }}
       />
       Patient Registration
     </button>

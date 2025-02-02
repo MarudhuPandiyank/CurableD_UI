@@ -159,9 +159,9 @@ const ResourcePlanning: React.FC = () => {
             <div className="buttons">
               <button
                 type="button"
-                className="Finish-extrawidtgh-button"
+                 className="Next-extrawidtgh-button"
                 onClick={handleAllocateResources}>Allocate Resources</button>
-              <button type="submit" className="Next-extrawidtgh-button">
+              <button type="submit" className="Finish-extrawidtgh-button">
               {loading ? 'Submitting...' : 'Submit'}
               </button>
             </div>
