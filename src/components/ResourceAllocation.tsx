@@ -129,27 +129,27 @@ const ResourceAllocation: React.FC = () => {
         ...programCoordinators.map((coordinator) => ({
           role: 'Program Coordinator',
           name: coordinator.name,
-          id: coordinator.id,
+          hospitalEmployeeId: coordinator.id,
         })),
         ...campCoordinators.map((coordinator) => ({
           role: 'Camp Coordinator',
           name: coordinator.name,
-          id: coordinator.id,
+          hospitalEmployeeId: coordinator.id,
         })),
         ...socialWorkers.map((worker) => ({
           role: 'Social Worker',
           name: worker.name,
-          id: worker.id,
+          hospitalEmployeeId: worker.id,
         })),
         ...nurses.map((nurse) => ({
           role: 'Nurse',
           name: nurse.name,
-          id: nurse.id,
+          hospitalEmployeeId: nurse.id,
         })),
         ...doctors.map((doctor) => ({
           role: 'Doctor',
           name: doctor.name,
-          id: doctor.id,
+          hospitalEmployeeId: doctor.id,
         })),
       ],
     };
