@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './ResourceAllocation.css';
-import Header from './Header';
+import Header1 from './Header1';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Select, { MultiValue, GroupBase } from 'react-select';
-import Header1 from './Header1';
 import config from '../config'; 
+
 interface Admin {
   id: number;
   name: string;
@@ -13,6 +13,14 @@ interface Admin {
 
 interface HospitalStaffResponse {
   [key: string]: Admin[];
+}
+
+interface CampStaffResponse {
+  'Program Coordinator': Admin[];
+  'Camp Coordinator': Admin[];
+  'Doctor': Admin[];
+  'Social Worker': Admin[];
+  'Nurse': Admin[];
 }
 
 interface SelectOption {
@@ -23,7 +31,7 @@ interface SelectOption {
 const ResourceAllocation: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { startDate, endDate, panchayatId, pincode, noCampcordinators, noDoctors, noNurses, noProgramCoordinators, noSocialWorkers,clinicName,clinicCode,id } = location.state || {};
+  const { startDate, endDate, panchayatId, pincode, noCampcordinators, noDoctors, noNurses, noProgramCoordinators, noSocialWorkers, clinicName, clinicCode, id } = location.state || {};
 
   const [formData, setFormData] = useState({
     programCoordinators: [] as Admin[],
@@ -44,7 +52,7 @@ const ResourceAllocation: React.FC = () => {
   const axiosInstance = axios.create({
     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
   });
-  const hospitalId=localStorage.getItem('hospitalId');
+
   useEffect(() => {
     const fetchStaffDetails = async () => {
       const token = localStorage.getItem('token');
@@ -55,48 +63,37 @@ const ResourceAllocation: React.FC = () => {
       }
 
       try {
-        const response = await axiosInstance.get<HospitalStaffResponse>(
-          `${config.appURL}/curable/hospitalstaffdetails/${localStorage.getItem('hospitalId')}`
-        );
+        const [hospitalStaffResponse, campStaffResponse] = await Promise.all([
+          axiosInstance.get<HospitalStaffResponse>(`${config.appURL}/curable/hospitalstaffdetails/${localStorage.getItem('hospitalId')}`),
+          id ? axiosInstance.get<CampStaffResponse>(`${config.appURL}/curable/campstaffdetails/${id}`) : null
+        ]);
 
         setDropdownData({
-          programCoordinators: response.data['Program Coordinator'] || [],
-          campCoordinators: response.data['Camp Coordinator'] || [],
-          socialWorkers: response.data['Social Worker'] || [],
-          nurses: response.data['Nurse'] || [],
-          doctors: response.data['Doctor'] || [],
+          programCoordinators: hospitalStaffResponse.data['Program Coordinator'] || [],
+          campCoordinators: hospitalStaffResponse.data['Camp Coordinator'] || [],
+          socialWorkers: hospitalStaffResponse.data['Social Worker'] || [],
+          nurses: hospitalStaffResponse.data['Nurse'] || [],
+          doctors: hospitalStaffResponse.data['Doctor'] || [],
         });
-      } catch (error) {
-        console.error('Error fetching staff details:', error);
-        alert('Failed to fetch staff details. Please try again.');
-      }
-    };
 
-    fetchStaffDetails();
-  }, [navigate]);
-
-  useEffect(() => {
-    const fetchStaffDetails = async () => {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        console.error('No token found, redirecting to login.');
-        navigate('/');
-        return;
-      }
-      try {
-        let response;
-        if (id) {
-          response = await axiosInstance.get(`${config.appURL}/curable/campstaffdetails/${id}`);
-          console.log('Camp Staff Details:', response.data); // Debugging output
+        if (campStaffResponse) {
+          const campData = campStaffResponse.data;
+          setFormData({
+            programCoordinators: campData['Program Coordinator'] || [],
+            campCoordinators: campData['Camp Coordinator'] || [],
+            socialWorkers: campData['Social Worker'] || [],
+            nurses: campData['Nurse'] || [],
+            doctors: campData['Doctor'] || [],
+          });
         }
       } catch (error) {
         console.error('Error fetching staff details:', error);
         alert('Failed to fetch staff details. Please try again.');
       }
     };
+
     fetchStaffDetails();
   }, [navigate, id]);
-  
 
   const handleMultiSelectChange = (name: string) => (selectedOptions: MultiValue<SelectOption>) => {
     setFormData((prevData) => ({
@@ -117,10 +114,9 @@ const ResourceAllocation: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-  
+
     const { programCoordinators, campCoordinators, socialWorkers, nurses, doctors } = formData;
-  
-    // Allow submission if at least one field has data
+
     if (
       programCoordinators.length === 0 &&
       campCoordinators.length === 0 &&
@@ -131,7 +127,7 @@ const ResourceAllocation: React.FC = () => {
       alert('Please select at least one field before submitting.');
       return;
     }
-  
+
     const requestDataFinal = {
       campDTO: {
         startDate,
@@ -145,7 +141,7 @@ const ResourceAllocation: React.FC = () => {
         noSocialworkers: noSocialWorkers,
         name: clinicName || '',
         campIdPrefix: clinicCode || '',
-        hospitalId,
+        hospitalId: localStorage.getItem('hospitalId'),
         id: id || null,
       },
       campStaffs: [
@@ -176,10 +172,10 @@ const ResourceAllocation: React.FC = () => {
         })),
       ],
     };
-  
+
     try {
       const response = await axiosInstance.post<string>(`${config.appURL}/curable/newcamp`, requestDataFinal);
-  
+
       if (response.status === 200) {
         navigate('/success-messageEdit', { state: { clickId: response.data } });
       } else {
@@ -190,13 +186,12 @@ const ResourceAllocation: React.FC = () => {
       alert('Something went wrong, please try again later.');
     }
   };
-  
 
   return (
     <div className="container2">
       <form className="clinic-form" onSubmit={handleSubmit}>
-      <Header1 />
-        
+        <Header1 />
+
         <h1 style={{ color: 'darkblue' }}>Resource Allocation</h1>
         <div className="form-group">
           <label className="label">Program Co-ordinator:</label>
@@ -269,28 +264,27 @@ const ResourceAllocation: React.FC = () => {
         </div>
 
         <button
-  className="submit-button"
-  type="submit"
-  disabled={
-    formData.programCoordinators.length === 0 &&
-    formData.campCoordinators.length === 0 &&
-    formData.socialWorkers.length === 0 &&
-    formData.nurses.length === 0 &&
-    formData.doctors.length === 0
-  }
->
-  Submit
-</button>
-
-      </form>
-      <footer className="footer-container">
-        <div className="footer-content">
-          <p className="footer-text">Powered By Curable</p>
-          <img src="/assets/Curable logo - rectangle with black text.png" alt="Curable Logo" className="footer-logo" />
-        </div>
-      </footer>
-    </div>
-  );
-};
-
-export default ResourceAllocation;
+          className="submit-button"
+          type="submit"
+          disabled={
+            formData.programCoordinators.length === 0 &&
+            formData.campCoordinators.length === 0 &&
+            formData.socialWorkers.length === 0 &&
+            formData.doctors.length === 0
+          }
+          >
+            Submit
+          </button>
+        </form>
+        <footer className="footer-container">
+          <div className="footer-content">
+            <p className="footer-text">Powered By Curable</p>
+            <img src="/assets/Curable logo - rectangle with black text.png" alt="Curable Logo" className="footer-logo" />
+          </div>
+        </footer>
+      </div>
+    );
+  };
+  
+  export default ResourceAllocation;
+  
