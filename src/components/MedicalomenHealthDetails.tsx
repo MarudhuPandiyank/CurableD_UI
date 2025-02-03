@@ -342,6 +342,7 @@ const navigate = useNavigate();
             <option value="Month2">&lt; 6 Months</option>
             <option value="Month3">6-12 Months</option>
             <option value="Month4">&gt; 12 Months</option>
+            <option value="Month5">Others</option>
           </select>
 
           <label>Have You Ever Undergone Breast/Cervix Screening?</label>

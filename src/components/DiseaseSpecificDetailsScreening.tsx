@@ -144,6 +144,9 @@ const App: React.FC = () => {
 
   const patientId = localStorage.getItem('patientId');
   const patientName = localStorage.getItem('patientName');
+  const pName= localStorage.getItem("patientName");
+  const regId= localStorage.getItem("registrationId");
+
 
   useEffect(() => {
     const selectedStage = localStorage.getItem("selectedStage");
@@ -165,8 +168,8 @@ const App: React.FC = () => {
     <div className="container2">
       <Header1 />
       <div className="participant-info-container">
-        <p className="participant-info-text"><strong>Participant:</strong> {patientId}</p>
-        <p className="participant-info-text"><strong>ID:</strong> {patientName}</p>
+        <p className="participant-info-text"><strong>Participant:</strong> {pName}</p>
+        <p className="participant-info-text"><strong>ID:</strong> {regId}</p>
       </div>
       <div className="clinic-details-form">
         <h1 style={{ color: 'darkblue' }}>{titleName}</h1>

@@ -337,20 +337,25 @@ const ParticipantDetails: React.FC = () => {
           <label htmlFor="education">Education:</label>
           <select id="education" name="education" value={education} onChange={(e) => setEducation(e.target.value)}>
             <option value="" disabled>Select Education</option>
+            <option value="NIL">NIL</option>
             <option value="primary">Primary</option>
-            <option value="secondary">Secondary</option>
-            <option value="graduate">Graduate</option>
-            <option value="postgraduate">Postgraduate</option>
+            <option value="secondary">Middle school</option>
+            <option value="graduate">High school</option>
+            <option value="postgraduate">College</option>
+            <option value="other">Others</option>
           </select>
         </div>
         <div className="form-group">
           <label htmlFor="occupation">Occupation:</label>
           <select id="occupation" name="occupation" value={occupation} onChange={(e) => setOccupation(e.target.value)}>
             <option value="" disabled>Select Occupation</option>
-            <option value="farmer">Farmer</option>
-            <option value="worker">Worker</option>
-            <option value="professional">Professional</option>
-            <option value="other">Other</option>
+            <option value="farmer">House wife</option>
+            <option value="Laborer-skilled">Laborer-skilled</option>
+            <option value="Teaching/Office">Teaching/Office jobs</option>
+            <option value="Professional">Professional</option>
+            <option value="Business">Business</option>
+            <option value="Not-working">Not working</option>
+            <option value="other">Others</option>
           </select>
         </div>
         <h2>ID Proof</h2>
