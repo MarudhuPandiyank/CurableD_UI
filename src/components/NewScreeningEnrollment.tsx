@@ -304,6 +304,9 @@ const NewScreeningEnrollment: React.FC = () => {
 
           <center>
             <div className="buttons">
+            <button type="submit" className="Finish-button">
+               Prev
+              </button>
               <button
                 type="button"
                 className="Next-button"

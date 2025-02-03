@@ -392,6 +392,8 @@ const navigate = useNavigate();
             </div>
           )}
         <div className="buttons">
+        <button type="button" className="Finish-button" >Prev</button>
+
           <button type="button" className="Next-button" onClick={openModal}>
             Finish
           </button>

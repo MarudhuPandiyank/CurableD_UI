@@ -281,7 +281,9 @@ function FamilyPersonalDetails() {
             Add Member
           </button>    </div>
         <center className="buttons">
-          
+        <button type="submit" className="Next-button">
+            Prev
+          </button>
           <button type="button" className="Finish-button" onClick={handleFinish}>
             Finish
           </button>

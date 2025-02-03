@@ -206,6 +206,7 @@ function DiseaseSpecificDetails() {
         )}
 
         <center className="buttons">
+        <button type="button" className="Finish-button" onClick={openModal}>Prev</button>
           <button type="button" className="Next-button" onClick={openModal}>Finish</button>
           <button type="submit" className="Finish-button" onClick={(e) => {
             if (Object.keys(formValues).length < formData.length) {

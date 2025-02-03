@@ -209,7 +209,9 @@ const FamilyMedicalDetails: React.FC = () => {
             Add Member
           </button></div>
         <center className="buttons">
-          
+        <button type="submit" className="Finish-button">
+            Prev
+          </button>
           <button type="submit" className="Next-button">
             Finish
           </button>

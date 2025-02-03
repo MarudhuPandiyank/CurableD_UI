@@ -534,6 +534,7 @@ const ParticipantDetails: React.FC = () => {
           {error && <p style={{ color: "red" }}>{error}</p>}
         </div>
         <div className="buttons">
+        <button type="button" className="Finish-button" >Prev</button>
         <button type="button" className="Next-button"  onClick={openModal} >Finish</button>
           <button type="submit" className="Finish-button" onClick={(e) => handleFormSubmit(e, '/MedicalomenHealthDetails')} disabled={isLoading}>
             { 'Next'}
