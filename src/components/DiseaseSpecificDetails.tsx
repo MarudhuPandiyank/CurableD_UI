@@ -21,6 +21,11 @@ interface ApiResponse {
     params: FamilyMetricsParam[];
   };
 }
+interface PrefillApiResponse {
+  eligibilityMetrics: {
+    params: FamilyMetricsParam[];
+  };
+}
 
 function DiseaseSpecificDetails() {
   const navigate = useNavigate();
@@ -33,7 +38,6 @@ function DiseaseSpecificDetails() {
 
   const participantValue = localStorage.getItem('participant');
   const gender = participantValue?.split('/')[1];
-
   useEffect(() => {
     const fetchDiseaseTestMaster = async () => {
       try {
@@ -42,7 +46,7 @@ function DiseaseSpecificDetails() {
           setError('Token is missing. Please log in again.');
           return;
         }
-
+  
         const response = await axios.get<ApiResponse>(`${config.appURL}/curable/getMetricsByGender/ELIGIBILE/${gender}`, {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -50,16 +54,35 @@ function DiseaseSpecificDetails() {
         });
         setFormData(response.data.eligibilityMetrics.params);
         console.log('Disease Test Master Data:', response.data);
+  
+        // Fetch prefill data
+        const prefillResponse = await axios.post<PrefillApiResponse>(`${config.appURL}/curable/candidatehistoryForPrefil`, {
+          candidateId: localStorage.getItem('patientId'),
+          type: 1
+        }, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+  
+        if (prefillResponse.data) {
+          const prefilledValues: Record<string, string> = {};
+          prefillResponse.data.eligibilityMetrics.params.forEach((param: FamilyMetricsParam) => {
+            prefilledValues[param.testName] = param.selectedValues[0];
+          });
+          setFormValues(prefilledValues);
+        }
       } catch (error) {
-        console.error('Error fetching disease test master data:', error);
-        setError('Failed to load disease test data. Please try again.');
+        console.error('Error fetching data:', error);
+        setError('Failed to load data. Please try again.');
       } finally {
         setLoading(false);
       }
     };
-
+  
     fetchDiseaseTestMaster();
   }, [gender]);
+  
 
   const handleInputChange = (testName: string, value: string) => {
     setFormValues((prevValues) => ({
@@ -116,7 +139,7 @@ function DiseaseSpecificDetails() {
       stage: "ELIGIBILE",
       testMetrics: null,
       type: 1,
-      candidateId: Number(patientId),
+      candidateId: Number(localStorage.getItem('patientId')),
     };
 
     try {

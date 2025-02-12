@@ -1,10 +1,36 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Header from './Header';
 import './HomePage.css';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import Header1 from './Header1';
 import config from '../config'; 
+
+
+interface PrefillApiResponse {
+  id: number;
+  candidateId: number;
+  medicalhistory: string;
+  bloodPressure: string;
+  pulseRate: string;
+  weight: number;
+  historyOfSurgery: boolean;
+  height: number;
+  spo2: number;
+  allergy: string;
+  otherComplaints: string;
+  ageAtMenarche: number;
+  whenWasLastMentrution: string;
+  abnormalBleedingVaginum: string;
+  ageAtMarriage: number;
+  totalPregnancies: number;
+  ageAtFirstChild: number;
+  ageAtLastChild: number;
+  currentlyPregant: boolean;
+  methodOfContraceptionUsed: string;
+  noOfBreastFedMonths: string;
+  cervicalBreastScrening: boolean;
+}
 const MedicalomenHealthDetails: React.FC = () => {
   const [selectedHistory, setSelectedHistory] = useState<string>('');
   const [bloodPressure, setBloodPressure] = useState<string>('');
@@ -27,6 +53,8 @@ const MedicalomenHealthDetails: React.FC = () => {
   const [selectedBreastFedMonths, setSelectedBreastFedMonths] = useState<string>('');
   const [selectedToggle2, setSelectedToggle2] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false); // State for modal visibility
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
 const navigate = useNavigate();
   const toggleOption = (option: string) => {
     setSelectedToggle(option);
@@ -93,6 +121,59 @@ const navigate = useNavigate();
       alert('Failed to submit data.');
     }
   };
+
+  useEffect(() => {
+    const fetchPrefillData = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        if (!token) {
+          setError('Token is missing. Please log in again.');
+          return;
+        }
+
+        const prefillResponse = await axios.post<PrefillApiResponse>(`${config.appURL}/curable/candidatehistoryForPrefil`, {
+          candidateId: localStorage.getItem('patientId'),
+          type: 3
+        }, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (prefillResponse.data) {
+          const data = prefillResponse.data;
+          setSelectedHistory(data.medicalhistory);
+          setBloodPressure(data.bloodPressure);
+          setPulseRate(data.pulseRate);
+          setWeight(data.weight.toString());
+          setSelectedToggle(data.historyOfSurgery ? 'yes' : 'no');
+          setHeight(data.height.toString());
+          setSpo2(data.spo2.toString());
+          setAllergy(data.allergy);
+          setOtherComplaints(data.otherComplaints);
+          setAgeAtMenarche(data.ageAtMenarche.toString());
+          setSelectedLastMenstruation(data.whenWasLastMentrution);
+          setSelectedBleedingIssues(data.abnormalBleedingVaginum);
+          setAgeAtMarriage(data.ageAtMarriage.toString());
+          setTotalPregnancies(data.totalPregnancies.toString());
+          setAgeAtFirstChild(data.ageAtFirstChild.toString());
+          setAgeAtLastChild(data.ageAtLastChild.toString());
+          setSelectedToggle1(data.currentlyPregant ? 'yes' : 'no');
+          setSelectedContraception(data.methodOfContraceptionUsed);
+          setSelectedBreastFedMonths(data.noOfBreastFedMonths);
+          setSelectedToggle2(data.cervicalBreastScrening ? 'yes' : 'no');
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        setError('Failed to load data. Please try again.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPrefillData();
+  }, []);
+
   const participant = localStorage.getItem('participant');
   const gender=participant?.split('/')[1];
   const registraionId = localStorage.getItem('registraionId');

@@ -417,12 +417,12 @@ input[type="date"] {
   }
   
   .toggle-btn.yes-active {
-    background-color: #4CAF50; /* Green for 'Yes' */
+    background-color: #d774ad; /* Green for 'Yes' */
     color: white;
   }
   
   .toggle-btn.no-active {
-    background-color: #f44336; /* Red for 'No' */
+    background-color: #d774ad; /* Red for 'No' */
     color: white;
   }
   

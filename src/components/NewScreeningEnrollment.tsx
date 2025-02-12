@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Header1 from './Header1';
 import './HomePage.css';
@@ -13,6 +13,41 @@ import 'primereact/resources/primereact.min.css'; // Core CSS
 import 'primeicons/primeicons.css'; // Icons
 import './Common.css';
 
+interface PrefillApiResponse {
+  id: number;
+  registraionId: string;
+  campId: number;
+  optionalId: any;
+  name: string;
+  gender: string;
+  age: number;
+  maritalStatus: any;
+  spouseName: string;
+  mobileNo: string;
+  aadhar: string;
+  address: string;
+  email: any;
+  tobaccoUser: boolean;
+  parentCandidateId: any;
+  surveyStatus: any;
+  consentDate: any;
+  consentSign: any;
+  dob: string;
+  streetId: number;
+  fatherName: string;
+  alternateMobileNo: string;
+  occupation: string;
+  monthlyIncome: number;
+  houseType: string;
+  voterId: string;
+  education: string;
+  rationCard: string;
+  hospitalId: number;
+  reason: any;
+  eligibleDiseases: any;
+  candidateHabitDTOs: any;
+}
+
 const NewScreeningEnrollment: React.FC = () => {
   const navigate = useNavigate();
   const [name, setName] = useState('');
@@ -23,7 +58,45 @@ const NewScreeningEnrollment: React.FC = () => {
   const [streetId, setStreetId] = useState('');
   const [isSaveButtonEnabled, setIsSaveButtonEnabled] = useState(false); // State for Save button
   const [showModal, setShowModal] = useState(false);
-  const [tag, setTag] = useState<string>('');
+  const [reason, setReason] = useState<string>('');
+
+  useEffect(() => {
+    const prefillData = async () => {
+      const token = localStorage.getItem('token');
+      const patientId = localStorage.getItem('patientId');
+
+      if (!token || !patientId) {
+        alert('Token or patient ID not found. Please log in again.');
+        return;
+      }
+
+      try {
+        const response = await axios.post<PrefillApiResponse>(
+          `${config.appURL}/curable/candidatehistoryForPrefil`,
+          { candidateId: patientId, type: 6 },
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+
+        if (response.status === 200) {
+          const data = response.data;
+          setName(data.name);
+          setMobile(data.mobileNo);
+          setGender(data.gender);
+          setDob(new Date(data.dob));
+          setAddress(data.address);
+          setStreetId(data.streetId.toString());
+        }
+      } catch (error) {
+        console.error('Error fetching prefill data:', error);
+        alert('Failed to fetch prefill data. Please try again.');
+      }
+    };
+
+    prefillData();
+  }, []);
+
   const handleGenderChange = (value: string) => setGender(value);
 
   const handleMobileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -31,7 +104,6 @@ const NewScreeningEnrollment: React.FC = () => {
     if (/^\d*$/.test(input)) setMobile(input); // Only numeric input
   };
 
-  // Enable Save button when Address and Street ID are filled
   const handleAddressChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setAddress(e.target.value);
     setIsSaveButtonEnabled(e.target.value.trim() !== '' && streetId.trim() !== '');
@@ -111,7 +183,7 @@ const NewScreeningEnrollment: React.FC = () => {
         },
       });
 
-      const data = response.data as { id: number; name: string, registraionId: string, age: number, gender: string };
+      const data = response.data as { id: number; name: string; registraionId: string; age: number; gender: string };
 
       if (response.status === 200) {
         localStorage.setItem('patientId', data.id.toString());
@@ -129,20 +201,16 @@ const NewScreeningEnrollment: React.FC = () => {
 
   const openModal = () => {
     if (!address.trim()) {
-
       alert('Address cannot be empty. Enter the address and click on Save');
-
-      return;  // Prevent the save action
-
+      return; // Prevent the save action
     }
     setShowModal(true);
   };
 
-  // Function to close modal
   const closeModal = () => {
     setShowModal(false);
   };
-  const [reason, setReason] = useState<string>('');
+
   const handleReasonChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { checked, value } = e.target;
 
@@ -159,7 +227,6 @@ const NewScreeningEnrollment: React.FC = () => {
       }
     });
   };
-
 
   return (
     <div>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header1 from './Header1';
 import './ParticipantDetails.css';
@@ -14,6 +14,60 @@ interface Habit {
   quit: string;
   isOpen: boolean;
 }
+
+interface FamilyMetricsParam {
+  testName: string;
+  subtestName: string;
+  condition: string | null;
+  valueType: string;
+  values: string[];
+  selectedValues: string[];
+}
+
+interface PrefillApiResponse {
+  id: string | null;
+  registraionId: string | null;
+  campId: string | null;
+  optionalId: string | null;
+  name: string | null;
+  gender: string | null;
+  age: number | null;
+  maritalStatus: string | null;
+  spouseName: string;
+  mobileNo: string | null;
+  aadhar: string;
+  address: string | null;
+  email: string | null;
+  tobaccoUser: boolean;
+  parentCandidateId: string | null;
+  surveyStatus: string | null;
+  consentDate: string | null;
+  consentSign: string | null;
+  dob: string | null;
+  streetId: string | null;
+  fatherName: string;
+  alternateMobileNo: string;
+  occupation: string;
+  monthlyIncome: number;
+  houseType: string;
+  voterId: string;
+  education: string;
+  rationCard: string;
+  hospitalId: string | null;
+  reason: string | null;
+  eligibleDiseases: string | null;
+  candidateHabitDTOs: {
+    candidateId: number;
+    id: number;
+    habits: string;
+    type: string;
+    duration: number;
+    frequency: string;
+    quit: boolean;
+    howLong: number;
+  }[];
+}
+
 const ParticipantDetails: React.FC = () => {
   
   const [houseType, setHouseType] = useState<string>('');
@@ -50,7 +104,65 @@ const ParticipantDetails: React.FC = () => {
   const toggleOption1 = (option: string) => {
     setSelectedToggle1(option);
   };
-
+  const fetchPrefillData = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const patientId = localStorage.getItem("patientId");
+  
+      if (!token || !patientId) {
+        console.error("Token or Patient ID not found");
+        alert("Session expired. Please log in again.");
+        return;
+      }
+  
+      const response = await axios.post<PrefillApiResponse>(
+        `${config.appURL}/curable/candidatehistoryForPrefil`,
+        { candidateId: patientId, type: 2 },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+  
+      if (response.status === 200) {
+        const data = response.data;
+  
+        setHouseType(data.houseType || "");
+        setEducation(data.education || "");
+        setOccupation(data.occupation || "");
+        setFatherName(data.fatherName || "");
+        setSpouseName(data.spouseName || "");
+        setAltMobile(data.alternateMobileNo || "");
+        setIncome(data.monthlyIncome?.toString() || "");
+        setAadhaar(data.aadhar || "");
+        setVoterId(data.voterId || "");
+        setRationCard(data.rationCard || "");
+  
+        if (data.candidateHabitDTOs && data.candidateHabitDTOs.length > 0) {
+          const habitData = data.candidateHabitDTOs[0];
+          setSelectedHabit(habitData.habits || "");
+          setSelectedHabitType(habitData.type || "");
+          setDuration(habitData.duration?.toString() || "");
+          setFrequency(habitData.frequency || "");
+          setQuit(habitData.quit?.toString() || "");
+          setHowLong(habitData.howLong?.toString() || "");
+        }
+  
+        console.log("Prefill Data:", data);
+      } else {
+        console.error("Error:", response.statusText);
+        alert(`Error: ${response.statusText}`);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      alert("An error occurred while fetching prefill data.");
+    }
+  };
+  
+  
+  // Call API when the component mounts
+  useEffect(() => {
+    fetchPrefillData();
+  }, []);
   const handleFormSubmit = async (e: React.FormEvent,navigateTo: string) => {
     e.preventDefault();
 
@@ -152,6 +264,8 @@ const ParticipantDetails: React.FC = () => {
       { habit: "", habitType: "", frequency: "", quit: "", isOpen: true }, // Default `isOpen: true`
     ]);
   };
+
+  
   // Handle input change
   const handleInputChange = (
     index: number,

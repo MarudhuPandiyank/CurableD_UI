@@ -8,7 +8,6 @@ import config from '../config';
 interface FamilyMedicalParam {
   testName: string;
   subtestName: string;
-  condition: string | null;
   valueType: string;
   values: string[];
   selectedValues: string[];
@@ -20,12 +19,18 @@ interface ApiResponse {
   };
 }
 
+interface PrefillApiResponse {
+  familyMetrics: {
+    params: FamilyMedicalParam[];
+  };
+}
+
 const FamilyMedicalDetails: React.FC = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState<FamilyMedicalParam[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [formValues, setFormValues] = useState<Record<string, string>[]>([{}]);
-  const [expandedIndex, setExpandedIndex] = useState<number>(0); // State to track expanded member
+  const [expandedIndex, setExpandedIndex] = useState<number>(0);
 
   useEffect(() => {
     const fetchFamilyMedicalMetrics = async () => {
@@ -50,7 +55,37 @@ const FamilyMedicalDetails: React.FC = () => {
       }
     };
 
+    const fetchPrefilledData = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        if (!token) {
+          setError('Token is missing. Please log in again.');
+          return;
+        }
+
+        const response = await axios.post<PrefillApiResponse>(
+          `${config.appURL}/curable/candidatehistoryForPrefil`,
+          { candidateId: localStorage.getItem('patientId'), type: 4 },
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+
+        const prefilledData = response.data.familyMetrics.params.reduce((acc, param) => {
+          acc[param.testName] = param.selectedValues[0];
+          return acc;
+        }, {} as Record<string, string>);
+
+        setFormValues([prefilledData]);
+        console.log('Prefilled Data:', prefilledData);
+      } catch (error) {
+        console.error('Error fetching prefilled data:', error);
+        setError('Failed to load prefilled data. Please try again.');
+      }
+    };
+
     fetchFamilyMedicalMetrics();
+    fetchPrefilledData();
   }, []);
 
   const handleFieldChange = (index: number, testName: string, value: string) => {
@@ -64,11 +99,11 @@ const FamilyMedicalDetails: React.FC = () => {
 
   const handleAddMember = () => {
     setFormValues((prevValues) => [...prevValues, {}]);
-    setExpandedIndex(formValues.length); // Set the new member as expanded
+    setExpandedIndex(formValues.length);
   };
 
   const handleToggleExpand = (index: number) => {
-    setExpandedIndex(index); // Toggle the expanded state
+    setExpandedIndex(index);
   };
 
   const handleDeleteMember = (index: number) => {
@@ -76,7 +111,7 @@ const FamilyMedicalDetails: React.FC = () => {
     setFormValues(updatedFormValues);
 
     if (expandedIndex === index) {
-      setExpandedIndex(0); // Collapse if the deleted member was expanded
+      setExpandedIndex(0);
     }
   };
 
@@ -93,8 +128,8 @@ const FamilyMedicalDetails: React.FC = () => {
     const payload = {
       description: 'Family Medical Metrics',
       diseaseTestId: 1,
-      familyMetrics: null,
-      familyMedicalMetrics: { params: updatedFormData.flat() },
+      familyMetrics: { params: updatedFormData.flat() },
+      familyMedicalMetrics: null,
       eligibilityMetrics: null,
       gender: 'FEMALE',
       genderValid: true,
@@ -149,21 +184,26 @@ const FamilyMedicalDetails: React.FC = () => {
       <form className="clinic-form" onSubmit={handleSubmit}>
         {formValues.map((formValue, formIndex) => (
           <div key={formIndex} className="family-member-form">
-            <p onClick={() => handleToggleExpand(formIndex)} style={{
-                    cursor: 'pointer',
-                    padding: '10px',
-                    backgroundColor: '#e3e3e3',
-                    border: '1px solid #ccc',
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                  }}>
-             {formValue.relationName || `Relation ${formIndex + 1}`}
-              <i onClick={(e) => {
-                    e.stopPropagation();
-                    handleDeleteMember(formIndex);
-                  }} className="fa-solid fa-trash-can float-end"></i>
-            
+            <p
+              onClick={() => handleToggleExpand(formIndex)}
+              style={{
+                cursor: 'pointer',
+                padding: '10px',
+                backgroundColor: '#e3e3e3',
+                border: '1px solid #ccc',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}
+            >
+              {formValue['Relation '] || `Relation ${formIndex + 1}`}
+              <i
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleDeleteMember(formIndex);
+                }}
+                className="fa-solid fa-trash-can float-end"
+              ></i>
             </p>
             {expandedIndex === formIndex && (
               <div className="form-fields">
@@ -201,15 +241,15 @@ const FamilyMedicalDetails: React.FC = () => {
                 ))}
               </div>
             )}
-          
           </div>
         ))}
-         <div className="button-container">
-  <button type="button" className="Next-button" onClick={handleAddMember}>
+        <div className="button-container">
+          <button type="button" className="Next-button" onClick={handleAddMember}>
             Add Member
-          </button></div>
+          </button>
+        </div>
         <center className="buttons">
-        <button type="submit" className="Finish-button">
+          <button type="submit" className="Finish-button">
             Prev
           </button>
           <button type="submit" className="Next-button">
@@ -217,7 +257,6 @@ const FamilyMedicalDetails: React.FC = () => {
           </button>
         </center>
       </form>
-      
 
       <footer className="footer-container">
         <div className="footer-content">

@@ -4,6 +4,7 @@ import './FamilyPersonalDetails.css';
 import { useNavigate } from 'react-router-dom';
 import Header1 from './Header1';
 import config from '../config'; 
+
 interface FamilyMetricsParam {
   testName: string;
   subtestName: string;
@@ -19,6 +20,12 @@ interface ApiResponse {
   };
 }
 
+interface PrefillApiResponse {
+  familyMetrics: {
+    params: FamilyMetricsParam[];
+  };
+}
+
 function FamilyPersonalDetails() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState<FamilyMetricsParam[]>([]);
@@ -27,7 +34,6 @@ function FamilyPersonalDetails() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    
     const fetchFamilyPersonalMetrics = async () => {
       try {
         const token = localStorage.getItem('token');
@@ -40,6 +46,24 @@ function FamilyPersonalDetails() {
           headers: { Authorization: `Bearer ${token}` },
         });
         setFormData(response.data.familyMetrics.params);
+
+        const prefillResponse = await axios.post<PrefillApiResponse>(`${config.appURL}/curable/candidatehistoryForPrefil`, {
+          candidateId: localStorage.getItem('patientId'),
+          type: 4
+        }, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (prefillResponse.data) {
+          const prefilledValues: Record<string, string> = {};
+          prefillResponse.data.familyMetrics.params.forEach((param: FamilyMetricsParam) => {
+            prefilledValues[param.testName] = param.selectedValues[0];
+          });
+          setFormValues([prefilledValues]);
+        }
+
       } catch (error) {
         console.error('Error fetching family personal metrics:', error);
         setError('Failed to load family personal metrics.');
@@ -59,14 +83,14 @@ function FamilyPersonalDetails() {
   };
 
   const handleAddMember = () => {
-    setExpandedMemberIndex(null)
+    setExpandedMemberIndex(null);
     setFormValues((prevValues) => [...prevValues, {}]);
-    setExpandedMemberIndex(formValues.length)
+    setExpandedMemberIndex(formValues.length);
   };
 
   const handleDeleteMember = (index: number) => {
     setFormValues((prevValues) => prevValues.filter((_, i) => i !== index));
-    if (expandedMemberIndex === index) setExpandedMemberIndex(null); // Collapse if the deleted member is expanded
+    if (expandedMemberIndex === index) setExpandedMemberIndex(null);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -168,9 +192,9 @@ function FamilyPersonalDetails() {
       navigate('/SuccessMessagePRFinal');
     } catch (error) {
       console.error('Error submitting data:', error);
-      setError('Failed to submit data.');
-    }
-  };
+      setError('Failed to submit data.'); }
+    };
+    
   return (
     <div >
 
