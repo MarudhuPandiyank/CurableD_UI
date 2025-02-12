@@ -209,7 +209,7 @@ const navigate = useNavigate();
           <div className="form-group">
   <label>Blood Pressure:</label>
   <input
-    type="text"
+    type="number"
     placeholder="Enter Blood Pressure"
     value={bloodPressure}
     onChange={(e) => {
@@ -221,7 +221,7 @@ const navigate = useNavigate();
 
   <label>Pulse Rate:</label>
   <input
-    type="text"
+    type="number"
     placeholder="Enter Pulse Rate"
     value={pulseRate}
     onChange={(e) => {
@@ -233,7 +233,7 @@ const navigate = useNavigate();
 
   <label>Weight (Kgs):</label>
   <input
-    type="text"
+    type="number"
     placeholder="Enter Weight (Kgs)"
     value={weight}
     onChange={(e) => {
@@ -266,7 +266,7 @@ const navigate = useNavigate();
           <div className="form-group">
   <label>Height (cms):</label>
   <input
-    type="text"
+    type="number"
     placeholder="Enter Height (cms)"
     value={height}
     onChange={(e) => {
@@ -340,7 +340,7 @@ const navigate = useNavigate();
 
           <label>Age at Marriage:</label>
           <input
-            type="text"
+            type="number"
             placeholder="Enter Age at Marriage"
             value={ageAtMarriage}
             onChange={(e) => setAgeAtMarriage(e.target.value)}
@@ -348,7 +348,7 @@ const navigate = useNavigate();
 
           <label>Total Pregnancies:</label>
           <input
-            type="text"
+            type="number"
             placeholder="Enter Total Pregnancies"
             value={totalPregnancies}
             onChange={(e) => setTotalPregnancies(e.target.value)}
@@ -357,7 +357,7 @@ const navigate = useNavigate();
 <div className="form-group">
   <label>Age at First Child:</label>
   <input
-    type="text"
+    type="number"
     placeholder="Enter Age at First Child"
     value={ageAtFirstChild}
     onChange={(e) => {
@@ -371,7 +371,7 @@ const navigate = useNavigate();
 <div className="form-group">
   <label>Age at Last Child:</label>
   <input
-    type="text"
+    type="number"
     placeholder="Enter Age of Last Child"
     value={ageAtLastChild}
     onChange={(e) => {

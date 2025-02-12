@@ -401,7 +401,7 @@ const ParticipantDetails: React.FC = () => {
         <div className="form-group">
   <label htmlFor="alt-mobile">Alt Mobile No:</label>
   <input
-    type="text" // Use text to handle controlled length
+    type="number" // Use text to handle controlled length
     id="alt-mobile"
     name="alt-mobile"
     value={altMobile}
@@ -417,7 +417,7 @@ const ParticipantDetails: React.FC = () => {
 <div className="form-group">
   <label htmlFor="income">Monthly Income:</label>
   <input
-    type="text" // Use text to handle controlled input sanitization
+    type="number" // Use text to handle controlled input sanitization
     id="income"
     name="income"
     value={income}
@@ -476,7 +476,7 @@ const ParticipantDetails: React.FC = () => {
         <div className="form-group">
   <label htmlFor="aadhaar">Aadhaar Number:</label>
   <input
-    type="text"
+    type="number"
     id="aadhaar"
     name="aadhaar"
     value={aadhaar}
@@ -491,7 +491,7 @@ const ParticipantDetails: React.FC = () => {
 <div className="form-group">
   <label htmlFor="voter-id">Voter ID:</label>
   <input
-    type="text"
+    type="number"
     id="voter-id"
     name="voter-id"
     value={voterId}

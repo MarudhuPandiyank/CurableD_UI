@@ -249,7 +249,7 @@ const NewScreeningEnrollment: React.FC = () => {
           <div className="form-group">
   <label style={{ color: 'black' }}>Mobile Number*:</label>
   <input
-    type="text" // Use text to apply maxLength
+    type="number" // Use text to apply maxLength
     inputMode="numeric" // Numeric keyboard on mobile
     pattern="[0-9]*" // Ensure only numeric input
     placeholder="Enter Mobile Number"
