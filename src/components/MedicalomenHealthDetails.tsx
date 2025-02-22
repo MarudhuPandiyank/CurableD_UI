@@ -69,7 +69,9 @@ const navigate = useNavigate();
   const openModal = () => {
     setShowModal(true);
   };
-
+  const handlePrevClick = () => {
+    navigate('/ParticipantDetails');
+  };
   // Function to close modal
   const closeModal = () => {
     setShowModal(false);
@@ -473,7 +475,7 @@ const navigate = useNavigate();
             </div>
           )}
         <div className="buttons">
-        <button type="button" className="Finish-button" >Prev</button>
+        <button type="button" className="Finish-button" onClick={handlePrevClick} >Prev</button>
 
           <button type="button" className="Next-button" onClick={openModal}>
             Finish

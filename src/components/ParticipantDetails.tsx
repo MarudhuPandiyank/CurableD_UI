@@ -364,7 +364,9 @@ const ParticipantDetails: React.FC = () => {
     //  const updatedHabits = habits.filter((_, i) => i !== index);
     setHabits(habits);
   };
-
+  const handlePrevClick = () => {
+    navigate('/DiseaseSpecificDetails');
+  };
   return (
     <div className="container2">
       <Header1 />
@@ -648,7 +650,7 @@ const ParticipantDetails: React.FC = () => {
           {error && <p style={{ color: "red" }}>{error}</p>}
         </div>
         <div className="buttons">
-        <button type="button" className="Finish-button" >Prev</button>
+        <button type="button" className="Finish-button" onClick={handlePrevClick} >Prev</button>
         <button type="button" className="Next-button"  onClick={openModal} >Finish</button>
           <button type="submit" className="Finish-button" onClick={(e) => handleFormSubmit(e, '/MedicalomenHealthDetails')} disabled={isLoading}>
             { 'Next'}

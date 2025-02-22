@@ -169,7 +169,9 @@ const FamilyMedicalDetails: React.FC = () => {
   if (!patientId || !patientName) {
     return <div className="error-message">Missing patient information. Please log in again.</div>;
   }
-
+  const handlePrevClick = () => {
+    navigate('/FamilyPersonalDetails');
+  };
   return (
     <div className="container2">
       <Header1 />
@@ -249,7 +251,7 @@ const FamilyMedicalDetails: React.FC = () => {
           </button>
         </div>
         <center className="buttons">
-          <button type="submit" className="Finish-button">
+          <button type="submit" className="Finish-button" onClick={handlePrevClick}>
             Prev
           </button>
           <button type="submit" className="Next-button">

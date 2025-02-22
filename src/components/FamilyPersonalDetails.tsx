@@ -194,7 +194,9 @@ function FamilyPersonalDetails() {
       console.error('Error submitting data:', error);
       setError('Failed to submit data.'); }
     };
-    
+    const handlePrevClick = () => {
+      navigate('/MedicalomenHealthDetails');
+    };
   return (
     <div >
 
@@ -305,7 +307,7 @@ function FamilyPersonalDetails() {
             Add Member
           </button>    </div>
         <center className="buttons">
-        <button type="submit" className="Next-button">
+        <button type="submit" className="Next-button" onClick={handlePrevClick}>
             Prev
           </button>
           <button type="button" className="Finish-button" onClick={handleFinish}>
