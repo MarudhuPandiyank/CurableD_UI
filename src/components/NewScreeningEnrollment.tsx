@@ -71,7 +71,7 @@ const NewScreeningEnrollment: React.FC = () => {
         return;
       }
   
-     
+      if (prefillNeeds === 'true') {
         try {
           const response = await axios.post<PrefillApiResponse>(
             `${config.appURL}/curable/candidatehistoryForPrefil`,
@@ -92,9 +92,9 @@ const NewScreeningEnrollment: React.FC = () => {
           }
         } catch (error) {
           console.error('Error fetching prefill data:', error);
-         // alert('Failed to fetch prefill data. Please try again.');
+          alert('Failed to fetch prefill data. Please try again.');
         }
-     
+      }
     };
   
     prefillData();

@@ -157,9 +157,9 @@ const ResourcePlanning: React.FC = () => {
         />
    <center>
             <div className="buttons">
-            <button type="submit" className="Finish-extrawidtgh-button">
+            {/* <button type="submit" className="Finish-extrawidtgh-button">
              Prev
-              </button>
+              </button> */}
               <button
                 type="button"
                  className="Next-extrawidtgh-button"
