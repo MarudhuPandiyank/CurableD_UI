@@ -182,13 +182,13 @@ const navigate = useNavigate();
   return (
     <div className="container2">
        <Header1 />
-       <h1 style={{ color: 'darkblue', fontWeight: 'bold', }}>Medical Details</h1>
+      
 
       <div className="participant-container">
         <p>Participant: {participant}</p>
         <p>ID: {registraionId}</p>
       </div>
-
+      <h1 style={{ color: 'darkblue', fontWeight: 'bold', }}>Medical Details</h1>
       <form className="clinic-form" onSubmit={(e) => handleSubmit(e, '/FamilyPersonalDetails')}>
         {/* Medical Details Section */}
         <fieldset>

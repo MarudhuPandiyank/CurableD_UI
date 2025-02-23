@@ -206,8 +206,7 @@ function FamilyPersonalDetails() {
         <p>Participant: {participant}</p>
         <p>ID: {registraionId}</p>
       </div>
-      <p style={{ color: 'darkblue', fontWeight: 'bold', }}>Family Personal Details</p>
-
+      <h1 style={{ color: 'darkblue', fontWeight: 'bold', }}>Family Personal Details</h1>
       {error && <div className="error-message">{error}</div>}
 
       <form className="clinic-form" onSubmit={handleSubmit}>

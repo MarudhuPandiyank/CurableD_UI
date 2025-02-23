@@ -165,7 +165,7 @@ const FamilyMedicalDetails: React.FC = () => {
   const patientId = localStorage.getItem('patientId');
   const patientName = localStorage.getItem('patientName');
   const participant = localStorage.getItem('participant');
-  const registrationId = localStorage.getItem('registrationId');
+  const registrationId = localStorage.getItem('registraionId');
   if (!patientId || !patientName) {
     return <div className="error-message">Missing patient information. Please log in again.</div>;
   }
@@ -175,12 +175,13 @@ const FamilyMedicalDetails: React.FC = () => {
   return (
     <div className="container2">
       <Header1 />
-      <p style={{ color: 'darkblue', fontWeight: 'bold' }}>Family Medical Details</p>
+    
       <div className="participant-container">
         <p>Participant: {participant}</p>
         <p>ID: {registrationId}</p>
+       
       </div>
-
+      <h1 style={{ color: 'darkblue', fontWeight: 'bold', }}>Family Medical Details</h1>
       {error && <div className="error-message">{error}</div>}
 
       <form className="clinic-form" onSubmit={handleSubmit}>
