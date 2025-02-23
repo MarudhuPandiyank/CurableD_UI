@@ -84,6 +84,7 @@ const PatientRegistrationSearch: React.FC = () => {
           const startDate = clinicData.startDate;
           const endDate = clinicData.endDate;
           localStorage.setItem('campId', clinicData.campId);
+          localStorage.setItem('prefill', 'false');
           return {
             id: clinicData.campIdPrefix,
             name: clinicData.campName,

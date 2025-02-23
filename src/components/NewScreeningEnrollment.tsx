@@ -63,39 +63,43 @@ const NewScreeningEnrollment: React.FC = () => {
   useEffect(() => {
     const prefillData = async () => {
       const token = localStorage.getItem('token');
+      const prefillNeeds = localStorage.getItem('prefill');
       const patientId = localStorage.getItem('patientId');
-
+  
       if (!token || !patientId) {
         alert('Token or patient ID not found. Please log in again.');
         return;
       }
-
-      try {
-        const response = await axios.post<PrefillApiResponse>(
-          `${config.appURL}/curable/candidatehistoryForPrefil`,
-          { candidateId: patientId, type: 6 },
-          {
-            headers: { Authorization: `Bearer ${token}` },
+  
+     
+        try {
+          const response = await axios.post<PrefillApiResponse>(
+            `${config.appURL}/curable/candidatehistoryForPrefil`,
+            { candidateId: patientId, type: 6 },
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
+          );
+  
+          if (response.status === 200) {
+            const data = response.data;
+            setName(data.name);
+            setMobile(data.mobileNo);
+            setGender(data.gender);
+            setDob(new Date(data.dob));
+            setAddress(data.address);
+            setStreetId(data.streetId.toString());
           }
-        );
-
-        if (response.status === 200) {
-          const data = response.data;
-          setName(data.name);
-          setMobile(data.mobileNo);
-          setGender(data.gender);
-          setDob(new Date(data.dob));
-          setAddress(data.address);
-          setStreetId(data.streetId.toString());
+        } catch (error) {
+          console.error('Error fetching prefill data:', error);
+         // alert('Failed to fetch prefill data. Please try again.');
         }
-      } catch (error) {
-        console.error('Error fetching prefill data:', error);
-        alert('Failed to fetch prefill data. Please try again.');
-      }
+     
     };
-
+  
     prefillData();
   }, []);
+  
 
   const handleGenderChange = (value: string) => setGender(value);
 

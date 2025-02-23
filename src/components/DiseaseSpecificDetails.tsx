@@ -231,9 +231,10 @@ function DiseaseSpecificDetails() {
         )}
 
         <center className="buttons">
-        <button type="button" className="Finish-button" onClick={handlePrevClick}>
+        {/* <button type="button" className="Finish-button" onClick={handlePrevClick}>
         Prev
-      </button>          <button type="button" className="Next-button" onClick={openModal}>Finish</button>
+      </button>           */}
+      <button type="button" className="Next-button" onClick={openModal}>Finish</button>
           <button type="submit" className="Finish-button" onClick={(e) => {
             if (Object.keys(formValues).length < formData.length) {
               setValidationError('Please fill in all mandatory fields.');
