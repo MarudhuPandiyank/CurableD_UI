@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Login from './components/Login';
 import ResetPassword from './components/ResetPassword';
@@ -36,10 +36,21 @@ import DynamicScreen from './components/DynamicScreen';
 import SuccessMessageEdit from './components/SuccessMessageEdit';
 
 import DiseaseSpecificDetailsScreening from './components/DiseaseSpecificDetailsScreening';
+import PatientEdit from './components/PatientEdit';
+import refreshToken from './components/refreshToken';
 
 
 const App: React.FC = () => {
- 
+  useEffect(() => {
+  
+    refreshToken();
+
+    const interval = setInterval(() => {
+      refreshToken();
+    }, 119 * 60 * 1000);
+
+    return () => clearInterval(interval);
+  }, []);
   return (
     <Router>
       <Routes>
@@ -84,6 +95,7 @@ const App: React.FC = () => {
                 <Route path="/SuccessMessageScreeningFInal" element={<SuccessMessageScreeningFInal />} />
                 <Route path="/SuccessMessageClinicalFInal" element={<SuccessMessageClinicalFInal />} />
                 <Route path="/DynamicScreen" element={<DynamicScreen />} />
+                <Route path="/PatientEdit" element={<PatientEdit />} />
               </Routes>
             </AuthGuard>
           }

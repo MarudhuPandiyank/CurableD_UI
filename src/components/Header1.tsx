@@ -66,6 +66,14 @@ const Header: React.FC = () => {
       />
       Patient Registration
     </button>
+    <button className="sidebar-btn" onClick={() => handleNavigation('/PatientEdit')}>
+      <img
+        src="./HomeScreenIcons/PNG/Patient Registration.png"
+        alt="Patient Registration Icon"
+        style={{ width: '20px', height: '20px', marginRight: '8px' }}
+      />
+      Modify Patient Information
+    </button>
     <button className="sidebar-btn" onClick={() => handleNavigation('/PatientSearchPage')}>
       <img
         src="./HomeScreenIcons/PNG/Screening.png"

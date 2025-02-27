@@ -45,7 +45,7 @@ const Login: React.FC = () => {
       if (response && response.data.token) {
         localStorage.setItem('token', response.data.token);
         localStorage.setItem('userName', userName);
-
+        localStorage.setItem('password', password);
         const authResponse = await axios.get<AuthResponseData>(
           `${config.appURL}/curable/authorizeUserRequest/${userName}`,
           {

@@ -72,6 +72,7 @@ const NewScreeningEnrollment: React.FC = () => {
       }
   
       if (prefillNeeds === 'true') {
+        localStorage.setItem('prefill', 'false');
         try {
           const response = await axios.post<PrefillApiResponse>(
             `${config.appURL}/curable/candidatehistoryForPrefil`,
