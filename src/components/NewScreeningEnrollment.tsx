@@ -73,6 +73,7 @@ const NewScreeningEnrollment: React.FC = () => {
   
       if (prefillNeeds === 'true') {
         localStorage.setItem('prefill', 'false');
+        localStorage.setItem('prefillId',patientId);
         try {
           const response = await axios.post<PrefillApiResponse>(
             `${config.appURL}/curable/candidatehistoryForPrefil`,
@@ -178,6 +179,8 @@ const NewScreeningEnrollment: React.FC = () => {
       streetId: parseInt(streetId, 10) || 0,
       hospitalId: parseInt(hospitalId, 10),
       campId,
+      id:  localStorage.getItem('prefillId'),
+
     };
 
     try {
@@ -196,6 +199,7 @@ const NewScreeningEnrollment: React.FC = () => {
         localStorage.setItem('registraionId', data.registraionId);
         const participantValue = `${data.name} ${data.age}/${data.gender}`;
         localStorage.setItem('participant', participantValue);
+        localStorage.removeItem('prefillId');         
         navigate('/DiseaseSpecificDetails');
       }
     } catch (error) {

@@ -1,10 +1,16 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
-import config from '../config';
-import Header1 from "./Header1";
+
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import Header1 from './Header1';
 import Select, { MultiValue } from 'react-select';
+import { Calendar } from 'primereact/calendar';
+import 'primereact/resources/themes/saga-blue/theme.css'; // Import the theme
+import 'primereact/resources/primereact.min.css'; // Import PrimeReact CSS
+import 'primeicons/primeicons.css'; // Import PrimeIcons
+import config from '../config'; 
 import './Common.css';
+
 interface Field {
   testName: string;
   subtestName: string;
@@ -13,10 +19,12 @@ interface Field {
   values: string[];
   selectedValues?: string[];
 }
+
 interface ColourOption {
   value: string;
   label: string;
 }
+
 interface Condition {
   enabledField: string;
   triggerValue: string;
@@ -33,6 +41,7 @@ const App: React.FC = () => {
   const [selectedValues, setSelectedValues] = useState<{ [key: string]: string | string[] }>({});
   const [hiddenFields, setHiddenFields] = useState<string[]>([]);
   const [fieldData, setFieldData] = useState<Field[]>([]);
+  const [dob, setDob] = useState<Date | null>(null);
   
   const navigate = useNavigate();
   const diseaseTestIds = localStorage.getItem('diseaseTestIds');
@@ -73,7 +82,6 @@ const App: React.FC = () => {
     }
   }, [diseaseTestIds]);
 
-
   const handleSelectChange = (testName: string, value: string | string[]) => {
     setSelectedValues({ ...selectedValues, [testName]: value});
 
@@ -93,9 +101,9 @@ const App: React.FC = () => {
 
     setHiddenFields(Array.from(fieldsToShow));
   };
-  const candidateId = localStorage.getItem('candidateId');
 
   const handleFinish = async () => {
+    const candidateId = localStorage.getItem('candidateId');
     const payload = {
       candidateId: Number(candidateId),
       diseaseTestMasterId: Number(diseaseTestIds),
@@ -111,7 +119,7 @@ const App: React.FC = () => {
       name: "Eligibility Metrics",
       stage: localStorage.getItem('selectedStage'),
       eligibilityMetrics: null,
-      type:1,
+      type: 1,
       testMetrics: {
         params: fieldData.map((field) => ({
           testName: field.testName,
@@ -140,13 +148,8 @@ const App: React.FC = () => {
       console.error('Error submitting data:', error);
     }
   };
+
   const [titleName, setTitleName] = useState("Disease Specific Details");
-
-  const patientId = localStorage.getItem('patientId');
-  const patientName = localStorage.getItem('patientName');
-  const pName= localStorage.getItem("patientName");
-  const regId= localStorage.getItem("registrationId");
-
 
   useEffect(() => {
     const selectedStage = localStorage.getItem("selectedStage");
@@ -161,8 +164,9 @@ const App: React.FC = () => {
       setTitleName("Disease Specific Details");
     }
   }, []);
-  
 
+  const pName = localStorage.getItem("patientName");
+  const regId = localStorage.getItem("registrationId");
 
   return (
     <div className="container2">
@@ -196,35 +200,53 @@ const App: React.FC = () => {
                   name={field.testName}
                   options={field.values.map((value) => ({ value, label: value }))}
                   onChange={(option: MultiValue<ColourOption>) => handleSelectChange(field.testName, option.map(opt => opt.value))} // Updated this line
-                 className="form-group"
+                  className="form-group"
                 />
               )}
               {field.valueType === "Input" && (
                 <input
-
                   type="text"
                   value={selectedValues[field.testName] || ""}
                   onChange={(e) => handleSelectChange(field.testName, e.target.value)}
                 />
               )}
+              {field.valueType === "Date" && (
+                <label>
+                  <label style={{ color: 'black' }}>{field.testName}*:</label>
+                  <span style={{ color: 'darkred', fontWeight: 'bold' }}></span>
+                  <div className="input-with-icon">
+                    <Calendar
+                      value={(selectedValues[field.testName] ? new Date(selectedValues[field.testName] as string) : dob) || null}
+                      onChange={(e) => {
+                        const dateValue = e.value as Date;
+                        setDob(dateValue);
+                        handleSelectChange(field.testName, dateValue.toISOString().split('T')[0]);
+                      }}
+                      dateFormat="yy-mm-dd"
+                      placeholder="yyyy-mm-dd"
+                      required
+                      maxDate={new Date()}
+                    />
+                    <img src="./assets/Calendar.png" className="clinic-id-icon" alt="calendar icon" />
+                  </div>
+                </label>
+              )}
             </div>
           )
         )}
 
-        {/* Add the Finish button */}
         <center className="buttons">
           <button className="Finish-button" onClick={handleFinish}>Finish</button>
         </center>
       </div>
     
-    <footer className="footer-container">
+      <footer className="footer-container">
         <div className="footer-content">
           <p className="footer-text">Powered By Curable</p>
           <img src="/assets/Curable logo - rectangle with black text.png" alt="Curable Logo" className="footer-logo" />
         </div>
       </footer>
     </div>
-    
   );
 };
 

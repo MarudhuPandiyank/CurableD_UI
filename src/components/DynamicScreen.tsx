@@ -3,6 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Header1 from './Header1';
 import Select, { MultiValue } from 'react-select';
+import { Calendar } from 'primereact/calendar';
+import 'primereact/resources/themes/saga-blue/theme.css'; // Import the theme
+import 'primereact/resources/primereact.min.css'; // Import PrimeReact CSS
+import 'primeicons/primeicons.css'; // Import PrimeIcons
 import config from '../config'; 
 import './Common.css';
 
@@ -37,17 +41,16 @@ const App: React.FC = () => {
   const [processingTestName, setProcessingTestName] = useState('');
   const [processingValue, setProcessingValue] = useState('');
   const [dependentList, setDependentList] = useState<string[]>([]);
-  const [isDependent, setIsDependent] = useState<Record<string, boolean>>({}); // Updated this line
-  const [formValues, setFormValues] = useState<Record<string, string[]>>({}); // Store selected values for each test
+  const [isDependent, setIsDependent] = useState<Record<string, boolean>>({});
+  const [formValues, setFormValues] = useState<Record<string, string[]>>({});
   const [multiParam, setMultiParam] = useState<readonly ColourOption[]>([
-    { value: '', label: 'Select values' } // Default option
+    { value: '', label: 'Select values' }
   ]);
- 
+
   useEffect(() => {
     const fetchDiseaseTestMaster = async () => {
       try {
-        const token = localStorage.getItem('token'); // Assuming token is stored in localStorage
-
+        const token = localStorage.getItem('token');
         const response = await axios.get<ApiResponse>(
           `${config.appURL}/curable/getMetricsById/${diseaseTestIds}`,
           {
@@ -60,17 +63,16 @@ const App: React.FC = () => {
         const filteredData = response.data.testMetrics.params.filter(
           (field: Param) => field.testName !== 'Referred for'
         );
-        console.log('filteredData',filteredData);
+        console.log('filteredData', filteredData);
         const mappedData: ColourOption[] = filteredData.map((drp) => ({
-          value: drp.testName,  // Assuming 'color' is the relevant property in filteredData
-          label: drp.testName,  // You can adjust this if needed
+          value: drp.testName,
+          label: drp.testName,
         }));
-        
+
         setMultiParam(mappedData);
-        setParamsObject({ params: filteredData }); // Store dynamic form fields based on the API response
+        setParamsObject({ params: filteredData });
 
         console.log('Disease Test Master Data:', response.data);
-       
       } catch (error) {
         console.error('Error fetching disease test master data:', error);
       }
@@ -80,18 +82,15 @@ const App: React.FC = () => {
   }, []);
 
   const listOfTestNames = paramsObject.params.map(param => param.testName);
-
   const listOfEnabledFields = paramsObject.params
     .filter(param => param.condition)
     .flatMap(param => param.condition!.map(cond => cond.enabledField));
-
   const independentList = listOfTestNames.filter(
     testName => !listOfEnabledFields.includes(testName)
   );
 
   const paramsMap = new Map<string, Param>();
   paramsObject.params.forEach(param => paramsMap.set(param.testName, param));
-
   const testNameWithEnabledFieldMap = new Map<string, string[]>();
   paramsObject.params.forEach(param => {
     if (param.condition) {
@@ -103,7 +102,6 @@ const App: React.FC = () => {
       });
     }
   });
-
   const testNameTriggerValueMap = new Map<string, string[]>();
   paramsObject.params.forEach(param => {
     if (param.condition) {
@@ -118,17 +116,11 @@ const App: React.FC = () => {
 
   const handleSelectionChange = (testName: string, selectedValue: string | string[]) => {
     setProcessingTestName(testName);
-
-    // If selectedValue is an array, take the first value or join them into a string
     const valueToSet = Array.isArray(selectedValue) ? selectedValue[0] : selectedValue;
-
-    // Set the value
     setProcessingValue(valueToSet);
-
-    // Update formValues with the selected value
     setFormValues((prevFormValues) => ({
       ...prevFormValues,
-      [testName]: Array.isArray(selectedValue) ? selectedValue : [selectedValue], // Ensure selectedValue is always an array
+      [testName]: Array.isArray(selectedValue) ? selectedValue : [selectedValue],
     }));
 
     let updatedDependentList: string[] = [];
@@ -156,15 +148,20 @@ const App: React.FC = () => {
     }
   };
 
+  const handleInputChange = (testName: string, value: string) => {
+    setFormValues((prevFormValues) => ({
+      ...prevFormValues,
+      [testName]: [value],
+    }));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    // Construct the body of the POST request to match the desired structure
     const updatedFormData = paramsObject.params.map((field) => {
-      const selectedValue = formValues[field.testName] || []; // Use the selected value from formValues
+      const selectedValue = formValues[field.testName] || [];
       return {
         ...field,
-        selectedValues: selectedValue, // Assign the selected value to selectedValues
+        selectedValues: selectedValue,
       };
     });
     const candidateId = localStorage.getItem('candidateId');
@@ -184,13 +181,12 @@ const App: React.FC = () => {
       medicalMetrics: null,
       name: "Test Metrics",
       stage: localStorage.getItem('selectedStage'),
-      type: 3,
-    };
+      type: 3,
+    };
 
     try {
       const token = localStorage.getItem('token');
       if (!token) {
-
         return;
       }
 
@@ -204,7 +200,6 @@ const App: React.FC = () => {
       navigate('/SuccessMessageClinicalFInal');
     } catch (error) {
       console.error('Error submitting data:', error);
-
     }
   };
 
@@ -216,40 +211,65 @@ const App: React.FC = () => {
   const renderField = (param: Param, key: string) => {
     return (
       <div key={key} className="form-group">
-        <p>{param.testName}</p>
-        {param.valueType === 'SingleSelect' && (
-          <select
-            onChange={e =>
-              handleSelectionChange(param.testName, e.target.value) // Updated this line
-            }
-            defaultValue=""
-          >
-            <option value="" disabled>
-              Select a value
-            </option>
-            {param.values.map(value => (
-              <option key={value} value={value}>
-                {value}
+        <label style={{ color: 'black' }}>{param.testName}*:</label>
+        <span style={{ color: 'darkred', fontWeight: 'bold' }}></span>
+        <div className="input-with-icon">
+          {param.valueType === 'SingleSelect' && (
+            <select
+              onChange={e =>
+                handleSelectionChange(param.testName, e.target.value)
+              }
+              defaultValue=""
+            >
+              <option value="" disabled>
+                Select a value
               </option>
-            ))}
-          </select>
-        )}
-        {param.valueType === 'Multi Select' && (
-          <Select
-            isMulti
-            name={param.testName}
-            options={param.values.map((value) => ({ value, label: value }))}
-            onChange={(option: MultiValue<ColourOption>) => handleSelectionChange(param.testName, option.map(opt => opt.value))} // Updated this line
-            className="basic-multi-select"
-          />
-        )}
-        {param.valueType === 'Input' && (
-          <input type="text" placeholder="Enter value" />
-        )}
+              {param.values.map(value => (
+                <option key={value} value={value}>
+                  {value}
+                </option>
+              ))}
+            </select>
+          )}
+          {param.valueType === 'Multi Select' && (
+            <Select
+              isMulti
+              name={param.testName}
+              options={param.values.map((value) => ({ value, label: value }))}
+              onChange={(option: MultiValue<ColourOption>) => handleSelectionChange(param.testName, option.map(opt => opt.value))}
+              className="basic-multi-select"
+            />
+          )}
+          {param.valueType === 'Input' && (
+            <input
+              type="text"
+              placeholder="Enter value"
+              value={formValues[param.testName] ? formValues[param.testName][0] : ''}
+              onChange={(e) => handleInputChange(param.testName, e.target.value)}
+            />
+          )}
+          {param.valueType === 'Date' && (
+            <div className="input-with-icon">
+                            <Calendar
+                value={(formValues[param.testName] && new Date(formValues[param.testName][0])) || null}
+                onChange={(e) => {
+                  const date = e.value;
+                  if (date) {
+                    handleSelectionChange(param.testName, date.toISOString().split('T')[0]);
+                  }
+                }}
+                dateFormat="yy-mm-dd"
+                placeholder="yyyy-mm-dd"
+                required
+                maxDate={new Date()}
+              />
+              <img src="./assets/Calendar.png" className="clinic-id-icon" alt="calendar icon" />
+            </div>
+          )}
+        </div>
       </div>
     );
   };
-  
 
   const getTestFieldsInline = () => {
     return independentList.map((testName) => {
@@ -275,7 +295,7 @@ const App: React.FC = () => {
   return (
     <div className="container2">
       <Header1 />
-    
+
       <div className="participant-info-container">
         <p className="participant-info-text">Participant: {ptName}</p>
         <p className="participant-info-text">ID: {registrationId}</p>
