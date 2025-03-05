@@ -67,7 +67,7 @@ const NewScreeningEnrollment: React.FC = () => {
       const patientId = localStorage.getItem('patientId');
   
       if (!token || !patientId) {
-        alert('Token or patient ID not found. Please log in again.');
+       // alert('Token or patient ID not found. Please log in again.');
         return;
       }
   

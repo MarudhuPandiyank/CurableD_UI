@@ -231,6 +231,20 @@ const App: React.FC = () => {
                   </div>
                 </label>
               )}
+            {field.valueType === 'SingleSelectButton' && (
+                <div className="gender-group">
+                  {field.values.map((value) => (
+                    <button
+                      key={value}
+                      type="button"
+                      className={`gender-btn ${selectedValues[field.testName] === value ? 'active' : ''}`}
+                      onClick={() => handleSelectChange(field.testName, value)}
+                    >
+                      {value}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
           )
         )}

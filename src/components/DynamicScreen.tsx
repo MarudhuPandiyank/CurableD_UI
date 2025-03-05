@@ -248,6 +248,7 @@ const App: React.FC = () => {
               onChange={(e) => handleInputChange(param.testName, e.target.value)}
             />
           )}
+      
           {param.valueType === 'Date' && (
             <div className="input-with-icon">
                             <Calendar
@@ -266,6 +267,20 @@ const App: React.FC = () => {
               <img src="./assets/Calendar.png" className="clinic-id-icon" alt="calendar icon" />
             </div>
           )}
+          {param.valueType === 'SingleSelectButton' && (
+        <div className="gender-group">
+          {param.values.map((value) => (
+            <button
+              key={value}
+              type="button"
+              className={`gender-btn ${formValues[param.testName] && formValues[param.testName][0] === value ? 'active' : ''}`}
+              onClick={() => handleSelectionChange(param.testName, value)}
+            >
+              {value}
+            </button>
+          ))}
+        </div>
+      )}
         </div>
       </div>
     );
