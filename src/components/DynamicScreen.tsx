@@ -237,7 +237,7 @@ const App: React.FC = () => {
               name={param.testName}
               options={param.values.map((value) => ({ value, label: value }))}
               onChange={(option: MultiValue<ColourOption>) => handleSelectionChange(param.testName, option.map(opt => opt.value))}
-              className="basic-multi-select"
+              className="form-group"
             />
           )}
           {param.valueType === 'Input' && (

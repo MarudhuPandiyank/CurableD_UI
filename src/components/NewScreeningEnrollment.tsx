@@ -180,6 +180,7 @@ const NewScreeningEnrollment: React.FC = () => {
       hospitalId: parseInt(hospitalId, 10),
       campId,
       id:  localStorage.getItem('prefillId'),
+      type: 1,
 
     };
 

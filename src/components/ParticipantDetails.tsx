@@ -194,6 +194,7 @@ const ParticipantDetails: React.FC = () => {
       duration: tobaccoUser ? parseFloat(duration) || 0 : null, // Include duration if tobaccoUser is 'yes'
       id: localStorage.getItem('patientId') || '',
       candidateHabitDTOs,  // Include the new habit details array here
+      type: 3
     };
 
     const token = localStorage.getItem('token');
