@@ -52,6 +52,7 @@ const PatientEdit: React.FC = () => {
     setMessage('');
 
     const token = localStorage.getItem('token');
+    const hospitalId = localStorage.getItem('hospitalId');
     if (!token) {
       setMessage('Authorization token not found. Please log in again.');
       setLoading(false);
@@ -59,9 +60,13 @@ const PatientEdit: React.FC = () => {
     }
 
     try {
+      if (!hospitalId) {
+        alert('No hospital ID found. Please ensure hospitalId is set in local storage.');
+        return;
+      }
       const response = await axios.post<CandidateAPIResponse[]>(
         `${config.appURL}/curable/getCandidatesList`,
-        { hospitalId: 1, search: searchInput, stage: 3 },
+        { hospitalId: parseInt(hospitalId, 10), search: searchInput, stage: 3 },
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
