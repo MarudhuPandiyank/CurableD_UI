@@ -59,6 +59,7 @@ const NewScreeningEnrollment: React.FC = () => {
   const [isSaveButtonEnabled, setIsSaveButtonEnabled] = useState(false); // State for Save button
   const [showModal, setShowModal] = useState(false);
   const [reason, setReason] = useState<string>('');
+  const [registraionId, setRegistraionId] = useState('');
 
   useEffect(() => {
     const prefillData = async () => {
@@ -91,6 +92,7 @@ const NewScreeningEnrollment: React.FC = () => {
             setDob(new Date(data.dob));
             setAddress(data.address);
             setStreetId(data.streetId.toString());
+            setRegistraionId(data.registraionId);
           }
         } catch (error) {
           console.error('Error fetching prefill data:', error);
@@ -174,6 +176,7 @@ const NewScreeningEnrollment: React.FC = () => {
       name,
       mobileNo: mobile,
       gender: gender.toUpperCase(),
+      registraionId: registraionId,
       dob: dob ? dob.toISOString().split('T')[0] : null,
       address,
       streetId: parseInt(streetId, 10) || 0,
