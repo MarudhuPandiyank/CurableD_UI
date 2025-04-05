@@ -142,7 +142,7 @@ const ClinicSearchPage: React.FC = () => {
        <Header1 />
       <div className="title">
         
-        <h1 style={{ color: 'darkblue' }}>Clinical</h1>
+        <h1 style={{ color: 'darkblue' }}>Clinical Evaluation</h1>
       </div>
       <div className="search-section">
         <input

@@ -231,7 +231,7 @@ const PatientSearchPage: React.FC = () => {
         </>
       )}
 
-      {patients.length === 0 && !loading && <p>No patients found.</p>}
+      {/* {patients.length === 0 && !loading && <p>No patients found.</p>} */}
       <footer className="footer-container">
         <div className="footer-content">
           <p className="footer-text">Powered By Curable</p>

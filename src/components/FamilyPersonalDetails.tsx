@@ -74,6 +74,16 @@ function FamilyPersonalDetails() {
   }, []);
 
   const handleFieldChange = (index: number, testName: string, value: string) => {
+    console.log(testName, index, "ddkdkd");
+  
+    // If testName is 'MonthlyIncome'
+    if (testName.toLowerCase().includes('monthlyincome')) {
+      const numericValue = parseInt(value, 10);
+      if (!/^\d*$/.test(value) || numericValue <= 0) {
+        return; 
+      }
+    }
+  
     const updatedFormValues = [...formValues];
     updatedFormValues[index] = {
       ...updatedFormValues[index],
@@ -81,6 +91,8 @@ function FamilyPersonalDetails() {
     };
     setFormValues(updatedFormValues);
   };
+  
+
 
   const handleAddMember = () => {
     setExpandedMemberIndex(null);
@@ -203,9 +215,9 @@ function FamilyPersonalDetails() {
       <Header1 />
 
       <div className="participant-container">
-        <p>Participant: {participant}</p>
-        <p>ID: {registraionId}</p>
-      </div>
+        <p className="participant-info-text"><strong>Participant:</strong> {participant}</p>
+      <p className="participant-info-text"><strong>ID:</strong> {registraionId}</p>
+            </div>
       <h1 style={{ color: 'darkblue', fontWeight: 'bold', }}>Family Personal Details</h1>
       {error && <div className="error-message">{error}</div>}
 
@@ -306,13 +318,13 @@ function FamilyPersonalDetails() {
             Add Member
           </button>    </div>
         <center className="buttons">
-        <button type="submit" className="Next-button" onClick={handlePrevClick}>
+        <button type="submit" className="Finish-button" onClick={handlePrevClick}>
             Prev
           </button>
-          <button type="button" className="Finish-button" onClick={handleFinish}>
+          <button type="button" className="Next-button" onClick={handleFinish}>
             Finish
           </button>
-          <button type="submit" className="Next-button">
+          <button type="submit" className="Finish-button">
             Next
           </button>
         </center>

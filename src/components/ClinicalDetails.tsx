@@ -90,9 +90,9 @@ const ClinicalDetails: React.FC = () => {
     <div className="container2">
       <Header1 />
       <div className="participant-container">
-        <p>Participant: {patientId}</p>
-        <p>ID: {patientName}</p>
-      </div>
+        <p className="participant-info-text"><strong>Participant:</strong> {patientId}</p>
+      <p className="participant-info-text"><strong>ID:</strong> {patientName}</p>
+            </div>
       <form className="clinic-form" onSubmit={handleFormSubmit}>
         
         <h1 style={{ color: 'darkblue' }}>General Details</h1>

@@ -167,9 +167,9 @@ const DiseaseSpecificDetails: React.FC = () => {
     <div className="container2">
       <Header1 />
       <div className="participant-container">
-        <p>Participant: {localStorage.getItem('ptName')}</p>
-        <p>ID: {localStorage.getItem('registrationId')}</p>
-      </div>
+        <p className="participant-info-text"><strong>Participant:</strong> {localStorage.getItem('ptName')}</p>
+      <p className="participant-info-text"><strong>ID:</strong> {localStorage.getItem('registrationId')}</p>
+            </div>
 
       {error && <div className="error-message">{error}</div>}
 

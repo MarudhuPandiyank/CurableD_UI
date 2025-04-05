@@ -312,10 +312,11 @@ const App: React.FC = () => {
       <Header1 />
 
       <div className="participant-info-container">
-        <p className="participant-info-text">Participant: {ptName}</p>
-        <p className="participant-info-text">ID: {registrationId}</p>
+        <p className="participant-info-text"><strong>Participant:</strong>{ptName}</p>
+        <p className="participant-info-text"><strong>ID:</strong>{registrationId}</p>
+        
       </div>
-      <h1 style={{ color: 'darkblue' }}>Clinical examination</h1>
+      <h1 style={{ color: 'darkblue' }}>Clinical Evaluation</h1>
       <form className="clinic-form" onSubmit={handleSubmit}>
         {getTestFieldsInline()}
         <center className="buttons">

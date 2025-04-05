@@ -118,11 +118,14 @@ const NewScreeningEnrollment: React.FC = () => {
   };
 
   const handleStreetIdChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setStreetId(e.target.value);
-    setIsSaveButtonEnabled(address.trim() !== '' && e.target.value.trim() !== '');
+    const input = e.target.value;
+  
+    if (/^\d{0,3}$/.test(input)) {
+      setStreetId(input);
+      setIsSaveButtonEnabled(address.trim() !== '' && input.trim() !== '');
+    }
   };
-
-  const handleSave = async () => {
+    const handleSave = async () => {
     const token = localStorage.getItem('token');
     const campId = localStorage.getItem('campId');
 
@@ -329,11 +332,13 @@ const NewScreeningEnrollment: React.FC = () => {
           <div className="form-group">
             <label style={{ color: 'black' }}>Street ID:</label>
             <input
-              type="number"
-              placeholder="Enter Street ID"
-              value={streetId}
-              onChange={handleStreetIdChange}
-            />
+  type="text" 
+  placeholder="Enter Street ID"
+  value={streetId}
+  onChange={handleStreetIdChange}
+  maxLength={3}
+  inputMode="numeric" 
+/>
           </div>
           {showModal && (
   <div className="custom-modal">

@@ -5,6 +5,8 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import Header1 from './Header1';
 import config from '../config'; 
+import Select from 'react-select';
+
 
 
 interface PrefillApiResponse {
@@ -32,7 +34,7 @@ interface PrefillApiResponse {
   cervicalBreastScrening: boolean;
 }
 const MedicalomenHealthDetails: React.FC = () => {
-  const [selectedHistory, setSelectedHistory] = useState<string>('');
+  const [selectedHistory, setSelectedHistory] = useState<string[]>([]);
   const [bloodPressure, setBloodPressure] = useState<string>('');
   const [pulseRate, setPulseRate] = useState<string>('');
   const [weight, setWeight] = useState<string>('');
@@ -55,6 +57,20 @@ const MedicalomenHealthDetails: React.FC = () => {
   const [showModal, setShowModal] = useState(false); // State for modal visibility
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+
+  const medicalHistoryOptions = [
+    { value: 'History1', label: 'Nil' },
+    { value: 'History2', label: 'Diabetes' },
+    { value: 'History3', label: 'Hypertension' },
+    { value: 'History4', label: 'Asthma' },
+    { value: 'History5', label: 'Tuberculosis' },
+    { value: 'History6', label: 'Stroke/Myocardial Infarction' },
+    { value: 'History7', label: 'Settled Thyroid' },
+    { value: 'History8', label: 'Cancer' },
+    { value: 'History9', label: 'Epilepsy' },
+    { value: 'History10', label: 'Others' }
+  ];
+  
 const navigate = useNavigate();
   const toggleOption = (option: string) => {
     setSelectedToggle(option);
@@ -92,8 +108,10 @@ const navigate = useNavigate();
       currentlyPregant: selectedToggle1 === 'yes',
       height: parseInt(height) || 0,
       historyOfSurgery: selectedToggle === 'yes',
+      medicalhistory: selectedHistory.join(','), // Use in API payload
+
      
-      medicalhistory: selectedHistory,
+      //medicalhistory: selectedHistory,
       methodOfContraceptionUsed: selectedContraception,
       noOfBreastFedMonths: selectedBreastFedMonths,
       otherComplaints,
@@ -125,6 +143,11 @@ const navigate = useNavigate();
   };
 
   useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+  
+
+  useEffect(() => {
     const fetchPrefillData = async () => {
       try {
         const token = localStorage.getItem('token');
@@ -144,7 +167,15 @@ const navigate = useNavigate();
 
         if (prefillResponse.data) {
           const data = prefillResponse.data;
+         // setSelectedHistory(data.medicalhistory);
+         console.log(data,"ksdkds")
+         if (Array.isArray(data.medicalhistory)) {
           setSelectedHistory(data.medicalhistory);
+        } else if (typeof data.medicalhistory === 'string') {
+          setSelectedHistory(data.medicalhistory ? data.medicalhistory.split(',') : []);
+        } else {
+          setSelectedHistory([]);
+        }
           setBloodPressure(data.bloodPressure);
           setPulseRate(data.pulseRate);
           setWeight(data.weight.toString());
@@ -185,28 +216,25 @@ const navigate = useNavigate();
       
 
       <div className="participant-container">
-        <p>Participant: {participant}</p>
-        <p>ID: {registraionId}</p>
-      </div>
+        <p className="participant-info-text"><strong>Participant:</strong> {participant}</p>
+      <p className="participant-info-text"><strong>ID:</strong> {registraionId}</p>
+            </div>
       <h1 style={{ color: 'darkblue', fontWeight: 'bold', }}>Medical Details</h1>
       <form className="clinic-form" onSubmit={(e) => handleSubmit(e, '/FamilyPersonalDetails')}>
         {/* Medical Details Section */}
         <fieldset>
           {/* <legend>Medical Details</legend> */}
           <label>Medical History:</label>
-          <select value={selectedHistory} onChange={(e) => setSelectedHistory(e.target.value)}>
-            <option value="">Select Medical History</option>
-            <option value="History1">Nil</option>
-            <option value="History2">Diabetes</option>
-            <option value="History3">Hypertension</option>
-            <option value="History4">Asthma</option>
-            <option value="History5">Tuberculosis</option>
-            <option value="History6">Stroke/Myocardial Infarction</option>
-            <option value="History7">Settled Thyroid</option>
-            <option value="History8">Cancer</option>
-            <option value="History9">Epilepsy</option>
-            <option value="History10">Others</option>
-          </select>
+          <Select
+        isMulti
+        options={medicalHistoryOptions}
+        value={medicalHistoryOptions.filter(option => selectedHistory.includes(option.value))}
+        onChange={(selectedOptions) => {
+          const values = selectedOptions.map((opt) => opt.value);
+          setSelectedHistory(values);
+        }}
+        placeholder="Select Medical History"
+      />
 
           <div className="form-group">
   <label>Blood Pressure:</label>
@@ -309,11 +337,18 @@ const navigate = useNavigate();
           <legend>Women's Health</legend>
           <label>Age at Menarche:</label>
           <input
-            type="text"
-            placeholder="Enter Age of Menarche"
-            value={ageAtMenarche}
-            onChange={(e) => setAgeAtMenarche(e.target.value)}
-          />
+  type="text"
+  inputMode="numeric"
+  placeholder="Enter Age at Menarche"
+  value={ageAtMenarche}
+  onChange={(e) => {
+    const val = e.target.value;
+
+    if (/^(|[1-9][0-9]?)$/.test(val)) {
+      setAgeAtMenarche(val);
+    }
+  }}
+/>
 
           <label>When was Last Menstruation:</label>
           <select
@@ -326,7 +361,7 @@ const navigate = useNavigate();
             <option value="LastMenstruation3">Surgical menopause</option>
           </select>
 
-          <label>Abnormal Bleeding/Vaginal Issues:</label>
+          <label>Abnormal Bleeding Per Vaginum:</label>
           <select
             value={selectedBleedingIssues}
             onChange={(e) => setSelectedBleedingIssues(e.target.value)}
@@ -350,11 +385,16 @@ const navigate = useNavigate();
 
           <label>Total Pregnancies:</label>
           <input
-            type="number"
-            placeholder="Enter Total Pregnancies"
-            value={totalPregnancies}
-            onChange={(e) => setTotalPregnancies(e.target.value)}
-          />
+  type="text"
+  inputMode="numeric"
+  value={totalPregnancies}
+  onChange={(e) => {
+    const val = e.target.value;
+    if (/^(|[1-9][0-9]*)$/.test(val)) {
+      setTotalPregnancies(val);
+    }
+  }}
+/>
 
 <div className="form-group">
   <label>Age at First Child:</label>

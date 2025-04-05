@@ -89,6 +89,14 @@ const FamilyMedicalDetails: React.FC = () => {
   }, []);
 
   const handleFieldChange = (index: number, testName: string, value: string) => {
+    console.log(testName,"testName")
+
+    if (testName.toLowerCase().includes('age at diagnosis')) {
+      const numericValue = parseInt(value, 10);
+      if (!/^\d*$/.test(value) || numericValue <= 0) {
+        return; // Reject invalid input
+      }
+    }
     const updatedFormValues = [...formValues];
     updatedFormValues[index] = {
       ...updatedFormValues[index],
@@ -177,10 +185,9 @@ const FamilyMedicalDetails: React.FC = () => {
       <Header1 />
     
       <div className="participant-container">
-        <p>Participant: {participant}</p>
-        <p>ID: {registrationId}</p>
-       
-      </div>
+        <p className="participant-info-text"><strong>Participant:</strong> {participant}</p>
+      <p className="participant-info-text"><strong>ID:</strong> {registrationId}</p>
+            </div>
       <h1 style={{ color: 'darkblue', fontWeight: 'bold', }}>Family Medical Details</h1>
       {error && <div className="error-message">{error}</div>}
 

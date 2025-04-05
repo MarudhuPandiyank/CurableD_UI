@@ -317,6 +317,9 @@ const ParticipantDetails: React.FC = () => {
 
       if (response.status === 200) {
         setHabitTypes(response.data); // Now TypeScript knows that response.data is a string[] (array of strings)
+        if(habit==="Snuff"){
+          setHabitTypes(["Snuff"])
+        }
       } else {
         console.error('Error:', response.statusText);
         alert(`Error: ${response.statusText}`);
@@ -340,6 +343,10 @@ const ParticipantDetails: React.FC = () => {
   };
 
 
+  useEffect(() => {
+    console.log('Tobacco Habit changed to:', hasTobaccoHabit);
+  }, [hasTobaccoHabit]);
+  
 
   const participant = localStorage.getItem('participant');
   const registraionId = localStorage.getItem('registraionId');
@@ -368,13 +375,18 @@ const ParticipantDetails: React.FC = () => {
   const handlePrevClick = () => {
     navigate('/DiseaseSpecificDetails');
   };
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+  
   return (
     <div className="container2">
+
       <Header1 />
       
       <div className="participant-container">
-        <p className="participant-info-text">Participant: {participant}</p>
-        <p className="participant-info-text">ID: {registraionId}</p>
+        <p className="participant-info-text"><strong>Participant:</strong> {participant}</p>
+      <p className="participant-info-text"><strong>ID:</strong> {registraionId}</p>
       </div>
       <h1 style={{ color: 'darkblue', fontWeight: 'bold', }}>General Details</h1>
       <div className="clinic-form" onSubmit={(e) => handleFormSubmit(e, '/MedicalomenHealthDetails')} >
@@ -402,7 +414,7 @@ const ParticipantDetails: React.FC = () => {
           />
         </div>
         <div className="form-group">
-  <label htmlFor="alt-mobile">Alt Mobile No:</label>
+  <label htmlFor="alt-mobile">Alternate Mobile No:</label>
   <input
     type="number" // Use text to handle controlled length
     id="alt-mobile"
@@ -414,7 +426,7 @@ const ParticipantDetails: React.FC = () => {
         setAltMobile(value); // Update state only if the length is <= 10
       }
     }}
-    placeholder="Enter Alt Mobile No"
+    placeholder="Enter Alternate Mobile No"
   />
 </div>
 <div className="form-group">
@@ -468,6 +480,7 @@ const ParticipantDetails: React.FC = () => {
             <option value="" disabled>Select Occupation</option>
             <option value="farmer">House wife</option>
             <option value="Laborer-skilled">Laborer-skilled</option>
+            <option value="Laborer-Unskilled">Laborer-Unskilled</option>
             <option value="Teaching/Office">Teaching/Office jobs</option>
             <option value="Professional">Professional</option>
             <option value="Business">Business</option>
@@ -494,18 +507,18 @@ const ParticipantDetails: React.FC = () => {
 <div className="form-group">
   <label htmlFor="voter-id">Voter ID:</label>
   <input
-    type="number"
-    id="voter-id"
-    name="voter-id"
-    value={voterId}
-    onChange={(e) => {
-      // Allow only alphanumeric characters (letters and numbers) and limit the length to, e.g., 12 characters
-      const value = e.target.value.replace(/[^a-zA-Z0-9]/g, '').slice(0, 12); // Keep only alphanumeric and limit length
-      setVoterId(value);
-    }}
-    placeholder="Enter Voter ID"
-    maxLength={12} // Restrict input to 12 characters
-  />
+  type="text"
+  id="voter-id"
+  name="voter-id"
+  value={voterId}
+  onChange={(e) => {
+    // Allow only alphanumeric characters (letters and numbers) and limit to 12 characters
+    const value = e.target.value.replace(/[^a-zA-Z0-9]/g, '').slice(0, 12);
+    setVoterId(value);
+  }}
+  placeholder="Enter Voter ID"
+  maxLength={12} // Still good to keep for accessibility and keyboard behavior
+/>
 </div>
 <div className="form-group">
   <label htmlFor="ration-card">Ration Card:</label>
@@ -524,22 +537,31 @@ const ParticipantDetails: React.FC = () => {
   />
 </div>
         <div>
-          <h2>Social Habits</h2>
-          <div>
-            <label>
-              Tobacco/Alcohol Habits:
-              <select
-                value={hasTobaccoHabit}
-                onChange={(e) => setHasTobaccoHabit(e.target.value)}
-              >
-                <option value="No">No</option>
-                <option value="Yes">Yes</option>
-              </select>
-            </label>
-          </div>
+          
+          <h2 style={{marginBottom:'1px'}}>Social Habits</h2>
+          <div className="social-habits-row">
+  <label className="label-text">Tobacco/Alcohol Habits:</label>
+  <div className="toggle-group">
+    <button
+      type="button"
+      className={`gender-btn ${hasTobaccoHabit === 'Yes' ? 'yes-active' : ''}`}
+      onClick={() => setHasTobaccoHabit('Yes')}
+    >
+      Yes
+    </button>
+    <button
+      type="button"
+      className={`gender-btn ${hasTobaccoHabit === 'No' ? 'no-active' : ''}`}
+      onClick={() => setHasTobaccoHabit('No')}
+    >
+      No
+    </button>
+  </div>
+
+</div>
 
           {hasTobaccoHabit === "Yes" && (
-            <>
+             <div className="habit-box">
               {habits.map((habit, index) => (
                 <div key={index} style={{ marginBottom: "1rem" }} >
                   <div onClick={() => toggleCollapse(index)} style={{ cursor: "pointer" }} className="habits m-2">
@@ -589,11 +611,21 @@ const ParticipantDetails: React.FC = () => {
                       <div>
                         <label>
                           Frequency/Day:
-                          <input
-                            type="number"
-                            value={habit.frequency}
-                            onChange={(e) => handleInputChange(index, "frequency", e.target.value)}
-                          />
+<input
+  type="text"
+  inputMode="numeric"
+  pattern="[1-9][0-9]*"
+  value={habit.frequency}
+  placeholder="Enter Frequency"
+  onChange={(e) => {
+    const val = e.target.value;
+
+    // Allow only digits > 0 and no leading zero
+    if (/^[1-9][0-9]*$/.test(val) || val === "") {
+      handleInputChange(index, "frequency", val);
+    }
+  }}
+/>
                         </label>
                       </div>
 
@@ -616,7 +648,7 @@ const ParticipantDetails: React.FC = () => {
              <div className="button-container">
   <button className="Next-button" onClick={addHabit}>Add Habit</button>
 </div>
-            </>
+</div>
           )}
 
 {showModal && (

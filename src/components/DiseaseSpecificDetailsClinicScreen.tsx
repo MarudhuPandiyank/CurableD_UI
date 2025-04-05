@@ -125,8 +125,10 @@ function DiseaseSpecificDetailsClinic() {
     <div className="container2">
       <Header1 />
       <div className="participant-container">
-        <p>Participant: {patientId}</p>
-        <p>ID: {patientName}</p>
+        <p className="participant-info-text"><strong>Participant:</strong> {patientId}</p>
+      <p className="participant-info-text"><strong>ID:</strong> {patientName}</p>
+      
+
       </div>
 
       {error && <div className="error-message">{error}</div>} {/* Display error message if there's an issue */}

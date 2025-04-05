@@ -320,7 +320,7 @@ const OutreachClinicCreation: React.FC = () => {
                     <span style={{ color: 'darkred', fontWeight: 'bold' }}></span>
                     <div className="input-with-icon">
                         <Calendar
-                            value={endDate}
+                            value={startDate}
                             onChange={(e) => setStartDate(e.value as Date | null)}
                           //  showIcon
                             minDate={startDate || new Date()}
