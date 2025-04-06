@@ -185,10 +185,11 @@ const FamilyMedicalDetails: React.FC = () => {
       <Header1 />
     
       <div className="participant-container">
-        <p className="participant-info-text"><strong>Participant:</strong> {participant}</p>
+        <p className="participant-info-text"><strong>Participant: </strong> {participant}</p>
       <p className="participant-info-text"><strong>ID:</strong> {registrationId}</p>
             </div>
       <h1 style={{ color: 'darkblue', fontWeight: 'bold', }}>Family Medical Details</h1>
+      <span style={{marginBottom:"10px"}}>{"Provide the details if any of the family members has cancer history"}</span>
       {error && <div className="error-message">{error}</div>}
 
       <form className="clinic-form" onSubmit={handleSubmit}>
@@ -217,38 +218,59 @@ const FamilyMedicalDetails: React.FC = () => {
             </p>
             {expandedIndex === formIndex && (
               <div className="form-fields">
-                {formData.map((field, index) => (
-                  <div key={index} className="form-group">
-                    <label style={{ color: 'darkblue' }}>{field.testName}:</label>
+{formData.map((field, index) => {
+  const trimmedName = field.testName.trim();
+  const value = formValue[trimmedName] || '';
 
-                    {field.valueType === 'SingleSelect' ? (
-                      <select
-                        id={field.testName.toLowerCase().replace(' ', '-')}
-                        name={field.testName.toLowerCase().replace(' ', '-')}
-                        value={formValue[field.testName] || ''}
-                        onChange={(e) => handleFieldChange(formIndex, field.testName, e.target.value)}
-                      >
-                        <option value="" disabled>
-                          Select {field.testName}
-                        </option>
-                        {field.values.map((value, idx) => (
-                          <option key={idx} value={value}>
-                            {value}
-                          </option>
-                        ))}
-                      </select>
-                    ) : (
-                      <input
-                        type="text"
-                        id={field.testName.toLowerCase().replace(' ', '-')}
-                        name={field.testName.toLowerCase().replace(' ', '-')}
-                        value={formValue[field.testName] || ''}
-                        onChange={(e) => handleFieldChange(formIndex, field.testName, e.target.value)}
-                        placeholder={`Enter ${field.testName}`}
-                      />
-                    )}
-                  </div>
-                ))}
+  return (
+    <div key={index} className="form-group">
+      <label style={{ color: 'darkblue' }}>{field.testName}:</label>
+
+      {field.valueType === 'SingleSelect' ? (
+        <select
+          id={trimmedName.toLowerCase().replace(/\s+/g, '-')}
+          name={trimmedName.toLowerCase().replace(/\s+/g, '-')}
+          value={value}
+          onChange={(e) => handleFieldChange(formIndex, trimmedName, e.target.value)}
+        >
+          <option value="" disabled>
+            Select {field.testName}
+          </option>
+          {field.values.map((val, idx) => (
+            <option key={idx} value={val.trim()}>
+              {val.trim()}
+            </option>
+          ))}
+        </select>
+      ) : field.valueType === 'Button' ? (
+        <div className="gender-group">
+          {field.values.map((val, i) => {
+            const trimmedVal = val.trim();
+            return (
+              <button
+                key={i}
+                type="button"
+                className={`gender-btn ${value === trimmedVal ? 'active' : ''}`}
+                onClick={() => handleFieldChange(formIndex, trimmedName, trimmedVal)}
+              >
+                {trimmedVal}
+              </button>
+            );
+          })}
+        </div>
+      ) : (
+        <input
+          type="text"
+          id={trimmedName.toLowerCase().replace(/\s+/g, '-')}
+          name={trimmedName.toLowerCase().replace(/\s+/g, '-')}
+          value={value}
+          onChange={(e) => handleFieldChange(formIndex, trimmedName, e.target.value)}
+          placeholder={`Enter ${field.testName}`}
+        />
+      )}
+    </div>
+  );
+})}
               </div>
             )}
           </div>

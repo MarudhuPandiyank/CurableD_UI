@@ -315,7 +315,7 @@ const App: React.FC = () => {
       <Header1 />
 
       <div className="participant-info-container">
-        <p className="participant-info-text"><strong>Participant:</strong>{ptName}{" "}{patientAge}{"/"}{patientgender}</p>
+        <p className="participant-info-text"><strong>Participant: </strong>{ptName}{" "}{patientAge}{"/"}{patientgender}</p>
         <p className="participant-info-text"><strong>ID:</strong>{registrationId}</p>
         
       </div>

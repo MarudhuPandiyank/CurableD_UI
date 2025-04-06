@@ -388,7 +388,7 @@ const ParticipantDetails: React.FC = () => {
       <Header1 />
       
       <div className="participant-container">
-        <p className="participant-info-text"><strong>Participant:</strong> {participant}</p>
+        <p className="participant-info-text"><strong>Participant: </strong> {participant}</p>
       <p className="participant-info-text"><strong>ID:</strong> {registraionId}</p>
       </div>
       <h1 style={{ color: 'darkblue', fontWeight: 'bold', }}>General Details</h1>
@@ -564,7 +564,7 @@ const ParticipantDetails: React.FC = () => {
 </div>
 
           {hasTobaccoHabit === "Yes" && (
-             <div className="habit-box">
+              <div className="habit-box">
               {habits.map((habit, index) => (
                 <div key={index} style={{ marginBottom: "1rem" }} >
                   <div onClick={() => toggleCollapse(index)} style={{ cursor: "pointer" }} className="habits m-2">

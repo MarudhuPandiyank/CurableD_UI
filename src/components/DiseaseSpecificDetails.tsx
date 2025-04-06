@@ -176,7 +176,7 @@ function DiseaseSpecificDetails() {
     <div className="container21">
       <Header1 />
       <div className="participant-container">
-      <p className="participant-info-text"><strong>Participant:</strong> {participantValue}</p>
+      <p className="participant-info-text"><strong>Participant: </strong> {participantValue}</p>
       <p className="participant-info-text"><strong>ID:</strong> {registraionId}</p>
       
       </div>

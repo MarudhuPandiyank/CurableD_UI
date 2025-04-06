@@ -192,7 +192,7 @@ function FamilyPersonalDetails() {
     <div>
       <Header1 />
       <div className="participant-container">
-        <p className="participant-info-text"><strong>Participant:</strong> {participant}</p>
+        <p className="participant-info-text"><strong>Participant: </strong> {participant}</p>
         <p className="participant-info-text"><strong>ID:</strong> {registraionId}</p>
       </div>
 
@@ -260,7 +260,7 @@ function FamilyPersonalDetails() {
                             <option key={i} value={val.trim()}>{val.trim()}</option>
                           ))}
                         </select>
-                      ) : field.valueType === 'Button' && trimmedName.toLowerCase() === 'gender' ? (
+                      ) : field.valueType === 'Button'  ? (
                         <div className="gender-group">
                           {field.values.map((val, i) => {
                             const trimmedVal = val.trim();

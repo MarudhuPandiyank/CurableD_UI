@@ -18,7 +18,7 @@ const TenantDetails: React.FC = () => {
 
       <div className="participant-container">
         <h1>Tenant Name</h1>
-        <p><strong>Participant:</strong> Sudha, 36/F</p>
+        <p><strong>Participant: </strong> Sudha, 36/F</p>
         <p><strong>ID:</strong> 123456890123456</p>
       </div>
 

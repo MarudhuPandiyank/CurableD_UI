@@ -216,7 +216,7 @@ const navigate = useNavigate();
       
 
       <div className="participant-container">
-        <p className="participant-info-text"><strong>Participant:</strong> {participant}</p>
+        <p className="participant-info-text"><strong>Participant: </strong> {participant}</p>
       <p className="participant-info-text"><strong>ID:</strong> {registraionId}</p>
             </div>
       <h1 style={{ color: 'darkblue', fontWeight: 'bold', }}>Medical Details</h1>
