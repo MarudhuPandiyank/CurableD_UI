@@ -3,7 +3,7 @@ import axios from 'axios';
 import './FamilyPersonalDetails.css';
 import { useNavigate } from 'react-router-dom';
 import Header1 from './Header1';
-import config from '../config'; 
+import config from '../config';
 
 interface FamilyMetricsParam {
   testName: string;
@@ -51,17 +51,24 @@ function FamilyPersonalDetails() {
           candidateId: localStorage.getItem('patientId'),
           type: 4
         }, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         });
 
         if (prefillResponse.data) {
-          const prefilledValues: Record<string, string> = {};
-          prefillResponse.data.familyMetrics.params.forEach((param: FamilyMetricsParam) => {
-            prefilledValues[param.testName] = param.selectedValues[0];
-          });
-          setFormValues([prefilledValues]);
+          const params = prefillResponse.data.familyMetrics.params;
+          const fieldsPerMember = response.data.familyMetrics.params.length;
+          const prefilledFormValues: Record<string, string>[] = [];
+
+          for (let i = 0; i < params.length; i += fieldsPerMember) {
+            const chunk = params.slice(i, i + fieldsPerMember);
+            const memberValues: Record<string, string> = {};
+            chunk.forEach((param) => {
+              memberValues[param.testName.trim()] = param.selectedValues[0]?.trim() || '';
+            });
+            prefilledFormValues.push(memberValues);
+          }
+
+          setFormValues(prefilledFormValues);
         }
 
       } catch (error) {
@@ -74,51 +81,46 @@ function FamilyPersonalDetails() {
   }, []);
 
   const handleFieldChange = (index: number, testName: string, value: string) => {
-    console.log(testName, index, "ddkdkd");
-  
-    // If testName is 'MonthlyIncome'
-    if (testName.toLowerCase().includes('monthlyincome')) {
+    const trimmedName = testName.trim();
+
+    if (trimmedName.toLowerCase().includes('monthlyincome')) {
       const numericValue = parseInt(value, 10);
       if (!/^\d*$/.test(value) || numericValue <= 0) {
-        return; 
+        return;
       }
     }
-  
+
     const updatedFormValues = [...formValues];
     updatedFormValues[index] = {
       ...updatedFormValues[index],
-      [testName]: value,
+      [trimmedName]: value,
     };
     setFormValues(updatedFormValues);
   };
-  
-
 
   const handleAddMember = () => {
     setExpandedMemberIndex(null);
-    setFormValues((prevValues) => [...prevValues, {}]);
+    setFormValues((prev) => [...prev, {}]);
     setExpandedMemberIndex(formValues.length);
   };
 
   const handleDeleteMember = (index: number) => {
-    setFormValues((prevValues) => prevValues.filter((_, i) => i !== index));
+    setFormValues((prev) => prev.filter((_, i) => i !== index));
     if (expandedMemberIndex === index) setExpandedMemberIndex(null);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    const updatedFormData = formValues.map((formValue) =>
-      formData.map((field) => ({
-        ...field,
-        selectedValues: formValue[field.testName] ? [formValue[field.testName]] : [],
-      }))
-    );
-
-    const payload = {
+  const buildPayload = () => {
+    return {
       description: 'Family Personal Metrics',
       diseaseTestId: 1,
-      familyMetrics: { params: updatedFormData.flat() },
+      familyMetrics: {
+        params: formValues.map((formValue) =>
+          formData.map((field) => ({
+            ...field,
+            selectedValues: formValue[field.testName.trim()] ? [formValue[field.testName.trim()]] : [],
+          }))
+        ).flat(),
+      },
       familyMedicalMetrics: null,
       eligibilityMetrics: null,
       gender: 'FEMALE',
@@ -132,104 +134,78 @@ function FamilyPersonalDetails() {
       type: 1,
       candidateId: Number(localStorage.getItem('patientId')),
     };
+  };
 
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
     try {
       const token = localStorage.getItem('token');
       if (!token) {
         setError('Token is missing. Please log in again.');
         return;
       }
-
-      await axios.post(`${config.appURL}/curable/candidatehistory`, payload, {
+      await axios.post(`${config.appURL}/curable/candidatehistory`, buildPayload(), {
         headers: { Authorization: `Bearer ${token}` },
       });
-
       console.log('Data submitted successfully!');
       navigate('/FamilyMedicalDetails');
     } catch (error) {
-      console.error('Error submitting data:', error);
+      console.error('Submit Error:', error);
       setError('Failed to submit data.');
     }
+  };
+
+  const handleFinish = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        setError('Token is missing. Please log in again.');
+        return;
+      }
+      await axios.post(`${config.appURL}/curable/candidatehistory`, buildPayload(), {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      console.log('Data submitted successfully!');
+      navigate('/SuccessMessagePRFinal');
+    } catch (error) {
+      console.error('Finish Error:', error);
+      setError('Failed to submit data.');
+    }
+  };
+
+  const handlePrevClick = () => {
+    navigate('/MedicalomenHealthDetails');
   };
 
   const patientId = localStorage.getItem('patientId');
   const patientName = localStorage.getItem('patientName');
   const participant = localStorage.getItem('participant');
   const registraionId = localStorage.getItem('registraionId');
+  console.log(patientId,patientName,"patientName")
 
   if (!patientId || !patientName) {
     return <div className="error-message">Missing patient information. Please log in again.</div>;
   }
 
-  const handleFinish = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    const updatedFormData = formValues.map((formValue) =>
-      formData.map((field) => ({
-        ...field,
-        selectedValues: formValue[field.testName] ? [formValue[field.testName]] : [],
-      }))
-    );
-
-    const payload = {
-      description: 'Family Personal Metrics',
-      diseaseTestId: 1,
-      familyMetrics: { params: updatedFormData.flat() },
-      familyMedicalMetrics: null,
-      eligibilityMetrics: null,
-      gender: 'FEMALE',
-      genderValid: true,
-      hospitalId: 1,
-      id: 27,
-      medicalMetrics: null,
-      name: 'Family Personal Metrics',
-      stage: 'FAMILY_PERSONAL',
-      testMetrics: null,
-      type: 1,
-      candidateId: Number(localStorage.getItem('patientId')),
-    };
-
-    try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        setError('Token is missing. Please log in again.');
-        return;
-      }
-
-      await axios.post(`${config.appURL}/curable/candidatehistory`, payload, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-
-      console.log('Data submitted successfully!');
-      navigate('/SuccessMessagePRFinal');
-    } catch (error) {
-      console.error('Error submitting data:', error);
-      setError('Failed to submit data.'); }
-    };
-    const handlePrevClick = () => {
-      navigate('/MedicalomenHealthDetails');
-    };
   return (
-    <div >
-
+    <div>
       <Header1 />
-
       <div className="participant-container">
         <p className="participant-info-text"><strong>Participant:</strong> {participant}</p>
-      <p className="participant-info-text"><strong>ID:</strong> {registraionId}</p>
-            </div>
-      <h1 style={{ color: 'darkblue', fontWeight: 'bold', }}>Family Personal Details</h1>
+        <p className="participant-info-text"><strong>ID:</strong> {registraionId}</p>
+      </div>
+
+      <h1 style={{ color: 'darkblue', fontWeight: 'bold' }}>Family Personal Details</h1>
       {error && <div className="error-message">{error}</div>}
 
       <form className="clinic-form" onSubmit={handleSubmit}>
-        {/* <p>Family Personal Details</p> */}
-
         {formValues.map((_, formIndex) => (
           <div key={formIndex} className="family-member-row">
-            {/* Collapsed View */}
-            {expandedMemberIndex !== formIndex && (
+            {expandedMemberIndex !== formIndex ? (
               <div
                 className="member-name"
+                onClick={() => setExpandedMemberIndex(formIndex)}
                 style={{
                   cursor: 'pointer',
                   padding: '10px',
@@ -239,24 +215,18 @@ function FamilyPersonalDetails() {
                   justifyContent: 'space-between',
                   alignItems: 'center',
                 }}
-                onClick={() => setExpandedMemberIndex(formIndex)}
               >
-                 {/* <span>Member {formIndex + 1} </span> */}
-                <span>{formValues[formIndex][formData[0].testName]? formValues[formIndex][formData[0].testName]:"Member"}</span>
-                
+                <span>{formValues[formIndex][formData[0]?.testName.trim()] || 'Member'}</span>
                 <i onClick={(e) => {
                   e.stopPropagation();
                   handleDeleteMember(formIndex);
                 }} className="fa-solid fa-trash-can float-end"></i>
-               
               </div>
-            )}
-
-            {/* Expanded View */}
-            {expandedMemberIndex === formIndex && (
+            ) : (
               <div className="family-member-form">
                 <div
                   className="member-header"
+                  onClick={() => setExpandedMemberIndex(null)}
                   style={{
                     cursor: 'pointer',
                     padding: '10px',
@@ -266,69 +236,73 @@ function FamilyPersonalDetails() {
                     justifyContent: 'space-between',
                     alignItems: 'center',
                   }}
-                  onClick={() => setExpandedMemberIndex(null)}
                 >
-                  {/* <span>Member {formIndex + 1} (Click to collapse)</span> */}
-                  <span>{formValues[formIndex][formData[0]?.testName]? formValues[formIndex][formData[0].testName]+" Click to collapse":"Member Click to collapse"}</span>
-                    <i onClick={(e) => {
+                  <span>{formValues[formIndex][formData[0]?.testName.trim()] || 'Member'} (Click to collapse)</span>
+                  <i onClick={(e) => {
                     e.stopPropagation();
                     handleDeleteMember(formIndex);
                   }} className="fa-solid fa-trash-can float-end"></i>
-                 
                 </div>
 
-                {formData.map((field, index) => (
-                  <div key={index} className="form-group">
-                    <label style={{ color: 'darkblue' }}>{field.testName}:</label>
-                    {field.valueType === 'SingleSelect' ? (
-                      <select
-                        id={field.testName.toLowerCase().replace(' ', '-')}
-                        name={field.testName.toLowerCase().replace(' ', '-')}
-                        value={formValues[formIndex][field.testName] || ''}
-                        onChange={(e) => handleFieldChange(formIndex, field.testName, e.target.value)}
-                      >
-                        <option value="" disabled>
-                          Select {field.testName}
-                        </option>
-                        {field.values.map((value, idx) => (
-                          <option key={idx} value={value}>
-                            {value}
-                          </option>
-                        ))}
-                      </select>
-                    ) : (
-                      <input
-                        type="text"
-                        id={field.testName.toLowerCase().replace(' ', '-')}
-                        name={field.testName.toLowerCase().replace(' ', '-')}
-                        value={formValues[formIndex][field.testName] || ''}
-                        onChange={(e) => handleFieldChange(formIndex, field.testName, e.target.value)}
-                        placeholder={`Enter ${field.testName}`}
-                      />
-                    )}
-                  </div>
-                ))}
+                {formData.map((field, index) => {
+                  const trimmedName = field.testName.trim();
+                  const value = formValues[formIndex][trimmedName] || '';
+                  return (
+                    <div key={index} className="form-group">
+                      <label style={{ color: 'darkblue' }}>{field.testName}:</label>
+                      {field.valueType === 'SingleSelect' ? (
+                        <select
+                          value={value}
+                          onChange={(e) => handleFieldChange(formIndex, trimmedName, e.target.value)}
+                        >
+                          <option value="" disabled>Select {field.testName}</option>
+                          {field.values.map((val, i) => (
+                            <option key={i} value={val.trim()}>{val.trim()}</option>
+                          ))}
+                        </select>
+                      ) : field.valueType === 'Button' && trimmedName.toLowerCase() === 'gender' ? (
+                        <div className="gender-group">
+                          {field.values.map((val, i) => {
+                            const trimmedVal = val.trim();
+                            return (
+                              <button
+                                key={i}
+                                type="button"
+                                className={`gender-btn ${value === trimmedVal ? 'active' : ''}`}
+                                onClick={() => handleFieldChange(formIndex, trimmedName, trimmedVal)}
+                              >
+                                {trimmedVal}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      ) : (
+                        <input
+                          type="text"
+                          value={value}
+                          placeholder={`Enter ${field.testName}`}
+                          onChange={(e) => handleFieldChange(formIndex, trimmedName, e.target.value)}
+                        />
+                      )}
+                    </div>
+                  );
+                })}
               </div>
             )}
-           
           </div>
         ))}
-         <div className="button-container">
- <button type="button" className="Next-button" onClick={handleAddMember}>
-            Add Member
-          </button>    </div>
+
+        <div className="button-container">
+          <button type="button" className="Next-button" onClick={handleAddMember}>Add Member</button>
+        </div>
+
         <center className="buttons">
-        <button type="submit" className="Finish-button" onClick={handlePrevClick}>
-            Prev
-          </button>
-          <button type="button" className="Next-button" onClick={handleFinish}>
-            Finish
-          </button>
-          <button type="submit" className="Finish-button">
-            Next
-          </button>
+          <button type="submit" className="Finish-button" onClick={handlePrevClick}>Prev</button>
+          <button type="button" className="Next-button" onClick={handleFinish}>Finish</button>
+          <button type="submit" className="Finish-button">Next</button>
         </center>
       </form>
+
       <footer className="footer-container">
         <div className="footer-content">
           <p className="footer-text">Powered By Curable</p>

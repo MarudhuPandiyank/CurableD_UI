@@ -120,6 +120,7 @@ const NewScreeningEnrollment: React.FC = () => {
   const handleStreetIdChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const input = e.target.value;
   
+    // Only allow up to 3 digits, no letters
     if (/^\d{0,3}$/.test(input)) {
       setStreetId(input);
       setIsSaveButtonEnabled(address.trim() !== '' && input.trim() !== '');

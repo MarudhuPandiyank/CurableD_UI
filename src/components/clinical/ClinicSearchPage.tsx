@@ -130,8 +130,16 @@ const ClinicSearchPage: React.FC = () => {
     }
 
     const patientName = selectedPatient?.name || "";
+    const patientgender=selectedPatient?.gender||"";
+    const patientAge = selectedPatient?.age != null ? selectedPatient.age.toString() : "";
+
+
     localStorage.setItem("selectedStage", selectedStage);
     localStorage.setItem("patientName", patientName);
+    localStorage.setItem("patientgender", patientgender);
+    localStorage.setItem("patientAge", patientAge);
+
+
 
    // navigate("/DiseaseSpecificDetailsClinic");
     navigate("/DynamicScreen");
@@ -227,7 +235,7 @@ const ClinicSearchPage: React.FC = () => {
         </>
       )}
 
-      {patients.length === 0 && !loading && <p>No patients found.</p>}
+      {/* {patients.length === 0 && !loading && <p>No patients found.</p>} */}
       <footer className="footer-container">
         <div className="footer-content">
           <p className="footer-text">Powered By Curable</p>

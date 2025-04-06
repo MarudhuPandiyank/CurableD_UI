@@ -167,12 +167,18 @@ const App: React.FC = () => {
 
   const pName = localStorage.getItem("patientName");
   const regId = localStorage.getItem("registrationId");
+  const patientAge = localStorage.getItem('patientAge');
+  const patientgender = localStorage.getItem('patientgender');
+
+  
+  console.log(patientAge,"patientAge")
+
 
   return (
     <div className="container2">
       <Header1 />
       <div className="participant-info-container">
-        <p className="participant-info-text"><strong>Participant:</strong> {pName}</p>
+        <p className="participant-info-text"><strong>Participant:</strong> {pName}{" "}{patientAge}{"/"}{patientgender}</p>
         <p className="participant-info-text"><strong>ID:</strong> {regId}</p>
       </div>
       <div className="clinic-details-form">

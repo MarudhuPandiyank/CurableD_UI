@@ -129,9 +129,16 @@ const PatientSearchPage: React.FC = () => {
     }
 
     const patientName = selectedPatient?.name || "";
+    const patientgender=selectedPatient?.gender||"";
+    const patientAge = selectedPatient?.age != null ? selectedPatient.age.toString() : "";
+
+
     localStorage.setItem("selectedStage", selectedStage);
-   
+    localStorage.setItem("patientgender", patientgender);
     localStorage.setItem("patientName", patientName);
+    localStorage.setItem("patientAge", patientAge);
+    console.log(patientAge,selectedPatient,"patientAge")
+    
 
     navigate("/DiseaseSpecificDetailsScreening");
   };

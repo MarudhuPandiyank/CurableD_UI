@@ -307,12 +307,15 @@ const App: React.FC = () => {
     });
   };
 
+  const patientAge = localStorage.getItem('patientAge');
+  const patientgender = localStorage.getItem('patientgender');
+
   return (
     <div className="container2">
       <Header1 />
 
       <div className="participant-info-container">
-        <p className="participant-info-text"><strong>Participant:</strong>{ptName}</p>
+        <p className="participant-info-text"><strong>Participant:</strong>{ptName}{" "}{patientAge}{"/"}{patientgender}</p>
         <p className="participant-info-text"><strong>ID:</strong>{registrationId}</p>
         
       </div>
