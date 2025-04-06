@@ -249,6 +249,8 @@ const ParticipantDetails: React.FC = () => {
     setShowModal(false);
   };
   const [hasTobaccoHabit, setHasTobaccoHabit] = useState("No");
+  const [hasQuit, setHasQuit] = useState("");
+
   // State to manage the list of habits
   const [habits, setHabits] = useState<Habit[]>([
     { habit: "", habitType: "", frequency: "", quit: "", isOpen: true }, // Default `isOpen: true`
@@ -295,6 +297,7 @@ const ParticipantDetails: React.FC = () => {
     // Optionally reset the form
     setHabits([{ habit: "", habitType: "", frequency: "", quit: "", isOpen: true }]);
     setHasTobaccoHabit("No");
+    setHasQuit("")
   };
 
   const fetchHabitTypes = async (habit: string) => {
@@ -629,16 +632,36 @@ const ParticipantDetails: React.FC = () => {
                         </label>
                       </div>
 
+                      <div className="social-habits-row">
+  <label className="label-text">Quit, Yes/No:</label>
+  <div className="toggle-group">
+    <button
+      type="button"
+      className={`gender-btn ${hasQuit === 'Yes' ? 'yes-active' : ''}`}
+      onClick={() => setHasQuit('Yes')}
+    >
+      Yes
+    </button>
+    <button
+      type="button"
+      className={`gender-btn ${hasQuit === 'No' ? 'no-active' : ''}`}
+      onClick={() => setHasQuit('No')}
+    >
+      No
+    </button>
+  </div>
+</div>
+{hasQuit==='Yes' &&
                       <div>
                         <label>
-                          Quit:
+                          How Long? (Yrs):
                           <input
                             type="text"
                             value={habit.quit}
                             onChange={(e) => handleInputChange(index, "quit", e.target.value)}
                           />
                         </label>
-                      </div>
+                      </div>}
 
                       <hr />
                     </div>
