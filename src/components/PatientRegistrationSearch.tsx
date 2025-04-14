@@ -161,7 +161,7 @@ const PatientRegistrationSearch: React.FC = () => {
         <Header1 />
             <h1 style={{ color: 'darkblue', fontWeight: 'bold', }}>Patient Registration</h1>
       <main className="content">
-      <div className="search-section">
+      <div className="search-section_patitent">
       <div className="full-width-search-section">
   <div className="full-width-search-input-container">
     <input

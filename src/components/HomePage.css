@@ -502,6 +502,22 @@ h1 {
     }
 }
 
+@media only screen and (max-width: 600px) {
+  .Finish-button,
+  .Next-button {
+    padding: 10px 20px; 
+    font-size: 14px;     
+    width: 100%;         
+    max-width: 300px;   
+  }
+
+  /* .buttons {
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  } */
+}
+
 /* Medium devices (tablets, 600px to 900px) */
 @media only screen and (min-width: 600px) and (max-width: 900px) {
     .header1, .footer, .content, .button-container {

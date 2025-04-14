@@ -331,10 +331,10 @@ const navigate = useNavigate();
             onChange={(e) => setOtherComplaints(e.target.value)}
           />
         </fieldset>
-
+<br/>
         {/* Women's Health Section */}
         {(gender === 'FEMALE' || gender === 'OTHER') && (<fieldset>
-          <legend>Women's Health</legend>
+          <h1 style={{ color: 'darkblue', fontWeight: 'bold', }}>Women's Health</h1>
           <label>Age at Menarche:</label>
           <input
   type="text"

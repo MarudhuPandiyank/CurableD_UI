@@ -281,10 +281,10 @@ const FamilyMedicalDetails: React.FC = () => {
           </button>
         </div>
         <center className="buttons">
-          <button type="submit" className="Finish-button" onClick={handlePrevClick}>
+          <button type="submit" className="Next-button" onClick={handlePrevClick}>
             Prev
           </button>
-          <button type="submit" className="Next-button">
+          <button type="submit" className="Finish-button">
             Finish
           </button>
         </center>
