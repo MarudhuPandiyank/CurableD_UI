@@ -4,8 +4,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronLeft } from '@fortawesome/free-solid-svg-icons';
 import './ResponsiveCancerInstitute.css';
 import config from '../config';  // Import the config file
-const Header: React.FC = () => {
-  const [isLeftSidebarOpen, setIsLeftSidebarOpen] = useState(false);
+
+interface HeaderProps {
+  showwidth?: boolean; // optional boolean prop
+}
+const Header: React.FC<HeaderProps> = ({ showwidth = false }) => {
+    const [isLeftSidebarOpen, setIsLeftSidebarOpen] = useState(false);
   const [isRightSidebarOpen, setIsRightSidebarOpen] = useState(false);
   const userName = localStorage.getItem('userName') || 'Guest';
   const navigate = useNavigate();
@@ -24,11 +28,13 @@ const Header: React.FC = () => {
 
   return (
     <div>
-      <header className="header d-flex justify-content-between align-items-center p-3">
-        <span
+      <header className={`header d-flex justify-content-between align-items-center ${showwidth ? 'p-3' : ''}`}>
+          <span
           className="menu-icon fas fa-bars"
-          onClick={() => setIsLeftSidebarOpen(true)}
-          aria-label="Open Left Sidebar"
+          onClick={() => {
+            setIsLeftSidebarOpen(true);
+            setIsRightSidebarOpen(false);
+          }}          aria-label="Open Left Sidebar"
           style={{ color: '#003366', cursor: 'pointer',marginTop:-12 }}        ></span>
         <span className="title text-center flex-grow-1" style={{ fontSize: '20px', color: '#003366' }}>
         <img src="./Curable Icons/PNG/Earth.png" style={{ height: '30px', width: '30px',marginTop:-7 }} alt="Earth Icon" />        
@@ -36,7 +42,10 @@ const Header: React.FC = () => {
         </span>
         <span
           className="account-icon fas fa-user-circle"
-          onClick={() => setIsRightSidebarOpen(true)}
+          onClick={() => {
+            setIsLeftSidebarOpen(false);
+            setIsRightSidebarOpen(true);
+          }}
           aria-label="Account Settings"
           style={{ color: '#003366', cursor: 'pointer' }}// Blue color for the user icon
         ></span>

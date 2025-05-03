@@ -106,10 +106,19 @@ const FamilyMedicalDetails: React.FC = () => {
   };
 
   const handleAddMember = () => {
+    const lastMember = formValues[formValues.length - 1];
+  
+    const hasData = Object.values(lastMember).some(value => value && value.trim() !== "");
+  
+    if (!hasData) {
+      alert("Please fill at least one field before adding another member.");
+      return;
+    }
+  
     setFormValues((prevValues) => [...prevValues, {}]);
     setExpandedIndex(formValues.length);
   };
-
+  
   const handleToggleExpand = (index: number) => {
     setExpandedIndex(index);
   };
@@ -292,7 +301,7 @@ const FamilyMedicalDetails: React.FC = () => {
 
       <footer className="footer-container">
         <div className="footer-content">
-          <p className="footer-text">Powered By Curable</p>
+          <p className="footer-text">Powered By</p>
           <img src="/assets/Curable logo - rectangle with black text.png" alt="Curable Logo" className="footer-logo" />
         </div>
       </footer>

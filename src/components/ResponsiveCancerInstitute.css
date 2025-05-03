@@ -15,7 +15,7 @@
     right: -500px;
     top: 0;
     height: 100%;
-    width: 500px;
+    width: 335px;
     margin-top: 0;
     background-color: white;
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
@@ -24,6 +24,8 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    border-radius: 19px;
+
 }
 
 /* Left Sidebar */
@@ -31,13 +33,14 @@
     left: -500px;
     top: 0;
     height: 100%;
-    width: 500px;
+    width: 335px;
     margin-top: 0;
     background-color: white;
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
     transition: 0.3s;
     z-index: 1000;
     display: flex;
+    border-radius: 14px;
     flex-direction: column;
     align-items: center;
   }
@@ -61,8 +64,10 @@
 .sidebar-header {
     display: flex;
     align-items: center;
-    padding: 10px 20px;
+    padding: 10px 10px;
     width: 100%;
+    margin-top: 30px;
+
 }
 
 /* Close (Back) Button Styling */
@@ -211,6 +216,52 @@
 }
 
 /* Responsive adjustments */
+
+@media (max-width: 768px) {
+
+    .container4-box .box {
+        border-radius: 18px;
+    }
+
+  .footer-container {
+    bottom: 0;
+    width: 100%;
+    background-color: white;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    padding: 10px;
+    z-index: 999;
+  }
+
+  .footer-container-fixed {
+    bottom: 0;
+    width: 100%;
+    background-color: white;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    padding: 10px;
+    z-index: 999;
+    position: fixed;
+  }
+
+  .footer-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .footer-logo {
+    width: 100px;
+    height: auto;
+  }
+
+  .footer-text {
+    font-size: 14px;
+    margin: 0;
+  }
+}
+
 @media (max-width: 768px) {
     .sidebar {
         width: 300px;
@@ -222,10 +273,11 @@
 
     .sidebar-btn,
     .sidebar-logout {
-        width: 230px;
+        width: 265px;
     }
 
     .sidebar.right {
         width: 350px;
     }
+    
 }

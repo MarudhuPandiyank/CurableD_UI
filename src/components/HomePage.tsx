@@ -17,7 +17,7 @@ console.log('test');
     return (
         <div className="container1">
             <Header1/><br/>
-            <h1 style={{ color: 'darkblue' }}>Outreach Clinic</h1>
+  <h1 style={{ color: 'darkblue' }}>Outreach Clinic</h1>
           
             <main className="content">
                 <div className="button-container">

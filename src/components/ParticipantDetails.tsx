@@ -257,16 +257,27 @@ const ParticipantDetails: React.FC = () => {
   ]);
   const [error, setError] = useState("");
   // Add a new habit set
-  const addHabit = () => {
-    habits.map((habit, index) => {
-      if (habit.isOpen)
-        habits[index].isOpen = false;
-    });
-    setHabits([
-      ...habits,
-      { habit: "", habitType: "", frequency: "", quit: "", isOpen: true }, // Default `isOpen: true`
-    ]);
-  };
+  // const addHabit = () => {
+  //   habits.map((habit, index) => {
+  //     if (habit.isOpen)
+  //       habits[index].isOpen = false;
+  //   });
+  //   setHabits([
+  //     ...habits,
+  //     { habit: "", habitType: "", frequency: "", quit: "", isOpen: true }, // Default `isOpen: true`
+  //   ]);
+  // };
+
+const deleteHabit = (index: number) => {
+  alert("Are you sure?");
+  
+  if (habits.length !== 1) {
+    habits.splice(index, 1);
+    setHabits([...habits]); 
+  } else {
+    alert("Last index not delete");
+  }
+};
 
   
   // Handle input change
@@ -350,7 +361,25 @@ const ParticipantDetails: React.FC = () => {
     console.log('Tobacco Habit changed to:', hasTobaccoHabit);
   }, [hasTobaccoHabit]);
   
-
+  const addHabit = () => {
+    const lastHabit = habits[habits.length - 1];
+  
+    const hasData =
+      lastHabit.habit || lastHabit.habitType || lastHabit.frequency || lastHabit.quit;
+  
+    if (!hasData) {
+      alert("Please fill at least one field before adding another habit.");
+      return;
+    }
+  
+    const updated = habits.map((h) => ({ ...h, isOpen: false }));
+  
+    setHabits([
+      ...updated,
+      { habit: "", habitType: "", frequency: "", quit: "", isOpen: true },
+    ]);
+  };
+  
   const participant = localStorage.getItem('participant');
   const registraionId = localStorage.getItem('registraionId');
 
@@ -364,17 +393,17 @@ const ParticipantDetails: React.FC = () => {
   };
 
 
-  const deleteHabit = (index: number) => {
-    alert("Are u sure ");
-    if (habits.length != 1) {
-      // toggleCollapse(habits.length-1);
-      habits.splice(index, 1);
-    } else {
-      alert("Last index not delete");
-    }
-    //  const updatedHabits = habits.filter((_, i) => i !== index);
-    setHabits(habits);
-  };
+  // const deleteHabit = (index: number) => {
+  //   alert("Are u sure ");
+  //   if (habits.length != 1) {
+  //     // toggleCollapse(habits.length-1);
+  //     habits.splice(index, 1);
+  //   } else {
+  //     alert("Last index not delete");
+  //   }
+  //   //  const updatedHabits = habits.filter((_, i) => i !== index);
+  //   setHabits(habits);
+  // };
   const handlePrevClick = () => {
     navigate('/DiseaseSpecificDetails');
   };
@@ -563,74 +592,74 @@ const ParticipantDetails: React.FC = () => {
 
 </div>
 
-          {hasTobaccoHabit === "Yes" && (
-              <div className="habit-box">
-              {habits.map((habit, index) => (
-                <div key={index} style={{ marginBottom: "1rem" }} >
-                  <div onClick={() => toggleCollapse(index)} style={{ cursor: "pointer" }} className="habits m-2">
-                    {/* <strong>{habit.habit || "Select Habit"}{index}</strong> */}
-                    {habit.habit || "Select Habit"}
+{hasTobaccoHabit === "Yes" && (
+  <div className="habit-box">
+    {habits.map((habit, index) => (
+      <div key={index} style={{ marginBottom: "1rem" }}>
+        <div
+          onClick={() => toggleCollapse(index)}
+          className="habits"
+        >
+          <span>{habit.habit || "Select Habit"}</span>
+          <i onClick={() => deleteHabit(index)} className="fa-solid fa-trash-can"></i>
+        </div>
 
-                    {/* <span className=''>del</span> */}
-                    <i onClick={() => deleteHabit(index)} className="fa-solid fa-trash-can float-end"></i>
-                  </div>
+        {habit.isOpen && (
+          <div>
+            <div>
+              <label>
+                Habits:
+                <select
+                  value={habit.habit}
+                  onChange={(e) => handleHabitChange(index, e.target.value)}
+                >
+                  <option value="">Select Habit</option>
+                  <option value="Tobacco">Tobacco</option>
+                  <option value="Smoking">Smoking</option>
+                  <option value="Alcohol">Alcohol</option>
+                  <option value="Snuff">Snuff</option>
+                  <option value="Others">Others</option>
+                </select>
+              </label>
+            </div>
 
-                  {habit.isOpen && (
-                    <div>
-                      <div>
-                        <label>
-                          Habits:
-                          <select
-                            value={habit.habit}
-                            onChange={(e) => handleHabitChange(index, e.target.value)}
-                          >
-                            <option value="">Select Habit</option>
-                            <option value="Tobacco">Tobacco</option>
-                            <option value="Smoking">Smoking</option>
-                            <option value="Alcohol">Alcohol</option>
-                            <option value="Snuff">Snuff</option>
-                            <option value="Others">Others</option>
-                          </select>
-                        </label>
-                      </div>
+            <div>
+              <label>
+                Habit Type:
+                <select
+                  value={habit.habitType}
+                  onChange={(e) =>
+                    handleInputChange(index, "habitType", e.target.value)
+                  }
+                >
+                  <option value="">Select Habit Type</option>
+                  {habitTypes.map((habitType, i) => (
+                    <option key={i} value={habitType}>
+                      {habitType}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            </div>
 
-                      <div>
-                        <label>
-                          Habit Type:
-                          <select
-                            value={habit.habitType}
-                            onChange={(e) => handleInputChange(index, "habitType", e.target.value)}
-                          >
-                            <option value="">Select Habit Type</option>
-                            {habitTypes.map((habitType, i) => (
-                              <option key={i} value={habitType}>
-                                {habitType}
-                              </option>
-                            ))}
-                          </select>
-                        </label>
-                      </div>
-
-                      <div>
-                        <label>
-                          Frequency/Day:
-<input
-  type="text"
-  inputMode="numeric"
-  pattern="[1-9][0-9]*"
-  value={habit.frequency}
-  placeholder="Enter Frequency"
-  onChange={(e) => {
-    const val = e.target.value;
-
-    // Allow only digits > 0 and no leading zero
-    if (/^[1-9][0-9]*$/.test(val) || val === "") {
-      handleInputChange(index, "frequency", val);
-    }
-  }}
-/>
-                        </label>
-                      </div>
+            <div>
+              <label>
+                Frequency/Day:
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  pattern="[1-9][0-9]*"
+                  value={habit.frequency}
+                  placeholder="Enter Frequency"
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    if (/^[1-9][0-9]*$/.test(val) || val === "") {
+                      handleInputChange(index, "frequency", val);
+                    }
+                  }}
+                />
+              </label>
+            </div>
 
                       <div className="social-habits-row">
   <label className="label-text">Quit, Yes/No:</label>
@@ -664,20 +693,26 @@ const ParticipantDetails: React.FC = () => {
                       </div>}
 
                       <hr />
-                    </div>
-                  )}
-                </div>
-              ))}
-             <div className="button-container">
-  <button className="Next-button" onClick={addHabit}>Add Habit</button>
-</div>
-</div>
-          )}
+          </div>
+        )}
+      </div>
+    ))}
+
+    <div className="button-container-addhabit">
+      <button className="Next-button" onClick={addHabit}>
+        Add Habit
+      </button>
+    </div>
+  </div>
+)}
+
 
 {showModal && (
            <div className="custom-modal">
     <div className="custom-modal-content">
-                <h1 style={{ marginTop: '130px', textAlign: 'center', color: 'darkblue' }}>Non mandatory fields are not provided Are you sure you want to finish registration?</h1>
+    <p style={{ textAlign: 'center', color: 'darkblue', fontWeight: 'bold' }}>
+  Non mandatory fields are not provided. Are you sure you want to finish registration?
+</p>
                 
 
                 <div className="form-group">
@@ -715,7 +750,7 @@ const ParticipantDetails: React.FC = () => {
       </div>
       <footer className="footer-container">
         <div className="footer-content">
-          <p className="footer-text">Powered By Curable</p>
+          <p className="footer-text">Powered By</p>
           <img src="/assets/Curable logo - rectangle with black text.png" alt="Curable Logo" className="footer-logo" />
         </div>
       </footer>

@@ -99,11 +99,20 @@ function FamilyPersonalDetails() {
   };
 
   const handleAddMember = () => {
-    setExpandedMemberIndex(null);
+    const lastMember = formValues[formValues.length - 1];
+  
+    const hasData = Object.values(lastMember).some(value => value.trim() !== "");
+  
+    if (!hasData) {
+      alert("Please fill at least one field before adding another member.");
+      return;
+    }
+  
+    setExpandedMemberIndex(null); 
     setFormValues((prev) => [...prev, {}]);
-    setExpandedMemberIndex(formValues.length);
+    setExpandedMemberIndex(formValues.length); 
   };
-
+  
   const handleDeleteMember = (index: number) => {
     setFormValues((prev) => prev.filter((_, i) => i !== index));
     if (expandedMemberIndex === index) setExpandedMemberIndex(null);
@@ -189,13 +198,13 @@ function FamilyPersonalDetails() {
   }
 
   return (
-    <div>
+    <div className="container2">
       <Header1 />
       <div className="participant-container">
         <p className="participant-info-text"><strong>Participant: </strong> {participant}</p>
         <p className="participant-info-text"><strong>ID:</strong> {registraionId}</p>
       </div>
-
+ 
       <h1 style={{ color: 'darkblue', fontWeight: 'bold' }}>Family Personal Details</h1>
       {error && <div className="error-message">{error}</div>}
 
@@ -305,7 +314,7 @@ function FamilyPersonalDetails() {
 
       <footer className="footer-container">
         <div className="footer-content">
-          <p className="footer-text">Powered By Curable</p>
+          <p className="footer-text">Powered By</p>
           <img src="/assets/Curable logo - rectangle with black text.png" alt="Curable Logo" className="footer-logo" />
         </div>
       </footer>

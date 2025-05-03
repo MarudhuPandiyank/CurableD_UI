@@ -59,7 +59,7 @@ const UserAccountInfo: React.FC = () => {
             </div>
             <footer className="footer-container">
         <div className="footer-content">
-          <p className="footer-text">Powered By Curable</p>
+          <p className="footer-text">Powered By</p>
           <img src="/assets/Curable logo - rectangle with black text.png" alt="Curable Logo" className="footer-logo" />
         </div>
       </footer>

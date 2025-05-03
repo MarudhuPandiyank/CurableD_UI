@@ -175,7 +175,7 @@ function DiseaseSpecificDetailsClinic() {
       </form>
 
       <div className="powered-container">
-        <p className="powered-by">Powered By Curable</p>
+        <p className="powered-by">Powered By </p>
         <img src="/assets/Curable logo - rectangle with black text.png" alt="Curable Logo" className="curable-logo" />
       </div>
     </div>

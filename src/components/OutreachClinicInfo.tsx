@@ -262,7 +262,7 @@ const OutreachClinicInfo: React.FC = () => {
             <Button
               onClick={handleCloseNoClinicDialog}
               variant="outlined"
-              style={{ color: '#d774ad', borderColor: '#e91e63' }}
+              style={{ color: '#d774ad', borderColor: '#d774ad' }}
             >
               No
             </Button>
@@ -271,7 +271,7 @@ const OutreachClinicInfo: React.FC = () => {
       </main>
       <footer className="footer-container">
         <div className="footer-content">
-          <p className="footer-text">Powered By Curable</p>
+          <p className="footer-text">Powered By</p>
           <img src="/assets/Curable logo - rectangle with black text.png" alt="Curable Logo" className="footer-logo" />
         </div>
       </footer>

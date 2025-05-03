@@ -44,7 +44,7 @@ const ResponsiveCancerInstitute: React.FC = () => {
   return (
     <div style={{ backgroundColor: 'white', minHeight: '100vh' }}>
     
-      <Header1 />
+      <Header1 showwidth={true}/>
     
       {/* Main Content with Boxes */}
       <main className="container4-fluid mt-4">
@@ -70,7 +70,7 @@ const ResponsiveCancerInstitute: React.FC = () => {
       </main>
       <footer className="footer-container">
         <div className="footer-content">
-          <p className="footer-text">Powered By Curable</p>
+          <p className="footer-text">Powered By </p>
           <img src="/assets/Curable logo - rectangle with black text.png" alt="Curable Logo" className="footer-logo" />
         </div>
       </footer>

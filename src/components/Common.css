@@ -87,6 +87,32 @@
     transition: background-color 0.3s ease;
   }
   
+  .clinic-details-form-newscreening {
+    margin-bottom: 30px;
+    margin-top: 30px;
+  }
+  
+  .clinic-details-form-newscreening label {
+    color: black;
+    padding: 0.5rem;
+    display: block;
+    font-size: 14px;
+    color: #555;
+    margin-top: 10px;
+  }
+  
+  .clinic-details-form-newscreening input,
+  .clinic-details-form-newscreening textarea,
+  .clinic-details-form-newscreening select {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    font-size: 14px;
+    background-color: #f9f9f9;
+  }
+
   .full-width-search-button:hover {
     background-color: #d774ad;
   }

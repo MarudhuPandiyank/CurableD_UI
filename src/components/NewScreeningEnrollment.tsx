@@ -60,6 +60,9 @@ const NewScreeningEnrollment: React.FC = () => {
   const [showModal, setShowModal] = useState(false);
   const [reason, setReason] = useState<string>('');
   const [registraionId, setRegistraionId] = useState('');
+  const [mobileError, setMobileError] = useState('');
+const [streetIdError, setStreetIdError] = useState('');
+
 
   useEffect(() => {
     const prefillData = async () => {
@@ -166,6 +169,24 @@ const NewScreeningEnrollment: React.FC = () => {
     const campId = localStorage.getItem('campId');
     const hospitalId = localStorage.getItem('hospitalId');
 
+    setMobileError('');
+  setStreetIdError('');
+
+  let hasError = false;
+
+  if (mobile.length < 10) {
+    setMobileError('Mobile number must be exactly 10 digits.');
+    hasError = true;
+  }
+
+  if (streetId && streetId.length < 3) {
+    setStreetIdError('Street ID must be 3 digits.');
+    hasError = true;
+  }
+
+  if (hasError) return; 
+  
+
     if (!token) {
       alert('No token found. Please log in again.');
       return;
@@ -249,7 +270,8 @@ const NewScreeningEnrollment: React.FC = () => {
     <div>
       <div className="container2">
         <Header1 />
-        <form className="clinic-details-form" onSubmit={handleSubmit}>
+        <form className="clinic-details-form-newscreening" onSubmit={handleSubmit}>
+          
           <h1 className="new-screening-title">New Screening Enrollment</h1>
 
           <div className="form-group">
@@ -275,10 +297,12 @@ const NewScreeningEnrollment: React.FC = () => {
       const value = e.target.value.replace(/\D/g, ''); // Allow only numeric input
       if (value.length <= 10) {
         setMobile(value); // Update state only if length is <= 10
+        setMobileError(''); 
       }
     }}
     required
   />
+  {mobileError && <p className="errors_message">{mobileError}</p>}
 </div>
 
 
@@ -336,10 +360,20 @@ const NewScreeningEnrollment: React.FC = () => {
   type="text" 
   placeholder="Enter Street ID"
   value={streetId}
-  onChange={handleStreetIdChange}
-  maxLength={3}
+  onChange={(e) => {
+    const input = e.target.value;
+    if (/^\d{0,3}$/.test(input)) {
+      setStreetId(input);
+      if (input.length > 0 && input.length < 3) {
+        setStreetIdError('Street ID must be 3 digits.');
+      } else {
+        setStreetIdError('');
+      }
+    }
+  }}  maxLength={3}
   inputMode="numeric" 
 />
+{streetIdError && <p className="errors_message">{streetIdError}</p>}
           </div>
           {showModal && (
   <div className="custom-modal">
@@ -407,7 +441,7 @@ const NewScreeningEnrollment: React.FC = () => {
         </form>
         <footer className="footer-container">
         <div className="footer-content">
-          <p className="footer-text">Powered By Curable</p>
+          <p className="footer-text">Powered By</p>
           <img src="/assets/Curable logo - rectangle with black text.png" alt="Curable Logo" className="footer-logo" />
         </div>
       </footer>
