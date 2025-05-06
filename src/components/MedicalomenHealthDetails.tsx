@@ -390,11 +390,12 @@ const navigate = useNavigate();
   value={totalPregnancies}
   onChange={(e) => {
     const val = e.target.value;
-    if (/^(|[1-9][0-9]*)$/.test(val)) {
+    if (/^(|0|[1-9][0-9]*)$/.test(val)) {
       setTotalPregnancies(val);
     }
   }}
 />
+
 
 <div className="form-group">
   <label>Age at First Child:</label>
@@ -524,9 +525,11 @@ const navigate = useNavigate();
             Next
           </button>
           </div>
+          <br/> <br/>
+
        
       </form>
-      <footer className="footer-container">
+      <footer className="footer-container-fixed">
         <div className="footer-content">
           <p className="footer-text">Powered By</p>
           <img src="/assets/Curable logo - rectangle with black text.png" alt="Curable Logo" className="footer-logo" />

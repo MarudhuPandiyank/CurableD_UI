@@ -119,6 +119,12 @@ const PatientEdit: React.FC = () => {
               placeholder="Enter ID/Mobile No"
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault();       
+                  handleSearch();           
+                }
+              }}
             />
             <button className="search-button" onClick={handleSearch} disabled={loading}>
               {loading ? 'Searching...' : 'Search'}
@@ -167,7 +173,7 @@ const PatientEdit: React.FC = () => {
           </DialogActions>
         </Dialog>
       </main>
-      <footer className="footer-container">
+      <footer className="footer-container-fixed">
         <div className="footer-content">
           <p className="footer-text">Powered By</p>
           <img src="/assets/Curable logo - rectangle with black text.png" alt="Curable Logo" className="footer-logo" />

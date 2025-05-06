@@ -91,7 +91,7 @@ const [streetIdError, setStreetIdError] = useState('');
             const data = response.data;
             setName(data.name);
             setMobile(data.mobileNo);
-            setGender(data.gender);
+            setGender(data.gender.charAt(0).toUpperCase() + data.gender.slice(1).toLowerCase());
             setDob(new Date(data.dob));
             setAddress(data.address);
             setStreetId(data.streetId.toString());
@@ -332,8 +332,9 @@ const [streetIdError, setStreetIdError] = useState('');
     <Calendar
       value={dob}
       onChange={(e) => setDob(e.value as Date | null)} // Update the dob state
-      dateFormat="yy-mm-dd" // PrimeReact date format
-      placeholder="yyyy-mm-dd"
+      placeholder="dd-mm-yyyy"
+      dateFormat="dd-mm-yy" // PrimeReact date format
+
       required
       maxDate={new Date()} // Set the minimum date to today
      
@@ -439,7 +440,8 @@ const [streetIdError, setStreetIdError] = useState('');
             </div>
           </center>
         </form>
-        <footer className="footer-container">
+        <br/>
+      <footer className="footer-container-fixed">
         <div className="footer-content">
           <p className="footer-text">Powered By</p>
           <img src="/assets/Curable logo - rectangle with black text.png" alt="Curable Logo" className="footer-logo" />

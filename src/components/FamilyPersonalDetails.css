@@ -19,6 +19,48 @@
     width: 100%;  /* Ensure all input fields take full width */
   }
   
+  /* Ensure container takes full height and pushes footer */
+.container3 {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.clinic-form {
+  flex: 1;
+}
+
+/* Footer styles */
+.footer-container-fixed {
+  padding: 10px 0;
+  /* background-color: #fff; */
+}
+
+
+.footer-container-fixed {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: #fff; /* Set background explicitly */
+  padding: 10px 0;
+  z-index: 1000; /* Ensure it stays on top if needed */
+}
+.footer-logo {
+  background-color: #fff; /* Prevent blending */
+  padding: 2px; /* Optional for spacing */
+  border-radius: 4px; /* Optional for rounded corners */
+}
+
+
+.footer-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+}
+
   .marital-status {
     width: 100%; /* Ensures the select box takes the full width of the form */
   }

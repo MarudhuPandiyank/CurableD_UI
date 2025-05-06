@@ -236,14 +236,30 @@
   .footer-container-fixed {
     bottom: 0;
     width: 100%;
-    background-color: white;
+    /* background-color: white;
     border-top-left-radius: 12px;
-    border-top-right-radius: 12px;
+    border-top-right-radius: 12px; */
     padding: 10px;
     z-index: 999;
     position: fixed;
   }
 
+  .footer-container-fixed {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #fff; /* Set background explicitly */
+    padding: 10px 0;
+    z-index: 1000; /* Ensure it stays on top if needed */
+  }
+
+  .footer-logo {
+    background-color: #fff; /* Prevent blending */
+    padding: 2px; /* Optional for spacing */
+    border-radius: 4px; /* Optional for rounded corners */
+  }
+  
   .footer-content {
     display: flex;
     justify-content: center;
@@ -257,7 +273,7 @@
   }
 
   .footer-text {
-    font-size: 14px;
+    font-size: 15px;
     margin: 0;
   }
 }

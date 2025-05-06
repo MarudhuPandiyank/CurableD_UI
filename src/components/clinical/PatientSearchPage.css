@@ -5,7 +5,7 @@
 .container10 {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    min-height: 100vh;
     background-color: white;
     padding: 1rem;
 }
@@ -14,7 +14,13 @@
     text-align: left;
     margin-top: 10px;
 }
-
+.no-data-message {
+    text-align: center;
+    color: #888;
+    margin-top: 1rem;
+    font-size: 16px;
+  }
+  
 .search-patient-title {
     font-size: 18px;
     color: grey;

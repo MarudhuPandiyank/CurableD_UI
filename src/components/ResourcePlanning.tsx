@@ -156,7 +156,7 @@ const ResourcePlanning: React.FC = () => {
           //required
         />
    <center>
-            <div className="buttons">
+            <div className="buttons_resource">
             {/* <button type="submit" className="Finish-extrawidtgh-button">
              Prev
               </button> */}
@@ -169,9 +169,11 @@ const ResourcePlanning: React.FC = () => {
               </button>
             </div>
           </center>
+          <br/>
+          
       
       </form>
-      <footer className="footer-container">
+      <footer className="footer-container-fixed">
         <div className="footer-content">
           <p className="footer-text">Powered By</p>
           <img src="/assets/Curable logo - rectangle with black text.png" alt="Curable Logo" className="footer-logo" />

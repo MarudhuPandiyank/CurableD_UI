@@ -324,6 +324,7 @@ const OutreachClinicCreation: React.FC = () => {
                             onChange={(e) => setStartDate(e.value as Date | null)}
                           //  showIcon
                             minDate={startDate || new Date()}
+                            dateFormat="dd/mm/yy" 
                             placeholder="Select Start Date"
                         />
                         {/* <DatePicker
@@ -362,6 +363,7 @@ const OutreachClinicCreation: React.FC = () => {
                            // showIcon
                             minDate={startDate || new Date()}
                             placeholder="Select End Date"
+                            dateFormat="dd/mm/yy" 
                         />
                         <img src="./assets/Calendar.png" className="clinic-id-icon" alt="calendar icon" />
                     </div>

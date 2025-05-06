@@ -330,7 +330,12 @@ input[type="date"] {
   gap: 10px;
   margin-top: 20px;
 }
-
+.buttons_resource {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+}
 .Next-button {
   padding: 10px 50px;
   border: 2px solid #d774ad; /* Pink border color */
@@ -362,32 +367,54 @@ input[type="date"] {
   background-color: #d774ad; /* Darker pink on hover */
 }
 
-.Finish-extrawidtgh-button {
-  padding: 10px 50px;
-  border: none;
-  background-color: #d774ad; /* Pink background for 'Next' */
-  color: white; /* White text color */
-  border-radius: 10px; /* Rounded corners */
-  font-size: 16px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  width: 200px !important;
-  height:60px !important;
- 
+
+.buttons_resource {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 2rem;
 }
 
-.Next-extrawidtgh-button {
-  padding: 10px 50px;
-  border: 2px solid #d774ad; /* Pink border color */
-  background-color: white; /* White background for 'Finish' */
-  color: #d774ad; /* Pink text color */
-  border-radius: 10px; /* Rounded corners */
+.Next-extrawidtgh-button,
+.Finish-extrawidtgh-button {
+  padding: 12px 30px;
   font-size: 16px;
+  border-radius: 10px;
   cursor: pointer;
-  transition: all 0.3s ease;
-  width: 200px !important;
-  height:60px !important;
+  transition: 0.3s ease;
+  min-width: 160px;
+  height: 50px;
 }
+
+/* Allocate Resources button */
+.Next-extrawidtgh-button {
+  background-color: white;
+  border: 2px solid #d774ad;
+  color: #d774ad;
+}
+
+/* Submit button */
+.Finish-extrawidtgh-button {
+  background-color: #d774ad;
+  color: white;
+  border: none;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 600px) {
+  .buttons_resource {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .Next-extrawidtgh-button,
+  .Finish-extrawidtgh-button {
+    width: 100%;
+    height: 45px;
+  }
+}
+
 /* ------------------------- */
 .social-habits-container {
     background-color: #f4f4f4; /* Light background color */

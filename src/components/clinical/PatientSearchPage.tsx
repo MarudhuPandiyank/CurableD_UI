@@ -28,10 +28,13 @@ const PatientSearchPage: React.FC = () => {
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
   const [stageList, setStageList] = useState<string[]>([]);
   const [selectedStage, setSelectedStage] = useState<string | null>(null);
+  const [searchSubmitted, setSearchSubmitted] = useState(false);
+
 
   const navigate = useNavigate();
 
   const handleSearch = async () => {
+    setSearchSubmitted(true); 
     const hospitalId = localStorage.getItem("hospitalId");
     const token = localStorage.getItem("token");
     if (!hospitalId || !token) {
@@ -149,8 +152,11 @@ const PatientSearchPage: React.FC = () => {
       <div className="title">
         <h1 style={{ color: 'darkblue' }}>Screening</h1>
       </div>
-      <div className="search-section">
-        <input
+      <main className="content">
+      <div className="search-container">
+
+      <div className="search-input-container">
+      <input
           id="search"
           type="text"
           className="search-input"
@@ -158,6 +164,12 @@ const PatientSearchPage: React.FC = () => {
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           aria-label="Search patient"
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              e.preventDefault();       
+              handleSearch();           
+            }
+          }}
         />
         <button
           className="search-button"
@@ -167,12 +179,17 @@ const PatientSearchPage: React.FC = () => {
           Search
         </button>
       </div>
+      </div>
 
 
 
 
 
-      
+      {!loading && searchSubmitted && patients.length === 0 && (
+  <p className="no-data-message">No data available</p>
+)}
+
+
 
       {loading && <p>Loading patients...</p>}
       {error && <p className="error">{error}</p>}
@@ -238,7 +255,7 @@ const PatientSearchPage: React.FC = () => {
           <br/>
         </>
       )}
-
+</main>
       {/* {patients.length === 0 && !loading && <p>No patients found.</p>} */}
       <footer className="footer-container-fixed">
         <div className="footer-content">

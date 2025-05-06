@@ -142,7 +142,9 @@
   background: #d774ad;
   color: white;
 }
-
+.container21{
+  padding: 2rem;
+}
 @media only screen and (max-width: 768px) {
   .container21 {
     padding: 16px;

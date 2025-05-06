@@ -1,0 +1,23 @@
+@media (max-width: 768px) {
+    .container2 {
+        display: flex;
+            flex-direction: column;
+            min-height: 1vh;
+            font-family: Arial, sans-serif;
+            color: #333;
+            background-color: #fff;
+            padding: 16px;
+    }
+    
+    .container3{
+        display: flex;
+            flex-direction: column;
+            min-height: 1vh;
+            font-family: Arial, sans-serif;
+            color: #333;
+            background-color: #fff;
+            padding: 16px;
+    }
+
+  }
+  

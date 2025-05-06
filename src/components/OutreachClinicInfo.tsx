@@ -173,6 +173,13 @@ const OutreachClinicInfo: React.FC = () => {
               placeholder="Enter Clinic ID or Name"
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault();       
+                  handleSearch();           
+                }
+              }}
+
             />
             <button className="search-button" onClick={handleSearch} disabled={loading}>
               {loading ? 'Searching...' : 'Search'}

@@ -464,17 +464,26 @@ const deleteHabit = (index: number) => {
 <div className="form-group">
   <label htmlFor="income">Monthly Income:</label>
   <input
-    type="number" // Use text to handle controlled input sanitization
+    type="text"
     id="income"
     name="income"
+    inputMode="numeric"
+    pattern="[0-9]*"
     value={income}
     onChange={(e) => {
-      const value = e.target.value.replace(/\D/g, ''); // Remove non-numeric characters
-      setIncome(value);
+      const value = e.target.value.replace(/^0+/, '').replace(/\D/g, ''); // Remove leading zeros and non-digits
+      const numericValue = parseInt(value, 10);
+      if (!isNaN(numericValue) && numericValue <= 99999) {
+        setIncome(value);
+      } else if (value === "") {
+        setIncome("");
+      }
     }}
     placeholder="Enter Monthly Income"
+    maxLength={5}
   />
 </div>
+
         <div className="form-group">
           <label>Type of House:</label>
           <div className="toggle-group">

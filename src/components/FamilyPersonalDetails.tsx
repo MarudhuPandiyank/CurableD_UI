@@ -29,7 +29,7 @@ interface PrefillApiResponse {
 function FamilyPersonalDetails() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState<FamilyMetricsParam[]>([]);
-  const [formValues, setFormValues] = useState<Record<string, string>[]>([{}]);
+  const [formValues, setFormValues] = useState<Record<string, string>[]>([]);
   const [expandedMemberIndex, setExpandedMemberIndex] = useState<number | null>(0);
   const [error, setError] = useState<string | null>(null);
 
@@ -84,12 +84,14 @@ function FamilyPersonalDetails() {
     const trimmedName = testName.trim();
 
     if (trimmedName.toLowerCase().includes('monthlyincome')) {
-      const numericValue = parseInt(value, 10);
-      if (!/^\d*$/.test(value) || numericValue <= 0) {
+      if (value === '' || /^\d{1,5}$/.test(value)) {
+        const parsed = parseInt(value, 10);
+        if (!isNaN(parsed) && parsed > 99999) return;
+        if (/^0\d+/.test(value)) return; // prevent leading zeros
+      } else {
         return;
       }
     }
-
     const updatedFormValues = [...formValues];
     updatedFormValues[index] = {
       ...updatedFormValues[index],
@@ -99,20 +101,24 @@ function FamilyPersonalDetails() {
   };
 
   const handleAddMember = () => {
+    if (formValues.length === 0) {
+      setFormValues([{}]);
+      setExpandedMemberIndex(0);
+      return;
+    }
+
     const lastMember = formValues[formValues.length - 1];
-  
     const hasData = Object.values(lastMember).some(value => value.trim() !== "");
-  
+
     if (!hasData) {
       alert("Please fill at least one field before adding another member.");
       return;
     }
-  
-    setExpandedMemberIndex(null); 
+
     setFormValues((prev) => [...prev, {}]);
-    setExpandedMemberIndex(formValues.length); 
+    setExpandedMemberIndex(formValues.length);
   };
-  
+
   const handleDeleteMember = (index: number) => {
     setFormValues((prev) => prev.filter((_, i) => i !== index));
     if (expandedMemberIndex === index) setExpandedMemberIndex(null);
@@ -191,25 +197,24 @@ function FamilyPersonalDetails() {
   const patientName = localStorage.getItem('patientName');
   const participant = localStorage.getItem('participant');
   const registraionId = localStorage.getItem('registraionId');
-  console.log(patientId,patientName,"patientName")
 
   if (!patientId || !patientName) {
     return <div className="error-message">Missing patient information. Please log in again.</div>;
   }
 
   return (
-    <div className="container2">
+    <div className="container3">
       <Header1 />
       <div className="participant-container">
         <p className="participant-info-text"><strong>Participant: </strong> {participant}</p>
         <p className="participant-info-text"><strong>ID:</strong> {registraionId}</p>
       </div>
- 
+
       <h1 style={{ color: 'darkblue', fontWeight: 'bold' }}>Family Personal Details</h1>
       {error && <div className="error-message">{error}</div>}
 
       <form className="clinic-form" onSubmit={handleSubmit}>
-        {formValues.map((_, formIndex) => (
+        {formValues.length > 0 && formValues.map((_, formIndex) => (
           <div key={formIndex} className="family-member-row">
             {expandedMemberIndex !== formIndex ? (
               <div
@@ -223,6 +228,8 @@ function FamilyPersonalDetails() {
                   display: 'flex',
                   justifyContent: 'space-between',
                   alignItems: 'center',
+                marginBottom: formIndex === formValues.length - 1 ? '20px' : '0px',
+
                 }}
               >
                 <span>{formValues[formIndex][formData[0]?.testName.trim()] || 'Member'}</span>
@@ -269,7 +276,7 @@ function FamilyPersonalDetails() {
                             <option key={i} value={val.trim()}>{val.trim()}</option>
                           ))}
                         </select>
-                      ) : field.valueType === 'Button'  ? (
+                      ) : field.valueType === 'Button' ? (
                         <div className="gender-group">
                           {field.values.map((val, i) => {
                             const trimmedVal = val.trim();
@@ -285,6 +292,14 @@ function FamilyPersonalDetails() {
                             );
                           })}
                         </div>
+                      ) : trimmedName.toLowerCase().includes('monthlyincome') ? (
+                        <input
+                          type="text"
+                          inputMode="numeric"
+                          value={value}
+                          placeholder="Enter Monthly Income"
+                          onChange={(e) => handleFieldChange(formIndex, trimmedName, e.target.value)}
+                        />
                       ) : (
                         <input
                           type="text"
@@ -310,9 +325,11 @@ function FamilyPersonalDetails() {
           <button type="button" className="Next-button" onClick={handleFinish}>Finish</button>
           <button type="submit" className="Finish-button">Next</button>
         </center>
+        <br/>
+        <br/>
       </form>
 
-      <footer className="footer-container">
+      <footer className="footer-container-fixed">
         <div className="footer-content">
           <p className="footer-text">Powered By</p>
           <img src="/assets/Curable logo - rectangle with black text.png" alt="Curable Logo" className="footer-logo" />

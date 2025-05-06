@@ -1,15 +1,15 @@
-
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Header1 from './Header1';
 import Select, { MultiValue } from 'react-select';
 import { Calendar } from 'primereact/calendar';
-import 'primereact/resources/themes/saga-blue/theme.css'; // Import the theme
-import 'primereact/resources/primereact.min.css'; // Import PrimeReact CSS
-import 'primeicons/primeicons.css'; // Import PrimeIcons
-import config from '../config'; 
+import 'primereact/resources/themes/saga-blue/theme.css';
+import 'primereact/resources/primereact.min.css';
+import 'primeicons/primeicons.css';
+import config from '../config';
 import './Common.css';
+import './disease.css';
 
 interface Field {
   testName: string;
@@ -17,7 +17,6 @@ interface Field {
   condition?: Condition[];
   valueType: string;
   values: string[];
-  selectedValues?: string[];
 }
 
 interface ColourOption {
@@ -41,52 +40,41 @@ const App: React.FC = () => {
   const [selectedValues, setSelectedValues] = useState<{ [key: string]: string | string[] }>({});
   const [hiddenFields, setHiddenFields] = useState<string[]>([]);
   const [fieldData, setFieldData] = useState<Field[]>([]);
+  const [formErrors, setFormErrors] = useState<string[]>([]);
   const [dob, setDob] = useState<Date | null>(null);
-  
+
   const navigate = useNavigate();
   const diseaseTestIds = localStorage.getItem('diseaseTestIds');
 
   useEffect(() => {
     const fetchDiseaseTestMaster = async () => {
       try {
-        const token = localStorage.getItem('token'); // Assuming token is stored in localStorage
-
+        const token = localStorage.getItem('token');
         const response = await axios.get<ApiResponse>(
           `${config.appURL}/curable/getMetricsById/${diseaseTestIds}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
+          { headers: { Authorization: `Bearer ${token}` } }
         );
 
         const filteredData = response.data.testMetrics.params;
-        setFieldData(filteredData); // Set the fetched data to fieldData state
+        setFieldData(filteredData);
 
-        // Optionally, you can set hiddenFields based on the conditions in filteredData
         const hidden = new Set<string>();
         filteredData.forEach((field) => {
-          field.condition?.forEach((cond) => {
-            hidden.add(cond.enabledField);
-          });
+          field.condition?.forEach((cond) => hidden.add(cond.enabledField));
         });
         setHiddenFields(Array.from(hidden));
-
       } catch (error) {
         console.error('Error fetching disease test master data:', error);
       }
     };
 
-    if (diseaseTestIds) {
-      fetchDiseaseTestMaster();
-    }
+    if (diseaseTestIds) fetchDiseaseTestMaster();
   }, [diseaseTestIds]);
 
   const handleSelectChange = (testName: string, value: string | string[]) => {
-    setSelectedValues({ ...selectedValues, [testName]: value});
+    setSelectedValues((prev) => ({ ...prev, [testName]: value }));
 
     const fieldsToShow = new Set<string>(hiddenFields);
-
     fieldData.forEach((field) => {
       if (field.testName === testName) {
         field.condition?.forEach((cond) => {
@@ -98,11 +86,28 @@ const App: React.FC = () => {
         });
       }
     });
-
     setHiddenFields(Array.from(fieldsToShow));
   };
 
   const handleFinish = async () => {
+    const requiredFields = fieldData
+      .filter((field) => !hiddenFields.includes(field.testName))
+      .map((field) => field.testName);
+
+    const missingFields = requiredFields.filter((key) => {
+      const val = selectedValues[key];
+      return (
+        val === undefined || val === '' || (Array.isArray(val) && val.length === 0)
+      );
+    });
+
+    if (missingFields.length > 0) {
+      setFormErrors(missingFields);
+      return;
+    }
+
+    setFormErrors([]);
+
     const candidateId = localStorage.getItem('candidateId');
     const payload = {
       candidateId: Number(candidateId),
@@ -111,7 +116,7 @@ const App: React.FC = () => {
       diseaseTestId: 1,
       familyMedicalMetrics: null,
       familyMetrics: null,
-      gender: "FEMALE", // You can dynamically adjust this if necessary
+      gender: "FEMALE",
       genderValid: true,
       hospitalId: 1,
       id: null,
@@ -124,25 +129,20 @@ const App: React.FC = () => {
         params: fieldData.map((field) => ({
           testName: field.testName,
           subtestName: field.subtestName,
-          selectedValues: selectedValues[field.testName] ? [selectedValues[field.testName]] : [],
+          selectedValues: selectedValues[field.testName]
+            ? Array.isArray(selectedValues[field.testName])
+              ? selectedValues[field.testName]
+              : [selectedValues[field.testName]]
+            : [],
         })),
       },
     };
 
     try {
       const token = localStorage.getItem('token');
-      if (!token) {
-        console.error("Token is missing");
-        return;
-      }
-
       await axios.post(`${config.appURL}/curable/candidatehistory`, payload, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
-
-      console.log('Data submitted successfully!');
       navigate('/SuccessMessageScreeningFInal');
     } catch (error) {
       console.error('Error submitting data:', error);
@@ -152,115 +152,132 @@ const App: React.FC = () => {
   const [titleName, setTitleName] = useState("Disease Specific Details");
 
   useEffect(() => {
-    const selectedStage = localStorage.getItem("selectedStage");
-  
-    if (selectedStage === "Breast screening Test") {
-      setTitleName("Breast Screening");
-    } else if (selectedStage === "Oral Screening Test") {
-      setTitleName("Oral Screening");
-    } else if (selectedStage === "Cervical Screening Test") {
-      setTitleName("Cervical Screening");
-    } else {
-      setTitleName("Disease Specific Details");
-    }
+    const stage = localStorage.getItem("selectedStage");
+    if (stage === "Breast screening Test") setTitleName("Breast Screening");
+    else if (stage === "Oral Screening Test") setTitleName("Oral Screening");
+    else if (stage === "Cervical Screening Test") setTitleName("Cervical Screening");
   }, []);
 
   const pName = localStorage.getItem("patientName");
   const regId = localStorage.getItem("registrationId");
-  const patientAge = localStorage.getItem('patientAge');
-  const patientgender = localStorage.getItem('patientgender');
-
-  
-  console.log(patientAge,"patientAge")
-
+  const patientAge = localStorage.getItem("patientAge");
+  const patientgender = localStorage.getItem("patientgender");
 
   return (
     <div className="container2">
       <Header1 />
       <div className="participant-info-container">
-        <p className="participant-info-text"><strong>Participant: </strong> {pName}{" "}{patientAge}{"/"}{patientgender}</p>
-        <p className="participant-info-text"><strong>ID:</strong> {regId}</p>
+        <p><strong>Participant: </strong>{pName} {patientAge}/{patientgender}</p>
+        <p><strong>ID:</strong> {regId}</p>
       </div>
-      <div className="clinic-details-form">
+      <br/>
+
+      <div className="clinic-details-form-newscreening">
         <h1 style={{ color: 'darkblue' }}>{titleName}</h1>
-        {fieldData.map((field) =>
-          !hiddenFields.includes(field.testName) && (
+
+        {fieldData.map((field) => {
+          if (hiddenFields.includes(field.testName)) return null;
+          console.log("Rendering field:", field); // ✅ Console will work
+
+          return (
             <div key={field.testName} className="form-group">
-              <h3 className="form-group" style={{ fontSize: "15px" }}>{field.testName}</h3>
+              <label style={{ fontSize: '15px' }}>{field.testName}</label>
+
               {field.valueType === "SingleSelect" && (
-                <select
-                  value={selectedValues[field.testName] || ""}
-                  onChange={(e) => handleSelectChange(field.testName, e.target.value)}
-                >
-                  <option value="" disabled>Select an option</option>
-                  {field.values.map((value) => (
-                    <option key={value} value={value}>
-                      {value}
-                    </option>
-                  ))}
-                </select>
+                <>
+                  <select
+                    value={selectedValues[field.testName] || ""}
+                    onChange={(e) => handleSelectChange(field.testName, e.target.value)}
+                  >
+                    <option value="" disabled>Select an option</option>
+                    {field.values.map((val) => (
+                      <option key={val} value={val}>{val}</option>
+                    ))}
+                  </select>
+                  {formErrors.includes(field.testName) && (
+                    <span className="error-message">This field is required</span>
+                  )}
+                </>
               )}
-              {field.valueType === 'Multi Select' && (
-                <Select
-                  isMulti
-                  name={field.testName}
-                  options={field.values.map((value) => ({ value, label: value }))}
-                  onChange={(option: MultiValue<ColourOption>) => handleSelectChange(field.testName, option.map(opt => opt.value))} // Updated this line
-                  className="form-group"
-                />
+
+              {field.valueType === "Multi Select" && (
+                <>
+                  <Select
+                    isMulti
+                    options={field.values.map((val) => ({ value: val, label: val }))}
+                    onChange={(options: MultiValue<ColourOption>) =>
+                      handleSelectChange(field.testName, options.map(o => o.value))
+                    }
+                  />
+                  {formErrors.includes(field.testName) && (
+                    <span className="error-message">This field is required</span>
+                  )}
+                </>
               )}
+
               {field.valueType === "Input" && (
-                <input
-                  type="text"
-                  value={selectedValues[field.testName] || ""}
-                  onChange={(e) => handleSelectChange(field.testName, e.target.value)}
-                />
+                <>
+                  <input
+                    type="text"
+                    value={selectedValues[field.testName] || ""}
+                    onChange={(e) => handleSelectChange(field.testName, e.target.value)}
+                  />
+                  {formErrors.includes(field.testName) && (
+                    <span className="error-message">This field is required</span>
+                  )}
+                </>
               )}
+
               {field.valueType === "Date" && (
-                <label>
-                  <label style={{ color: 'black' }}>{field.testName}*:</label>
-                  <span style={{ color: 'darkred', fontWeight: 'bold' }}></span>
-                  <div className="input-with-icon">
-                    <Calendar
-                      value={(selectedValues[field.testName] ? new Date(selectedValues[field.testName] as string) : dob) || null}
-                      onChange={(e) => {
-                        const dateValue = e.value as Date;
-                        setDob(dateValue);
-                        handleSelectChange(field.testName, dateValue.toISOString().split('T')[0]);
-                      }}
-                      dateFormat="yy-mm-dd"
-                      placeholder="yyyy-mm-dd"
-                      required
-                      maxDate={new Date()}
-                    />
-                    <img src="./assets/Calendar.png" className="clinic-id-icon" alt="calendar icon" />
-                  </div>
-                </label>
+                <>
+                  <Calendar
+                    value={selectedValues[field.testName]
+                      ? new Date(selectedValues[field.testName] as string)
+                      : dob}
+                    onChange={(e) => {
+                      const date = e.value as Date;
+                      setDob(date);
+                      handleSelectChange(field.testName, date.toISOString().split('T')[0]);
+                    }}
+                    dateFormat="yy-mm-dd"
+                    placeholder="yyyy-mm-dd"
+                    maxDate={new Date()}
+                  />
+                  {formErrors.includes(field.testName) && (
+                    <span className="error-message">This field is required</span>
+                  )}
+                </>
               )}
-            {field.valueType === 'SingleSelectButton' && (
-                <div className="gender-group">
-                  {field.values.map((value) => (
-                    <button
-                      key={value}
-                      type="button"
-                      className={`gender-btn ${selectedValues[field.testName] === value ? 'active' : ''}`}
-                      onClick={() => handleSelectChange(field.testName, value)}
-                    >
-                      {value}
-                    </button>
-                  ))}
-                </div>
+
+              {field.valueType === "SingleSelectButton" && (
+                <>
+                  <div className="gender-group">
+                    {field.values.map((val) => (
+                      <button
+                        key={val}
+                        type="button"
+                        className={`gender-btn ${selectedValues[field.testName] === val ? 'active' : ''}`}
+                        onClick={() => handleSelectChange(field.testName, val)}
+                      >
+                        {val}
+                      </button>
+                    ))}
+                  </div>
+                  {formErrors.includes(field.testName) && (
+                    <span className="error-message">This field is required</span>
+                  )}
+                </>
               )}
             </div>
-          )
-        )}
+          );
+        })}
 
-        <center className="buttons">
+        <center>
           <button className="Finish-button" onClick={handleFinish}>Finish</button>
         </center>
       </div>
-    
-      <footer className="footer-container">
+
+      <footer className="footer-container-fixed">
         <div className="footer-content">
           <p className="footer-text">Powered By</p>
           <img src="/assets/Curable logo - rectangle with black text.png" alt="Curable Logo" className="footer-logo" />
