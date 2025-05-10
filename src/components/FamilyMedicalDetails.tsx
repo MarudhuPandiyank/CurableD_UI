@@ -234,7 +234,7 @@ const FamilyMedicalDetails: React.FC = () => {
         ))}
 
         <div className="button-container">
-          <button type="button" className="Next-button" onClick={handleAddMember}>Add Member</button>
+           <button type="button" className="Next-button_familydetails" onClick={handleAddMember}>Add Member</button>
         </div>
 
         <center className="buttons">

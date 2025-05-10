@@ -448,18 +448,20 @@ const deleteHabit = (index: number) => {
         <div className="form-group">
   <label htmlFor="alt-mobile">Alternate Mobile No:</label>
   <input
-    type="number" // Use text to handle controlled length
-    id="alt-mobile"
-    name="alt-mobile"
-    value={altMobile}
-    onChange={(e) => {
-      const value = e.target.value.replace(/\D/g, ''); // Remove non-numeric characters
-      if (value.length <= 10) {
-        setAltMobile(value); // Update state only if the length is <= 10
-      }
-    }}
-    placeholder="Enter Alternate Mobile No"
-  />
+  type="text"
+  inputMode="numeric"
+  id="alt-mobile"
+  name="alt-mobile"
+  value={altMobile}
+  onChange={(e) => {
+    const value = e.target.value.replace(/\D/g, ''); // Remove non-digits
+    if (value.length <= 10) {
+      setAltMobile(value);
+    }
+  }}
+  placeholder="Enter Alternate Mobile No"
+  maxLength={10}
+/>
 </div>
 <div className="form-group">
   <label htmlFor="income">Monthly Income:</label>
@@ -471,19 +473,18 @@ const deleteHabit = (index: number) => {
     pattern="[0-9]*"
     value={income}
     onChange={(e) => {
-      const value = e.target.value.replace(/^0+/, '').replace(/\D/g, ''); // Remove leading zeros and non-digits
+const value = e.target.value.replace(/^0+/, '').replace(/\D/g, ''); 
       const numericValue = parseInt(value, 10);
-      if (!isNaN(numericValue) && numericValue <= 99999) {
+      if (!isNaN(numericValue) && numericValue <= 999999) {
         setIncome(value);
       } else if (value === "") {
         setIncome("");
       }
     }}
     placeholder="Enter Monthly Income"
-    maxLength={5}
+    maxLength={6} 
   />
 </div>
-
         <div className="form-group">
           <label>Type of House:</label>
           <div className="toggle-group">
@@ -532,19 +533,20 @@ const deleteHabit = (index: number) => {
         <h2>ID Proof</h2>
         <div className="form-group">
   <label htmlFor="aadhaar">Aadhaar Number:</label>
-  <input
-    type="number"
-    id="aadhaar"
-    name="aadhaar"
-    value={aadhaar}
-    onChange={(e) => {
-      const value = e.target.value.replace(/\D/g, '').slice(0, 12); // Remove non-numeric and limit to 12 digits
-      setAadhaar(value);
-    }}
-    placeholder="Enter Aadhaar Number"
-    maxLength={12} // Restrict to 12 characters
-  />
-</div>
+<input
+  type="text"
+  id="aadhaar"
+  name="aadhaar"
+  inputMode="numeric"
+  pattern="\d*"
+  value={aadhaar}
+  onChange={(e) => {
+    const value = e.target.value.replace(/\D/g, '').slice(0, 12); // Only digits, max 12
+    setAadhaar(value);
+  }}
+  placeholder="Enter Aadhaar Number"
+  maxLength={12}
+/></div>
 <div className="form-group">
   <label htmlFor="voter-id">Voter ID:</label>
   <input

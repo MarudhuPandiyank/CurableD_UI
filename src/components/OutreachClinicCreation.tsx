@@ -231,18 +231,18 @@ const OutreachClinicCreation: React.FC = () => {
                 <label>
                     <span style={{ color: "black" }}>Pincode*:</span><span style={{ color: 'darkred', fontWeight: 'bold', }}></span>
                     <input
-                        type="number"
-                        placeholder="Enter Pincode"
-                        value={pincode}
-                        onChange={(e) => {
-                            // Allow only numbers and limit to 6 characters
-                            const value = e.target.value;
-                            if (/^\d{0,6}$/.test(value)) {  // Regex allows only digits and up to 6 characters
-                                setPincode(value);
-                            }
-                        }}
-                        required
-                    />
+    type="text"
+    inputMode="numeric" 
+    placeholder="Enter Pincode"
+    value={pincode}
+    onChange={(e) => {
+      const value = e.target.value;
+      if (/^\d{0,6}$/.test(value)) {
+        setPincode(value);
+      }
+    }}
+    required
+  />
                 </label>
                 <label>
                     <span style={{ color: "black" }}>State Name*:</span><span style={{ color: 'darkred', fontWeight: 'bold', }}></span>
@@ -384,22 +384,20 @@ const OutreachClinicCreation: React.FC = () => {
                     <span style={{ color: 'black' }}>Outreach Clinic ID*:</span>
                     <span style={{ color: 'darkred', fontWeight: 'bold' }}></span>
                     <div className="input-with-icon">
-                        <input
-                            type="number"
-                            placeholder="Show 7 digit System ID"
-                            value={clinicCode}
-                            onChange={(e) => {
-                                // Allow only numbers and limit to 6 characters
-                                const value = e.target.value;
-                                if (/^\d{0,7}$/.test(value)) {  // Regex allows only digits and up to 6 characters
-                                    setClinicCode(value);
-                                }
-                            }}
-                            required
+                       <input
+  type="text"
+  inputMode="numeric" 
+  placeholder="Show 7 digit System ID"
+  value={clinicCode}
+  onChange={(e) => {
+    const value = e.target.value;
+    if (/^\d{0,7}$/.test(value)) { // Allows up to 7 digits
+      setClinicCode(value);
+    }
+  }}
+  required
+/>
 
-                        // Prefill with clinicId state
-                        //readOnly // Make the field read-only
-                        />
                         <img
                             src="./Curable Icons/PNG/Group 1269.png"
                             className="clinic-id-icon"

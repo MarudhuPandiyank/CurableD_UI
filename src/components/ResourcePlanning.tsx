@@ -37,12 +37,25 @@ const ResourcePlanning: React.FC = () => {
 
   const [loading, setLoading] = useState(false);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
+const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const { name, value } = e.target;
+  const numberOnlyFields = [
+    'noProgramCoordinators',
+    'noCampcordinators',
+    'noSocialWorkers',
+    'noNurses',
+    'noDoctors',
+  ];
+
+  if (numberOnlyFields.includes(name)) {
+    if (!/^\d*$/.test(value)) return; 
+  }
+
+  setFormData((prev) => ({
+    ...prev,
+    [name]: value,
+  }));
+};
   const { noProgramCoordinators, noCampcordinators, noSocialWorkers, noNurses, noDoctors } = formData;
   const requestData = {
     campDTO: {
@@ -105,56 +118,56 @@ const ResourcePlanning: React.FC = () => {
     <div className="container21">
        <Header1 />
       <h1 style={{ color: 'darkblue' }}>Resource Planning</h1>
-      <form className="clinic-form" onSubmit={handleSubmit}>
-        <label><span style={{ color: "darkblue" }}>Program Co-ordinator:</span> </label>
-        <input
-          type="number"
-          placeholder="Enter No of Program Co-ordinators"
-          name="noProgramCoordinators"
-          value={formData.noProgramCoordinators}
-          onChange={handleChange}
-          //required
-        />
+<form className="clinic-form" onSubmit={handleSubmit}>
+  <label><span style={{ color: "darkblue" }}>Program Co-ordinator:</span> </label>
+  <input
+    type="text"
+    inputMode="numeric"
+    placeholder="Enter No of Program Co-ordinators"
+    name="noProgramCoordinators"
+    value={formData.noProgramCoordinators}
+    onChange={handleChange}
+  />
 
-        <label> <span style={{ color: "darkblue" }}>Camp Co-ordinator:</span></label>
-        <input
-          type="number"
-          placeholder="Enter No of Camp Co-ordinators"
-          name="noCampcordinators"
-          value={formData.noCampcordinators}
-          onChange={handleChange}
-          //required
-        />
+  <label><span style={{ color: "darkblue" }}>Camp Co-ordinator:</span></label>
+  <input
+    type="text"
+    inputMode="numeric"
+    placeholder="Enter No of Camp Co-ordinators"
+    name="noCampcordinators"
+    value={formData.noCampcordinators}
+    onChange={handleChange}
+  />
 
-        <label><span style={{ color: "darkblue" }}>Social Workers:</span></label>
-        <input
-          type="number"
-          placeholder="Enter No of Social Workers"
-          name="noSocialWorkers"
-          value={formData.noSocialWorkers}
-          onChange={handleChange}
-          //required
-        />
+  <label><span style={{ color: "darkblue" }}>Social Workers:</span></label>
+  <input
+    type="text"
+    inputMode="numeric"
+    placeholder="Enter No of Social Workers"
+    name="noSocialWorkers"
+    value={formData.noSocialWorkers}
+    onChange={handleChange}
+  />
 
-        <label><span style={{ color: "darkblue" }}>Nurses:</span></label>
-        <input
-          type="number"
-          placeholder="Enter No of Nurses"
-          name="noNurses"
-          value={formData.noNurses}
-          onChange={handleChange}
-          //required
-        />
+  <label><span style={{ color: "darkblue" }}>Nurses:</span></label>
+  <input
+    type="text"
+    inputMode="numeric"
+    placeholder="Enter No of Nurses"
+    name="noNurses"
+    value={formData.noNurses}
+    onChange={handleChange}
+  />
 
-        <label><span style={{ color: "darkblue" }}>Doctors:</span></label>
-        <input
-          type="number"
-          placeholder="Enter No of Doctors"
-          name="noDoctors"
-          value={formData.noDoctors}
-          onChange={handleChange}
-          //required
-        />
+  <label><span style={{ color: "darkblue" }}>Doctors:</span></label>
+  <input
+    type="text"
+    inputMode="numeric"
+    placeholder="Enter No of Doctors"
+    name="noDoctors"
+    value={formData.noDoctors}
+    onChange={handleChange}
+  />
    <center>
             <div className="buttons_resource">
             {/* <button type="submit" className="Finish-extrawidtgh-button">

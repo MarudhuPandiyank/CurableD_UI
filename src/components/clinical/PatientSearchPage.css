@@ -16,7 +16,7 @@
 }
 .no-data-message {
     text-align: center;
-    color: #888;
+    color: red;
     margin-top: 1rem;
     font-size: 16px;
   }

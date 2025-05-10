@@ -275,8 +275,9 @@ const OutreachClinicInfo: React.FC = () => {
             </Button>
           </DialogActions>
         </Dialog>
+        <br/>
       </main>
-      <footer className="footer-container">
+      <footer className="footer-container-fixed">
         <div className="footer-content">
           <p className="footer-text">Powered By</p>
           <img src="/assets/Curable logo - rectangle with black text.png" alt="Curable Logo" className="footer-logo" />

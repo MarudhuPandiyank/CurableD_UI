@@ -80,13 +80,13 @@ function FamilyPersonalDetails() {
     fetchFamilyPersonalMetrics();
   }, []);
 
-  const handleFieldChange = (index: number, testName: string, value: string) => {
+ const handleFieldChange = (index: number, testName: string, value: string) => {
     const trimmedName = testName.trim();
 
     if (trimmedName.toLowerCase().includes('monthlyincome')) {
-      if (value === '' || /^\d{1,5}$/.test(value)) {
+      if (value === '' || /^\d{1,6}$/.test(value)) {
         const parsed = parseInt(value, 10);
-        if (!isNaN(parsed) && parsed > 99999) return;
+        if (!isNaN(parsed) && parsed > 999999) return;
         if (/^0\d+/.test(value)) return; // prevent leading zeros
       } else {
         return;
@@ -317,7 +317,7 @@ function FamilyPersonalDetails() {
         ))}
 
         <div className="button-container">
-          <button type="button" className="Next-button" onClick={handleAddMember}>Add Member</button>
+<button type="button" className="Next-button_familydetails" onClick={handleAddMember}>Add Member</button>
         </div>
 
         <center className="buttons">

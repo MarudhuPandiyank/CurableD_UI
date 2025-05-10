@@ -57,6 +57,10 @@ const MedicalomenHealthDetails: React.FC = () => {
   const [showModal, setShowModal] = useState(false); // State for modal visibility
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  const [errorMenarche, setErrorMenarche] = useState('');
+const [errorFirstChild, setErrorFirstChild] = useState('');
+const [errorLastChild, setErrorLastChild] = useState('');
+
 
   const medicalHistoryOptions = [
     { value: 'History1', label: 'Nil' },
@@ -95,6 +99,15 @@ const navigate = useNavigate();
   const handleSubmit = async (event: React.FormEvent ,navigateTo: string) => {
     event.preventDefault();
     const patientId = localStorage.getItem('patientId');
+
+    if (
+  parseInt(ageAtMenarche || '0') > age ||
+  parseInt(ageAtFirstChild || '0') < parseInt(ageAtMarriage || '0') ||
+  parseInt(ageAtLastChild || '0') < parseInt(ageAtFirstChild || '0')
+) {
+  alert('Please correct validation errors before proceeding.');
+  return;
+}
     const payload = {
       abnormalBleedingVaginum: selectedBleedingIssues,
       ageAtFirstChild: parseInt(ageAtFirstChild) || 0,
@@ -207,8 +220,13 @@ const navigate = useNavigate();
     fetchPrefillData();
   }, []);
 
-  const participant = localStorage.getItem('participant');
+  const participant = localStorage.getItem('participant')|| '';
   const gender=participant?.split('/')[1];
+   const ageString = participant.split(' ')[1]?.split('/')[0] || '0';
+const age = parseInt(ageString, 10);
+
+console.log(age,gender,"skkksa")
+
   const registraionId = localStorage.getItem('registraionId');
   return (
     <div className="container2">
@@ -238,40 +256,50 @@ const navigate = useNavigate();
 
           <div className="form-group">
   <label>Blood Pressure:</label>
-  <input
-    type="number"
-    placeholder="Enter Blood Pressure"
-    value={bloodPressure}
-    onChange={(e) => {
-      // Allow only numeric input, or you can extend the logic to allow special characters like '/' or '-'
-      const value = e.target.value.replace(/[^0-9-]/g, '');
-      setBloodPressure(value);
-    }}
-  />
+ <input
+  type="text"
+  inputMode="numeric" 
+  placeholder="Enter Blood Pressure"
+  value={bloodPressure}
+  onChange={(e) => {
+    // Allow only numbers, slash (/), and dash (-)
+    const value = e.target.value.replace(/[^0-9/-]/g, '');
+    setBloodPressure(value);
+  }}
+/>
+
 
   <label>Pulse Rate:</label>
   <input
-    type="number"
-    placeholder="Enter Pulse Rate"
-    value={pulseRate}
-    onChange={(e) => {
-      // Allow only numeric input
-      const value = e.target.value.replace(/[^0-9]/g, '');
-      setPulseRate(value);
-    }}
-  />
+  type="text"
+  inputMode="numeric" 
+  placeholder="Enter Pulse Rate"
+  value={pulseRate}
+  onChange={(e) => {
+    const value = e.target.value.replace(/[^0-9]/g, ''); // Allow only digits
+    setPulseRate(value);
+  }}
+  maxLength={3} // Optional: restrict to 3 digits like 120
+/>
+
 
   <label>Weight (Kgs):</label>
-  <input
-    type="number"
-    placeholder="Enter Weight (Kgs)"
-    value={weight}
-    onChange={(e) => {
-      // Allow only numeric input for weight
-      const value = e.target.value.replace(/[^0-9.]/g, ''); // Allow numbers and decimal points
+ <input
+  type="text"
+  inputMode="decimal" 
+  placeholder="Enter Weight (Kgs)"
+  value={weight}
+  onChange={(e) => {
+    // Allow only digits and one optional decimal point
+    let value = e.target.value;
+    // Remove all non-numeric characters except one "."
+    if (/^\d*\.?\d{0,2}$/.test(value)) {
       setWeight(value);
-    }}
-  />
+    }
+  }}
+  maxLength={6} // Optional: limits input length
+/>
+
 </div>
 
 
@@ -336,19 +364,22 @@ const navigate = useNavigate();
         {(gender === 'FEMALE' || gender === 'OTHER') && (<fieldset>
           <h1 style={{ color: 'darkblue', fontWeight: 'bold', }}>Women's Health</h1>
           <label>Age at Menarche:</label>
-          <input
+        <input
   type="text"
   inputMode="numeric"
   placeholder="Enter Age at Menarche"
   value={ageAtMenarche}
   onChange={(e) => {
     const val = e.target.value;
-
+    const num = parseInt(val || '0');
     if (/^(|[1-9][0-9]?)$/.test(val)) {
       setAgeAtMenarche(val);
+      setErrorMenarche(num > age ? "Age at Menarche cannot be greater than participant's age." : '');
     }
   }}
 />
+{errorMenarche && <span className="error-message">{errorMenarche}</span>}
+
 
           <label>When was Last Menstruation:</label>
           <select
@@ -376,12 +407,20 @@ const navigate = useNavigate();
           </select>
 
           <label>Age at Marriage:</label>
-          <input
-            type="number"
-            placeholder="Enter Age at Marriage"
-            value={ageAtMarriage}
-            onChange={(e) => setAgeAtMarriage(e.target.value)}
-          />
+         <input
+  type="text"
+  inputMode="numeric"
+  placeholder="Enter Age at Marriage"
+  value={ageAtMarriage}
+  onChange={(e) => {
+    const val = e.target.value.replace(/\D/g, ''); // only digits
+    if (val.length <= 2) {
+      setAgeAtMarriage(val);
+    }
+  }}
+  maxLength={2}
+/>
+
 
           <label>Total Pregnancies:</label>
           <input
@@ -399,30 +438,48 @@ const navigate = useNavigate();
 
 <div className="form-group">
   <label>Age at First Child:</label>
-  <input
-    type="number"
-    placeholder="Enter Age at First Child"
-    value={ageAtFirstChild}
-    onChange={(e) => {
-      // Allow only numeric input for age
-      const value = e.target.value.replace(/[^0-9]/g, ''); // Remove non-numeric characters
-      setAgeAtFirstChild(value);
-    }}
-  />
+<input
+  type="text"
+  inputMode="numeric" 
+  placeholder="Enter Age at First Child"
+  value={ageAtFirstChild}
+  maxLength={2}
+  onChange={(e) => {
+    const value = e.target.value.replace(/[^0-9]/g, ''); // Only digits
+    setAgeAtFirstChild(value);
+
+    if (parseInt(value || '0') < parseInt(ageAtMarriage || '0')) {
+      setErrorFirstChild('Age at First Child must be greater than or equal to Age at Marriage');
+    } else {
+      setErrorFirstChild('');
+    }
+  }}
+/>
+{errorFirstChild && <span className="error-message">{errorFirstChild}</span>}
+
 </div>
 
 <div className="form-group">
   <label>Age at Last Child:</label>
-  <input
-    type="number"
-    placeholder="Enter Age of Last Child"
-    value={ageAtLastChild}
-    onChange={(e) => {
-      // Allow only numeric input for age
-      const value = e.target.value.replace(/[^0-9]/g, ''); // Remove non-numeric characters
-      setAgeAtLastChild(value);
-    }}
-  />
+<input
+  type="text"
+  inputMode="numeric" // Opens numeric keyboard on mobile
+  placeholder="Enter Age of Last Child"
+  value={ageAtLastChild}
+  maxLength={2}
+  onChange={(e) => {
+    const value = e.target.value.replace(/[^0-9]/g, ''); // Allow only digits
+    setAgeAtLastChild(value);
+
+    if (parseInt(value || '0') <= parseInt(ageAtFirstChild || '0')) {
+      setErrorLastChild('Age at Last Child must be greater than or equal to Age at First Child');
+    } else {
+      setErrorLastChild('');
+    }
+  }}
+/>
+{errorLastChild && <span className="error-message">{errorLastChild}</span>}
+
 </div>
 
           <label>Are You Currently Pregnant?</label>
@@ -445,13 +502,14 @@ const navigate = useNavigate();
 
           <label>Method of Contraception Used:</label>
           <select
-            value={selectedContraception}
+            value={selectedContraception} 
             onChange={(e) => setSelectedContraception(e.target.value)}
           >
             <option value="">Select</option>
-            <option value="Contraception1">Nil</option>
             <option value="Contraception2">Condom</option>
-            <option value="Contraception3">Pil</option>
+            <option value="Contraception6">Iucd</option>
+            <option value="Contraception1">Nil</option>
+            <option value="Contraception3">Pill</option>
             <option value="Contraception4">Tubectomy</option>
             <option value="Contraception5">Others</option>
           </select>

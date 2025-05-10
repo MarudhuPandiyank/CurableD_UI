@@ -5,7 +5,7 @@ import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Typography }
 import '../components/OutreachClinicInfo.css';
 import Header1 from './Header1';
 import config from '../config';  // Import the config file
-import './Common.css';
+import './Common.css'; 
 
 interface Clinic {
   id: string;

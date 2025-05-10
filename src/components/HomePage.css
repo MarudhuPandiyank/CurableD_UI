@@ -351,6 +351,25 @@ input[type="date"] {
   background-color: #fce4f9; /* Light pink on hover */
 }
 
+.Next-button_familydetails:hover {
+  background-color: #fce4f9; /* Light pink on hover */
+}
+
+
+.Next-button_familydetails {
+  padding: 10px 50px;
+  border: 2px solid #d774ad; /* Pink border color */
+  background-color: white; /* White background for 'Finish' */
+  color: #d774ad; /* Pink text color */
+  border-radius: 10px; /* Rounded corners */
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.Next-button_familydetails:hover {
+  background-color: #fce4f9; /* Light pink on hover */
+}
 .Finish-button {
   padding: 10px 50px;
   border: none;
@@ -538,6 +557,13 @@ h1 {
     max-width: 300px;   
   }
 
+  .Next-button_familydetails{
+    padding: 10px 20px; 
+    font-size: 14px;     
+    width: 100%;         
+
+
+  }
   /* .buttons {
     flex-direction: column;
     align-items: center;

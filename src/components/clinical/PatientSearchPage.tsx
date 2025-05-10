@@ -185,10 +185,9 @@ const PatientSearchPage: React.FC = () => {
 
 
 
-      {!loading && searchSubmitted && patients.length === 0 && (
-  <p className="no-data-message">No data available</p>
+{!loading && searchSubmitted && patients.length === 0 && (
+  <p className="no-data-message">No patient found</p>
 )}
-
 
 
       {loading && <p>Loading patients...</p>}

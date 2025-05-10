@@ -29,6 +29,7 @@ const ClinicSearchPage: React.FC = () => {
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
   const [stageList, setStageList] = useState<string[]>([]);
   const [selectedStage, setSelectedStage] = useState<string | null>(null);
+  const [searchAttempted, setSearchAttempted] = useState(false);
 
   const navigate = useNavigate();
 
@@ -42,6 +43,7 @@ const ClinicSearchPage: React.FC = () => {
 
     setLoading(true);
     setError(null);
+     setSearchAttempted(true);
 
     try {
       const response = await axios.post<Patient[]>(
@@ -161,6 +163,12 @@ const ClinicSearchPage: React.FC = () => {
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           aria-label="Search patient"
+           onKeyDown={(e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault(); 
+      handleSearch(); // trigger search
+    }
+  }}
         />
         <button
           className="search-button"
@@ -171,9 +179,9 @@ const ClinicSearchPage: React.FC = () => {
         </button>
       </div>
 
-      {loading && <p>Loading patients...</p>}
-      {error && <p className="error">{error}</p>}
-
+{!loading && searchAttempted && patients.length === 0 && (
+  <p className="no-data-message">No patient found</p>
+)}
       {patients.length > 0 && (
         <>
           <div className="patient-list">

@@ -62,6 +62,8 @@ const NewScreeningEnrollment: React.FC = () => {
   const [registraionId, setRegistraionId] = useState('');
   const [mobileError, setMobileError] = useState('');
 const [streetIdError, setStreetIdError] = useState('');
+const [genderError, setGenderError] = useState('');
+
 
 
   useEffect(() => {
@@ -171,6 +173,8 @@ const [streetIdError, setStreetIdError] = useState('');
 
     setMobileError('');
   setStreetIdError('');
+  setGenderError('');
+
 
   let hasError = false;
 
@@ -181,6 +185,11 @@ const [streetIdError, setStreetIdError] = useState('');
 
   if (streetId && streetId.length < 3) {
     setStreetIdError('Street ID must be 3 digits.');
+    hasError = true;
+  }
+
+   if (!gender) {
+    setGenderError('Please select gender.');
     hasError = true;
   }
 
@@ -287,24 +296,28 @@ const [streetIdError, setStreetIdError] = useState('');
 
           <div className="form-group">
   <label style={{ color: 'black' }}>Mobile Number*:</label>
-  <input
-    type="number" // Use text to apply maxLength
-    inputMode="numeric" // Numeric keyboard on mobile
-    pattern="[0-9]*" // Ensure only numeric input
-    placeholder="Enter Mobile Number"
-    value={mobile}
-    onChange={(e) => {
-      const value = e.target.value.replace(/\D/g, ''); // Allow only numeric input
-      if (value.length <= 10) {
-        setMobile(value); // Update state only if length is <= 10
-        setMobileError(''); 
+<input
+  type="text" // Use text to enable maxLength
+  inputMode="numeric" // Mobile number keyboard
+  pattern="[0-9]*" // Accept only digits
+  placeholder="Enter Mobile Number"
+  value={mobile}
+  maxLength={10}
+  onChange={(e) => {
+    const value = e.target.value.replace(/\D/g, ''); // Remove non-digits
+    if (value.length <= 10) {
+      setMobile(value);
+      if (value.length < 10) {
+        setMobileError('Mobile number must be 10 digits.');
+      } else {
+        setMobileError('');
       }
-    }}
-    required
-  />
-  {mobileError && <p className="errors_message">{mobileError}</p>}
+    }
+  }}
+  required
+/>
+{mobileError && <p className="errors_message">{mobileError}</p>}
 </div>
-
 
           <div className="form-group">
             <label style={{ color: 'black' }}>Gender*:</label>
@@ -323,6 +336,8 @@ const [streetIdError, setStreetIdError] = useState('');
               ))}
               
             </div>
+            {genderError && <p className="errors_message">{genderError}</p>}
+
           </div>
     
           <label>

@@ -34,10 +34,10 @@ import SuccessMessageScreeningFInal from './components/SuccessMessageScreeningFI
 import SuccessMessageClinicalFInal from './components/SuccessMessageClinicalFInal';
 import DynamicScreen from './components/DynamicScreen';
 import SuccessMessageEdit from './components/SuccessMessageEdit';
-
 import DiseaseSpecificDetailsScreening from './components/DiseaseSpecificDetailsScreening';
 import PatientEdit from './components/PatientEdit';
 import refreshToken from './components/refreshToken';
+import ScrollToTop from './ScrollToTop';
 
 
 const App: React.FC = () => {
@@ -53,6 +53,7 @@ const App: React.FC = () => {
   }, []);
   return (
     <Router>
+    <ScrollToTop />
       <Routes>
         {/* Public Routes */}
         <Route path="/" element={<Login />} />
