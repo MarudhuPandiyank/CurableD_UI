@@ -5,6 +5,8 @@
   flex-direction: column;
   align-items: center;
   padding: 20px;
+    margin-top: -45px;
+
 }
 
 .profile-header-container {
@@ -109,6 +111,52 @@
 .profile-curable-logo {
   width: 150px;
   margin-top: 10px;
+}
+
+.password-field-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.password-field-wrapper input {
+  width: 100%;
+  padding: 10px 40px 10px 10px; /* right padding added for icon space */
+  border-radius: 60px;
+  border: 1px solid #ccc;
+  margin-bottom: 20px;
+  background-color: #f5f5f5;
+  font-size: 16px;
+}
+
+.password-field-wrapper .eye-icon {
+  position: absolute;
+  top: 37%;
+  right: 16px;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #888;
+}
+
+.gender-button-group {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.gender-button {
+  padding: 10px 20px;
+  border-radius: 30px;
+  border: 1px solid #ccc;
+  background-color: #f0f0f0;
+  font-weight: bold;
+  cursor: pointer;
+  flex: 1;
+}
+
+.gender-button.active {
+  background-color:#d774ad;
+  color: white;
+  border: 1px solid #d774ad;
 }
 
 /* Add responsive media query if needed */

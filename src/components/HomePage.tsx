@@ -30,10 +30,16 @@ console.log('test');
                 </div>
             </main>
 
-            <center>
+            {/* <center>
                 <span className="curable-logo">Powered By</span>
                 <img src="/assets/Curable logo - rectangle with black text.png" alt="Curable Logo" className="curable-logo" />
-            </center>
+            </center> */}
+            <footer className="footer-container-fixed">
+        <div className="footer-content">
+          <p className="footer-text">Powered By</p>
+          <img src="/assets/Curable logo - rectangle with black text.png" alt="Curable Logo" className="footer-logo" />
+        </div>
+      </footer>
         </div>
     );
 };

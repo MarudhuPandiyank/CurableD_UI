@@ -145,7 +145,7 @@
     align-items: center;
     justify-content: center; /* Center content horizontally */
     position: absolute; /* Position at the bottom */
-    bottom: 20px; /* 20px from the bottom of the sidebar */
+    bottom: 80px; /* 20px from the bottom of the sidebar */
     right: 20px; /* Move the button to the right end */
     gap: 10px; /* Add space between icon and text */
   }

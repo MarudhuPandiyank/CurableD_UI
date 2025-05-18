@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./ProfileScreen.css";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 import './HomePage.css'; // Assuming you are keeping it for other styles
 import config from '../config';  // Import the config file
 import Header1 from "./Header1";
@@ -19,6 +20,7 @@ const ProfilePage: React.FC = () => {
   const [phoneNo, setPhoneNo] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [keycloakUserId, setkeycloakUserId] = useState<string>("");
+   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const userId = localStorage.getItem("userId");
@@ -122,7 +124,7 @@ const ProfilePage: React.FC = () => {
 
   return (
     <>
-    <div style={{marginTop:'20px'}}>
+    <div style={{marginTop:'20px',padding:'20px'}}>
     <Header1 />
     </div>
     
@@ -143,23 +145,42 @@ const ProfilePage: React.FC = () => {
         <input type="text" value={name} onChange={(e) => setName(e.target.value)} />
 
         <label>Gender:</label>
-        <input type="text" value={gender} onChange={(e) => setGender(e.target.value)} />
+<div className="gender-button-group">
+  {["MALE", "FEMALE", "OTHER"].map((option) => (
+    <button
+      key={option}
+      type="button"
+      className={`gender-button ${gender === option ? "active" : ""}`}
+      onClick={() => setGender(option)}
+    >
+      {option.charAt(0) + option.slice(1).toLowerCase()}
+    </button>
+  ))}
+</div>
 
         <label>Alternate Mobile Number:</label>
         <input type="text" value={phoneNo} onChange={(e) => setPhoneNo(e.target.value)} />
 
         <label>Change Password:</label>
         <div className="password-field-wrapper">
-          <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
-          <i className="fa fa-eye" onClick={handlePasswordVisibility}></i>
+        <input
+              type={showPassword ? "text" : "password"}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            {showPassword ? (
+              <VisibilityOff className="eye-icon" onClick={() => setShowPassword(false)} />
+            ) : (
+              <Visibility className="eye-icon" onClick={() => setShowPassword(true)} />
+            )}
         </div>
         <center className="buttons">
-        <button type="button" className="Finish-button" onClick={handleUpdate}>
+        <button  style={{marginBottom:"40px"}} type="button" className="Finish-button" onClick={handleUpdate}>
           Update
         </button>
         </center>
       </form>
-      <footer className="footer-container">
+     <footer className="footer-container-fixed">
         <div className="footer-content">
           <p className="footer-text">Powered By</p>
           <img src="/assets/Curable logo - rectangle with black text.png" alt="Curable Logo" className="footer-logo" />

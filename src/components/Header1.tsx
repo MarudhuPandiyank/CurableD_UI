@@ -47,7 +47,7 @@ const Header: React.FC<HeaderProps> = ({ showwidth = false }) => {
             setIsRightSidebarOpen(true);
           }}
           aria-label="Account Settings"
-          style={{ color: '#003366', cursor: 'pointer' }}// Blue color for the user icon
+          style={{ color: '#003366', cursor: 'pointer', marginTop: '-12px'  }}// Blue color for the user icon
         ></span>
       </header>
 

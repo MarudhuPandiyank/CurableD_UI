@@ -169,4 +169,18 @@
     font-size: 14px;
     padding: 8px;
   }
+  .custom-modal-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  width: 100%;
+  margin-top: 20px;
+  padding-bottom: 20px;
+}
+.custom-form-group {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;  /* Moves the select box lower */
+}
 }

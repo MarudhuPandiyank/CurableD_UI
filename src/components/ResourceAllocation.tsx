@@ -264,6 +264,7 @@ const ResourceAllocation: React.FC = () => {
         </div>
 
         <button
+        style={{marginBottom:'40px'}}
           className="submit-button"
           type="submit"
           disabled={
@@ -276,6 +277,9 @@ const ResourceAllocation: React.FC = () => {
             Submit
           </button>
         </form>
+       
+
+
         <footer className="footer-container-fixed">
           <div className="footer-content">
             <p className="footer-text">Powered By</p>

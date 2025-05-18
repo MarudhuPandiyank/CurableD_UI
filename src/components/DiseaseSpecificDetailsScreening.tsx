@@ -275,6 +275,7 @@ const App: React.FC = () => {
         <center>
           <button className="Finish-button" onClick={handleFinish}>Finish</button>
         </center>
+        <br/>
       </div>
 
       <footer className="footer-container-fixed">

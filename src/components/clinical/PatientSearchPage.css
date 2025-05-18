@@ -311,6 +311,7 @@ select::-ms-expand {
 
     .patient-list {
         margin-top: 15px;
+        width: 100%;
     }
 
     .circle-dropdown-icon {

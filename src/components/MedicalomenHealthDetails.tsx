@@ -100,14 +100,45 @@ const navigate = useNavigate();
     event.preventDefault();
     const patientId = localStorage.getItem('patientId');
 
-    if (
-  parseInt(ageAtMenarche || '0') > age ||
-  parseInt(ageAtFirstChild || '0') < parseInt(ageAtMarriage || '0') ||
-  parseInt(ageAtLastChild || '0') < parseInt(ageAtFirstChild || '0')
+   let hasError = false;
+
+// Validate ageAtMenarche only if filled
+if (ageAtMenarche && parseInt(ageAtMenarche) > age) {
+  setErrorMenarche("Age at Menarche cannot be greater than participant's age.");
+  hasError = true;
+} else {
+  setErrorMenarche('');
+}
+
+// Validate Age at First Child only if both ageAtMarriage and ageAtFirstChild are non-empty and > 0
+if (
+  ageAtMarriage && ageAtFirstChild &&
+  parseInt(ageAtMarriage) > 0 && parseInt(ageAtFirstChild) > 0 &&
+  parseInt(ageAtFirstChild) < parseInt(ageAtMarriage)
 ) {
-  alert('Please correct validation errors before proceeding.');
+  setErrorFirstChild("Age at First Child must be greater than or equal to Age at Marriage");
+  hasError = true;
+} else {
+  setErrorFirstChild('');
+}
+
+// Validate Age at Last Child only if both ageAtFirstChild and ageAtLastChild are non-empty and > 0
+if (
+  ageAtFirstChild && ageAtLastChild &&
+  parseInt(ageAtFirstChild) > 0 && parseInt(ageAtLastChild) > 0 &&
+  parseInt(ageAtLastChild) < parseInt(ageAtFirstChild)
+) {
+  setErrorLastChild("Age at Last Child must be greater than or equal to Age at First Child");
+  hasError = true;
+} else {
+  setErrorLastChild('');
+}
+
+if (hasError) {
+  alert("Please correct validation errors before proceeding.");
   return;
 }
+
     const payload = {
       abnormalBleedingVaginum: selectedBleedingIssues,
       ageAtFirstChild: parseInt(ageAtFirstChild) || 0,
@@ -402,8 +433,8 @@ console.log(age,gender,"skkksa")
             <option value="Issue2">Post Menoposal Bleeding</option>
             <option value="Issue3">Post Coital Bleeding</option>
             <option value="Issue4">Inter Menstrual Bleeding</option>
-            <option value="Issue4">DUB</option>
-            <option value="Issue5">Others</option>
+            <option value="Issue5">DUB</option>
+            <option value="Issue6">Others</option>
           </select>
 
           <label>Age at Marriage:</label>

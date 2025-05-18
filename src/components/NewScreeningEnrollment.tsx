@@ -135,6 +135,12 @@ const [genderError, setGenderError] = useState('');
     const token = localStorage.getItem('token');
     const campId = localStorage.getItem('campId');
 
+    const streetIdValue = parseInt(streetId, 10);
+  if (!streetId || isNaN(streetIdValue) || streetIdValue < 100) {
+    alert('Street ID must be 3 digits and at least 100.');
+    return;
+  }
+
     if (!token) {
       alert('No token found. Please log in again.');
       return;
@@ -143,7 +149,7 @@ const [genderError, setGenderError] = useState('');
     const payload = {
       address,
       campId: parseInt(campId || '0', 10), // Convert campId to number
-      streetId: parseInt(streetId, 10) || 0, // Convert to number
+      streetId: streetIdValue, // Convert to number
       reason, // Include reason directly in the payload
     };
 
@@ -183,11 +189,11 @@ const [genderError, setGenderError] = useState('');
     hasError = true;
   }
 
-  if (streetId && streetId.length < 3) {
-    setStreetIdError('Street ID must be 3 digits.');
-    hasError = true;
-  }
-
+ const streetIdValue = parseInt(streetId, 10);
+if (!streetId || streetIdValue < 100) {
+  setStreetIdError('Street ID must be 3 digits and at least 100.');
+  hasError = true;
+}
    if (!gender) {
     setGenderError('Please select gender.');
     hasError = true;
@@ -378,11 +384,11 @@ const [genderError, setGenderError] = useState('');
   value={streetId}
   onChange={(e) => {
     const input = e.target.value;
-    if (/^\d{0,3}$/.test(input)) {
+       if (/^\d{0,3}$/.test(input)) {
       setStreetId(input);
-      if (input.length > 0 && input.length < 3) {
-        setStreetIdError('Street ID must be 3 digits.');
-      } else {
+       if (input === '' || parseInt(input, 10) < 100) {
+        setStreetIdError('Street ID must be 3 digits and greater than or equal to 100.');
+      }  else {
         setStreetIdError('');
       }
     }
