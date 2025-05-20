@@ -173,6 +173,7 @@ const PatientEdit: React.FC = () => {
           </DialogActions>
         </Dialog>
       </main>
+      <br/>
       <footer className="footer-container-fixed">
         <div className="footer-content">
           <p className="footer-text">Powered By</p>

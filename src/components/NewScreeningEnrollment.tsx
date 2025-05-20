@@ -63,6 +63,8 @@ const NewScreeningEnrollment: React.FC = () => {
   const [mobileError, setMobileError] = useState('');
 const [streetIdError, setStreetIdError] = useState('');
 const [genderError, setGenderError] = useState('');
+const [isEditMode, setIsEditMode] = useState(false); // NEW
+
 
 
 
@@ -76,6 +78,7 @@ const [genderError, setGenderError] = useState('');
        // alert('Token or patient ID not found. Please log in again.');
         return;
       }
+      {console.log(prefillNeeds,"prefillNeeds")}
   
       if (prefillNeeds === 'true') {
         localStorage.setItem('prefill', 'false');
@@ -91,6 +94,7 @@ const [genderError, setGenderError] = useState('');
   
           if (response.status === 200) {
             const data = response.data;
+             setIsEditMode(true); 
             setName(data.name);
             setMobile(data.mobileNo);
             setGender(data.gender.charAt(0).toUpperCase() + data.gender.slice(1).toLowerCase());
@@ -122,15 +126,15 @@ const [genderError, setGenderError] = useState('');
     setIsSaveButtonEnabled(e.target.value.trim() !== '' && streetId.trim() !== '');
   };
 
-  const handleStreetIdChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const input = e.target.value;
+  // const handleStreetIdChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const input = e.target.value;
   
-    // Only allow up to 3 digits, no letters
-    if (/^\d{0,3}$/.test(input)) {
-      setStreetId(input);
-      setIsSaveButtonEnabled(address.trim() !== '' && input.trim() !== '');
-    }
-  };
+  //   // Only allow up to 3 digits, no letters
+  //   if (/^\d{0,3}$/.test(input)) {
+  //     setStreetId(input);
+  //     setIsSaveButtonEnabled(address.trim() !== '' && input.trim() !== '');
+  //   }
+  // };
     const handleSave = async () => {
     const token = localStorage.getItem('token');
     const campId = localStorage.getItem('campId');
@@ -189,11 +193,14 @@ const [genderError, setGenderError] = useState('');
     hasError = true;
   }
 
- const streetIdValue = parseInt(streetId, 10);
-if (!streetId || streetIdValue < 100) {
-  setStreetIdError('Street ID must be 3 digits and at least 100.');
-  hasError = true;
+   const streetIdValue = parseInt(streetId, 10);
+  if (!isEditMode && streetId.trim() !== '') {
+  if (!/^\d{3}$/.test(streetId) || isNaN(streetIdValue) || streetIdValue < 100) {
+    setStreetIdError('Street ID must be 3 digits and at least 100.');
+    hasError = true;
+  }
 }
+
    if (!gender) {
     setGenderError('Please select gender.');
     hasError = true;
@@ -378,24 +385,31 @@ if (!streetId || streetIdValue < 100) {
 
           <div className="form-group">
             <label style={{ color: 'black' }}>Street ID:</label>
-            <input
-  type="text" 
+          <input
+  type="text"
   placeholder="Enter Street ID"
   value={streetId}
   onChange={(e) => {
     const input = e.target.value;
-       if (/^\d{0,3}$/.test(input)) {
-      setStreetId(input);
-       if (input === '' || parseInt(input, 10) < 100) {
-        setStreetIdError('Street ID must be 3 digits and greater than or equal to 100.');
-      }  else {
+    setStreetId(input); 
+
+    if (!isEditMode) {
+      // Validate only if something typed
+      if (input !== '' && !/^\d{3}$/.test(input)) {
+        setStreetIdError('Street ID must be 3 digits and at least 100.');
+      } else if (parseInt(input, 10) < 100) {
+        setStreetIdError('Street ID must be greater than or equal to 100.');
+      } else {
         setStreetIdError('');
       }
     }
-  }}  maxLength={3}
-  inputMode="numeric" 
+  }}
+  maxLength={3}
+  inputMode="numeric"
+  disabled={isEditMode} // Disable in Edit Mode
 />
-{streetIdError && <p className="errors_message">{streetIdError}</p>}
+{streetIdError && !isEditMode && <p className="errors_message">{streetIdError}</p>}
+
           </div>
           {showModal && (
   <div className="custom-modal">
