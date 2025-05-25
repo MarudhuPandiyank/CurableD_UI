@@ -12,6 +12,7 @@ interface Habit {
   habitType: string;
   frequency: string;
   quit: string;
+  howLong: string;
   isOpen: boolean;
 }
 
@@ -64,7 +65,8 @@ interface PrefillApiResponse {
     duration: number;
     frequency: string;
     quit: boolean;
-    howLong: number;
+      howLong: string;
+
   }[];
 }
 
@@ -92,6 +94,13 @@ const ParticipantDetails: React.FC = () => {
   const [habitTypes, setHabitTypes] = useState<string[]>([]);  // Store fetched habit types
   const [selectedHabit, setSelectedHabit] = useState<string>('');  // Store selected habit
   const [selectedHabitType, setSelectedHabitType] = useState<string>(''); // Store selected habit type
+    const [hasTobaccoHabit, setHasTobaccoHabit] = useState("No");
+  const [hasQuit, setHasQuit] = useState("");
+  const [altMobileError, setAltMobileError] = useState("");
+  const [habits, setHabits] = useState<Habit[]>([
+  { habit: "", habitType: "", frequency: "", quit: "", howLong: "", isOpen: true },
+]);
+
 
 
 
@@ -104,59 +113,86 @@ const ParticipantDetails: React.FC = () => {
   const toggleOption1 = (option: string) => {
     setSelectedToggle1(option);
   };
-  const fetchPrefillData = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      const patientId = localStorage.getItem("patientId");
-  
-      if (!token || !patientId) {
-        console.error("Token or Patient ID not found");
-        alert("Session expired. Please log in again.");
-        return;
-      }
-  
-      const response = await axios.post<PrefillApiResponse>(
-        `${config.appURL}/curable/candidatehistoryForPrefil`,
-        { candidateId: patientId, type: 2 },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-  
-      if (response.status === 200) {
-        const data = response.data;
-  
-        setHouseType(data.houseType || "");
-        setEducation(data.education || "");
-        setOccupation(data.occupation || "");
-        setFatherName(data.fatherName || "");
-        setSpouseName(data.spouseName || "");
-        setAltMobile(data.alternateMobileNo || "");
-        setIncome(data.monthlyIncome?.toString() || "");
-        setAadhaar(data.aadhar || "");
-        setVoterId(data.voterId || "");
-        setRationCard(data.rationCard || "");
-  
-        if (data.candidateHabitDTOs && data.candidateHabitDTOs.length > 0) {
-          const habitData = data.candidateHabitDTOs[0];
-          setSelectedHabit(habitData.habits || "");
-          setSelectedHabitType(habitData.type || "");
-          setDuration(habitData.duration?.toString() || "");
-          setFrequency(habitData.frequency || "");
-          setQuit(habitData.quit?.toString() || "");
-          setHowLong(habitData.howLong?.toString() || "");
-        }
-  
-        console.log("Prefill Data:", data);
-      } else {
-        console.error("Error:", response.statusText);
-        alert(`Error: ${response.statusText}`);
-      }
-    } catch (error) {
-      console.error("Error:", error);
-      alert("An error occurred while fetching prefill data.");
+const fetchPrefillData = async () => {
+  try {
+    const token = localStorage.getItem("token");
+    const patientId = localStorage.getItem("patientId");
+
+    if (!token || !patientId) {
+      console.error("Token or Patient ID not found");
+      alert("Session expired. Please log in again.");
+      return;
     }
-  };
+
+    const response = await axios.post<PrefillApiResponse>(
+      `${config.appURL}/curable/candidatehistoryForPrefil`,
+      { candidateId: patientId, type: 2 },
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+
+    if (response.status === 200) {
+      const data = response.data;
+
+      setHouseType(data.houseType || "");
+      setEducation(data.education || "");
+      setOccupation(data.occupation || "");
+      setFatherName(data.fatherName || "");
+      setSpouseName(data.spouseName || "");
+      setAltMobile(data.alternateMobileNo || "");
+      setIncome(data.monthlyIncome?.toString() || "");
+      setAadhaar(data.aadhar || "");
+      setVoterId(data.voterId || "");
+      setRationCard(data.rationCard || "");
+
+      if (data.candidateHabitDTOs && data.candidateHabitDTOs.length > 0) {
+        setHasTobaccoHabit("Yes");
+
+        const mappedHabits: Habit[] = data.candidateHabitDTOs.map((habit, idx) => ({
+          habit: habit.habits || "",
+          habitType: habit.type || "",
+          frequency: habit.frequency || "",
+          quit: habit.quit ? "Yes" : "No",
+          howLong: habit.howLong?.toString() || "",
+          isOpen: idx === 0,
+        }));
+
+        setHabits(mappedHabits);
+
+        const firstHabit = data.candidateHabitDTOs[0];
+        setDuration(firstHabit.duration?.toString() || "");
+        setHowLong(firstHabit.howLong?.toString() || "");
+        setHasQuit(firstHabit.quit ? "Yes" : "No");
+
+        // fetch types for all habits
+        for (const habit of mappedHabits) {
+          if (habit.habit) {
+            await fetchHabitTypes(habit.habit);
+          }
+        }
+      } else {
+        setHasTobaccoHabit("No");
+        setHabits([{ habit: "", habitType: "", frequency: "", quit: "", howLong: "", isOpen: true }]);
+      }
+
+      console.log("Prefill Data:", data);
+    } else {
+      console.error("Error:", response.statusText);
+      alert(`Error: ${response.statusText}`);
+    }
+  } catch (error) {
+    console.error("Error:", error);
+    alert("An error occurred while fetching prefill data.");
+  }
+};
+
+
+
+
+
+
+
   
   
   // Call API when the component mounts
@@ -168,14 +204,23 @@ const ParticipantDetails: React.FC = () => {
 
     const tobaccoUser = selectedToggle1 === 'yes';
 
+    if (altMobile && altMobile.length !== 10) {
+  setAltMobileError("Alternate Mobile No must be exactly 10 digits.");
+  return; // prevent form submission
+} else {
+  setAltMobileError(""); // clear error if valid
+}
+
+
     // Format the candidateHabitDTOs with the habit details
+    {console.log(habits,"habits")}
     const candidateHabitDTOs = habits.map(habit => ({
       candidateId: localStorage.getItem('patientId'),  // Assuming candidateId is 0, replace with actual logic if necessary
       duration: tobaccoUser ? parseFloat(duration) || 0 : 0,  // Duration only if tobaccoUser is true
       frequency: habit.frequency,
       habits: habit.habit,
-      howLong: parseFloat(howLong) || 0,  // Assuming howLong is a number
-      quit: habit.quit === "yes",  // Assuming 'quit' is a string, handle accordingly
+      howLong: parseFloat(habit.howLong) || 0,  // Assuming howLong is a number
+      quit: habit.quit === "Yes"?true:false,  // Assuming 'quit' is a string, handle accordingly
       type: habit.habitType,
     }));
 
@@ -248,13 +293,8 @@ const ParticipantDetails: React.FC = () => {
   const closeModal = () => {
     setShowModal(false);
   };
-  const [hasTobaccoHabit, setHasTobaccoHabit] = useState("No");
-  const [hasQuit, setHasQuit] = useState("");
 
   // State to manage the list of habits
-  const [habits, setHabits] = useState<Habit[]>([
-    { habit: "", habitType: "", frequency: "", quit: "", isOpen: true }, // Default `isOpen: true`
-  ]);
   const [error, setError] = useState("");
   // Add a new habit set
   // const addHabit = () => {
@@ -291,25 +331,25 @@ const deleteHabit = (index: number) => {
     setHabits(updatedHabits);
   };
   // Handle form submission with validation
-  const handleSubmit = () => {
-    if (hasTobaccoHabit === "Yes") {
-      // Simple validation: Ensure no empty fields
-      for (let habit of habits) {
-        if (!habit.habit || !habit.habitType || !habit.frequency || !habit.quit) {
-          setError("Please fill in all fields for each habit.");
-          return;
-        }
-      }
-    }
-    setError(""); // Clear error message if all fields are valid
-    console.log("Submitted Habits:", habits);
-    console.log("Has Tobacco Habit:", hasTobaccoHabit);
+  // const handleSubmit = () => {
+  //   if (hasTobaccoHabit === "Yes") {
+  //     // Simple validation: Ensure no empty fields
+  //     for (let habit of habits) {
+  //       if (!habit.habit || !habit.habitType || !habit.frequency || !habit.quit) {
+  //         setError("Please fill in all fields for each habit.");
+  //         return;
+  //       }
+  //     }
+  //   }
+  //   setError(""); // Clear error message if all fields are valid
+  //   console.log("Submitted Habits:", habits);
+  //   console.log("Has Tobacco Habit:", hasTobaccoHabit);
 
-    // Optionally reset the form
-    setHabits([{ habit: "", habitType: "", frequency: "", quit: "", isOpen: true }]);
-    setHasTobaccoHabit("No");
-    setHasQuit("")
-  };
+  //   // Optionally reset the form
+  //   setHabits([{ habit: "", habitType: "", frequency: "", quit: "", isOpen: true }]);
+  //   setHasTobaccoHabit("No");
+  //   setHasQuit("")
+  // };
 
   const fetchHabitTypes = async (habit: string) => {
     try {
@@ -361,24 +401,25 @@ const deleteHabit = (index: number) => {
     console.log('Tobacco Habit changed to:', hasTobaccoHabit);
   }, [hasTobaccoHabit]);
   
-  const addHabit = () => {
-    const lastHabit = habits[habits.length - 1];
-  
-    const hasData =
-      lastHabit.habit || lastHabit.habitType || lastHabit.frequency || lastHabit.quit;
-  
-    if (!hasData) {
-      alert("Please fill at least one field before adding another habit.");
-      return;
-    }
-  
-    const updated = habits.map((h) => ({ ...h, isOpen: false }));
-  
-    setHabits([
-      ...updated,
-      { habit: "", habitType: "", frequency: "", quit: "", isOpen: true },
-    ]);
-  };
+const addHabit = () => {
+  const lastHabit = habits[habits.length - 1];
+
+  const hasData =
+    lastHabit.habit || lastHabit.habitType || lastHabit.frequency || lastHabit.quit;
+
+  if (!hasData) {
+    alert("Please fill at least one field before adding another habit.");
+    return;
+  }
+
+  const updated = habits.map((h) => ({ ...h, isOpen: false }));
+
+  setHabits([
+    ...updated,
+    { habit: "", habitType: "", frequency: "", quit: "", howLong: "", isOpen: true },
+  ]);
+};
+
   
   const participant = localStorage.getItem('participant');
   const registraionId = localStorage.getItem('registraionId');
@@ -445,24 +486,31 @@ const deleteHabit = (index: number) => {
             placeholder="Enter Spouse Name"
           />
         </div>
-        <div className="form-group">
+
+<div className="form-group">
   <label htmlFor="alt-mobile">Alternate Mobile No:</label>
   <input
-  type="text"
-  inputMode="numeric"
-  id="alt-mobile"
-  name="alt-mobile"
-  value={altMobile}
-  onChange={(e) => {
-    const value = e.target.value.replace(/\D/g, ''); // Remove non-digits
-    if (value.length <= 10) {
-      setAltMobile(value);
-    }
-  }}
-  placeholder="Enter Alternate Mobile No"
-  maxLength={10}
-/>
+    type="text"
+    inputMode="numeric"
+    id="alt-mobile"
+    name="alt-mobile"
+    value={altMobile}
+    onChange={(e) => {
+      const value = e.target.value.replace(/\D/g, '');
+      if (value.length <= 10) {
+        setAltMobile(value);
+        // clear error if user starts typing again
+        if (value.length === 10 || value.length === 0) {
+          setAltMobileError('');
+        }
+      }
+    }}
+    placeholder="Enter Alternate Mobile No"
+    maxLength={10}
+  />
+  {altMobileError && <p style={{ color: 'red' }}>{altMobileError}</p>}
 </div>
+
 <div className="form-group">
   <label htmlFor="income">Monthly Income:</label>
   <input
@@ -691,18 +739,18 @@ const value = e.target.value.replace(/^0+/, '').replace(/\D/g, '');
     </button>
   </div>
 </div>
-{hasQuit==='Yes' &&
-                      <div>
-                        <label>
-                          How Long? (Yrs):
-                          <input
-                            type="text"
-                            value={habit.quit}
-                            onChange={(e) => handleInputChange(index, "quit", e.target.value)}
-                          />
-                        </label>
-                      </div>}
-
+{hasQuit === 'Yes' && (
+  <div>
+    <label>
+      How Long? (Yrs):
+      <input
+        type="text"
+        value={habit.howLong}
+        onChange={(e) => handleInputChange(index, "howLong", e.target.value)}
+      />
+    </label>
+  </div>
+)}
                       <hr />
           </div>
         )}

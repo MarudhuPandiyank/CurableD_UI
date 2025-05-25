@@ -189,7 +189,7 @@ const OutreachClinicInfo: React.FC = () => {
 
         {message && <div className="message">{message}</div>}
 
-        {hasDuplicateNames && (
+        {/* {hasDuplicateNames && (
           <div className="clinic-select-container">
             <label>Select Clinic ID:</label>
             <select onChange={handleClinicSelect} value={selectedClinicId}>
@@ -201,7 +201,7 @@ const OutreachClinicInfo: React.FC = () => {
               ))}
             </select>
           </div>
-        )}
+        )} */}
 
         {filteredClinics.length > 0 && (
           <div className="clinic-details-container">

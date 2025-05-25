@@ -60,6 +60,9 @@ const MedicalomenHealthDetails: React.FC = () => {
   const [errorMenarche, setErrorMenarche] = useState('');
 const [errorFirstChild, setErrorFirstChild] = useState('');
 const [errorLastChild, setErrorLastChild] = useState('');
+ const [errorMarriage, setErrorMarriage] = useState('');
+ const [errorTotalPregnancies, setErrorTotalPregnancies] = useState('');
+
 
 
   const medicalHistoryOptions = [
@@ -96,95 +99,115 @@ const navigate = useNavigate();
   const closeModal = () => {
     setShowModal(false);
   };
-  const handleSubmit = async (event: React.FormEvent ,navigateTo: string) => {
-    event.preventDefault();
-    const patientId = localStorage.getItem('patientId');
+const handleSubmit = async (event: React.FormEvent, navigateTo: string) => {
+  event.preventDefault();
+  const patientId = localStorage.getItem('patientId');
+  let hasError = false;
 
-   let hasError = false;
+  // Age value from localStorage
+  const age = parseInt(localStorage.getItem('participantage') || '0', 10);
 
-// Validate ageAtMenarche only if filled
-if (ageAtMenarche && parseInt(ageAtMenarche) > age) {
-  setErrorMenarche("Age at Menarche cannot be greater than participant's age.");
-  hasError = true;
-} else {
-  setErrorMenarche('');
-}
+  // Age at Menarche
+  if (ageAtMenarche && parseInt(ageAtMenarche) > age) {
+    setErrorMenarche("Age at Menarche cannot be greater than participant's age.");
+    hasError = true;
+  } else {
+    setErrorMenarche('');
+  }
 
-// Validate Age at First Child only if both ageAtMarriage and ageAtFirstChild are non-empty and > 0
-if (
-  ageAtMarriage && ageAtFirstChild &&
-  parseInt(ageAtMarriage) > 0 && parseInt(ageAtFirstChild) > 0 &&
-  parseInt(ageAtFirstChild) < parseInt(ageAtMarriage)
-) {
-  setErrorFirstChild("Age at First Child must be greater than or equal to Age at Marriage");
-  hasError = true;
-} else {
-  setErrorFirstChild('');
-}
+  // Age at Marriage
+  if (ageAtMarriage && parseInt(ageAtMarriage) > age) {
+    setErrorMarriage("Age at Marriage must be less than participant's age");
+    hasError = true;
+  } else {
+    setErrorMarriage('');
+  }
 
-// Validate Age at Last Child only if both ageAtFirstChild and ageAtLastChild are non-empty and > 0
-if (
-  ageAtFirstChild && ageAtLastChild &&
-  parseInt(ageAtFirstChild) > 0 && parseInt(ageAtLastChild) > 0 &&
-  parseInt(ageAtLastChild) < parseInt(ageAtFirstChild)
-) {
-  setErrorLastChild("Age at Last Child must be greater than or equal to Age at First Child");
-  hasError = true;
-} else {
-  setErrorLastChild('');
-}
+  const totalPreg = parseInt(totalPregnancies || '0');
+  if (totalPreg > age) {
+    setErrorTotalPregnancies("Total Pregnancies cannot exceed participant's age");
+    hasError = true;
+  } else {
+    setErrorTotalPregnancies('');
+  }
 
-if (hasError) {
-  alert("Please correct validation errors before proceeding.");
-  return;
-}
-
-    const payload = {
-      abnormalBleedingVaginum: selectedBleedingIssues,
-      ageAtFirstChild: parseInt(ageAtFirstChild) || 0,
-      ageAtLastChild: parseInt(ageAtLastChild) || 0,
-      ageAtMarriage: parseInt(ageAtMarriage) || 0,
-      ageAtMenarche: parseInt(ageAtMenarche) || 0,
-      allergy,
-      bloodPressure,
-      candidateId: patientId, // Replace with the actual candidate ID
-      cervicalBreastScrening: selectedToggle2 === 'yes',
-      currentlyPregant: selectedToggle1 === 'yes',
-      height: parseInt(height) || 0,
-      historyOfSurgery: selectedToggle === 'yes',
-      medicalhistory: selectedHistory.join(','), // Use in API payload
-
-     
-      //medicalhistory: selectedHistory,
-      methodOfContraceptionUsed: selectedContraception,
-      noOfBreastFedMonths: selectedBreastFedMonths,
-      otherComplaints,
-      pulseRate,
-      spo2: parseInt(spo2) || 0,
-      totalPregnancies: parseInt(totalPregnancies) || 0,
-      weight: parseInt(weight) || 0,//double
-      whenWasLastMentrution: selectedLastMenstruation
-    };
-    
-    try {
-      const token = localStorage.getItem('token');
-      const response = await axios.post(
-        `${config.appURL}/curable/createMedicalHistory`,
-        payload,{
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      console.log('Response:', response.data);
-      navigate(navigateTo);
-      //navigate('/FamilyPersonalDetails');
-     
-    } catch (error) {
-      console.error('Error submitting data:', error);
-      alert('Failed to submit data.');
+  // Combined validation for First/Last Child if Pregnancies > 0
+  if (totalPreg > 0) {
+    const first = parseInt(ageAtFirstChild || '0');
+    if (!ageAtFirstChild || first === 0) {
+      setErrorFirstChild("Age at First Child is required for pregnancies");
+      hasError = true;
+    } else if (first > age) {
+      setErrorFirstChild("Age at First Child cannot be greater than participant's age");
+      hasError = true;
+    } else {
+      setErrorFirstChild('');
     }
+
+    const last = parseInt(ageAtLastChild || '0');
+    if (!ageAtLastChild || last === 0) {
+      setErrorLastChild("Age at Last Child is required for pregnancies");
+      hasError = true;
+    } else if (last > age) {
+      setErrorLastChild("Age at Last Child must be less than participant's age");
+      hasError = true;
+    } else {
+      setErrorLastChild('');
+    }
+  } else {
+    setErrorFirstChild('');
+    setErrorLastChild('');
+  }
+
+  if (hasError) {
+    alert("Please correct validation errors before proceeding.");
+    return;
+  }
+
+  const payload = {
+    abnormalBleedingVaginum: selectedBleedingIssues,
+    ageAtFirstChild: parseInt(ageAtFirstChild) || 0,
+    ageAtLastChild: parseInt(ageAtLastChild) || 0,
+    ageAtMarriage: parseInt(ageAtMarriage) || 0,
+    ageAtMenarche: parseInt(ageAtMenarche) || 0,
+    allergy,
+    bloodPressure,
+    candidateId: patientId,
+    cervicalBreastScrening: selectedToggle2 === 'yes',
+    currentlyPregant: selectedToggle1 === 'yes',
+    height: parseInt(height) || 0,
+    historyOfSurgery: selectedToggle === 'yes',
+    medicalhistory: selectedHistory.join(','),
+    methodOfContraceptionUsed: selectedContraception,
+    noOfBreastFedMonths: selectedBreastFedMonths,
+    otherComplaints,
+    pulseRate,
+    spo2: parseInt(spo2) || 0,
+    totalPregnancies: totalPreg,
+    weight: parseInt(weight) || 0,
+    whenWasLastMentrution: selectedLastMenstruation
   };
+
+  try {
+    const token = localStorage.getItem('token');
+    const response = await axios.post(
+      `${config.appURL}/curable/createMedicalHistory`,
+      payload,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    console.log('Response:', response.data);
+    navigate(navigateTo);
+  } catch (error) {
+    console.error('Error submitting data:', error);
+    alert('Failed to submit data.');
+  }
+};
+
+
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -252,11 +275,14 @@ if (hasError) {
   }, []);
 
   const participant = localStorage.getItem('participant')|| '';
+  console.log(participant,"skkksa")
+
   const gender=participant?.split('/')[1];
    const ageString = participant.split(' ')[1]?.split('/')[0] || '0';
-const age = parseInt(ageString, 10);
+   const setages=localStorage.getItem('participantage')|| '';
+const age = parseInt(setages, 10);
 
-console.log(age,gender,"skkksa")
+console.log(age,participant,ageString,"skkksa")
 
   const registraionId = localStorage.getItem('registraionId');
   return (
@@ -438,23 +464,30 @@ console.log(age,gender,"skkksa")
           </select>
 
           <label>Age at Marriage:</label>
-         <input
-  type="text"
-  inputMode="numeric"
-  placeholder="Enter Age at Marriage"
-  value={ageAtMarriage}
-  onChange={(e) => {
-    const val = e.target.value.replace(/\D/g, ''); // only digits
-    if (val.length <= 2) {
-      setAgeAtMarriage(val);
-    }
-  }}
-  maxLength={2}
-/>
+        <input
+        type="text"
+        inputMode="numeric"
+        placeholder="Enter Age at Marriage"
+        value={ageAtMarriage}
+        onChange={(e) => {
+          const val = e.target.value.replace(/\D/g, '');
+          if (val.length <= 2) {
+            setAgeAtMarriage(val);
+            const ageVal = parseInt(val || '0');
+            if (ageVal > age) {
+              setErrorMarriage('Age at Marriage must be less than participant age');
+            } else {
+              setErrorMarriage('');
+            }
+          }
+        }}
+        maxLength={2}
+      />
+      {errorMarriage && <span className="error-message">{errorMarriage}</span>}
 
 
-          <label>Total Pregnancies:</label>
-          <input
+      <label>Total Pregnancies:</label>
+<input
   type="text"
   inputMode="numeric"
   value={totalPregnancies}
@@ -462,53 +495,62 @@ console.log(age,gender,"skkksa")
     const val = e.target.value;
     if (/^(|0|[1-9][0-9]*)$/.test(val)) {
       setTotalPregnancies(val);
+      const num = parseInt(val || '0');
+      if (num > age) {
+        setErrorTotalPregnancies("Total Pregnancies cannot exceed participant's age");
+      } else {
+        setErrorTotalPregnancies('');
+      }
     }
   }}
 />
+{errorTotalPregnancies && <span className="error-message">{errorTotalPregnancies}</span>}
 
 
 <div className="form-group">
   <label>Age at First Child:</label>
-<input
-  type="text"
-  inputMode="numeric" 
-  placeholder="Enter Age at First Child"
-  value={ageAtFirstChild}
-  maxLength={2}
-  onChange={(e) => {
-    const value = e.target.value.replace(/[^0-9]/g, ''); // Only digits
-    setAgeAtFirstChild(value);
-
-    if (parseInt(value || '0') < parseInt(ageAtMarriage || '0')) {
-      setErrorFirstChild('Age at First Child must be greater than or equal to Age at Marriage');
-    } else {
-      setErrorFirstChild('');
-    }
-  }}
-/>
-{errorFirstChild && <span className="error-message">{errorFirstChild}</span>}
+    <input
+        type="text"
+        inputMode="numeric"
+        placeholder="Enter Age at First Child"
+        value={ageAtFirstChild}
+        maxLength={2}
+        onChange={(e) => {
+          const value = e.target.value.replace(/[^0-9]/g, '');
+          setAgeAtFirstChild(value);
+          const ageVal = parseInt(value || '0');
+          const marriage = parseInt(ageAtMarriage || '0');
+          if (ageVal > age) {
+            setErrorFirstChild("Age at First Child cannot be greater than participant's age");
+          } else {
+            setErrorFirstChild('');
+          }
+        }}
+      />
+      {errorFirstChild && <span className="error-message">{errorFirstChild}</span>}
 
 </div>
 
 <div className="form-group">
   <label>Age at Last Child:</label>
 <input
-  type="text"
-  inputMode="numeric" // Opens numeric keyboard on mobile
-  placeholder="Enter Age of Last Child"
-  value={ageAtLastChild}
-  maxLength={2}
-  onChange={(e) => {
-    const value = e.target.value.replace(/[^0-9]/g, ''); // Allow only digits
-    setAgeAtLastChild(value);
-
-    if (parseInt(value || '0') <= parseInt(ageAtFirstChild || '0')) {
-      setErrorLastChild('Age at Last Child must be greater than or equal to Age at First Child');
-    } else {
-      setErrorLastChild('');
-    }
-  }}
-/>
+        type="text"
+        inputMode="numeric"
+        placeholder="Enter Age of Last Child"
+        value={ageAtLastChild}
+        maxLength={2}
+        onChange={(e) => {
+          const value = e.target.value.replace(/[^0-9]/g, '');
+          setAgeAtLastChild(value);
+          const lastAge = parseInt(value || '0');
+          const firstAge = parseInt(ageAtFirstChild || '0');
+           if (lastAge > age) {
+            setErrorLastChild('Age at Last Child must be less than participant age');
+          } else {
+            setErrorLastChild('');
+          }
+        }}
+      />
 {errorLastChild && <span className="error-message">{errorLastChild}</span>}
 
 </div>

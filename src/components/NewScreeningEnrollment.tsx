@@ -249,7 +249,9 @@ const [isEditMode, setIsEditMode] = useState(false); // NEW
         localStorage.setItem('patientName', data.name);
         localStorage.setItem('registraionId', data.registraionId);
         const participantValue = `${data.name} ${data.age}/${data.gender}`;
+        const setage=data.age;
         localStorage.setItem('participant', participantValue);
+       localStorage.setItem('participantage', `${setage}`);
         localStorage.removeItem('prefillId');         
         navigate('/DiseaseSpecificDetails');
       }
