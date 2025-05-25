@@ -209,13 +209,13 @@ const App: React.FC = () => {
   const ptName = localStorage.getItem('ptName');
 
   const renderField = (param: Param, key: string) => {
-   if (
-  (param.testName === 'Breast Imaging Report Date' && formValues['Breast Imaging']?.[0] === 'No') ||
-  (param.testName === 'Cytology Report Date' && formValues['Cytology']?.[0] === 'No') ||
-  (param.testName === 'Colpo Guided Biopsy Report Date' && formValues['Colpo Guided Biopsy']?.[0] === 'No')
-) {
-  return null;
-}
+//    if (
+//   (param.testName === 'Breast Imaging Report Date' && formValues['Breast Imaging']?.[0] === 'No') ||
+//   (param.testName === 'Cytology Report Date' && formValues['Cytology']?.[0] === 'No') ||
+//   (param.testName === 'Colpo Guided Biopsy Report Date' && formValues['Colpo Guided Biopsy']?.[0] === 'No')
+// ) {
+//   return null;
+// }
     return (
       <div key={key} className="form-group">
         <label style={{ color: 'black' }}>{param.testName}*:</label>
