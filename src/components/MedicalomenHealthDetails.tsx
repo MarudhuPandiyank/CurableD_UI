@@ -132,7 +132,7 @@ const handleSubmit = async (event: React.FormEvent, navigateTo: string) => {
   }
 
   // Combined validation for First/Last Child if Pregnancies > 0
-  if (totalPreg > 0) {
+  if (totalPreg > 1) {
     const first = parseInt(ageAtFirstChild || '0');
     if (!ageAtFirstChild || first === 0) {
       setErrorFirstChild("Age at First Child is required for pregnancies");
@@ -539,6 +539,7 @@ console.log(age,participant,ageString,"skkksa")
         placeholder="Enter Age of Last Child"
         value={ageAtLastChild}
         maxLength={2}
+disabled={parseInt(totalPregnancies) === 1}
         onChange={(e) => {
           const value = e.target.value.replace(/[^0-9]/g, '');
           setAgeAtLastChild(value);
