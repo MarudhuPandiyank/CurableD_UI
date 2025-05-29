@@ -271,13 +271,15 @@ const App: React.FC = () => {
             </div>
           );
         })}
+      
 
         <center>
           <button className="Finish-button" onClick={handleFinish}>Finish</button>
         </center>
         <br/>
       </div>
-
+        <br/>  <br/>
+        <br/>
       <footer className="footer-container-fixed">
         <div className="footer-content">
           <p className="footer-text">Powered By</p>
