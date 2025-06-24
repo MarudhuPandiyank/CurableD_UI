@@ -193,14 +193,12 @@ const [isEditMode, setIsEditMode] = useState(false); // NEW
     hasError = true;
   }
 
-   const streetIdValue = parseInt(streetId, 10);
-  if (!isEditMode && streetId.trim() !== '') {
-  if (!/^\d{3}$/.test(streetId) || isNaN(streetIdValue) || streetIdValue < 100) {
-    setStreetIdError('Street ID must be 3 digits and at least 100.');
+if (!isEditMode && streetId.trim() !== '') {
+  if (!/^\d{3}$/.test(streetId) || streetId === '000') {
+    setStreetIdError('Street ID must be 3 digits from 001 to 999.');
     hasError = true;
   }
 }
-
    if (!gender) {
     setGenderError('Please select gender.');
     hasError = true;
@@ -387,20 +385,19 @@ const [isEditMode, setIsEditMode] = useState(false); // NEW
 
           <div className="form-group">
             <label style={{ color: 'black' }}>Street ID:</label>
-          <input
+      <input
   type="text"
   placeholder="Enter Street ID"
   value={streetId}
   onChange={(e) => {
     const input = e.target.value;
-    setStreetId(input); 
+    setStreetId(input);
 
     if (!isEditMode) {
-      // Validate only if something typed
-      if (input !== '' && !/^\d{3}$/.test(input)) {
-        setStreetIdError('Street ID must be 3 digits and at least 100.');
-      } else if (parseInt(input, 10) < 100) {
-        setStreetIdError('Street ID must be greater than or equal to 100.');
+      if (!/^\d{3}$/.test(input)) {
+        setStreetIdError('Street ID must be exactly 3 digits (e.g., 001, 123).');
+      } else if (input === '000') {
+        setStreetIdError('Street ID cannot be 000.');
       } else {
         setStreetIdError('');
       }
@@ -408,8 +405,10 @@ const [isEditMode, setIsEditMode] = useState(false); // NEW
   }}
   maxLength={3}
   inputMode="numeric"
-  disabled={isEditMode} // Disable in Edit Mode
+  disabled={isEditMode}
 />
+
+
 {streetIdError && !isEditMode && <p className="errors_message">{streetIdError}</p>}
 
           </div>

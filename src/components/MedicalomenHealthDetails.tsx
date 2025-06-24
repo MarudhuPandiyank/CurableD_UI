@@ -151,7 +151,14 @@ const handleSubmit = async (event: React.FormEvent, navigateTo: string) => {
     } else if (last > age) {
       setErrorLastChild("Age at Last Child must be less than participant's age");
       hasError = true;
-    } else {
+    } 
+    else if (last < first) {
+     setErrorLastChild('Age at Last Child must be Greater than  First Child');
+           hasError = true;
+
+      } 
+    
+    else {
       setErrorLastChild('');
     }
   } else {
@@ -547,7 +554,12 @@ disabled={parseInt(totalPregnancies) === 1}
           const firstAge = parseInt(ageAtFirstChild || '0');
            if (lastAge > age) {
             setErrorLastChild('Age at Last Child must be less than participant age');
-          } else {
+          } 
+           else if (lastAge < firstAge) {
+            setErrorLastChild('Age at Last Child must be Greater than  First Child');
+          } 
+          
+          else {
             setErrorLastChild('');
           }
         }}
