@@ -263,7 +263,8 @@ const App: React.FC = () => {
                 onChange={(e) => {
                   const date = e.value;
                   if (date) {
-                    handleSelectionChange(param.testName, date.toISOString().split('T')[0]);
+                   const formattedDate = date.toLocaleDateString('en-CA'); 
+                    handleSelectionChange(param.testName, formattedDate);
                   }
                 }}
                 dateFormat="yy-mm-dd"

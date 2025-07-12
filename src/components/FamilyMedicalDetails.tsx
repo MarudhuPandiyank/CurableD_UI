@@ -59,8 +59,11 @@ const FamilyMedicalDetails: React.FC = () => {
 
   const handleFieldChange = (index: number, testName: string, value: string) => {
     if (testName.toLowerCase().includes('age at diagnosis')) {
-      if (!/^\d*$/.test(value) || parseInt(value, 10) <= 0) return;
+    const numericValue = parseInt(value, 10);
+    if (!/^\d*$/.test(value) || numericValue < 1 || numericValue > 100) {
+      return;
     }
+  }
     const updatedFormValues = [...formValues];
     updatedFormValues[index] = {
       ...updatedFormValues[index],

@@ -374,6 +374,9 @@ const deleteHabit = (index: number) => {
         if(habit==="Snuff"){
           setHabitTypes(["Snuff"])
         }
+          if(habit==="Others"){
+          setHabitTypes(["Others"])
+        }
       } else {
         console.error('Error:', response.statusText);
         alert(`Error: ${response.statusText}`);

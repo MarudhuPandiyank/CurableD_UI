@@ -140,7 +140,12 @@ const handleSubmit = async (event: React.FormEvent, navigateTo: string) => {
     } else if (first > age) {
       setErrorFirstChild("Age at First Child cannot be greater than participant's age");
       hasError = true;
-    } else {
+    } 
+    
+     else if (first > totalPreg) {
+            setErrorFirstChild("Age at First Child cannot be greater than Total Pregnancies");
+          }
+    else {
       setErrorFirstChild('');
     }
 
@@ -353,15 +358,17 @@ console.log(age,participant,ageString,"skkksa")
   inputMode="decimal" 
   placeholder="Enter Weight (Kgs)"
   value={weight}
-  onChange={(e) => {
-    // Allow only digits and one optional decimal point
+ onChange={(e) => {
     let value = e.target.value;
-    // Remove all non-numeric characters except one "."
+
     if (/^\d*\.?\d{0,2}$/.test(value)) {
-      setWeight(value);
+      const numericValue = parseFloat(value);
+      if (!value || isNaN(numericValue) || numericValue <= 1000) {
+        setWeight(value);
+      }
     }
   }}
-  maxLength={6} // Optional: limits input length
+  maxLength={6} 
 />
 
 </div>
@@ -388,15 +395,21 @@ console.log(age,participant,ageString,"skkksa")
           <div className="form-group">
   <label>Height (cms):</label>
   <input
-    type="number"
-    placeholder="Enter Height (cms)"
-    value={height}
-    onChange={(e) => {
-      // Allow only numeric input for height
-      const value = e.target.value.replace(/[^0-9]/g, ''); // Remove non-numeric characters
+  type="number"
+  placeholder="Enter Height (cms)"
+  value={height}
+  onChange={(e) => {
+    const value = e.target.value;
+
+    const numericValue = parseInt(value, 10);
+
+    if (!value || (Number.isInteger(numericValue) && numericValue >= 1 && numericValue <= 300)) {
       setHeight(value);
-    }}
-  />
+    }
+  }}
+/>
+
+  
 </div>
 
           <label>SpO2:</label>
@@ -527,9 +540,15 @@ console.log(age,participant,ageString,"skkksa")
           setAgeAtFirstChild(value);
           const ageVal = parseInt(value || '0');
           const marriage = parseInt(ageAtMarriage || '0');
-          if (ageVal > age) {
+            const totalPregval = parseInt(totalPregnancies || '0');
+
+          if (ageVal > age ) {
             setErrorFirstChild("Age at First Child cannot be greater than participant's age");
-          } else {
+          } 
+          else if (ageVal > totalPregval) {
+            setErrorFirstChild("Age at First Child cannot be greater than Total Pregnancies");
+          } 
+          else {
             setErrorFirstChild('');
           }
         }}
@@ -592,12 +611,12 @@ disabled={parseInt(totalPregnancies) === 1}
             onChange={(e) => setSelectedContraception(e.target.value)}
           >
             <option value="">Select</option>
-            <option value="Contraception2">Condom</option>
-            <option value="Contraception6">Iucd</option>
-            <option value="Contraception1">Nil</option>
-            <option value="Contraception3">Pill</option>
-            <option value="Contraception4">Tubectomy</option>
-            <option value="Contraception5">Others</option>
+                        <option value="Contraception1">Nil</option>
+                        <option value="Contraception2">Condom</option>
+                        <option value="Contraception3">Pill</option>
+                        <option value="Contraception6">LUCD</option>
+                        <option value="Contraception4">Tubectomy</option>
+                        <option value="Contraception5">Others</option>
           </select>
 
           <label>Breast Fed (How Many Months?):</label>

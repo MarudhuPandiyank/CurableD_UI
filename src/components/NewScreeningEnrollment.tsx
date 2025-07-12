@@ -64,6 +64,8 @@ const NewScreeningEnrollment: React.FC = () => {
 const [streetIdError, setStreetIdError] = useState('');
 const [genderError, setGenderError] = useState('');
 const [isEditMode, setIsEditMode] = useState(false); // NEW
+const [age, setAge] = useState<number | ''>('');
+
 
 
 
@@ -99,6 +101,7 @@ const [isEditMode, setIsEditMode] = useState(false); // NEW
             setMobile(data.mobileNo);
             setGender(data.gender.charAt(0).toUpperCase() + data.gender.slice(1).toLowerCase());
             setDob(new Date(data.dob));
+            setAge(data.age || '');
             setAddress(data.address);
             setStreetId(data.streetId.toString());
             setRegistraionId(data.registraionId);
@@ -222,7 +225,8 @@ if (!isEditMode && streetId.trim() !== '') {
       mobileNo: mobile,
       gender: gender.toUpperCase(),
       registraionId: registraionId,
-      dob: dob ? dob.toISOString().split('T')[0] : null,
+      // dob: dob ? dob.toISOString().split('T')[0] : null,
+      age,
       address,
       streetId: parseInt(streetId, 10) || 0,
       hospitalId: parseInt(hospitalId, 10),
@@ -354,22 +358,37 @@ if (!isEditMode && streetId.trim() !== '') {
           </div>
     
           <label>
-  <label style={{ color: 'black' }}>Date of Birth*:</label>
+  <label style={{ color: 'black' }}>Age*:</label>
   <span style={{ color: 'darkred', fontWeight: 'bold' }}></span>
-  <div className="input-with-icon">
-    <Calendar
-      value={dob}
-      onChange={(e) => setDob(e.value as Date | null)} // Update the dob state
-      placeholder="dd-mm-yyyy"
-      dateFormat="dd-mm-yy" // PrimeReact date format
+   
+   <div className="form-group">
+  <input
+    type="number"
+    placeholder="Enter Age"
+    value={age}
+    onChange={(e) => {
+      const value = e.target.value;
+      const numeric = Number(value);
+      if (value === '' || (numeric >= 1 && numeric <= 100)) {
+        setAge(value === '' ? '' : numeric);
+      }
+    }}
+    min={1}
+    max={100}
+    step={1}
+    required
+    onWheel={(e) => e.currentTarget.blur()} // Prevent scroll change
+    onKeyDown={(e) => {
+      if (
+        ['e', 'E', '+', '-', '.'].includes(e.key)
+      ) {
+        e.preventDefault(); // Disallow invalid characters
+      }
+    }}
+  />
+</div>
 
-      required
-      maxDate={new Date()} // Set the minimum date to today
-     
-    />
-    <img src="./assets/Calendar.png" className="clinic-id-icon" alt="calendar icon" />
-  </div>
-</label>
+  </label>
 
          
         
