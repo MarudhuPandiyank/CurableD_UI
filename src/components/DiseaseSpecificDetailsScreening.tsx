@@ -230,19 +230,28 @@ const App: React.FC = () => {
 
               {field.valueType === "Date" && (
                 <>
-                  <Calendar
-                    value={selectedValues[field.testName]
-                      ? new Date(selectedValues[field.testName] as string)
-                      : dob}
-                    onChange={(e) => {
-                      const date = e.value as Date;
-                      setDob(date);
-                      handleSelectChange(field.testName, date.toISOString().split('T')[0]);
-                    }}
-                    dateFormat="yy-mm-dd"
-                    placeholder="yyyy-mm-dd"
-                    maxDate={new Date()}
-                  />
+                <div style={{ width: '100%' }}>
+                <Calendar
+  value={
+    selectedValues[field.testName]
+      ? new Date(selectedValues[field.testName] as string)
+      : null
+  }
+  onChange={(e) => {
+    if (e.value) {
+      const date = e.value as Date;
+      const localDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000)
+        .toISOString()
+        .split('T')[0];
+      handleSelectChange(field.testName, localDate);
+    }
+  }}
+  dateFormat="yy-mm-dd"
+  placeholder="yyyy-mm-dd"
+  maxDate={new Date()}
+
+/>
+</div>
                   {formErrors.includes(field.testName) && (
                     <span className="error-message">This field is required</span>
                   )}

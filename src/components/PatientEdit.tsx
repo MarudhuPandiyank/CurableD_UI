@@ -141,7 +141,7 @@ const PatientEdit: React.FC = () => {
             {candidates.map((candidate) => (
               <div className="clinic-details" key={candidate.id}>
                 <p><strong>Individual Name:</strong> <span>{candidate.name}</span></p>
-                <p><strong>Date of Birth:</strong> <span>{candidate.dob?.split("-").reverse().join("-")}</span></p>
+                {/* <p><strong>Date of Birth:</strong> <span>{candidate.dob?.split("-").reverse().join("-")}</span></p> */}
                 <p><strong>Age:</strong> <span>{candidate.age}</span></p>
                 <p><strong>Gender:</strong> <span>{candidate.gender}</span></p>
                 <p><strong>Spouse Name:</strong> <span>{candidate.spouseName}</span></p>
