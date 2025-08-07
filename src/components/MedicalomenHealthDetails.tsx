@@ -123,56 +123,61 @@ const handleSubmit = async (event: React.FormEvent, navigateTo: string) => {
     setErrorMarriage('');
   }
 
-  const totalPreg = parseInt(totalPregnancies || '0');
-  // if (totalPreg > age) {
-  //   setErrorTotalPregnancies("Total Pregnancies cannot exceed participant's age");
-  //   hasError = true;
-  // } else {
-  //   setErrorTotalPregnancies('');
-  // }
+const totalPreg = parseInt(totalPregnancies || '0');
+const first = parseInt(ageAtFirstChild || '0');
+const last = parseInt(ageAtLastChild || '0');
 
-  // Combined validation for First/Last Child if Pregnancies > 0
-  if (totalPreg > 1) {
-    const first = parseInt(ageAtFirstChild || '0');
-    if (!ageAtFirstChild || first === 0) {
-      setErrorFirstChild("Age at First Child is required for pregnancies");
-      hasError = true;
-    } 
-    // else if (first > age) {
-    //   setErrorFirstChild("Age at First Child cannot be greater than participant's age");
-    //   hasError = true;
-    // } 
-    
-     else if (first > totalPreg) {
-            setErrorFirstChild("Age at First Child cannot be greater than Total Pregnancies");
-          }
-    else {
-      setErrorFirstChild('');
-    }
-
-    const last = parseInt(ageAtLastChild || '0');
-    if (!ageAtLastChild || last === 0) {
-      setErrorLastChild("Age at Last Child is required for pregnancies");
-      hasError = true;
-    } 
-    // else if (last > age) {
-    //   setErrorLastChild("Age at Last Child must be less than participant's age");
-    //   hasError = true;
-    // } 
-    else if (last < first) {
-     setErrorLastChild('Age at Last Child must be Greater than  First Child');
-           hasError = true;
-
-      } 
-    
-    else {
-      setErrorLastChild('');
-    }
+// Enforce reset when pregnancy changes
+if (totalPreg === 0) {
+  if (first || last) {
+    setErrorFirstChild("Age at First Child must be empty when pregnancies are 0");
+    setErrorLastChild("Age at Last Child must be empty when pregnancies are 0");
+    hasError = true;
   } else {
     setErrorFirstChild('');
     setErrorLastChild('');
   }
+} else if (totalPreg === 1) {
+  if (!first) {
+    setErrorFirstChild("Age at First Child is required");
+    hasError = true;
+  } else if (first >= age) {
+    setErrorFirstChild("Age at First Child must be less than participant's age");
+    hasError = true;
+  } else {
+    setErrorFirstChild('');
+  }
 
+  if (last) {
+    setErrorLastChild("Age at Last Child should not be filled when pregnancies are 1");
+    hasError = true;
+  } else {
+    setErrorLastChild('');
+  }
+} else {
+  if (!first) {
+    setErrorFirstChild("Age at First Child is required");
+    hasError = true;
+  } else if (first >= age) {
+    setErrorFirstChild("Age at First Child must be less than participant's age");
+    hasError = true;
+  } else {
+    setErrorFirstChild('');
+  }
+
+  if (!last) {
+    setErrorLastChild("Age at Last Child is required");
+    hasError = true;
+  } else if (last >= age) {
+    setErrorLastChild("Age at Last Child must be less than participant's age and greater than Age at First Child");
+    hasError = true;
+  } else if (last <= first) {
+    setErrorLastChild("Age at Last Child must be greater than Age at First Child");
+    hasError = true;
+  } else {
+    setErrorLastChild('');
+  }
+}
   if (hasError) {
     alert("Please correct validation errors before proceeding.");
     return;
@@ -226,6 +231,18 @@ const handleSubmit = async (event: React.FormEvent, navigateTo: string) => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+
+  useEffect(() => {
+  const pregCount = parseInt(totalPregnancies || '0');
+
+  if (pregCount === 0) {
+    setAgeAtFirstChild('');
+    setAgeAtLastChild('');
+  } else if (pregCount === 1) {
+    setAgeAtLastChild(''); // only last child needs clearing
+  }
+}, [totalPregnancies]);
+
   
 
   useEffect(() => {
@@ -531,60 +548,38 @@ console.log(age,participant,ageString,"skkksa")
 
 <div className="form-group">
   <label>Age at First Child:</label>
-    <input
-        type="text"
-        inputMode="numeric"
-        placeholder="Enter Age at First Child"
-        value={ageAtFirstChild}
-        maxLength={2}
-        onChange={(e) => {
-          const value = e.target.value.replace(/[^0-9]/g, '');
-          setAgeAtFirstChild(value);
-          const ageVal = parseInt(value || '0');
-          const marriage = parseInt(ageAtMarriage || '0');
-            const totalPregval = parseInt(totalPregnancies || '0');
-
-          // if (ageVal > age ) {
-          //   setErrorFirstChild("Age at First Child cannot be greater than participant's age");
-          // } 
-           if (ageVal > totalPregval) {
-            setErrorFirstChild("Age at First Child cannot be greater than Total Pregnancies");
-          } 
-          else {
-            setErrorFirstChild('');
-          }
-        }}
-      />
-      {errorFirstChild && <span className="error-message">{errorFirstChild}</span>}
+<input
+  type="text"
+  inputMode="numeric"
+  placeholder="Enter Age at First Child"
+  value={ageAtFirstChild}
+  maxLength={2}
+  disabled={parseInt(totalPregnancies || '0') === 0}
+  onChange={(e) => {
+    const value = e.target.value.replace(/[^0-9]/g, '');
+    setAgeAtFirstChild(value);
+    setErrorFirstChild('');
+  }}
+/>
+{errorFirstChild && <span className="error-message">{errorFirstChild}</span>}
 
 </div>
 
 <div className="form-group">
   <label>Age at Last Child:</label>
 <input
-        type="text"
-        inputMode="numeric"
-        placeholder="Enter Age of Last Child"
-        value={ageAtLastChild}
-        maxLength={2}
-disabled={parseInt(totalPregnancies) === 0 || parseInt(totalPregnancies) === 1}
-        onChange={(e) => {
-          const value = e.target.value.replace(/[^0-9]/g, '');
-          setAgeAtLastChild(value);
-          const lastAge = parseInt(value || '0');
-          const firstAge = parseInt(ageAtFirstChild || '0');
-          //  if (lastAge > age) {
-          //   setErrorLastChild('Age at Last Child must be less than participant age');
-          // } 
-            if (lastAge < firstAge) {
-            setErrorLastChild('Age at Last Child must be Greater than  First Child');
-          } 
-          
-          else {
-            setErrorLastChild('');
-          }
-        }}
-      />
+  type="text"
+  inputMode="numeric"
+  placeholder="Enter Age of Last Child"
+  value={ageAtLastChild}
+  maxLength={2}
+  disabled={parseInt(totalPregnancies || '0') <= 1}
+  onChange={(e) => {
+    const value = e.target.value.replace(/[^0-9]/g, '');
+    setAgeAtLastChild(value);
+    setErrorLastChild('');
+  }}
+/>
 {errorLastChild && <span className="error-message">{errorLastChild}</span>}
 
 </div>
@@ -616,7 +611,7 @@ disabled={parseInt(totalPregnancies) === 0 || parseInt(totalPregnancies) === 1}
                         <option value="Contraception1">Nil</option>
                         <option value="Contraception2">Condom</option>
                         <option value="Contraception3">Pill</option>
-                        <option value="Contraception6">Icud</option>
+                        <option value="Contraception6">IUCD</option>
                         <option value="Contraception4">Tubectomy</option>
                         <option value="Contraception5">Others</option>
           </select>

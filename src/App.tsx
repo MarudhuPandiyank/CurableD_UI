@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { HashRouter as Router, Route, Routes } from 'react-router-dom';
 import Login from './components/Login';
 import ResetPassword from './components/ResetPassword';
 import ResponsiveCancerInstitute from './components/ResponsiveCancerInstitute';
@@ -39,10 +39,8 @@ import PatientEdit from './components/PatientEdit';
 import refreshToken from './components/refreshToken';
 import ScrollToTop from './ScrollToTop';
 
-
 const App: React.FC = () => {
   useEffect(() => {
-  
     refreshToken();
 
     const interval = setInterval(() => {
@@ -51,9 +49,10 @@ const App: React.FC = () => {
 
     return () => clearInterval(interval);
   }, []);
+
   return (
     <Router>
-    <ScrollToTop />
+      <ScrollToTop />
       <Routes>
         {/* Public Routes */}
         <Route path="/" element={<Login />} />
