@@ -108,8 +108,8 @@ const FamilyMedicalDetails: React.FC = () => {
     const payload = {
       description: 'Family Medical Metrics',
       diseaseTestId: 1,
-      familyMetrics: { params: updatedFormData.flat() },
-      familyMedicalMetrics: null,
+      familyMedicalMetrics: { params: updatedFormData.flat() },
+      familyMetrics: null, 
       eligibilityMetrics: null,
       gender: 'FEMALE',
       genderValid: true,
