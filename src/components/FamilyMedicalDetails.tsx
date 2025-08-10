@@ -13,16 +13,17 @@ interface FamilyMedicalParam {
   selectedValues: string[];
 }
 
-interface ApiResponse {
+interface MetricsResponse {
   testMetrics: {
     params: FamilyMedicalParam[];
   };
 }
 
 interface PrefillApiResponse {
-  familyMetrics: {
+  // NOTE: for type 5, prefill returns familyMedicalMetrics
+  familyMedicalMetrics: {
     params: FamilyMedicalParam[];
-  };
+  } | null;
 }
 
 const FamilyMedicalDetails: React.FC = () => {
@@ -41,15 +42,50 @@ const FamilyMedicalDetails: React.FC = () => {
           return;
         }
 
-        const response = await axios.get<ApiResponse>(`${config.appURL}/curable/getMetrics/FAMILY_MEDICAL`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        // 1) Load master field definitions
+        const response = await axios.get<MetricsResponse>(
+          `${config.appURL}/curable/getMetrics/FAMILY_MEDICAL`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        const masterParams = response.data?.testMetrics?.params || [];
+        setFormData(masterParams);
 
-        setFormData(response.data.testMetrics.params);
-      } catch (error) {
-        console.error('Error fetching family medical metrics data:', error);
+        // 2) Prefill (type: 5)
+        const prefillResponse = await axios.post<PrefillApiResponse>(
+          `${config.appURL}/curable/candidatehistoryForPrefil`,
+          {
+            candidateId: localStorage.getItem('patientId'),
+            type: 5,
+          },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+
+        const prefillParams = prefillResponse.data?.familyMedicalMetrics?.params || [];
+        if (prefillParams.length && masterParams.length) {
+          const fieldsPerMember = masterParams.length;
+
+          // Slice the flat array into member-sized chunks
+          const prefilledFormValues: Record<string, string>[] = [];
+          for (let i = 0; i < prefillParams.length; i += fieldsPerMember) {
+            const chunk = prefillParams.slice(i, i + fieldsPerMember);
+            const memberValues: Record<string, string> = {};
+            chunk.forEach((param) => {
+              const key = (param.testName || '').trim();
+              const val = (param.selectedValues?.[0] || '').trim();
+              if (key) memberValues[key] = val;
+            });
+            prefilledFormValues.push(memberValues);
+          }
+
+          setFormValues(prefilledFormValues);
+          setExpandedIndex(0); // open first prefilled member
+        } else {
+          // No prefill? Start with empty state and let user add members
+          setFormValues([]);
+          setExpandedIndex(null);
+        }
+      } catch (err) {
+        console.error('Error fetching family medical metrics data:', err);
         setError('Failed to load family medical metrics. Please try again.');
       }
     };
@@ -57,31 +93,34 @@ const FamilyMedicalDetails: React.FC = () => {
     fetchFamilyMedicalMetrics();
   }, []);
 
-  const handleFieldChange = (index: number, testName: string, value: string) => {
+  const handleFieldChange = (index: number, rawName: string, value: string) => {
+    const testName = (rawName || '').trim();
+
+    // simple numeric guard for "Age at Diagnosis" fields
     if (testName.toLowerCase().includes('age at diagnosis')) {
-    const numericValue = parseInt(value, 10);
-    if (!/^\d*$/.test(value) || numericValue < 1 || numericValue > 100) {
-      return;
+      if (!/^\d*$/.test(value)) return;
+      const n = value === '' ? NaN : parseInt(value, 10);
+      if (!isNaN(n) && (n < 1 || n > 100)) return;
     }
-  }
-    const updatedFormValues = [...formValues];
-    updatedFormValues[index] = {
-      ...updatedFormValues[index],
+
+    const updated = [...formValues];
+    updated[index] = {
+      ...updated[index],
       [testName]: value,
     };
-    setFormValues(updatedFormValues);
+    setFormValues(updated);
   };
 
   const handleAddMember = () => {
     if (formValues.length > 0) {
-      const lastMember = formValues[formValues.length - 1];
-      const hasData = Object.values(lastMember).some(value => value && value.trim() !== '');
+      const last = formValues[formValues.length - 1];
+      const hasData = Object.values(last).some(v => (v ?? '').toString().trim() !== '');
       if (!hasData) {
         alert('Please fill at least one field before adding another member.');
         return;
       }
     }
-    setFormValues((prev) => [...prev, {}]);
+    setFormValues(prev => [...prev, {}]);
     setExpandedIndex(formValues.length);
   };
 
@@ -98,18 +137,19 @@ const FamilyMedicalDetails: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const updatedFormData = formValues.map((formValue) =>
-      formData.map((field) => ({
-        ...field,
-        selectedValues: formValue[field.testName] ? [formValue[field.testName]] : [],
-      }))
+    const updatedParams = formValues.map((member) =>
+      formData.map((field) => {
+        const key = (field.testName || '').trim();
+        const selected = member[key] ? [member[key]] : [];
+        return { ...field, selectedValues: selected };
+      })
     );
 
     const payload = {
       description: 'Family Medical Metrics',
       diseaseTestId: 1,
-      familyMedicalMetrics: { params: updatedFormData.flat() },
-      familyMetrics: null, 
+      familyMedicalMetrics: { params: updatedParams.flat() },
+      familyMetrics: null,
       eligibilityMetrics: null,
       gender: 'FEMALE',
       genderValid: true,
@@ -135,8 +175,8 @@ const FamilyMedicalDetails: React.FC = () => {
       });
 
       navigate('/SuccessMessagePRFinal');
-    } catch (error) {
-      console.error('Error submitting data:', error);
+    } catch (err) {
+      console.error('Error submitting data:', err);
       setError('Failed to submit data. Please try again.');
     }
   };
@@ -148,6 +188,9 @@ const FamilyMedicalDetails: React.FC = () => {
   const participant = localStorage.getItem('participant');
   const registrationId = localStorage.getItem('registraionId');
 
+  // Helper for the member header title: use the first field name (trimmed) as key if available
+  const firstFieldKey = (formData?.[0]?.testName || '').trim() || 'Relation';
+
   return (
     <div className="container2">
       <Header1 />
@@ -157,7 +200,9 @@ const FamilyMedicalDetails: React.FC = () => {
       </div>
 
       <h1 style={{ color: 'darkblue', fontWeight: 'bold' }}>Family Medical Details</h1>
-      <span style={{ marginBottom: '10px' }}>Provide the details if any of the family members has cancer history</span>
+      <span style={{ marginBottom: '10px' }}>
+        Provide the details if any of the family members has cancer history
+      </span>
       {error && <div className="error-message">{error}</div>}
 
       <form className="clinic-form" onSubmit={handleSubmit}>
@@ -179,7 +224,7 @@ const FamilyMedicalDetails: React.FC = () => {
                 alignItems: 'center',
               }}
             >
-              {formValue['Relation '] || `Relation ${formIndex + 1}`}
+              {formValue[firstFieldKey] || `${firstFieldKey} ${formIndex + 1}`}
               <i
                 onClick={(e) => {
                   e.stopPropagation();
@@ -188,37 +233,46 @@ const FamilyMedicalDetails: React.FC = () => {
                 className="fa-solid fa-trash-can float-end"
               ></i>
             </p>
+
             {expandedIndex === formIndex && (
               <div className="form-fields">
                 {formData.map((field, index) => {
-                  const trimmedName = field.testName.trim();
+                  const trimmedName = (field.testName || '').trim();
                   const value = formValue[trimmedName] || '';
 
                   return (
                     <div key={index} className="form-group">
                       <label style={{ color: 'darkblue' }}>{field.testName}:</label>
+
                       {field.valueType === 'SingleSelect' ? (
                         <select
                           value={value}
                           onChange={(e) => handleFieldChange(formIndex, trimmedName, e.target.value)}
                         >
-                          <option value="" disabled>Select {field.testName}</option>
+                          <option value="" disabled>
+                            Select {field.testName}
+                          </option>
                           {field.values.map((val, i) => (
-                            <option key={i} value={val.trim()}>{val.trim()}</option>
+                            <option key={i} value={val.trim()}>
+                              {val.trim()}
+                            </option>
                           ))}
                         </select>
                       ) : field.valueType === 'Button' ? (
                         <div className="gender-group">
-                          {field.values.map((val, i) => (
-                            <button
-                              key={i}
-                              type="button"
-                              className={`gender-btn ${value === val.trim() ? 'active' : ''}`}
-                              onClick={() => handleFieldChange(formIndex, trimmedName, val.trim())}
-                            >
-                              {val.trim()}
-                            </button>
-                          ))}
+                          {field.values.map((val, i) => {
+                            const trimmedVal = (val || '').trim();
+                            return (
+                              <button
+                                key={i}
+                                type="button"
+                                className={`gender-btn ${value === trimmedVal ? 'active' : ''}`}
+                                onClick={() => handleFieldChange(formIndex, trimmedName, trimmedVal)}
+                              >
+                                {trimmedVal}
+                              </button>
+                            );
+                          })}
                         </div>
                       ) : (
                         <input
@@ -237,21 +291,35 @@ const FamilyMedicalDetails: React.FC = () => {
         ))}
 
         <div className="button-container">
-           <button type="button" className="Next-button_familydetails" onClick={handleAddMember}>Add Member</button>
+          <button
+            type="button"
+            className="Next-button_familydetails"
+            onClick={handleAddMember}
+          >
+            Add Member
+          </button>
         </div>
 
         <center className="buttons">
-          <button type="button" className="Next-button" onClick={handlePrevClick}>Prev</button>
-          <button type="submit" className="Finish-button">Finish</button>
+          <button type="button" className="Next-button" onClick={handlePrevClick}>
+            Prev
+          </button>
+          <button type="submit" className="Finish-button">
+            Finish
+          </button>
         </center>
-        <br/>
-        <br/>
+        <br />
+        <br />
       </form>
 
       <footer className="footer-container-fixed">
         <div className="footer-content">
           <p className="footer-text">Powered By</p>
-          <img src="/assets/Curable logo - rectangle with black text.png" alt="Curable Logo" className="footer-logo" />
+          <img
+            src="/assets/Curable logo - rectangle with black text.png"
+            alt="Curable Logo"
+            className="footer-logo"
+          />
         </div>
       </footer>
     </div>
