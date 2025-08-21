@@ -168,7 +168,11 @@ useEffect(() => {
       campId: parseInt(campId || '0', 10), // Convert campId to number
       streetId: streetIdValue, // Convert to number
       reason, // Include reason directly in the payload,
-      hospitalId
+      hospitalId,
+        name,
+      mobileNo: mobile,
+      gender: gender.toUpperCase(),
+      age,
       
     };
 
@@ -468,7 +472,7 @@ if (!isEditMode && streetId.trim() !== '') {
 
       <div className="custom-modal-buttons">
         <button 
-          className="Next-button" 
+          className="Next-button Next-button_home" 
           type="button" 
           onClick={closeModal}
         >

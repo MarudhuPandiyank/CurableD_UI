@@ -164,6 +164,12 @@
     line-height: 1.4;
   }
 
+   .Next-button_home {
+    padding: 10px 20px; 
+    font-size: 14px;     
+    width: 50%;         
+    max-width: 300px;   
+  }
   .modal-buttons button {
     width: 100px;
     font-size: 14px;
