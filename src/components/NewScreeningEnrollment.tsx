@@ -45,7 +45,7 @@ interface PrefillApiResponse {
   hospitalId: number;
   reason: any;
   eligibleDiseases: any;
-  candidateHabitDTOs: any;
+  candidateHabitDTOs: any; 
 }
 
 const NewScreeningEnrollment: React.FC = () => {
@@ -70,52 +70,60 @@ const [age, setAge] = useState<number | ''>('');
 
 
 
-  useEffect(() => {
-    const prefillData = async () => {
-      const token = localStorage.getItem('token');
-      const prefillNeeds = localStorage.getItem('prefill');
-      const patientId = localStorage.getItem('patientId');
-  
-      if (!token || !patientId) {
-       // alert('Token or patient ID not found. Please log in again.');
-        return;
-      }
-      {console.log(prefillNeeds,"prefillNeeds")}
-  
-      if (prefillNeeds === 'true') {
-        localStorage.setItem('prefill', 'false');
-        localStorage.setItem('prefillId',patientId);
-        try {
-          const response = await axios.post<PrefillApiResponse>(
-            `${config.appURL}/curable/candidatehistoryForPrefil`,
-            { candidateId: patientId, type: 6 },
-            {
-              headers: { Authorization: `Bearer ${token}` },
-            }
-          );
-  
-          if (response.status === 200) {
-            const data = response.data;
-             setIsEditMode(true); 
-            setName(data.name);
-            setMobile(data.mobileNo);
-            setGender(data.gender.charAt(0).toUpperCase() + data.gender.slice(1).toLowerCase());
-            setDob(new Date(data.dob));
-            setAge(data.age || '');
-            setAddress(data.address);
-            setStreetId(data.streetId.toString());
-            setRegistraionId(data.registraionId);
-          }
-        } catch (error) {
-          console.error('Error fetching prefill data:', error);
-          alert('Failed to fetch prefill data. Please try again.');
+useEffect(() => {
+  const prefillData = async () => {
+    const token = localStorage.getItem('token');
+    const prefillNeeds = localStorage.getItem('prefill');
+    const patientId = localStorage.getItem('patientId');
+
+    if (!token || !patientId) return;
+
+    if (prefillNeeds === 'true') {
+      localStorage.setItem('prefill', 'false');
+      localStorage.setItem('prefillId', patientId);
+
+      try {
+        const res = await axios.post<PrefillApiResponse>(
+          `${config.appURL}/curable/candidatehistoryForPrefil`,
+          { candidateId: patientId, type: 6 },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+
+        if (res.status !== 200) return; 
+
+        const data = res.data;
+
+        if (!data || (typeof data === 'object' && Object.keys(data).length === 0)) {
+          console.log('Prefill: empty body'); 
+          return;
         }
+
+        setIsEditMode(true);
+        if (data.name) setName(data.name);
+        if (data.mobileNo) setMobile(data.mobileNo);
+        if (data.gender) {
+          const g = String(data.gender);
+          setGender(g.charAt(0).toUpperCase() + g.slice(1).toLowerCase());
+        }
+        if (data.dob) setDob(new Date(data.dob));
+        setAge(data.age ?? '');
+        if (data.address) setAddress(data.address);
+        if (data.streetId != null) setStreetId(String(data.streetId));
+        if (data.registraionId) setRegistraionId(data.registraionId);
+      } catch (err: any) {
+        if (err?.response?.status && err.response.status !== 200) {
+          alert('Failed to fetch prefill data. Please try again.');
+        } else if (!err?.response) {
+          alert('Network error fetching prefill data. Please try again.');
+        }
+        console.error('Prefill error:', err);
       }
-    };
-  
-    prefillData();
-  }, []);
-  
+    }
+  };
+
+  prefillData();
+}, []);
+
 
   const handleGenderChange = (value: string) => setGender(value);
 
@@ -141,6 +149,8 @@ const [age, setAge] = useState<number | ''>('');
     const handleSave = async () => {
     const token = localStorage.getItem('token');
     const campId = localStorage.getItem('campId');
+    const hospitalId = localStorage.getItem('hospitalId');
+
 
     const streetIdValue = parseInt(streetId, 10);
   if (!streetId || isNaN(streetIdValue) || streetIdValue < 100) {
@@ -157,7 +167,9 @@ const [age, setAge] = useState<number | ''>('');
       address,
       campId: parseInt(campId || '0', 10), // Convert campId to number
       streetId: streetIdValue, // Convert to number
-      reason, // Include reason directly in the payload
+      reason, // Include reason directly in the payload,
+      hospitalId
+      
     };
 
     try {
@@ -169,7 +181,7 @@ const [age, setAge] = useState<number | ''>('');
       });
 
       if (response.status === 200) {
-        navigate('/SuccessMessagePatient');
+        navigate('/SuccessMessagePatient',{ state: { clickId: response.data } });
       }
     } catch (error) {
       console.error('Error saving candidate:', error);

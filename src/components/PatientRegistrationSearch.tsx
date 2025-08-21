@@ -57,10 +57,10 @@ const PatientRegistrationSearch: React.FC = () => {
   const [message, setMessage] = useState<string>('');
 
   const handleSearch = async () => {
-    if (!searchInput) {
-      setMessage('Please enter a clinic ID or Name.');
-      return;
-    }
+    // if (!searchInput) {
+    //   setMessage('Please enter a clinic ID or Name.');
+    //   return;
+    // }
 
     setLoading(true);
     setMessage('');
@@ -189,7 +189,7 @@ const PatientRegistrationSearch: React.FC = () => {
        
         {message && <div className="message">{message}</div>}
 
-        {hasDuplicateNames && (
+        {/* {hasDuplicateNames && (
           <div className="clinic-select-container">
             <label>Select Clinic ID:</label>
             <select onChange={handleClinicSelect} value={selectedClinicId}>
@@ -201,7 +201,7 @@ const PatientRegistrationSearch: React.FC = () => {
               ))}
             </select>
           </div>
-        )}
+        )} */}
 
         {filteredClinics.length > 0 && (
           <div className="clinic-details-container">

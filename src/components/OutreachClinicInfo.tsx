@@ -57,10 +57,10 @@ const OutreachClinicInfo: React.FC = () => {
   const [message, setMessage] = useState<string>('');
 
   const handleSearch = async () => {
-    if (!searchInput) {
-      setMessage('Please enter a clinic ID or Name.');
-      return;
-    }
+    // if (!searchInput) {
+    //   setMessage('Please enter a clinic ID or Name.');
+    //   return;
+    // }
 
     setLoading(true);
     setMessage('');

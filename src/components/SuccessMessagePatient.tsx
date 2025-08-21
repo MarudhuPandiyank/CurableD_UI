@@ -11,6 +11,8 @@ const SuccessMessagePatient = () => {
       <main className="content">
         <img src='./Curable Icons/PNG/Group 261.png' alt="Success Icon" className="icon" /><br/>
         <h1>Patient has been Tagged Successfully!</h1>
+           <p className="reg-id-text">Patient Registration ID: <strong>{clickId && clickId.registraionId}</strong></p>
+
         
         <button className="primary-button" onClick={() => navigate('/NewScreeningEnrollment')}>
           Begin Next Enrollment
@@ -21,6 +23,6 @@ const SuccessMessagePatient = () => {
       </main>
     </div>
   );
-};
+}; 
 
 export default SuccessMessagePatient;

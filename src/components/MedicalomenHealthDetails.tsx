@@ -31,7 +31,7 @@ interface PrefillApiResponse {
   currentlyPregant: boolean;
   methodOfContraceptionUsed: string;
   noOfBreastFedMonths: string;
-  cervicalBreastScrening: boolean;
+  undergoneCervicalBreastScrening: string;
 }
 const MedicalomenHealthDetails: React.FC = () => {
   const [selectedHistory, setSelectedHistory] = useState<string[]>([]);
@@ -53,6 +53,7 @@ const MedicalomenHealthDetails: React.FC = () => {
   const [selectedToggle1, setSelectedToggle1] = useState<string | null>(null);
   const [selectedContraception, setSelectedContraception] = useState<string>('');
   const [selectedBreastFedMonths, setSelectedBreastFedMonths] = useState<string>('');
+      const [selectedBreastCrevixMonths, setSelectedBreastCrevixMonths] = useState<string>('');
   const [selectedToggle2, setSelectedToggle2] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false); // State for modal visibility
   const [error, setError] = useState<string | null>(null);
@@ -183,6 +184,8 @@ if (totalPreg === 0) {
     return;
   }
 
+  console.log(selectedContraception,selectedHistory,"selectedHistory")
+
   const payload = {
     abnormalBleedingVaginum: selectedBleedingIssues,
     ageAtFirstChild: parseInt(ageAtFirstChild) || 0,
@@ -192,7 +195,7 @@ if (totalPreg === 0) {
     allergy,
     bloodPressure,
     candidateId: patientId,
-    cervicalBreastScrening: selectedToggle2 === 'yes',
+    undergoneCervicalBreastScrening:selectedBreastCrevixMonths,
     currentlyPregant: selectedToggle1 === 'yes',
     height: parseInt(height) || 0,
     historyOfSurgery: selectedToggle === 'yes',
@@ -292,7 +295,9 @@ if (totalPreg === 0) {
           setSelectedToggle1(data.currentlyPregant ? 'yes' : 'no');
           setSelectedContraception(data.methodOfContraceptionUsed);
           setSelectedBreastFedMonths(data.noOfBreastFedMonths);
-          setSelectedToggle2(data.cervicalBreastScrening ? 'yes' : 'no');
+          // setSelectedToggle2(data.cervicalBreastScrening ? 'yes' : 'no');
+          setSelectedBreastCrevixMonths(data.undergoneCervicalBreastScrening);
+
         }
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -331,16 +336,17 @@ console.log(age,participant,ageString,"skkksa")
         <fieldset>
           {/* <legend>Medical Details</legend> */}
           <label>Medical History:</label>
-          <Select
-        isMulti
-        options={medicalHistoryOptions}
-        value={medicalHistoryOptions.filter(option => selectedHistory.includes(option.value))}
-        onChange={(selectedOptions) => {
-          const values = selectedOptions.map((opt) => opt.value);
-          setSelectedHistory(values);
-        }}
-        placeholder="Select Medical History"
-      />
+         <Select
+  isMulti
+  options={medicalHistoryOptions}
+  value={medicalHistoryOptions.filter(option => selectedHistory.includes(option.label))}
+  onChange={(selectedOptions) => {
+    const values = selectedOptions.map((opt) => opt.label); // use label instead of value
+    setSelectedHistory(values);
+  }}
+  placeholder="Select Medical History"
+/>
+
 
           <div className="form-group">
   <label>Blood Pressure:</label>
@@ -630,7 +636,7 @@ console.log(age,participant,ageString,"skkksa")
           </select>
 
           <label>Have You Ever Undergone Breast/Cervix Screening?</label>
-          <div className="toggle-group">
+          {/* <div className="toggle-group">
             <button
               type="button"
               className={`toggle-btn ${selectedToggle2 === 'yes' ? 'yes-active' : ''}`}
@@ -645,7 +651,17 @@ console.log(age,participant,ageString,"skkksa")
             >
               No
             </button>
-          </div>
+          </div> */}
+            <select
+            value={selectedBreastCrevixMonths}
+            onChange={(e) => setSelectedBreastCrevixMonths(e.target.value)}
+          >
+            <option value="">Select</option>
+            <option value="Yes, for Breast Screening only">Yes, for Breast Screening only</option>
+            <option value="Yes, for Cervical Screening only">Yes, for Cervical Screening only</option>
+            <option value="Yes, for Both Breast and Cervical Screening">Yes, for Both Breast and Cervical Screening</option>
+            <option value="No, I have not undergone either">No, I have not undergone either</option>
+          </select>
         </fieldset>)}
         
         {showModal && (

@@ -43,10 +43,10 @@ const PatientEdit: React.FC = () => {
   const [message, setMessage] = useState<string>('');
 
   const handleSearch = async () => {
-    if (!searchInput) {
-      setMessage('Please enter a search term.');
-      return;
-    }
+    // if (!searchInput) {
+    //   setMessage('Please enter a search term.');
+    //   return;
+    // }
 
     setLoading(true);
     setMessage('');
