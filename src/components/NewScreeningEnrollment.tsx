@@ -163,18 +163,17 @@ useEffect(() => {
       return;
     }
 
-    const payload = {
-      address,
-      campId: parseInt(campId || '0', 10), // Convert campId to number
-      streetId: streetIdValue, // Convert to number
-      reason, // Include reason directly in the payload,
-      hospitalId,
-        name,
-      mobileNo: mobile,
-      gender: gender.toUpperCase(),
-      age,
-      
-    };
+   const payload = {
+  address,
+  campId: parseInt(campId || '0', 10), // Convert campId to number
+  streetId: streetIdValue,             // Convert to number
+  reason,                              // Include reason directly in the payload
+  hospitalId,
+  name: name ? name : null,            // If value present, use it else null
+  mobileNo: mobile ? mobile : null,    // Same check for mobile
+  gender: gender ? gender.toUpperCase() : null, // Ensure uppercase only if present
+  age: age ? age : null,               // Send value else null
+};
 
     try {
       const response = await axios.post(`${config.appURL}/curable/saveCandidate`, payload, {
