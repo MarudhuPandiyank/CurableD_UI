@@ -173,6 +173,7 @@ useEffect(() => {
   mobileNo: mobile ? mobile : null,    // Same check for mobile
   gender: gender ? gender.toUpperCase() : null, // Ensure uppercase only if present
   age: age ? age : null,               // Send value else null
+  screenId: 2,                         // constant value for identify the screen type
 };
 
     try {
@@ -248,6 +249,7 @@ if (!isEditMode && streetId.trim() !== '') {
       campId,
       id:  localStorage.getItem('prefillId'),
       type: 1,
+      screenId: 1,                         // constant value for identify the screen type
 
     };
 
