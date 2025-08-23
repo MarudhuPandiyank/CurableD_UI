@@ -247,8 +247,10 @@ if (!isEditMode && streetId.trim() !== '') {
       streetId: parseInt(streetId, 10) || 0,
       hospitalId: parseInt(hospitalId, 10),
       campId,
-      id:  localStorage.getItem('prefillId'),
-      type: 1,
+      // id:  localStorage.getItem('prefillId'),
+            id:  null,
+
+          type: 1,
       screenId: 1,                         // constant value for identify the screen type
 
     };
