@@ -5,31 +5,57 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import config from '../config';
 
+// ----- Types -----
 interface FamilyMedicalParam {
   testName: string;
   subtestName: string;
-  valueType: string;
+  valueType: 'Input' | 'SingleSelect' | 'Button' | string;
   values: string[];
   selectedValues: string[];
 }
 
 interface MetricsResponse {
-  testMetrics: {
-    params: FamilyMedicalParam[];
-  };
+  testMetrics: { params: FamilyMedicalParam[] };
 }
 
-interface PrefillApiResponse {
-  // NOTE: for type 5, prefill returns familyMedicalMetrics
-  familyMedicalMetrics: {
-    params: FamilyMedicalParam[];
-  } | null;
+interface FamilyMemberGroup {
+  params: FamilyMedicalParam[];
+  repeat: string | null;
+  repeatlabel: string | null;
 }
+
+type FamilyMedicalMetricsFlat = { params: FamilyMedicalParam[] };
+type FamilyMedicalMetricsGrouped = FamilyMemberGroup[];
+
+interface PrefillApiResponse {
+  // NEW grouped array OR OLD flat object OR null
+  familyMedicalMetrics: FamilyMedicalMetricsGrouped | FamilyMedicalMetricsFlat | null;
+}
+
+// ----- Type guards -----
+const isGrouped = (x: unknown): x is FamilyMedicalMetricsGrouped =>
+  Array.isArray(x) && x.every(g => g && typeof g === 'object' && Array.isArray((g as any).params));
+
+const isFlat = (x: unknown): x is FamilyMedicalMetricsFlat =>
+  !!x && typeof x === 'object' && Array.isArray((x as any).params);
+
+// helper to convert an array of params into a { testName: selectedValue } map
+const makeMemberMapFromParams = (paramsArray: FamilyMedicalParam[]) => {
+  const memberValues: Record<string, string> = {};
+  for (const p of paramsArray) {
+    const key = (p.testName || '').trim();
+    const val = (p.selectedValues?.[0] || '').trim();
+    if (key) memberValues[key] = val;
+  }
+  return memberValues;
+};
 
 const FamilyMedicalDetails: React.FC = () => {
   const navigate = useNavigate();
+
   const [formData, setFormData] = useState<FamilyMedicalParam[]>([]);
   const [error, setError] = useState<string | null>(null);
+  // each array element = one family member (map of fieldName -> value)
   const [formValues, setFormValues] = useState<Record<string, string>[]>([]);
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
 
@@ -50,7 +76,7 @@ const FamilyMedicalDetails: React.FC = () => {
         const masterParams = response.data?.testMetrics?.params || [];
         setFormData(masterParams);
 
-        // 2) Prefill (type: 5)
+        // 2) Prefill (type: 5) — support new grouped or old flat shapes
         const prefillResponse = await axios.post<PrefillApiResponse>(
           `${config.appURL}/curable/candidatehistoryForPrefil`,
           {
@@ -60,27 +86,27 @@ const FamilyMedicalDetails: React.FC = () => {
           { headers: { Authorization: `Bearer ${token}` } }
         );
 
-        const prefillParams = prefillResponse.data?.familyMedicalMetrics?.params || [];
-        if (prefillParams.length && masterParams.length) {
-          const fieldsPerMember = masterParams.length;
+        const fmRaw = prefillResponse.data?.familyMedicalMetrics;
+        let prefilledMembers: Record<string, string>[] = [];
 
-          // Slice the flat array into member-sized chunks
-          const prefilledFormValues: Record<string, string>[] = [];
-          for (let i = 0; i < prefillParams.length; i += fieldsPerMember) {
-            const chunk = prefillParams.slice(i, i + fieldsPerMember);
-            const memberValues: Record<string, string> = {};
-            chunk.forEach((param) => {
-              const key = (param.testName || '').trim();
-              const val = (param.selectedValues?.[0] || '').trim();
-              if (key) memberValues[key] = val;
-            });
-            prefilledFormValues.push(memberValues);
+        if (isGrouped(fmRaw)) {
+          prefilledMembers = fmRaw
+            .map(group => mapParamsToMemberValuesSafe(group?.params))
+            .filter(m => Object.keys(m).length > 0);
+        } else if (isFlat(fmRaw)) {
+          if (masterParams.length > 0) {
+            const fieldsPerMember = masterParams.length;
+            for (let i = 0; i < fmRaw.params.length; i += fieldsPerMember) {
+              const chunk = fmRaw.params.slice(i, i + fieldsPerMember);
+              prefilledMembers.push(makeMemberMapFromParams(chunk));
+            }
           }
+        } // else null/unknown -> empty
 
-          setFormValues(prefilledFormValues);
-          setExpandedIndex(0); // open first prefilled member
+        if (prefilledMembers.length) {
+          setFormValues(prefilledMembers);
+          setExpandedIndex(0);
         } else {
-          // No prefill? Start with empty state and let user add members
           setFormValues([]);
           setExpandedIndex(null);
         }
@@ -93,22 +119,25 @@ const FamilyMedicalDetails: React.FC = () => {
     fetchFamilyMedicalMetrics();
   }, []);
 
+  // safe wrapper in case params is undefined/null
+  const mapParamsToMemberValuesSafe = (params?: FamilyMedicalParam[]) =>
+    makeMemberMapFromParams(params ?? []);
+
   const handleFieldChange = (index: number, rawName: string, value: string) => {
     const testName = (rawName || '').trim();
 
-    // simple numeric guard for "Age at Diagnosis" fields
+    // example numeric guard for fields containing "Age at Diagnosis"
     if (testName.toLowerCase().includes('age at diagnosis')) {
       if (!/^\d*$/.test(value)) return;
       const n = value === '' ? NaN : parseInt(value, 10);
       if (!isNaN(n) && (n < 1 || n > 100)) return;
     }
 
-    const updated = [...formValues];
-    updated[index] = {
-      ...updated[index],
-      [testName]: value,
-    };
-    setFormValues(updated);
+    setFormValues(prev => {
+      const updated = [...prev];
+      updated[index] = { ...updated[index], [testName]: value };
+      return updated;
+    });
   };
 
   const handleAddMember = () => {
@@ -129,26 +158,27 @@ const FamilyMedicalDetails: React.FC = () => {
   };
 
   const handleDeleteMember = (index: number) => {
-    const updated = formValues.filter((_, i) => i !== index);
-    setFormValues(updated);
+    setFormValues(prev => prev.filter((_, i) => i !== index));
     if (expandedIndex === index) setExpandedIndex(null);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const updatedParams = formValues.map((member) =>
-      formData.map((field) => {
+    // Build grouped array the backend expects
+    const groups: FamilyMemberGroup[] = formValues.map(member => {
+      const paramsForMember = formData.map(field => {
         const key = (field.testName || '').trim();
-        const selected = member[key] ? [member[key]] : [];
-        return { ...field, selectedValues: selected };
-      })
-    );
+        const v = (member[key] ?? '').toString().trim();
+        return { ...field, selectedValues: v ? [v] : [] };
+      });
+      return { params: paramsForMember, repeat: null, repeatlabel: null };
+    });
 
     const payload = {
       description: 'Family Medical Metrics',
       diseaseTestId: 1,
-      familyMedicalMetrics: { params: updatedParams.flat() },
+      familyMedicalMetrics: groups, // NEW grouped array shape
       familyMetrics: null,
       eligibilityMetrics: null,
       gender: 'FEMALE',
@@ -187,8 +217,6 @@ const FamilyMedicalDetails: React.FC = () => {
 
   const participant = localStorage.getItem('participant');
   const registrationId = localStorage.getItem('registraionId');
-
-  // Helper for the member header title: use the first field name (trimmed) as key if available
   const firstFieldKey = (formData?.[0]?.testName || '').trim() || 'Relation';
 
   return (
@@ -253,8 +281,8 @@ const FamilyMedicalDetails: React.FC = () => {
                             Select {field.testName}
                           </option>
                           {field.values.map((val, i) => (
-                            <option key={i} value={val.trim()}>
-                              {val.trim()}
+                            <option key={i} value={(val || '').trim()}>
+                              {(val || '').trim()}
                             </option>
                           ))}
                         </select>
