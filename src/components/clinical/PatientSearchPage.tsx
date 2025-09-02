@@ -36,7 +36,10 @@ const PatientSearchPage: React.FC = () => {
   const handleSearch = async () => {
     setSearchSubmitted(true); 
     const hospitalId = localStorage.getItem("hospitalId");
+    const roleId= localStorage.getItem('roleId');
     const token = localStorage.getItem("token");
+    const userId= localStorage.getItem('userId');
+
     if (!hospitalId || !token) {
       setError("Hospital ID or Token missing. Please log in again.");
       return;
@@ -52,6 +55,8 @@ const PatientSearchPage: React.FC = () => {
           hospitalId: Number(hospitalId),
           search: searchQuery,
           stage: 1,
+          roleId: Number(roleId),
+          userId: Number(userId),
         },
         {
           headers: {

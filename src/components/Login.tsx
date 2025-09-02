@@ -30,6 +30,7 @@ const Login: React.FC = () => {
     hospitalId: string;
     tenantName: string;
     userId: string;
+    roleId: string;
   }
 
   const handleSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -57,9 +58,11 @@ const Login: React.FC = () => {
           const hospitalId = authResponse.data.hospitalId;
           const tenantName = authResponse.data.tenantName;
           const userId = authResponse.data.userId;
+          const roleId = authResponse.data.roleId;
           localStorage.setItem('hospitalId', hospitalId);
           localStorage.setItem('tenantName', tenantName);
           localStorage.setItem('userId', userId);
+          localStorage.setItem('roleId', roleId);
           navigate('/responsive-cancer-institute');
         } else {
           setError('Invalid password! Retry or click forgot password');

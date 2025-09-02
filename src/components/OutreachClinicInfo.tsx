@@ -74,9 +74,11 @@ const OutreachClinicInfo: React.FC = () => {
 
     try {
             let userIds= localStorage.getItem('userId');
+            let roleId= localStorage.getItem('roleId');
+            let hospitalId= localStorage.getItem('hospitalId');
       const response = await axios.post<ClinicAPIResponse[]>(
         `${config.appURL}/curable/activecamp`,
-        { search: searchInput, userId: userIds },
+        { search: searchInput, userId: Number(userIds) ,roleId: Number(roleId) ,hospitalId: Number(hospitalId),stage:1},
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
