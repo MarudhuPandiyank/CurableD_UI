@@ -37,23 +37,17 @@ const ClinicSearchPage: React.FC = () => {
   const [searchAttempted, setSearchAttempted] = useState(false);
 
   const navigate = useNavigate();
-
-  
-        const { canView, canCreate, canEdit } = useSelector(
+      const { canView, canCreate, canEdit } = useSelector(
       selectPrivilegeFlags('Patient Registration') // or selectPrivilegeFlags('/preg')
     );
   
     const allowAllThree = useSelector(canAll('/clinical', 'CREATE', 'VIEW', 'EDIT'));
-  
+
 
   const handleSearch = async () => {
     const hospitalId = localStorage.getItem("hospitalId");
     const token = localStorage.getItem("token");
-<<<<<<< HEAD
-     const roleId= localStorage.getItem('roleId');
-=======
     const roleId= localStorage.getItem('roleId');
->>>>>>> 6009453f43964c916f0a289197529e014400ce52
     const userId= localStorage.getItem('userId');
     if (!hospitalId || !token) {
       setError("Hospital ID or Token missing. Please log in again.");
@@ -71,7 +65,7 @@ const ClinicSearchPage: React.FC = () => {
           hospitalId: Number(hospitalId),
           search: searchQuery,
           stage: 2,
-          roleId: Number(roleId),
+           roleId: Number(roleId),
           userId: Number(userId),
         },
         {
@@ -255,9 +249,10 @@ const ClinicSearchPage: React.FC = () => {
 
             <button
               className={`next-button ${!allowAllThree ? 'disabled-button' : ''}`}
+
+              disabled={!allowAllThree }
               onClick={handleNext}
               aria-label="Next"
-               disabled={!allowAllThree } 
             >
               Next
             </button>

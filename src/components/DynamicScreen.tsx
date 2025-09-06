@@ -41,12 +41,12 @@ interface ApiResponse {
 
 const App: React.FC = () => {
   const navigate = useNavigate();
-          const { canView, canCreate, canEdit } = useSelector(
-        selectPrivilegeFlags('Patient Registration') // or selectPrivilegeFlags('/preg')
-      );
-    
-      const allowAllThree = useSelector(canAll('/management', 'CREATE', 'VIEW', 'EDIT'));
+      const { canView, canCreate, canEdit } = useSelector(
+      selectPrivilegeFlags('Patient Registration') // or selectPrivilegeFlags('/preg')
+    );
   
+    const allowAllThree = useSelector(canAll('/management', 'CREATE', 'VIEW', 'EDIT'));
+
   const diseaseTestIds = localStorage.getItem('diseaseTestIds');
   const [paramsObject, setParamsObject] = useState<{ params: Param[] }>({ params: [] });
   const [processingTestName, setProcessingTestName] = useState('');
@@ -342,7 +342,9 @@ const App: React.FC = () => {
       <form className="clinic-form" onSubmit={handleSubmit}>
         {getTestFieldsInline()}
         <center className="buttons">
-          <button type="submit"  disabled={!allowAllThree }  className={`Finish-button ${!allowAllThree ? 'disabled-button' : ''}`}>Finish</button>
+          <button type="submit"  disabled={!allowAllThree }  
+          className={`Finish-button ${!allowAllThree ? 'disabled-button' : ''}`}
+          >Finish</button>
         </center>
       </form>
       <footer className="footer-container">

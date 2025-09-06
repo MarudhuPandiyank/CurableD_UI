@@ -6,6 +6,11 @@ import '../components/OutreachClinicInfo.css';
 import Header from './Header';
 import Header1 from './Header1';
 import config from '../config';  // Import the config file
+import { useSelector } from 'react-redux';
+import { selectPrivilegeFlags } from '../store/userSlice';
+
+import { canAll, can, Privilege } from '../store/userSlice';
+
 interface Clinic {
   id: string;
   name: string;
@@ -55,6 +60,12 @@ const OutreachClinicInfo: React.FC = () => {
   const [selectedClinicId, setSelectedClinicId] = useState<string>('');
   const [openNoClinicDialog, setOpenNoClinicDialog] = useState<boolean>(false);
   const [message, setMessage] = useState<string>('');
+    const { canView, canCreate, canEdit } = useSelector(
+      selectPrivilegeFlags('Patient Registration') // or selectPrivilegeFlags('/preg')
+    );
+  
+    const allowAllThree = useSelector(canAll('/Outrich Clinic', 'CREATE', 'VIEW', 'EDIT'));
+  
 
   const handleSearch = async () => {
     // if (!searchInput) {
@@ -74,21 +85,12 @@ const OutreachClinicInfo: React.FC = () => {
 
     try {
             let userIds= localStorage.getItem('userId');
-<<<<<<< HEAD
              let roleId= localStorage.getItem('roleId');
-            let hospitalId= localStorage.getItem('hospitalId');
+            let hospitalId= localStorage.getItem('hospitalId')
       const response = await axios.post<ClinicAPIResponse[]>(
         `${config.appURL}/curable/activecamp`,
  { search: searchInput, userId: Number(userIds) ,roleId: Number(roleId) ,hospitalId: Number(hospitalId),stage:1},
          { headers: { Authorization: `Bearer ${token}` } }
-=======
-            let roleId= localStorage.getItem('roleId');
-            let hospitalId= localStorage.getItem('hospitalId');
-      const response = await axios.post<ClinicAPIResponse[]>(
-        `${config.appURL}/curable/activecamp`,
-        { search: searchInput, userId: Number(userIds) ,roleId: Number(roleId) ,hospitalId: Number(hospitalId),stage:1},
-        { headers: { Authorization: `Bearer ${token}` } }
->>>>>>> 6009453f43964c916f0a289197529e014400ce52
       );
 
       if (response.data.length > 0) {
@@ -248,7 +250,10 @@ const OutreachClinicInfo: React.FC = () => {
                 </p>
                 <div className="edit-button-container">
                   <button
-                    className="edit-button"
+                     className={`edit-button ${!allowAllThree ? 'disabled-button' : ''}`}
+
+                     disabled={!allowAllThree }             
+
                     onClick={() => handleEditClick(clinic)}
                   >
                     Edit

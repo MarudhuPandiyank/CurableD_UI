@@ -120,19 +120,16 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     font-weight: 600;
     text-align: center;
 }
- .secondary-button.disabled-button {
+.primary-button.disabled-button {
   background-color: #d6d6d6; /* grey */
   color: #999;
   cursor: not-allowed;
-
-   }
-    .primary-button.disabled-button {
+}
+.secondary-button.disabled-button {
   background-color: #d6d6d6; /* grey */
   color: #999;
   cursor: not-allowed;
-
-   }
-
+}
 
 .footer {
     width: 100%;
@@ -395,16 +392,16 @@ input[type="date"] {
  
 }
 
+ .Finish-button.disabled-button {
+  background-color: #d6d6d6; /* grey */
+  color: #999;
+  cursor: not-allowed;
+}
+
 .Finish-button:hover {
   background-color: #d774ad; /* Darker pink on hover */
 }
 
-.Finish-button.disabled-button {
-  background-color: #d6d6d6; /* grey */
-  color: #999;
-  cursor: not-allowed;
-
-   }
 
 .buttons_resource {
   display: flex;
@@ -561,18 +558,7 @@ h1 {
         padding: 0.5rem 1.5rem;
         font-size: 0.875rem;
     }
-    .primary-button.disabled-button {
-  background-color: #d6d6d6; /* grey */
-  color: #999;
-  cursor: not-allowed;
-
-   }
-     .secondary-button.disabled-button {
-  background-color: #d6d6d6; /* grey */
-  color: #999;
-  cursor: not-allowed;
-
-   }
+    
     .title1 {
         font-size: 1.25rem;
     }
@@ -590,8 +576,7 @@ h1 {
   background-color: #d6d6d6; /* grey */
   color: #999;
   cursor: not-allowed;
-
-   }
+}
 
   .Next-button_familydetails{
     padding: 10px 20px; 
@@ -621,22 +606,19 @@ h1 {
         padding: 0.75rem 2rem;
         font-size: 1rem;
     }
-    
-    .title1 {
-        font-size: 1.5rem;
-    }
     .primary-button.disabled-button {
   background-color: #d6d6d6; /* grey */
   color: #999;
   cursor: not-allowed;
-
-   }
-    .secondary-button.disabled-button {
+}
+.secondary-button.disabled-button {
   background-color: #d6d6d6; /* grey */
   color: #999;
   cursor: not-allowed;
-
-   }
+}
+    .title1 {
+        font-size: 1.5rem;
+    }
 }
 
 /* Large devices (laptops/desktops, 900px to 1200px) */
@@ -648,22 +630,20 @@ h1 {
     .primary-button, .secondary-button {
         max-width: 350px;
     }
-    .primary-button.disabled-button {
-  background-color: #d6d6d6; /* grey */
-  color: #999;
-  cursor: not-allowed;
-
-   }
-    .secondary-button.disabled-button {
-  background-color: #d6d6d6; /* grey */
-  color: #999;
-  cursor: not-allowed;
-
-   }
     
     .title1 {
         font-size: 1.75rem;
     }
+    .primary-button.disabled-button {
+  background-color: #d6d6d6; /* grey */
+  color: #999;
+  cursor: not-allowed;
+}
+.secondary-button.disabled-button {
+  background-color: #d6d6d6; /* grey */
+  color: #999;
+  cursor: not-allowed;
+}
 }
 
 
@@ -675,15 +655,20 @@ h1 {
     .primary-button, .secondary-button {
         max-width: 400px;
     }
- .secondary-button.disabled-button {
-  background-color: #d6d6d6; /* grey */
-  color: #999;
-  cursor: not-allowed;
 
-   }
     .title1 {
         font-size: 2rem;
     }
+    .primary-button.disabled-button {
+  background-color: #d6d6d6; /* grey */
+  color: #999;
+  cursor: not-allowed;
+}
+.secondary-button.disabled-button {
+  background-color: #d6d6d6; /* grey */
+  color: #999;
+  cursor: not-allowed;
+}
 
 }
 

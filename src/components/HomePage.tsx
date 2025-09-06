@@ -10,12 +10,11 @@ import { canAll, can, Privilege } from '../store/userSlice';
 
 const HomePage: React.FC = () => {
     const navigate = useNavigate();
-
-      const { canView, canCreate, canEdit } = useSelector(
-    selectPrivilegeFlags('Patient Registration') // or selectPrivilegeFlags('/preg')
-  );
-
-  const allowAllThree = useSelector(canAll('/Outrich Clinic', 'CREATE', 'VIEW', 'EDIT'));
+        const { canView, canCreate, canEdit } = useSelector(
+      selectPrivilegeFlags('Patient Registration') // or selectPrivilegeFlags('/preg')
+    );
+  
+    const allowAllThree = useSelector(canAll('/Outrich Clinic', 'CREATE', 'VIEW', 'EDIT'));
 
 
     // const handleCreateClick = () => {
@@ -33,11 +32,12 @@ console.log('test');
           
             <main className="content">
                 <div className="button-container">
-                    <button   disabled={!allowAllThree }                
-className={`primary-button ${!allowAllThree ? 'disabled-button' : ''}`} onClick={() => navigate('/create-outreach-clinic')}>
+                    <button className={`primary-button ${!allowAllThree ? 'disabled-button' : ''}`}
+                     disabled={!allowAllThree }  onClick={() => navigate('/create-outreach-clinic')}>
                         Create New Outreach Clinic
                     </button>
-                    <button disabled={!allowAllThree }  className={`secondary-button ${!allowAllThree ? 'disabled-button' : ''}`} onClick={() => navigate('/outreach-clinic-info')}>
+                    <button className={`secondary-button ${!allowAllThree ? 'disabled-button' : ''}`}
+                      onClick={() => navigate('/outreach-clinic-info')}>
                         Edit Existing Outreach Clinic
                     </button>
                 </div>

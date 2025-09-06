@@ -5,6 +5,11 @@ import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Typography }
 import '../components/OutreachClinicInfo.css';  // Same CSS file
 import Header1 from './Header1';
 import config from '../config';  // Import the config file
+import { useSelector } from 'react-redux';
+import { selectPrivilegeFlags } from '../store/userSlice';
+
+import { canAll, can, Privilege } from '../store/userSlice';
+
 
 interface Candidate {
   id: number;  // Standardized to number
@@ -34,6 +39,12 @@ interface CandidateAPIResponse {
 
 const PatientEdit: React.FC = () => {
   const navigate = useNavigate();
+      const { canView, canCreate, canEdit } = useSelector(
+      selectPrivilegeFlags('Patient Registration') // or selectPrivilegeFlags('/preg')
+    );
+  
+    const allowAllThree = useSelector(canAll('/screening', 'CREATE', 'VIEW', 'EDIT'));
+
 
   const [candidates, setCandidates] = useState<Candidate[]>([]);
   const [searchInput, setSearchInput] = useState<string>('');
@@ -53,7 +64,7 @@ const PatientEdit: React.FC = () => {
 
     const token = localStorage.getItem('token');
     const hospitalId = localStorage.getItem('hospitalId');
-    const roleId= localStorage.getItem('roleId');
+     const roleId= localStorage.getItem('roleId');
     const userId= localStorage.getItem('userId');
     if (!token) {
       setMessage('Authorization token not found. Please log in again.');
@@ -150,8 +161,8 @@ const PatientEdit: React.FC = () => {
                 <p><strong>Father Name:</strong> <span>{candidate.fatherName}</span></p>
                 <p><strong>Mobile No:</strong> <span>{candidate.mobileNo}</span></p>
                 <div className="edit-button-container">
-                  <button
-                    className="edit-button"
+                  <button  disabled={!allowAllThree }
+                    className={`edit-button ${!allowAllThree ? 'disabled-button' : ''}`}
                     onClick={() => handleEditClick(candidate.id)}
                   >
                     Edit

@@ -10,6 +10,7 @@ import { selectPrivilegeFlags } from '../../store/userSlice';
 
 import { canAll, can, Privilege } from '../../store/userSlice';
 
+
 interface Patient {
   id: number;
   name: string;
@@ -34,28 +35,22 @@ const PatientSearchPage: React.FC = () => {
   const [stageList, setStageList] = useState<string[]>([]);
   const [selectedStage, setSelectedStage] = useState<string | null>(null);
   const [searchSubmitted, setSearchSubmitted] = useState(false);
-    const navigate = useNavigate();
 
+
+  const navigate = useNavigate();
       const { canView, canCreate, canEdit } = useSelector(
-    selectPrivilegeFlags('Patient Registration') // or selectPrivilegeFlags('/preg')
-  );
-
-  const allowAllThree = useSelector(canAll('/screening', 'CREATE', 'VIEW', 'EDIT'));
-
+      selectPrivilegeFlags('Patient Registration') // or selectPrivilegeFlags('/preg')
+    );
+  
+    const allowAllThree = useSelector(canAll('/Outrich Clinic', 'CREATE', 'VIEW', 'EDIT'));
 
 
   const handleSearch = async () => {
     setSearchSubmitted(true); 
     const hospitalId = localStorage.getItem("hospitalId");
-    const roleId= localStorage.getItem('roleId');
+     const roleId= localStorage.getItem('roleId');
     const token = localStorage.getItem("token");
-<<<<<<< HEAD
-    const roleId= localStorage.getItem('roleId');
      const userId= localStorage.getItem('userId');
-=======
-    const userId= localStorage.getItem('userId');
-
->>>>>>> 6009453f43964c916f0a289197529e014400ce52
     if (!hospitalId || !token) {
       setError("Hospital ID or Token missing. Please log in again.");
       return;
@@ -265,10 +260,10 @@ const PatientSearchPage: React.FC = () => {
             </select>
 
             <button
-              className={`next-button ${!allowAllThree ? 'disabled-button' : ''}`}
+              disabled={!allowAllThree } 
               onClick={handleNext}
               aria-label="Next"
-              disabled={!allowAllThree }
+              className={`next-button ${!allowAllThree ? 'disabled-button' : ''}`}
             >
               Next
             </button>

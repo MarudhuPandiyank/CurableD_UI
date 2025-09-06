@@ -15,6 +15,7 @@ import Header1 from './Header1';
 import config from '../config';
 import './Common.css';
 
+
 // 👇 NEW: read privilege flags from Redux
 import { useSelector } from 'react-redux';
 import { selectPrivilegeFlags } from '../store/userSlice';
@@ -94,23 +95,13 @@ const PatientRegistrationSearch: React.FC = () => {
     }
 
     try {
-<<<<<<< HEAD
       const userIds = localStorage.getItem('userId');
-       let roleId= localStorage.getItem('roleId');
+      let roleId= localStorage.getItem('roleId');
             let hospitalId= localStorage.getItem('hospitalId');
       const response = await axios.post<ClinicAPIResponse[]>(
         `${config.appURL}/curable/activecamp`,
  { search: searchInput, userId: Number(userIds),roleId: Number(roleId) ,hospitalId: Number(hospitalId),stage:1},
          { headers: { Authorization: `Bearer ${token}` } }
-=======
-      let userIds= localStorage.getItem('userId');
-                  let roleId= localStorage.getItem('roleId');
-            let hospitalId= localStorage.getItem('hospitalId');
-      const response = await axios.post<ClinicAPIResponse[]>(
-        `${config.appURL}/curable/activecamp`,
-        { search: searchInput, userId: Number(userIds),roleId: Number(roleId) ,hospitalId: Number(hospitalId),stage:1},
-        { headers: { Authorization: `Bearer ${token}` } }
->>>>>>> 6009453f43964c916f0a289197529e014400ce52
       );
 
       if (response.data.length > 0) {
