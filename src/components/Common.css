@@ -87,6 +87,11 @@
     transition: background-color 0.3s ease;
   }
   
+  .full-width-search-button.disabled-button {
+  background-color: #d6d6d6; /* grey */
+  color: #999;
+  cursor: not-allowed;
+}
   .clinic-details-form-newscreening {
     margin-bottom: 30px;
     /* margin-top: 30px; */
@@ -217,6 +222,11 @@
       box-sizing: border-box;
       cursor: pointer;
     }
+    .full-width-search-button.disabled-button {
+  background-color: #d6d6d6; /* grey */
+  color: #999;
+  cursor: not-allowed;
+}
   }
   
   

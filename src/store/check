@@ -1,0 +1,97 @@
+// ===== Common, reusable privilege checkers =====
+const norm = (url: string) => (url || '').trim().replace(/\s+/g, '');
+
+const getDto = (state: RootState, menuOrUrl: string) =>
+  state.user.menus.find(
+    (m) => m.menu === menuOrUrl || norm(m.url) === norm(menuOrUrl)
+  );
+
+// True if user has EVERY privilege in `req`
+export const canAll =
+  (menuOrUrl: string, ...req: Privilege[]) =>
+  (state: RootState) => {
+    const dto = getDto(state, menuOrUrl);
+    if (!dto) return false;
+    const set = new Set(dto.privileges || []);
+    return req.every((p) => set.has(p));
+  };
+
+// True if user has AT LEAST ONE in `req`
+export const canAny =
+  (menuOrUrl: string, ...req: Privilege[]) =>
+  (state: RootState) => {
+    const dto = getDto(state, menuOrUrl);
+    if (!dto) return false;
+    const set = new Set(dto.privileges || []);
+    return req.some((p) => set.has(p));
+  };
+
+// True if user has EXACTLY the privileges in `exact` (no more, no less)
+export const canExactly =
+  (menuOrUrl: string, exact: Privilege[]) =>
+  (state: RootState) => {
+    const dto = getDto(state, menuOrUrl);
+    if (!dto) return false;
+    const set = new Set(dto.privileges || []);
+    if (set.size !== exact.length) return false;
+    return exact.every((p) => set.has(p));
+  };
+
+// Flexible rule: combine allOf / anyOf / noneOf / exactly
+export const can =
+  (
+    menuOrUrl: string,
+    rules: {
+      allOf?: Privilege[];
+      anyOf?: Privilege[];
+      noneOf?: Privilege[];
+      exactly?: Privilege[]; // if set, must match exactly
+    } = {}
+  ) =>
+  (state: RootState) => {
+    const dto = getDto(state, menuOrUrl);
+    if (!dto) return false;
+    const set = new Set(dto.privileges || []);
+
+    // exactly (if provided, it overrides by requiring exact match)
+    if (rules.exactly) {
+      if (set.size !== rules.exactly.length) return false;
+      for (const p of rules.exactly) if (!set.has(p)) return false;
+    }
+
+    if (rules.allOf && !rules.allOf.every((p) => set.has(p))) return false;
+    if (rules.anyOf && !rules.anyOf.some((p) => set.has(p))) return false;
+    if (rules.noneOf && rules.noneOf.some((p) => set.has(p))) return false;
+
+    return true;
+  };
+
+
+  import { useSelector } from 'react-redux';
+import { canAll, can, Privilege } from '../store/userSlice';
+
+// two privileges required (CREATE + VIEW)
+const allowAdd_CreateView = useSelector(canAll('/preg', 'CREATE', 'VIEW'));
+
+// all three required
+const allowAllThree = useSelector(canAll('/preg', 'CREATE', 'VIEW', 'EDIT'));
+
+// exactly CREATE + VIEW (if user also has EDIT, this will be false)
+const allowExactlyCV = useSelector(can('/preg', { exactly: ['CREATE', 'VIEW'] }));
+
+// use them:
+{allowAdd_CreateView && (
+  <button className="edit-button" onClick={() => handleEditClick(clinic)}>
+    Start Registration
+  </button>
+)}
+
+{allowAllThree && (
+  <button className="btn btn-warning" onClick={() => {/* … */}}>
+    Admin Action (needs all 3)
+  </button>
+)}
+
+{allowExactlyCV && (
+  <div className="note">You have exactly CREATE + VIEW</div>
+)}

@@ -1,77 +1,64 @@
-import React, { useState } from 'react';
+// src/components/ResponsiveCancerInstitute.tsx
+import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import './ResponsiveCancerInstitute.css';
 import { useNavigate } from 'react-router-dom';
-import { faChevronLeft } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Header1 from './Header1';
+import { useSelector } from 'react-redux';
+import { selectMenus } from '../store/userSlice';
+import { toRoute, normalize } from '../utils/routeMap'; // 👈 import normalize
+
 const ResponsiveCancerInstitute: React.FC = () => {
-  const [isLeftSidebarOpen, setIsLeftSidebarOpen] = useState(false);
-  const [isRightSidebarOpen, setIsRightSidebarOpen] = useState(false);
-
   const navigate = useNavigate();
-  const userName = localStorage.getItem('userName');
+  const menus = useSelector(selectMenus);
 
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    navigate('/');
-  };
-
-  const handleNavigate = (page: string) => {
-    if (page === 'Outreach Clinic') {
-      navigate('/HomePage');
-    } else if (page === 'Patient Registration') {
-      navigate('/PatientRegistrationSearch');
-    } else if(page === 'Screening') {
-      navigate('/PatientSearchPage');
-    }else if(page === 'Clinical Evaluation') {
-      navigate('/ClinicSearchPage');
-    }
-  };
-
-  // List of boxes and icons
-  const boxes = [
-    { title: 'Outreach Clinic', icon: 'Outreach Clinic.png' },
-    { title: 'Patient Registration', icon: 'Patient Registration.png' },
-    { title: 'Screening', icon: 'Screening.png' },
-    { title: 'Clinical Evaluation', icon: 'Clinical Evaluation.png' },
-    // { title: 'Referral to Hospital', icon: 'Referral to Hospital.png' },
-    { title: 'Master Data Management', icon: 'Master Data Management.png' },
-   
-  ];
+  // hide the injected "Modify Patient Information" entry (/PatientEdit)
+  const visibleMenus = (menus || []).filter(
+    (m) =>
+      m?.menu?.trim().toLowerCase() !== 'modify patient information' &&
+      normalize(m?.url || '') !== normalize('/PatientEdit')
+  );
 
   return (
     <div style={{ backgroundColor: 'white', minHeight: '100vh' }}>
-    
-      <Header1 showwidth={true}/>
-    
-      {/* Main Content with Boxes */}
+      <Header1 showwidth />
+
       <main className="container4-fluid mt-4">
         <div className="container4-box d-flex flex-wrap justify-content-center">
-          {boxes.map((box, index) => (
+          {visibleMenus.map((m) => (
             <div
-              key={index}
+              key={m.menu}
               className="box"
-              onClick={() => handleNavigate(box.title)}
+              onClick={() => navigate(toRoute(m.url))}
               style={{ cursor: 'pointer' }}
             >
               <img
-                src={`/HomeScreenIcons/PNG/${box.icon}`}
-                alt={box.title}
-                style={{ width: '50px', height: '50px', marginBottom: '10px' }}
+                src={`/HomeScreenIcons/PNG/${m.menu}.png`}
+                onError={(e: any) => {
+                  e.currentTarget.style.visibility = 'hidden';
+                }}
+                alt={m.menu}
+                style={{ width: 50, height: 50, marginBottom: 10 }}
               />
-                         <div style={{ color: 'black' }}>{box.title}</div> {/* Change text color to black */}
-
-             
+              <div style={{ color: 'black' }}>{m.menu}</div>
             </div>
           ))}
+
+          {visibleMenus.length === 0 && (
+            <div style={{ color: '#666', padding: 16 }}>No menus available.</div>
+          )}
         </div>
       </main>
+
       <footer className="footer-container">
         <div className="footer-content">
-          <p className="footer-text">Powered By </p>
-          <img src="/assets/Curable logo - rectangle with black text.png" alt="Curable Logo" className="footer-logo" />
+          <p className="footer-text">Powered By</p>
+          <img
+            src="/assets/Curable logo - rectangle with black text.png"
+            alt="Curable Logo"
+            className="footer-logo"
+          />
         </div>
       </footer>
     </div>

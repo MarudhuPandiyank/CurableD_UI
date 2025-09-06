@@ -1,11 +1,25 @@
+// src/components/PatientRegistrationSearch.tsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Typography } from '@mui/material';
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+  Typography,
+} from '@mui/material';
 import '../components/OutreachClinicInfo.css';
 import Header1 from './Header1';
-import config from '../config';  // Import the config file
+import config from '../config';
 import './Common.css';
+
+// 👇 NEW: read privilege flags from Redux
+import { useSelector } from 'react-redux';
+import { selectPrivilegeFlags } from '../store/userSlice';
+
+import { canAll, can, Privilege } from '../store/userSlice';
 
 interface Clinic {
   id: string;
@@ -49,6 +63,15 @@ interface ClinicAPIResponse {
 const PatientRegistrationSearch: React.FC = () => {
   const navigate = useNavigate();
 
+  // 🔐 privileges for this screen (by menu name or use '/preg')
+  const { canView, canCreate, canEdit } = useSelector(
+    selectPrivilegeFlags('Patient Registration') // or selectPrivilegeFlags('/preg')
+  );
+
+  const allowAllThree = useSelector(canAll('/preg', 'CREATE', 'VIEW', 'EDIT'));
+
+  console.log(allowAllThree,"allowAllThree")
+  
   const [clinics, setClinics] = useState<Clinic[]>([]);
   const [searchInput, setSearchInput] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
@@ -57,10 +80,8 @@ const PatientRegistrationSearch: React.FC = () => {
   const [message, setMessage] = useState<string>('');
 
   const handleSearch = async () => {
-    // if (!searchInput) {
-    //   setMessage('Please enter a clinic ID or Name.');
-    //   return;
-    // }
+    // Guard: need VIEW privilege to search
+    if (!canView) return;
 
     setLoading(true);
     setMessage('');
@@ -73,11 +94,13 @@ const PatientRegistrationSearch: React.FC = () => {
     }
 
     try {
-      let userIds= localStorage.getItem('userId');
+      const userIds = localStorage.getItem('userId');
+       let roleId= localStorage.getItem('roleId');
+            let hospitalId= localStorage.getItem('hospitalId');
       const response = await axios.post<ClinicAPIResponse[]>(
         `${config.appURL}/curable/activecamp`,
-        { search: searchInput, userId: userIds},
-        { headers: { Authorization: `Bearer ${token}` } }
+ { search: searchInput, userId: Number(userIds),roleId: Number(roleId) ,hospitalId: Number(hospitalId),stage:1},
+         { headers: { Authorization: `Bearer ${token}` } }
       );
 
       if (response.data.length > 0) {
@@ -94,8 +117,8 @@ const PatientRegistrationSearch: React.FC = () => {
             district: clinicData.districtName,
             taluk: clinicData.talukName,
             village: clinicData.panchayatName,
-            startDate: startDate,
-            endDate: endDate,
+            startDate,
+            endDate,
             noCampcordinators: clinicData.noCampcordinators,
             noDoctors: clinicData.noDoctors,
             noNurses: clinicData.noNurses,
@@ -128,6 +151,9 @@ const PatientRegistrationSearch: React.FC = () => {
   };
 
   const handleEditClick = (clinic: Clinic) => {
+    // Guard: you may also require canCreate AND/OR canView here depending on flow
+    if (!canCreate) return;
+
     navigate('/NewScreeningEnrollment', {
       state: {
         startDate: clinic.startDate,
@@ -159,36 +185,43 @@ const PatientRegistrationSearch: React.FC = () => {
 
   return (
     <div className="container2">
-        <Header1 />
-            <h1 style={{ color: 'darkblue', fontWeight: 'bold', }}>Patient Registration</h1>
+      <Header1 />
+      <h1 style={{ color: 'darkblue', fontWeight: 'bold' }}>Patient Registration</h1>
+
       <main className="content">
-      <div className="search-section_patitent">
-      <div className="full-width-search-section">
-  <div className="full-width-search-input-container">
-    <input
-      className="full-width-search-input"
-      type="text"
-      placeholder="Enter Clinic ID or Name"
-      value={searchInput}
-      onChange={(e) => setSearchInput(e.target.value)}
-      onKeyDown={(e) => {
-        if (e.key === 'Enter') {
-          e.preventDefault();       
-          handleSearch();           
-        }
-      }}
-    />
-    <button className="full-width-search-button" onClick={handleSearch} disabled={loading}>
-      {loading ? 'Searching...' : 'Search'}
-    </button>
-  </div>
-</div>
+        <div className="search-section_patitent">
+          <div className="full-width-search-section">
+            <div className="full-width-search-input-container">
+              <input
+                className="full-width-search-input"
+                type="text"
+                placeholder="Enter Clinic ID or Name"
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    handleSearch();
+                  }
+                }}
+              />
 
-</div>
+              {/* VIEW → show Search button. If you prefer "disabled when no VIEW", replace block with one disabled button */}
+             
+                <button
+                  className={`full-width-search-button ${!allowAllThree ? 'disabled-button' : ''}`}
+                  onClick={handleSearch}
+ disabled={!allowAllThree || loading}                >
+                  {loading ? 'Searching...' : 'Search'}
+                </button>
+              
+            </div>
+          </div>
+        </div>
 
-       
         {message && <div className="message">{message}</div>}
 
+        {/* Example: duplicate name resolver dropdown (kept commented as in your code) */}
         {/* {hasDuplicateNames && (
           <div className="clinic-select-container">
             <label>Select Clinic ID:</label>
@@ -234,13 +267,27 @@ const PatientRegistrationSearch: React.FC = () => {
                 <p>
                   <strong>End Date:</strong> <span>{clinic.displayEndDate}</span>
                 </p>
+
                 <div className="edit-button-container">
-                  <button
-                    className="edit-button"
-                    onClick={() => handleEditClick(clinic)}
-                  >
-                   Start Registration
-                  </button>
+                  {/* CREATE → Start Registration */}
+                  {canCreate && (
+                    <button
+                      className="edit-button"
+                      onClick={() => handleEditClick(clinic)}
+                    >
+                      Start Registration
+                    </button>
+                  )}
+
+                  {/* EDIT → Example edit button (uncomment if needed) */}
+                  {/* {canEdit && (
+                    <button
+                      className="edit-button"
+                      onClick={() => {/* your edit flow */ /*}}
+                    >
+                      Edit Registration
+                    </button>
+                  )} */}
                 </div>
               </div>
             ))}
@@ -276,11 +323,16 @@ const PatientRegistrationSearch: React.FC = () => {
           </DialogActions>
         </Dialog>
       </main>
-      <br/>
+
+      <br />
       <footer className="footer-container-fixed">
         <div className="footer-content">
           <p className="footer-text">Powered By</p>
-          <img src="/assets/Curable logo - rectangle with black text.png" alt="Curable Logo" className="footer-logo" />
+          <img
+            src="/assets/Curable logo - rectangle with black text.png"
+            alt="Curable Logo"
+            className="footer-logo"
+          />
         </div>
       </footer>
     </div>

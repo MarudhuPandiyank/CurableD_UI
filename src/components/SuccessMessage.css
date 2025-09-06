@@ -60,6 +60,12 @@ h1 {
     max-width: 300px;
 }
 
+   .primary-button.disabled-button {
+  background-color: #d6d6d6; /* grey */
+  color: #999;
+  cursor: not-allowed;
+
+   }
 /* Secondary button styling */
 .secondary-button {
     background-color: white;

@@ -1,0 +1,239 @@
+1) Create a slice (action + reducer)
+
+src/store/uiSlice.ts
+
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import type { RootState } from './index';
+
+interface UIState {
+  leftSidebarOpen: boolean;
+  rightSidebarOpen: boolean;
+  globalLoading: boolean;
+}
+
+const initialState: UIState = {
+  leftSidebarOpen: false,
+  rightSidebarOpen: false,
+  globalLoading: false,
+};
+
+const uiSlice = createSlice({
+  name: 'ui',
+  initialState,
+  reducers: {
+    // ✅ single-action examples
+    setLeftSidebarOpen(state, action: PayloadAction<boolean>) {
+      state.leftSidebarOpen = action.payload;
+      if (action.payload) state.rightSidebarOpen = false; // ensure only one open
+    },
+    setRightSidebarOpen(state, action: PayloadAction<boolean>) {
+      state.rightSidebarOpen = action.payload;
+      if (action.payload) state.leftSidebarOpen = false;
+    },
+    // convenience toggles
+    toggleLeftSidebar(state) {
+      state.leftSidebarOpen = !state.leftSidebarOpen;
+      if (state.leftSidebarOpen) state.rightSidebarOpen = false;
+    },
+    toggleRightSidebar(state) {
+      state.rightSidebarOpen = !state.rightSidebarOpen;
+      if (state.rightSidebarOpen) state.leftSidebarOpen = false;
+    },
+    // global loading flag you can flip around API calls
+    setGlobalLoading(state, action: PayloadAction<boolean>) {
+      state.globalLoading = action.payload;
+    },
+    resetUI(state) {
+      Object.assign(state, initialState);
+    },
+  },
+});
+
+export const {
+  setLeftSidebarOpen,
+  setRightSidebarOpen,
+  toggleLeftSidebar,
+  toggleRightSidebar,
+  setGlobalLoading,
+  resetUI,
+} = uiSlice.actions;
+
+export default uiSlice.reducer;
+
+// selectors
+export const selectLeftSidebarOpen = (state: RootState) => state.ui.leftSidebarOpen;
+export const selectRightSidebarOpen = (state: RootState) => state.ui.rightSidebarOpen;
+export const selectGlobalLoading = (state: RootState) => state.ui.globalLoading;
+
+
+This file gives you actions and the reducer in one place.
+Example single action: setLeftSidebarOpen(true).
+
+2) Add the slice to your store
+
+If your src/store/index.ts already exists, add ui: uiReducer.
+If not, use this minimal version:
+
+src/store/index.ts
+
+import { configureStore } from '@reduxjs/toolkit';
+import userReducer from './userSlice';
+import uiReducer from './uiSlice';
+
+export const store = configureStore({
+  reducer: {
+    user: userReducer,
+    ui: uiReducer,
+  },
+});
+
+// typed helpers
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;
+export {};
+
+3) (Nice to have) typed hooks
+
+src/store/hooks.ts
+
+import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
+import type { RootState, AppDispatch } from './index';
+
+export const useAppDispatch = () => useDispatch<AppDispatch>();
+export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
+
+4) Use it from a React component
+
+Here’s how to use the action and read state (I’ll show it with your Header1.tsx to control sidebars via Redux instead of local useState):
+
+// src/components/Header1.tsx (only the relevant bits)
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { selectMenus, selectTenantName, selectUserName, logout } from '../store/userSlice';
+import {
+  selectLeftSidebarOpen,
+  selectRightSidebarOpen,
+  toggleLeftSidebar,
+  toggleRightSidebar,
+  setLeftSidebarOpen,
+  setRightSidebarOpen,
+} from '../store/uiSlice';
+// ...other imports...
+
+const Header1: React.FC<{ showwidth?: boolean }> = ({ showwidth = false }) => {
+  const tenantName = useSelector(selectTenantName);
+  const userName = useSelector(selectUserName);
+  const menus = useSelector(selectMenus);
+
+  // ✅ read UI state from store
+  const leftOpen = useSelector(selectLeftSidebarOpen);
+  const rightOpen = useSelector(selectRightSidebarOpen);
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const handleNavigation = (url: string) => {
+    dispatch(setLeftSidebarOpen(false));
+    dispatch(setRightSidebarOpen(false));
+    navigate(url);
+  };
+
+  return (
+    <div>
+      <header className={`header d-flex justify-content-between align-items-center ${showwidth ? 'p-3' : ''}`}>
+        <span
+          className="menu-icon fas fa-bars"
+          onClick={() => dispatch(toggleLeftSidebar())}   // ✅ one action usage
+          aria-label="Open Left Sidebar"
+          style={{ color: '#003366', cursor: 'pointer', marginTop: -12 }}
+        />
+        <span className="title text-center flex-grow-1" style={{ fontSize: 20, color: '#003366' }}>
+          <img src="./Curable Icons/PNG/Earth.png" style={{ height: 30, width: 30, marginTop: -7 }} alt="Earth" />
+          {tenantName}
+        </span>
+        <span
+          className="account-icon fas fa-user-circle"
+          onClick={() => dispatch(toggleRightSidebar())}  // ✅ one action usage
+          aria-label="Account Settings"
+          style={{ color: '#003366', cursor: 'pointer', marginTop: -12 }}
+        />
+      </header>
+
+      {/* Left Sidebar */}
+      <div className={`sidebar left ${leftOpen ? 'active' : ''}`}>
+        <div className="sidebar-header d-flex align-items-center">
+          <button className="close-btn" onClick={() => dispatch(setLeftSidebarOpen(false))}>
+            Back
+          </button>
+          <h6>Menu</h6>
+        </div>
+        <div className="sidebar-content p-3">
+          {menus.map((m) => (
+            <button key={m.menu} className="sidebar-btn" onClick={() => handleNavigation(m.url)}>
+              {m.menu}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Right Sidebar */}
+      <div className={`sidebar right ${rightOpen ? 'active' : ''}`}>
+        <div className="sidebar-header d-flex align-items-center">
+          <button className="close-btn" onClick={() => dispatch(setRightSidebarOpen(false))}>
+            Back
+          </button>
+          <h6>{userName}</h6>
+        </div>
+        {/* ... */}
+      </div>
+    </div>
+  );
+};
+
+export default Header1;
+
+
+That shows the typical flow:
+
+Action: toggleLeftSidebar()
+
+Reducer (in uiSlice) flips leftSidebarOpen
+
+Selector reads leftSidebarOpen to render the UI
+
+5) Use the same pattern for any screen (example around API calls)
+
+In your PatientRegistrationSearch, you can flip a global loading flag via one action:
+
+import { useDispatch, useSelector } from 'react-redux';
+import { setGlobalLoading, selectGlobalLoading } from '../store/uiSlice';
+
+const dispatch = useDispatch();
+const busy = useSelector(selectGlobalLoading);
+
+const handleSearch = async () => {
+  dispatch(setGlobalLoading(true));
+  try {
+    // ... your API call
+  } finally {
+    dispatch(setGlobalLoading(false));
+  }
+};
+
+// then bind UI
+<button className="full-width-search-button" onClick={handleSearch} disabled={busy}>
+  {busy ? 'Searching...' : 'Search'}
+</button>
+
+Recap
+
+uiSlice.ts: defines the action(s) and reducer
+
+store/index.ts: registers reducers and exports RootState/AppDispatch
+
+components: use useDispatch() to dispatch actions, and useSelector() to read state
+
+This is the exact “one action → reducer → use in React via store” pipeline. Plug these files in and you’re set.
+
+ChatGPT can make mistakes. Check important info. See Cookie Preferences.

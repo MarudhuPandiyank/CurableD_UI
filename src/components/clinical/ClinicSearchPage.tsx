@@ -5,6 +5,11 @@ import "./PatientSearchPage.css";
 import Header from "../Header";
 import Header1 from "../Header1";
 import config from '../../config'; 
+import { useSelector } from 'react-redux';
+import { selectPrivilegeFlags } from '../../store/userSlice';
+
+import { canAll, can, Privilege } from '../../store/userSlice';
+
 
 interface Patient {
   id: number;
@@ -33,9 +38,19 @@ const ClinicSearchPage: React.FC = () => {
 
   const navigate = useNavigate();
 
+  
+        const { canView, canCreate, canEdit } = useSelector(
+      selectPrivilegeFlags('Patient Registration') // or selectPrivilegeFlags('/preg')
+    );
+  
+    const allowAllThree = useSelector(canAll('/clinical', 'CREATE', 'VIEW', 'EDIT'));
+  
+
   const handleSearch = async () => {
     const hospitalId = localStorage.getItem("hospitalId");
     const token = localStorage.getItem("token");
+     const roleId= localStorage.getItem('roleId');
+    const userId= localStorage.getItem('userId');
     if (!hospitalId || !token) {
       setError("Hospital ID or Token missing. Please log in again.");
       return;
@@ -52,6 +67,8 @@ const ClinicSearchPage: React.FC = () => {
           hospitalId: Number(hospitalId),
           search: searchQuery,
           stage: 2,
+          roleId: Number(roleId),
+          userId: Number(userId),
         },
         {
           headers: {
@@ -233,9 +250,10 @@ const ClinicSearchPage: React.FC = () => {
             </select>
 
             <button
-              className="next-button"
+              className={`next-button ${!allowAllThree ? 'disabled-button' : ''}`}
               onClick={handleNext}
               aria-label="Next"
+               disabled={!allowAllThree } 
             >
               Next
             </button>

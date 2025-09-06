@@ -5,6 +5,11 @@ import "./PatientSearchPage.css";
 import Header from "../Header";
 import Header1 from "../Header1";
 import config from "../../config";
+import { useSelector } from 'react-redux';
+import { selectPrivilegeFlags } from '../../store/userSlice';
+
+import { canAll, can, Privilege } from '../../store/userSlice';
+
 interface Patient {
   id: number;
   name: string;
@@ -29,14 +34,22 @@ const PatientSearchPage: React.FC = () => {
   const [stageList, setStageList] = useState<string[]>([]);
   const [selectedStage, setSelectedStage] = useState<string | null>(null);
   const [searchSubmitted, setSearchSubmitted] = useState(false);
+    const navigate = useNavigate();
+
+      const { canView, canCreate, canEdit } = useSelector(
+    selectPrivilegeFlags('Patient Registration') // or selectPrivilegeFlags('/preg')
+  );
+
+  const allowAllThree = useSelector(canAll('/screening', 'CREATE', 'VIEW', 'EDIT'));
 
 
-  const navigate = useNavigate();
 
   const handleSearch = async () => {
     setSearchSubmitted(true); 
     const hospitalId = localStorage.getItem("hospitalId");
     const token = localStorage.getItem("token");
+    const roleId= localStorage.getItem('roleId');
+     const userId= localStorage.getItem('userId');
     if (!hospitalId || !token) {
       setError("Hospital ID or Token missing. Please log in again.");
       return;
@@ -52,6 +65,8 @@ const PatientSearchPage: React.FC = () => {
           hospitalId: Number(hospitalId),
           search: searchQuery,
           stage: 1,
+          roleId: Number(roleId),
+          userId: Number(userId),
         },
         {
           headers: {
@@ -244,9 +259,10 @@ const PatientSearchPage: React.FC = () => {
             </select>
 
             <button
-              className="next-button"
+              className={`next-button ${!allowAllThree ? 'disabled-button' : ''}`}
               onClick={handleNext}
               aria-label="Next"
+              disabled={!allowAllThree }
             >
               Next
             </button>
