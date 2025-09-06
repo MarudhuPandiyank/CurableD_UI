@@ -49,7 +49,11 @@ const ClinicSearchPage: React.FC = () => {
   const handleSearch = async () => {
     const hospitalId = localStorage.getItem("hospitalId");
     const token = localStorage.getItem("token");
+<<<<<<< HEAD
      const roleId= localStorage.getItem('roleId');
+=======
+    const roleId= localStorage.getItem('roleId');
+>>>>>>> 6009453f43964c916f0a289197529e014400ce52
     const userId= localStorage.getItem('userId');
     if (!hospitalId || !token) {
       setError("Hospital ID or Token missing. Please log in again.");

@@ -55,6 +55,11 @@ const Login: React.FC = () => {
     message: string | null;
     hospitalId: number;
     tenantName: string;
+<<<<<<< HEAD
+=======
+    userId: string;
+    roleId: string;
+>>>>>>> 6009453f43964c916f0a289197529e014400ce52
   }
 
   const handleSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -68,8 +73,36 @@ const Login: React.FC = () => {
         { userName, password }
       );
 
+<<<<<<< HEAD
       const token = auth?.data?.token;
       if (!token) {
+=======
+      if (response && response.data.token) {
+        localStorage.setItem('token', response.data.token);
+        localStorage.setItem('userName', userName);
+        localStorage.setItem('password', password);
+        const authResponse = await axios.get<AuthResponseData>(
+          `${config.appURL}/curable/authorizeUserRequest/${userName}`,
+          {
+            headers: { Authorization: `Bearer ${response.data.token}` },
+          }
+        );
+
+        if (authResponse && authResponse.data) {
+          const hospitalId = authResponse.data.hospitalId;
+          const tenantName = authResponse.data.tenantName;
+          const userId = authResponse.data.userId;
+          const roleId = authResponse.data.roleId;
+          localStorage.setItem('hospitalId', hospitalId);
+          localStorage.setItem('tenantName', tenantName);
+          localStorage.setItem('userId', userId);
+          localStorage.setItem('roleId', roleId);
+          navigate('/responsive-cancer-institute');
+        } else {
+          setError('Invalid password! Retry or click forgot password');
+        }
+      } else {
+>>>>>>> 6009453f43964c916f0a289197529e014400ce52
         setError('Invalid password! Retry or click forgot password');
         return;
       }
