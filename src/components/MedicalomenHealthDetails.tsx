@@ -489,9 +489,9 @@ console.log(age,participant,ageString,"skkksa")
             onChange={(e) => setSelectedLastMenstruation(e.target.value)}
           >
             <option value="">Select</option>
-            <option value="LastMenstruation1">Less than 12 months ago</option>
-            <option value="LastMenstruation2">More than 12 months ago</option>
-            <option value="LastMenstruation3">Surgical menopause</option>
+            <option value="Less than 12 months ago">Less than 12 months ago</option>
+            <option value="More than 12 months ago">More than 12 months ago</option>
+            <option value="Surgical menopause">Surgical menopause</option>
           </select>
 
           <label>Abnormal Bleeding Per Vaginum:</label>
@@ -500,12 +500,12 @@ console.log(age,participant,ageString,"skkksa")
             onChange={(e) => setSelectedBleedingIssues(e.target.value)}
           >
             <option value="">Select</option>
-            <option value="Issue1">None</option>
-            <option value="Issue2">Post Menoposal Bleeding</option>
-            <option value="Issue3">Post Coital Bleeding</option>
-            <option value="Issue4">Inter Menstrual Bleeding</option>
-            <option value="Issue5">DUB</option>
-            <option value="Issue6">Others</option>
+            <option value="None">None</option>
+            <option value="Post Menoposal Bleeding">Post Menoposal Bleeding</option>
+            <option value="Post Coital Bleeding">Post Coital Bleeding</option>
+            <option value="Inter Menstrual Bleeding">Inter Menstrual Bleeding</option>
+            <option value="DUB">DUB</option>
+            <option value="Others">Others</option>
           </select>
 
           <label>Age at Marriage:</label>
@@ -614,12 +614,12 @@ console.log(age,participant,ageString,"skkksa")
             onChange={(e) => setSelectedContraception(e.target.value)}
           >
             <option value="">Select</option>
-                        <option value="Contraception1">Nil</option>
-                        <option value="Contraception2">Condom</option>
-                        <option value="Contraception3">Pill</option>
-                        <option value="Contraception6">IUCD</option>
-                        <option value="Contraception4">Tubectomy</option>
-                        <option value="Contraception5">Others</option>
+                        <option value="Nil">Nil</option>
+                        <option value="Condom">Condom</option>
+                        <option value="Pill">Pill</option>
+                        <option value="IUCD">IUCD</option>
+                        <option value="Tubectomy">Tubectomy</option>
+                        <option value="Others">Others</option>
           </select>
 
           <label>Breast Fed (How Many Months?):</label>
@@ -628,11 +628,11 @@ console.log(age,participant,ageString,"skkksa")
             onChange={(e) => setSelectedBreastFedMonths(e.target.value)}
           >
             <option value="">Select</option>
-            <option value="Month1">Nil</option>
-            <option value="Month2">&lt; 6 Months</option>
-            <option value="Month3">6-12 Months</option>
-            <option value="Month4">&gt; 12 Months</option>
-            <option value="Month5">Others</option>
+            <option value="Nil">Nil</option>
+            <option value="< 6 Months">&lt; 6 Months</option>
+            <option value="6-12 Months">6-12 Months</option>
+            <option value="> 12 Months">&gt; 12 Months</option>
+            <option value="Others">Others</option>
           </select>
 
           <label>Have You Ever Undergone Breast/Cervix Screening?</label>
