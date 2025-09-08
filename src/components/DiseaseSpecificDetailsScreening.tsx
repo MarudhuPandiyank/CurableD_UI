@@ -41,10 +41,75 @@ const App: React.FC = () => {
   const [hiddenFields, setHiddenFields] = useState<string[]>([]);
   const [fieldData, setFieldData] = useState<Field[]>([]);
   const [formErrors, setFormErrors] = useState<string[]>([]);
-  const [dob, setDob] = useState<Date | null>(null);
+  const [dob, setDob] = useState<Date | null>(null); // unchanged
 
   const navigate = useNavigate();
   const diseaseTestIds = localStorage.getItem('diseaseTestIds');
+
+  // ---------- visibility helpers (updated: dependency-walk) ----------
+  const isTriggered = (current: string | string[] | undefined, trigger: string) => {
+    if (Array.isArray(current)) return current.includes(trigger);
+    return current === trigger;
+  };
+
+  /**
+   * Build dependency graph:
+   * parent -> [{ child, triggerValue }]
+   * Also compute root fields (those that are not enabled by anyone).
+   */
+  const buildGraph = (fields: Field[]) => {
+    const parentToChildren = new Map<string, Array<{ child: string; trigger: string }>>();
+    const allNames = new Set<string>();
+    const childNames = new Set<string>();
+
+    fields.forEach(f => {
+      allNames.add(f.testName);
+      if (f.condition) {
+        f.condition.forEach(c => {
+          const arr = parentToChildren.get(f.testName) || [];
+          arr.push({ child: c.enabledField, trigger: c.triggerValue });
+          parentToChildren.set(f.testName, arr);
+          childNames.add(c.enabledField);
+        });
+      }
+    });
+
+    const roots: string[] = Array.from(allNames).filter(n => !childNames.has(n));
+    return { parentToChildren, allNames, roots };
+  };
+
+  /**
+   * Compute which fields should be hidden by walking from roots and
+   * only revealing children when their parent value matches trigger.
+   * Any subtree under a non-matching/hidden parent stays hidden.
+   */
+  const computeHidden = (
+    fields: Field[],
+    selections: { [k: string]: string | string[] }
+  ) => {
+    const { parentToChildren, allNames, roots } = buildGraph(fields);
+
+    const visible = new Set<string>(roots); // roots are always visible
+    const queue: string[] = [...roots];
+
+    while (queue.length) {
+      const parent = queue.shift() as string;
+      const children = parentToChildren.get(parent) || [];
+      for (const { child, trigger } of children) {
+        if (isTriggered(selections[parent], trigger)) {
+          if (!visible.has(child)) {
+            visible.add(child);
+            queue.push(child);
+          }
+        }
+        // If not triggered, child stays hidden (and its subtree too).
+      }
+    }
+
+    const hidden: string[] = Array.from(allNames).filter(n => !visible.has(n));
+    return hidden;
+  };
+  // -------------------------------------------------------------------
 
   useEffect(() => {
     const fetchDiseaseTestMaster = async () => {
@@ -58,11 +123,8 @@ const App: React.FC = () => {
         const filteredData = response.data.testMetrics.params;
         setFieldData(filteredData);
 
-        const hidden = new Set<string>();
-        filteredData.forEach((field) => {
-          field.condition?.forEach((cond) => hidden.add(cond.enabledField));
-        });
-        setHiddenFields(Array.from(hidden));
+        // Initialize visibility with empty selections
+        setHiddenFields(computeHidden(filteredData, {}));
       } catch (error) {
         console.error('Error fetching disease test master data:', error);
       }
@@ -71,22 +133,22 @@ const App: React.FC = () => {
     if (diseaseTestIds) fetchDiseaseTestMaster();
   }, [diseaseTestIds]);
 
+  // Recompute visibility on every selection change
   const handleSelectChange = (testName: string, value: string | string[]) => {
-    setSelectedValues((prev) => ({ ...prev, [testName]: value }));
+    const nextSelected = { ...selectedValues, [testName]: value };
+    const nextHidden = computeHidden(fieldData, nextSelected);
 
-    const fieldsToShow = new Set<string>(hiddenFields);
-    fieldData.forEach((field) => {
-      if (field.testName === testName) {
-        field.condition?.forEach((cond) => {
-          if (cond.triggerValue === value) {
-            fieldsToShow.delete(cond.enabledField);
-          } else {
-            fieldsToShow.add(cond.enabledField);
-          }
-        });
+    // Clear values of any fields that just became hidden (including deep descendants)
+    const prevHiddenSet = new Set(hiddenFields);
+    const nextHiddenSet = new Set(nextHidden);
+    Object.keys(nextSelected).forEach(key => {
+      if (!prevHiddenSet.has(key) && nextHiddenSet.has(key)) {
+        delete nextSelected[key];
       }
     });
-    setHiddenFields(Array.from(fieldsToShow));
+
+    setSelectedValues(nextSelected);
+    setHiddenFields(nextHidden);
   };
 
   const handleFinish = async () => {
@@ -177,7 +239,7 @@ const App: React.FC = () => {
 
         {fieldData.map((field) => {
           if (hiddenFields.includes(field.testName)) return null;
-          console.log("Rendering field:", field); // ✅ Console will work
+          console.log("Rendering field:", field);
 
           return (
             <div key={field.testName} className="form-group">
@@ -230,28 +292,27 @@ const App: React.FC = () => {
 
               {field.valueType === "Date" && (
                 <>
-                <div style={{ width: '100%' }}>
-                <Calendar
-  value={
-    selectedValues[field.testName]
-      ? new Date(selectedValues[field.testName] as string)
-      : null
-  }
-  onChange={(e) => {
-    if (e.value) {
-      const date = e.value as Date;
-      const localDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000)
-        .toISOString()
-        .split('T')[0];
-      handleSelectChange(field.testName, localDate);
-    }
-  }}
-  dateFormat="yy-mm-dd"
-  placeholder="yyyy-mm-dd"
-  maxDate={new Date()}
-
-/>
-</div>
+                  <div style={{ width: '100%' }}>
+                    <Calendar
+                      value={
+                        selectedValues[field.testName]
+                          ? new Date(selectedValues[field.testName] as string)
+                          : null
+                      }
+                      onChange={(e) => {
+                        if (e.value) {
+                          const date = e.value as Date;
+                          const localDate = new Date(
+                            date.getTime() - date.getTimezoneOffset() * 60000
+                          ).toISOString().split('T')[0];
+                          handleSelectChange(field.testName, localDate);
+                        }
+                      }}
+                      dateFormat="yy-mm-dd"
+                      placeholder="yyyy-mm-dd"
+                      maxDate={new Date()}
+                    />
+                  </div>
                   {formErrors.includes(field.testName) && (
                     <span className="error-message">This field is required</span>
                   )}
@@ -280,15 +341,13 @@ const App: React.FC = () => {
             </div>
           );
         })}
-      
 
         <center>
           <button className="Finish-button" onClick={handleFinish}>Finish</button>
         </center>
         <br/>
       </div>
-        <br/>  <br/>
-        <br/>
+      <br/><br/><br/>
       <footer className="footer-container-fixed">
         <div className="footer-content">
           <p className="footer-text">Powered By</p>
