@@ -32,7 +32,13 @@ const ResourceAllocation: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { startDate, endDate, panchayatId, pincode, noCampcordinators, noDoctors, noNurses, noProgramCoordinators, noSocialWorkers, clinicName, clinicCode, id } = location.state || {};
-
+const [errors, setErrors] = useState({
+  programCoordinators: '',
+  campCoordinators: '',
+  socialWorkers: '',
+  nurses: '',
+  doctors: '',
+});
   const [formData, setFormData] = useState({
     programCoordinators: [] as Admin[],
     campCoordinators: [] as Admin[],
@@ -95,7 +101,20 @@ const ResourceAllocation: React.FC = () => {
     fetchStaffDetails();
   }, [navigate, id]);
 
-  const handleMultiSelectChange = (name: string) => (selectedOptions: MultiValue<SelectOption>) => {
+  const handleMultiSelectChangeWithLimit = (name: string, limit: number) =>
+  (selectedOptions: MultiValue<SelectOption>) => {
+    if (selectedOptions.length > limit) {
+      // Show error if user exceeds limit
+      setErrors((prev) => ({
+        ...prev,
+        [name]: `Kindly select maximum ${limit} only.`,
+      }));
+      return; // Prevent updating formData with extra selections
+    }
+
+    // Clear error if valid
+    setErrors((prev) => ({ ...prev, [name]: '' }));
+
     setFormData((prevData) => ({
       ...prevData,
       [name]: selectedOptions.map((option) => ({
@@ -203,8 +222,11 @@ const ResourceAllocation: React.FC = () => {
               label: coordinator.name,
             }))}
             options={createSelectOptions(dropdownData.programCoordinators)}
-            onChange={handleMultiSelectChange('programCoordinators')}
+            onChange={handleMultiSelectChangeWithLimit('programCoordinators', Number(noProgramCoordinators) || 0)}
           />
+          {errors.programCoordinators && (
+    <p className="error-text">{errors.programCoordinators}</p>
+  )}
         </div>
 
         <div className="form-group">
@@ -217,8 +239,13 @@ const ResourceAllocation: React.FC = () => {
               label: coordinator.name,
             }))}
             options={createSelectOptions(dropdownData.campCoordinators)}
-            onChange={handleMultiSelectChange('campCoordinators')}
+           // onChange={handleMultiSelectChange('campCoordinators')}
+            onChange={handleMultiSelectChangeWithLimit('campCoordinators', Number(noCampcordinators) || 0)}
+
           />
+          {errors.programCoordinators && (
+    <p className="error-text">{errors.campCoordinators}</p>
+  )}
         </div>
 
         <div className="form-group">
@@ -231,8 +258,13 @@ const ResourceAllocation: React.FC = () => {
               label: worker.name,
             }))}
             options={createSelectOptions(dropdownData.socialWorkers)}
-            onChange={handleMultiSelectChange('socialWorkers')}
+            //onChange={handleMultiSelectChange('socialWorkers')}
+            onChange={handleMultiSelectChangeWithLimit('socialWorkers', Number(noSocialWorkers) || 0)}
+
           />
+          {errors.programCoordinators && (
+    <p className="error-text">{errors.socialWorkers}</p>
+  )}
         </div>
 
         <div className="form-group">
@@ -245,8 +277,12 @@ const ResourceAllocation: React.FC = () => {
               label: nurse.name,
             }))}
             options={createSelectOptions(dropdownData.nurses)}
-            onChange={handleMultiSelectChange('nurses')}
+            //onChange={handleMultiSelectChange('nurses')}
+            onChange={handleMultiSelectChangeWithLimit('nurses', Number(noNurses) || 0)}
           />
+          {errors.programCoordinators && (
+    <p className="error-text">{errors.nurses}</p>
+  )}
         </div>
 
         <div className="form-group">
@@ -259,8 +295,13 @@ const ResourceAllocation: React.FC = () => {
               label: doctor.name,
             }))}
             options={createSelectOptions(dropdownData.doctors)}
-            onChange={handleMultiSelectChange('doctors')}
+            //onChange={handleMultiSelectChange('doctors')}
+            onChange={handleMultiSelectChangeWithLimit('doctors', Number(noDoctors) || 0)}
+
           />
+          {errors.programCoordinators && (
+    <p className="error-text">{errors.doctors}</p>
+  )}
         </div>
 
         <button

@@ -90,3 +90,8 @@
 .submit-button:hover {
     background-color: #d774ad;
 }
+.error-text {
+  color: red;
+  font-size: 0.9rem;
+  margin-top: 5px;
+}
