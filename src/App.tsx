@@ -38,6 +38,7 @@ import DiseaseSpecificDetailsScreening from './components/DiseaseSpecificDetails
 import PatientEdit from './components/PatientEdit';
 import refreshToken from './components/refreshToken';
 import ScrollToTop from './ScrollToTop';
+import Reports from "./components/Reports";
 
 const App: React.FC = () => {
   useEffect(() => {
@@ -96,6 +97,7 @@ const App: React.FC = () => {
                 <Route path="/SuccessMessageClinicalFInal" element={<SuccessMessageClinicalFInal />} />
                 <Route path="/DynamicScreen" element={<DynamicScreen />} />
                 <Route path="/PatientEdit" element={<PatientEdit />} />
+                <Route path="/reports" element={<Reports />} />
               </Routes>
             </AuthGuard>
           }

@@ -7,6 +7,28 @@
     padding: 1rem;
     background-color: white;
 }
+/* Ensure MultiSelect matches other input fields */
+.multi-select-dropdown {
+  width: 100%;
+  padding: 3px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  background-color: #f9f9f9;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+/* Reuse the same icon style as calendar inputs */
+.input-with-icon img.clinic-id-icon {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 25px;
+  height: 25px;
+  pointer-events: none;
+}
+
 
 .header1 {
     display: flex;
