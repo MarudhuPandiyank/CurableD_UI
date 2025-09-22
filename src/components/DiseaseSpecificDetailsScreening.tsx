@@ -11,12 +11,35 @@ import config from '../config';
 import './Common.css';
 import './disease.css';
 
+interface Condition {
+  enabledField: string;
+  triggerValue: string;
+}
+
 interface Field {
   testName: string;
   subtestName: string;
   condition?: Condition[];
-  valueType: string;
+  valueType: string;          // "SingleSelect" | "Multi Select" | "Input" | "Date" | "SingleSelectButton"
   values: string[];
+  isMandatory?: boolean;
+}
+
+interface PrefillParam {
+  testName: string;
+  subtestName?: string;
+  // backend usually sends selectedValues; keep optional fallbacks for safety
+  selectedValues?: string[];
+  value?: string;      // sometimes single value appears as 'value'
+  values?: string[];   // sometimes same name as definition
+}
+interface PrefillResponse {
+  testResult?: { params?: PrefillParam[] };
+}
+
+interface ApiResponse {
+  id: number;
+  testMetrics: { params: Field[] };
 }
 
 interface ColourOption {
@@ -24,39 +47,22 @@ interface ColourOption {
   label: string;
 }
 
-interface Condition {
-  enabledField: string;
-  triggerValue: string;
-}
-
-interface ApiResponse {
-  id: number;
-  testMetrics: {
-    params: Field[];
-  };
-}
-
 const App: React.FC = () => {
   const [selectedValues, setSelectedValues] = useState<{ [key: string]: string | string[] }>({});
   const [hiddenFields, setHiddenFields] = useState<string[]>([]);
   const [fieldData, setFieldData] = useState<Field[]>([]);
   const [formErrors, setFormErrors] = useState<string[]>([]);
-  const [dob, setDob] = useState<Date | null>(null); // unchanged
-
+  const [titleName, setTitleName] = useState('Disease Specific Details');
   const navigate = useNavigate();
+
   const diseaseTestIds = localStorage.getItem('diseaseTestIds');
 
-  // ---------- visibility helpers (updated: dependency-walk) ----------
+  // ---------- visibility helpers ----------
   const isTriggered = (current: string | string[] | undefined, trigger: string) => {
     if (Array.isArray(current)) return current.includes(trigger);
     return current === trigger;
   };
 
-  /**
-   * Build dependency graph:
-   * parent -> [{ child, triggerValue }]
-   * Also compute root fields (those that are not enabled by anyone).
-   */
   const buildGraph = (fields: Field[]) => {
     const parentToChildren = new Map<string, Array<{ child: string; trigger: string }>>();
     const allNames = new Set<string>();
@@ -64,32 +70,25 @@ const App: React.FC = () => {
 
     fields.forEach(f => {
       allNames.add(f.testName);
-      if (f.condition) {
-        f.condition.forEach(c => {
-          const arr = parentToChildren.get(f.testName) || [];
-          arr.push({ child: c.enabledField, trigger: c.triggerValue });
-          parentToChildren.set(f.testName, arr);
-          childNames.add(c.enabledField);
-        });
-      }
+      (f.condition || []).forEach(c => {
+        const arr = parentToChildren.get(f.testName) || [];
+        arr.push({ child: c.enabledField, trigger: c.triggerValue });
+        parentToChildren.set(f.testName, arr);
+        childNames.add(c.enabledField);
+      });
     });
 
     const roots: string[] = Array.from(allNames).filter(n => !childNames.has(n));
     return { parentToChildren, allNames, roots };
   };
 
-  /**
-   * Compute which fields should be hidden by walking from roots and
-   * only revealing children when their parent value matches trigger.
-   * Any subtree under a non-matching/hidden parent stays hidden.
-   */
   const computeHidden = (
     fields: Field[],
     selections: { [k: string]: string | string[] }
   ) => {
     const { parentToChildren, allNames, roots } = buildGraph(fields);
 
-    const visible = new Set<string>(roots); // roots are always visible
+    const visible = new Set<string>(roots);
     const queue: string[] = [...roots];
 
     while (queue.length) {
@@ -102,43 +101,84 @@ const App: React.FC = () => {
             queue.push(child);
           }
         }
-        // If not triggered, child stays hidden (and its subtree too).
       }
     }
 
-    const hidden: string[] = Array.from(allNames).filter(n => !visible.has(n));
-    return hidden;
+    return Array.from(allNames).filter(n => !visible.has(n));
   };
-  // -------------------------------------------------------------------
+  // ----------------------------------------
 
+  // ---------- fetch definitions then prefill ----------
   useEffect(() => {
-    const fetchDiseaseTestMaster = async () => {
+    const fetchDefsAndPrefill = async () => {
       try {
         const token = localStorage.getItem('token');
+        // 1) field definitions
         const response = await axios.get<ApiResponse>(
           `${config.appURL}/curable/getMetricsById/${diseaseTestIds}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
+        const params = response.data?.testMetrics?.params || [];
+        setFieldData(params);
 
-        const filteredData = response.data.testMetrics.params;
-        setFieldData(filteredData);
+        // 2) prefill (candidate history)
+        try {
+          const candidateId = localStorage.getItem('candidateId') || localStorage.getItem('patientId');
+          const prefill = await axios.post<PrefillResponse>(
+            `${config.appURL}/curable/candidatehistoryForPrefil`,
+            {
+              candidateId,
+              type:7,
+              diseaseTypeId: Number(diseaseTestIds), // adjust if your API expects diseaseTypeId instead
+              // type: 7, // uncomment if your API requires a type code for this screen
+            },
+            { headers: { Authorization: `Bearer ${token}` } }
+          );
 
-        // Initialize visibility with empty selections
-        setHiddenFields(computeHidden(filteredData, {}));
+          console.log(prefill.data,"kka")
+
+          const histParams = prefill.data?.testResult?.params || [];
+          // Normalize into { testName: string | string[] } based on field.valueType
+          const initial: { [k: string]: string | string[] } = {};
+          params.forEach(f => {
+            const hit = histParams.find(p => p.testName === f.testName);
+            if (!hit) return;
+
+            // collect candidates of values in order of preference
+            const arr = (Array.isArray(hit.selectedValues) ? hit.selectedValues :
+                        Array.isArray(hit.values) ? hit.values :
+                        typeof hit.value === 'string' ? [hit.value] : []) as string[];
+
+            if (f.valueType === 'Multi Select') {
+              initial[f.testName] = arr || [];
+            } else {
+              initial[f.testName] = (arr && arr.length > 0) ? arr[0] : '';
+            }
+          });
+
+          setSelectedValues(initial);
+          // visibility should depend on prefilled selections
+          setHiddenFields(computeHidden(params, initial));
+        } catch (prefillErr) {
+          // If no prefill available, just compute default visibility (roots only)
+          setHiddenFields(computeHidden(params, {}));
+          console.warn('Prefill not available / failed, continuing with empty selections.', prefillErr);
+        }
       } catch (error) {
         console.error('Error fetching disease test master data:', error);
       }
     };
 
-    if (diseaseTestIds) fetchDiseaseTestMaster();
+    if (diseaseTestIds) fetchDefsAndPrefill();
   }, [diseaseTestIds]);
+  // ----------------------------------------------------
 
-  // Recompute visibility on every selection change
+  // Change handler
   const handleSelectChange = (testName: string, value: string | string[]) => {
     const nextSelected = { ...selectedValues, [testName]: value };
     const nextHidden = computeHidden(fieldData, nextSelected);
 
-    // Clear values of any fields that just became hidden (including deep descendants)
+    // Clear values for any fields that just became hidden
     const prevHiddenSet = new Set(hiddenFields);
     const nextHiddenSet = new Set(nextHidden);
     Object.keys(nextSelected).forEach(key => {
@@ -149,81 +189,116 @@ const App: React.FC = () => {
 
     setSelectedValues(nextSelected);
     setHiddenFields(nextHidden);
+
+    if (formErrors.includes(testName)) {
+      setFormErrors(errs => errs.filter(e => e !== testName));
+    }
   };
 
-  const handleFinish = async () => {
-    const requiredFields = fieldData
-      .filter((field) => !hiddenFields.includes(field.testName))
-      .map((field) => field.testName);
+  // “No” flow detection
+  const isNoFlow = Object.entries(selectedValues).some(
+    ([name, val]) => /clinical evaluation/i.test(name) && val === 'No'
+  );
 
-    const missingFields = requiredFields.filter((key) => {
-      const val = selectedValues[key];
-      return (
-        val === undefined || val === '' || (Array.isArray(val) && val.length === 0)
-      );
-    });
+  // Validate only visible & mandatory
+  const validateForFinish = () => {
+    const missing = fieldData
+      .filter(f => !hiddenFields.includes(f.testName) && f.isMandatory)
+      .map(f => f.testName)
+      .filter(name => {
+        const v = selectedValues[name];
+        return v === undefined || v === '' || (Array.isArray(v) && v.length === 0);
+      });
 
-    if (missingFields.length > 0) {
-      setFormErrors(missingFields);
-      return;
-    }
+    setFormErrors(missing);
+    return missing.length === 0;
+  };
 
-    setFormErrors([]);
-
-    const candidateId = localStorage.getItem('candidateId');
-    const payload = {
-      candidateId: Number(candidateId),
+  // Build payload with completed flag
+  const buildPayload = (completed: 0 | 1) => {
+    const candidateId = Number(localStorage.getItem('candidateId'));
+    return {
+      candidateId,
       diseaseTestMasterId: Number(diseaseTestIds),
-      description: "Eligibility Metrics",
+      description: 'Eligibility Metrics',
       diseaseTestId: 1,
       familyMedicalMetrics: null,
       familyMetrics: null,
-      gender: "FEMALE",
+      gender: 'FEMALE',
       genderValid: true,
       hospitalId: 1,
       id: null,
       medicalMetrics: null,
-      name: "Eligibility Metrics",
+      name: 'Eligibility Metrics',
       stage: localStorage.getItem('selectedStage'),
       eligibilityMetrics: null,
+      completed,
       type: 1,
       testMetrics: {
-        params: fieldData.map((field) => ({
+        params: fieldData.map(field => ({
           testName: field.testName,
           subtestName: field.subtestName,
           selectedValues: selectedValues[field.testName]
             ? Array.isArray(selectedValues[field.testName])
-              ? selectedValues[field.testName]
-              : [selectedValues[field.testName]]
+              ? (selectedValues[field.testName] as string[])
+              : [selectedValues[field.testName] as string]
             : [],
         })),
       },
     };
+  };
 
+  const handleSave = async () => {
     try {
       const token = localStorage.getItem('token');
-      await axios.post(`${config.appURL}/curable/candidatehistory`, payload, {
+      await axios.post(`${config.appURL}/curable/candidatehistory`, buildPayload(0), {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      // In “No” flow, proceed after Save; else stay or toast
+      navigate('/SuccessMessageScreeningFInal');
+    } catch (error) {
+      console.error('Error saving data:', error);
+      alert('Save failed. Please try again.');
+    }
+  };
+
+  const handleFinish = async () => {
+    if (!validateForFinish()) return;
+    try {
+      const token = localStorage.getItem('token');
+      await axios.post(`${config.appURL}/curable/candidatehistory`, buildPayload(1), {
         headers: { Authorization: `Bearer ${token}` },
       });
       navigate('/SuccessMessageScreeningFInal');
     } catch (error) {
       console.error('Error submitting data:', error);
+      alert('Submit failed. Please try again.');
     }
   };
 
-  const [titleName, setTitleName] = useState("Disease Specific Details");
-
+  // Titles for 3 stages (robust)
   useEffect(() => {
-    const stage = localStorage.getItem("selectedStage");
-    if (stage === "Breast screening Test") setTitleName("Breast Screening");
-    else if (stage === "Oral Screening Test") setTitleName("Oral Screening");
-    else if (stage === "Cervical Screening Test") setTitleName("Cervical Screening");
+    const raw = (localStorage.getItem('selectedStage') || '').toLowerCase().trim();
+    if (raw === 'breast screening test') setTitleName('Breast Screening');
+    else if (raw === 'oral screening test') setTitleName('Oral Screening');
+    else if (raw === 'cervical screening test') setTitleName('Cervical Screening');
+    else setTitleName('Disease Specific Details');
   }, []);
 
-  const pName = localStorage.getItem("patientName");
-  const regId = localStorage.getItem("registrationId");
-  const patientAge = localStorage.getItem("patientAge");
-  const patientgender = localStorage.getItem("patientgender");
+  // Finish disabled derived
+  const finishDisabled =
+    isNoFlow ||
+    fieldData.some(f => {
+      if (hiddenFields.includes(f.testName)) return false;
+      if (!f.isMandatory) return false;
+      const v = selectedValues[f.testName];
+      return v === undefined || v === '' || (Array.isArray(v) && v.length === 0);
+    });
+
+  const pName = localStorage.getItem('patientName');
+  const regId = localStorage.getItem('registrationId');
+  const patientAge = localStorage.getItem('patientAge');
+  const patientgender = localStorage.getItem('patientgender');
 
   return (
     <div className="container2">
@@ -232,23 +307,24 @@ const App: React.FC = () => {
         <p><strong>Participant: </strong>{pName} {patientAge}/{patientgender}</p>
         <p><strong>ID:</strong> {regId}</p>
       </div>
-      <br/>
 
       <div className="clinic-details-form-newscreening">
         <h1 style={{ color: 'darkblue' }}>{titleName}</h1>
 
         {fieldData.map((field) => {
           if (hiddenFields.includes(field.testName)) return null;
-          console.log("Rendering field:", field);
 
           return (
             <div key={field.testName} className="form-group">
-              <label style={{ fontSize: '15px' }}>{field.testName}</label>
+              <label style={{ fontSize: '15px' }}>
+                {field.testName}{' '}
+                {field.isMandatory && <span style={{ color: 'red' }}>*</span>}
+              </label>
 
-              {field.valueType === "SingleSelect" && (
+              {field.valueType === 'SingleSelect' && (
                 <>
                   <select
-                    value={selectedValues[field.testName] || ""}
+                    value={(selectedValues[field.testName] as string) || ''}
                     onChange={(e) => handleSelectChange(field.testName, e.target.value)}
                   >
                     <option value="" disabled>Select an option</option>
@@ -262,13 +338,18 @@ const App: React.FC = () => {
                 </>
               )}
 
-              {field.valueType === "Multi Select" && (
+              {field.valueType === 'Multi Select' && (
                 <>
                   <Select
                     isMulti
                     options={field.values.map((val) => ({ value: val, label: val }))}
+                    value={
+                      Array.isArray(selectedValues[field.testName])
+                        ? (selectedValues[field.testName] as string[]).map(v => ({ value: v, label: v }))
+                        : []
+                    }
                     onChange={(options: MultiValue<ColourOption>) =>
-                      handleSelectChange(field.testName, options.map(o => o.value))
+                      handleSelectChange(field.testName, (options || []).map(o => o.value))
                     }
                   />
                   {formErrors.includes(field.testName) && (
@@ -277,11 +358,11 @@ const App: React.FC = () => {
                 </>
               )}
 
-              {field.valueType === "Input" && (
+              {field.valueType === 'Input' && (
                 <>
                   <input
                     type="text"
-                    value={selectedValues[field.testName] || ""}
+                    value={(selectedValues[field.testName] as string) || ''}
                     onChange={(e) => handleSelectChange(field.testName, e.target.value)}
                   />
                   {formErrors.includes(field.testName) && (
@@ -290,7 +371,7 @@ const App: React.FC = () => {
                 </>
               )}
 
-              {field.valueType === "Date" && (
+              {field.valueType === 'Date' && (
                 <>
                   <div style={{ width: '100%' }}>
                     <Calendar
@@ -319,7 +400,7 @@ const App: React.FC = () => {
                 </>
               )}
 
-              {field.valueType === "SingleSelectButton" && (
+              {field.valueType === 'SingleSelectButton' && (
                 <>
                   <div className="gender-group">
                     {field.values.map((val) => (
@@ -343,11 +424,17 @@ const App: React.FC = () => {
         })}
 
         <center>
-          <button className="Finish-button" onClick={handleFinish}>Finish</button>
+          <div className="buttons">
+            <button className="Next-button" onClick={handleSave}>Save</button>
+            <button className="Finish-button" onClick={handleFinish} disabled={finishDisabled}>
+              Finish
+            </button>
+          </div>
         </center>
-        <br/>
+        <br />
       </div>
-      <br/><br/><br/>
+
+      <br /><br /><br />
       <footer className="footer-container-fixed">
         <div className="footer-content">
           <p className="footer-text">Powered By</p>
