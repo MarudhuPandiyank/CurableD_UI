@@ -58,7 +58,7 @@ const App: React.FC = () => {
   const { canView, canCreate, canEdit } = useSelector(
     selectPrivilegeFlags('Patient Registration')
   );
-  const allowAllThree = useSelector(canAll('/management', 'CREATE', 'VIEW', 'EDIT'));
+  const allowAllThree = useSelector(canAll('/clinical', 'CREATE', 'VIEW', 'EDIT'));
 
   // ids from LS
   const diseaseTestIds = localStorage.getItem('diseaseTestIds') || '';
