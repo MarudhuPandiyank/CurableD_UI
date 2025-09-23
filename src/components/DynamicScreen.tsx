@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Header1 from './Header1';
@@ -29,11 +29,6 @@ interface Field {
   isMandatory?: boolean;
 }
 
-interface ApiResponse {
-  id: number;
-  testMetrics: { params: Field[] };
-}
-
 interface PrefillParam {
   testName: string;
   subtestName?: string;
@@ -46,6 +41,11 @@ interface PrefillResponse {
   testResult?: { params?: PrefillParam[] };
 }
 
+interface ApiResponse {
+  id: number;
+  testMetrics: { params: Field[] };
+}
+
 interface ColourOption {
   value: string;
   label: string;
@@ -54,183 +54,169 @@ interface ColourOption {
 const App: React.FC = () => {
   const navigate = useNavigate();
 
-  // privileges (kept, no BAU change)
-  const { canView, canCreate, canEdit } = useSelector(
-    selectPrivilegeFlags('Patient Registration')
-  );
+  // privileges (unchanged BAU inputs)
+  const { canView, canCreate, canEdit } = useSelector(selectPrivilegeFlags('Patient Registration'));
   const allowAllThree = useSelector(canAll('/clinical', 'CREATE', 'VIEW', 'EDIT'));
 
-  // ids from LS
-  const diseaseTestIds = localStorage.getItem('diseaseTestIds') || '';
-  const candidateId = Number(localStorage.getItem('candidateId') || localStorage.getItem('patientId') || 0);
-
-  // definitions + selection state
-  const [fields, setFields] = useState<Field[]>([]);
-  const [selected, setSelected] = useState<Record<string, string | string[]>>({});
-  const [hidden, setHidden] = useState<string[]>([]);
+  // ids & state
+  const diseaseTestIds = localStorage.getItem('diseaseTestIds');
+  const [fieldData, setFieldData] = useState<Field[]>([]);
+  const [selectedValues, setSelectedValues] = useState<Record<string, string | string[]>>({});
+  const [hiddenFields, setHiddenFields] = useState<string[]>([]);
   const [formErrors, setFormErrors] = useState<string[]>([]);
-  const [multiParam, setMultiParam] = useState<readonly ColourOption[]>([]);
   const [titleName, setTitleName] = useState('Clinical Evaluation');
 
-  // small helpers
-  const normalizeArray = (v: unknown): string[] =>
-    Array.isArray(v) ? (v as string[]).filter(Boolean) : typeof v === 'string' ? [v] : [];
-
+  // ---------- visibility helpers ----------
   const isTriggered = (current: string | string[] | undefined, trigger: string) => {
     if (Array.isArray(current)) return current.includes(trigger);
     return current === trigger;
   };
 
-  // Build dependency graph once we have fields
-  const graph = useMemo(() => {
-    const parentToChildren = new Map<
-      string,
-      Array<{ child: string; trigger: string }>
-    >();
-    const all = new Set<string>();
-    const children = new Set<string>();
+  const buildGraph = (fields: Field[]) => {
+    const parentToChildren = new Map<string, Array<{ child: string; trigger: string }>>();
+    const allNames = new Set<string>();
+    const childNames = new Set<string>();
 
     fields.forEach(f => {
-      all.add(f.testName);
+      allNames.add(f.testName);
       (f.condition || []).forEach(c => {
         const arr = parentToChildren.get(f.testName) || [];
         arr.push({ child: c.enabledField, trigger: c.triggerValue });
         parentToChildren.set(f.testName, arr);
-        children.add(c.enabledField);
+        childNames.add(c.enabledField);
       });
     });
 
-    const roots = Array.from(all).filter(n => !children.has(n));
-    return { parentToChildren, roots, all };
-  }, [fields]);
+    const roots: string[] = Array.from(allNames).filter(n => !childNames.has(n));
+    return { parentToChildren, allNames, roots };
+  };
 
-  // Compute hidden fields from selections
-  const computeHidden = (selections: Record<string, string | string[]>) => {
-    const { parentToChildren, roots, all } = graph;
-    if (fields.length === 0) return [];
-
+  const computeHidden = (fields: Field[], selections: Record<string, string | string[]>) => {
+    const { parentToChildren, allNames, roots } = buildGraph(fields);
     const visible = new Set<string>(roots);
-    const q = [...roots];
+    const queue: string[] = [...roots];
 
-    while (q.length) {
-      const p = q.shift() as string;
-      const kids = parentToChildren.get(p) || [];
-      for (const { child, trigger } of kids) {
-        if (isTriggered(selections[p], trigger)) {
+    while (queue.length) {
+      const parent = queue.shift() as string;
+      const children = parentToChildren.get(parent) || [];
+      for (const { child, trigger } of children) {
+        if (isTriggered(selections[parent], trigger)) {
           if (!visible.has(child)) {
             visible.add(child);
-            q.push(child);
+            queue.push(child);
           }
         }
       }
     }
-    return Array.from(all).filter(n => !visible.has(n));
+    return Array.from(allNames).filter(n => !visible.has(n));
   };
+  // ----------------------------------------
 
-  // Fetch definitions + prefill
+  // ---------- fetch definitions then prefill ----------
   useEffect(() => {
-    const run = async () => {
+    const fetchDefsAndPrefill = async () => {
       try {
-        const token = localStorage.getItem('token') || '';
-        // 1) definitions
-        const def = await axios.get<ApiResponse>(
+        const token = localStorage.getItem('token');
+        if (!token || !diseaseTestIds) return;
+
+        // 1) Field definitions
+        const res = await axios.get<ApiResponse>(
           `${config.appURL}/curable/getMetricsById/${diseaseTestIds}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
-        const params = (def.data?.testMetrics?.params || []).filter(
-          (f) => f.testName !== 'Referred for'
-        );
-        setFields(params);
+        const all = res.data?.testMetrics?.params || [];
+        // BAU: filter example kept from your first snippet (exclude "Referred for")
+        const params = all.filter((f) => f.testName !== 'Referred for');
+        setFieldData(params);
 
-        // for your multiParam usage (unchanged BAU)
-        setMultiParam(
-          params.map(d => ({ value: d.testName, label: d.testName }))
-        );
-
-        // 2) prefill (safe if none)
+        // 2) Prefill
         try {
-          const pre = await axios.post<PrefillResponse>(
+          const candidateId = localStorage.getItem('candidateId') || localStorage.getItem('patientId');
+          const prefill = await axios.post<PrefillResponse>(
             `${config.appURL}/curable/candidatehistoryForPrefil`,
             {
               candidateId,
-              type: 7,               // keep/update if your API expects this screen type
-              diseaseTypeId: Number(diseaseTestIds) // or diseaseTestMasterId, per backend
+              type: 7,                       // keep as you noted for this screen
+              diseaseTypeId: Number(diseaseTestIds),
             },
             { headers: { Authorization: `Bearer ${token}` } }
           );
 
-          const hist = pre.data?.testResult?.params || [];
-          // Build initial selected map respecting valueType
+          const histParams = prefill.data?.testResult?.params || [];
           const initial: Record<string, string | string[]> = {};
+
           params.forEach(f => {
-            const hit = hist.find(h => h.testName === f.testName);
+            const hit = histParams.find(p => p.testName === f.testName);
             if (!hit) return;
-            const arr = normalizeArray(
-              hit.selectedValues ?? hit.values ?? hit.value
-            );
+
+            const arr = (Array.isArray(hit.selectedValues) ? hit.selectedValues :
+                        Array.isArray(hit.values) ? hit.values :
+                        typeof hit.value === 'string' ? [hit.value] : []) as string[];
+
             if (f.valueType === 'Multi Select') {
-              initial[f.testName] = arr;
+              initial[f.testName] = arr || [];
             } else {
-              initial[f.testName] = arr[0] || '';
+              initial[f.testName] = (arr && arr.length > 0) ? arr[0] : '';
             }
           });
 
-          setSelected(initial);
-          setHidden(computeHidden(initial));
-        } catch {
-          // No prefill — show only roots
-          setHidden(computeHidden({}));
+          setSelectedValues(initial);
+          setHiddenFields(computeHidden(params, initial));
+        } catch (prefillErr) {
+          // If prefill fails/empty, compute roots only
+          setHiddenFields(computeHidden(params, {}));
+          console.warn('Prefill not available; proceeding empty.', prefillErr);
         }
       } catch (e) {
-        console.error('Failed to load definitions/prefill', e);
+        console.error('Error fetching disease test master data:', e);
       }
     };
 
-    if (diseaseTestIds) run();
-  }, [diseaseTestIds]); // eslint-disable-line react-hooks/exhaustive-deps
+    fetchDefsAndPrefill();
+  }, [diseaseTestIds]);
+  // ----------------------------------------------------
 
-  // Title mapping (kept)
+  // Titles
   useEffect(() => {
     const raw = (localStorage.getItem('selectedStage') || '').toLowerCase().trim();
-    if (raw === 'breast screening test') setTitleName('Breast Screening');
-    else if (raw === 'oral screening test') setTitleName('Oral Screening');
-    else if (raw === 'cervical screening test') setTitleName('Cervical Screening');
+    if (raw.includes('breast')) setTitleName('Breast Screening');
+    else if (raw.includes('oral')) setTitleName('Oral Screening');
+    else if (raw.includes('cervical')) setTitleName('Cervical Screening');
     else setTitleName('Clinical Evaluation');
   }, []);
 
-  // Change handler (updates visibility; clears values that became hidden)
-  const onValueChange = (testName: string, value: string | string[]) => {
-    const next = { ...selected, [testName]: value };
-    const nextHidden = computeHidden(next);
+  // Change handlers
+  const handleSelectChange = (testName: string, value: string | string[]) => {
+    const nextSelected = { ...selectedValues, [testName]: value };
+    const nextHidden = computeHidden(fieldData, nextSelected);
 
-    // clear selections for any field that just became hidden
-    const prevHidden = new Set(hidden);
-    const nowHidden = new Set(nextHidden);
-    Object.keys(next).forEach(k => {
-      if (!prevHidden.has(k) && nowHidden.has(k)) {
-        delete next[k];
-      }
+    // Clear values that just became hidden
+    const prevHiddenSet = new Set(hiddenFields);
+    const nextHiddenSet = new Set(nextHidden);
+    Object.keys(nextSelected).forEach(key => {
+      if (!prevHiddenSet.has(key) && nextHiddenSet.has(key)) delete nextSelected[key];
     });
 
-    setSelected(next);
-    setHidden(nextHidden);
+    setSelectedValues(nextSelected);
+    setHiddenFields(nextHidden);
+
+    // clear error as soon as user touches it
     if (formErrors.includes(testName)) {
       setFormErrors(errs => errs.filter(e => e !== testName));
     }
   };
 
-  // “No” early-exit flow (if you have such a control)
-  const isNoFlow = Object.entries(selected).some(
-    ([name, val]) => /clinical evaluation/i.test(name) && val === 'No'
-  );
+  const handleInputChange = (testName: string, v: string) => {
+    handleSelectChange(testName, v);
+  };
 
-  // Validation only for visible, mandatory fields
+  // Validation for Finish (only visible & mandatory)
   const validateForFinish = () => {
-    const missing = fields
-      .filter(f => !hidden.includes(f.testName) && f.isMandatory)
+    const missing = fieldData
+      .filter(f => !hiddenFields.includes(f.testName) && f.isMandatory)
       .map(f => f.testName)
       .filter(name => {
-        const v = selected[name];
+        const v = selectedValues[name];
         return v === undefined || v === '' || (Array.isArray(v) && v.length === 0);
       });
 
@@ -238,21 +224,32 @@ const App: React.FC = () => {
     return missing.length === 0;
   };
 
-  // payload builder (completed: 0 = Save, 1 = Finish)
+  // Finish disabled derived
+  const finishDisabled =
+    fieldData.some(f => {
+      if (hiddenFields.includes(f.testName)) return false;
+      if (!f.isMandatory) return false;
+      const v = selectedValues[f.testName];
+      return v === undefined || v === '' || (Array.isArray(v) && v.length === 0);
+    });
+
+  // Payload
   const buildPayload = (completed: 0 | 1) => {
+    const candidateId = Number(localStorage.getItem('candidateId'));
+    const stage = localStorage.getItem('selectedStage');
     return {
       candidateId,
       diseaseTestMasterId: Number(diseaseTestIds),
       description: 'Test Metrics',
       diseaseTestId: 1,
       testMetrics: {
-        params: fields.map(f => ({
-          testName: f.testName,
-          subtestName: f.subtestName,
-          selectedValues: selected[f.testName]
-            ? Array.isArray(selected[f.testName])
-              ? (selected[f.testName] as string[])
-              : [selected[f.testName] as string]
+        params: fieldData.map(field => ({
+          testName: field.testName,
+          subtestName: field.subtestName,
+          selectedValues: selectedValues[field.testName]
+            ? Array.isArray(selectedValues[field.testName])
+              ? (selectedValues[field.testName] as string[])
+              : [selectedValues[field.testName] as string]
             : [],
         })),
       },
@@ -263,60 +260,46 @@ const App: React.FC = () => {
       id: null,
       medicalMetrics: null,
       name: 'Test Metrics',
-      stage: localStorage.getItem('selectedStage'),
-      type: 3,
-      completed
+      stage,
+      type: 3,               // keep your original type for Clinical Evaluation
+      completed,             // <- 0 for Save, 1 for Finish
     };
   };
 
-  // Save (no validation)
-  const handleSave = async (e?: React.MouseEvent) => {
-    e?.preventDefault();
+  const postCandidateHistory = async (payload: any) => {
+    const token = localStorage.getItem('token');
+    if (!token) throw new Error('Missing token');
+    await axios.post(`${config.appURL}/curable/candidatehistory`, payload, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+  };
+
+  const handleSave = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
     try {
-      const token = localStorage.getItem('token') || '';
-      await axios.post(`${config.appURL}/curable/candidatehistory`, buildPayload(0), {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      // If your flow wants to move forward on Save (like your ref code), navigate:
+      await postCandidateHistory(buildPayload(0));
       navigate('/SuccessMessageClinicalFInal');
-      // alert('Saved');
     } catch (error) {
-      console.error('Save failed', error);
+      console.error('Save failed:', error);
       alert('Save failed. Please try again.');
     }
   };
 
-  // Finish (requires validation)
-  const handleFinish = async (e?: React.MouseEvent) => {
-    e?.preventDefault();
-    if (isNoFlow) return; // (kept as your guard)
+  const handleFinish = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
     if (!validateForFinish()) return;
-
     try {
-      const token = localStorage.getItem('token') || '';
-      await axios.post(`${config.appURL}/curable/candidatehistory`, buildPayload(1), {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await postCandidateHistory(buildPayload(1));
       navigate('/SuccessMessageClinicalFInal');
     } catch (error) {
-      console.error('Submit failed', error);
+      console.error('Submit failed:', error);
       alert('Submit failed. Please try again.');
     }
   };
 
-  const finishDisabled =
-    !allowAllThree || // respect your privilege gate
-    isNoFlow ||
-    fields.some(f => {
-      if (hidden.includes(f.testName)) return false;
-      if (!f.isMandatory) return false;
-      const v = selected[f.testName];
-      return v === undefined || v === '' || (Array.isArray(v) && v.length === 0);
-    });
-
-  // LS bits for header
-  const ptName = localStorage.getItem('ptName') || localStorage.getItem('patientName');
-  const registrationId = localStorage.getItem('registrationId');
+  // UI bits
+  const pName = localStorage.getItem('ptName') || localStorage.getItem('patientName');
+  const regId = localStorage.getItem('registrationId');
   const patientAge = localStorage.getItem('patientAge');
   const patientgender = localStorage.getItem('patientgender');
 
@@ -325,35 +308,33 @@ const App: React.FC = () => {
       <Header1 />
 
       <div className="participant-info-container">
-        <p className="participant-info-text">
-          <strong>Participant: </strong>{ptName} {patientAge}/{patientgender}
-        </p>
-        <p className="participant-info-text"><strong>ID: </strong>{registrationId}</p>
+        <p className="participant-info-text"><strong>Participant: </strong>{pName} {patientAge}/{patientgender}</p>
+        <p className="participant-info-text"><strong>ID:</strong> {regId}</p>
       </div>
 
-      <div className="clinic-details-form-newscreening">
-        <h1 style={{ color: 'darkblue' }}>{titleName}</h1>
+      <h1 style={{ color: 'darkblue' }}>{titleName}</h1>
 
-        {fields.map((field) => {
-          if (hidden.includes(field.testName)) return null;
+      <form className="clinic-form" onSubmit={(e) => e.preventDefault()}>
+        {fieldData.map((field) => {
+          if (hiddenFields.includes(field.testName)) return null;
 
           return (
             <div key={field.testName} className="form-group">
-              <label style={{ fontSize: '15px' }}>
-                {field.testName}{' '}
-                {field.isMandatory && <span style={{ color: 'red' }}>*</span>}
+              <label style={{ color: 'black' }}>
+                {field.testName}
+                {field.isMandatory && <span style={{ color: 'red' }}> *</span>}
               </label>
 
               {/* SingleSelect */}
               {field.valueType === 'SingleSelect' && (
                 <>
                   <select
-                    value={(selected[field.testName] as string) || ''}
-                    onChange={(e) => onValueChange(field.testName, e.target.value)}
+                    value={(selectedValues[field.testName] as string) || ''}
+                    onChange={(e) => handleSelectChange(field.testName, e.target.value)}
                   >
-                    <option value="" disabled>Select an option</option>
-                    {field.values.map((val) => (
-                      <option key={val} value={val}>{val}</option>
+                    <option value="" disabled>Select a value</option>
+                    {field.values.map(value => (
+                      <option key={value} value={value}>{value}</option>
                     ))}
                   </select>
                   {formErrors.includes(field.testName) && (
@@ -367,15 +348,17 @@ const App: React.FC = () => {
                 <>
                   <Select
                     isMulti
-                    options={field.values.map((val) => ({ value: val, label: val }))}
+                    name={field.testName}
+                    options={field.values.map((v) => ({ value: v, label: v }))}
                     value={
-                      Array.isArray(selected[field.testName])
-                        ? (selected[field.testName] as string[]).map(v => ({ value: v, label: v }))
+                      Array.isArray(selectedValues[field.testName])
+                        ? (selectedValues[field.testName] as string[]).map(v => ({ value: v, label: v }))
                         : []
                     }
-                    onChange={(options: MultiValue<ColourOption>) =>
-                      onValueChange(field.testName, (options || []).map(o => o.value))
+                    onChange={(option: MultiValue<ColourOption>) =>
+                      handleSelectChange(field.testName, (option || []).map(opt => opt.value))
                     }
+                    className="form-group"
                   />
                   {formErrors.includes(field.testName) && (
                     <span className="error-message">This field is required</span>
@@ -388,8 +371,9 @@ const App: React.FC = () => {
                 <>
                   <input
                     type="text"
-                    value={(selected[field.testName] as string) || ''}
-                    onChange={(e) => onValueChange(field.testName, e.target.value)}
+                    placeholder="Enter value"
+                    value={(selectedValues[field.testName] as string) || ''}
+                    onChange={(e) => handleInputChange(field.testName, e.target.value)}
                   />
                   {formErrors.includes(field.testName) && (
                     <span className="error-message">This field is required</span>
@@ -403,18 +387,20 @@ const App: React.FC = () => {
                   <div className="input-with-icon">
                     <Calendar
                       value={
-                        selected[field.testName]
-                          ? new Date(selected[field.testName] as string)
+                        selectedValues[field.testName]
+                          ? new Date(selectedValues[field.testName] as string)
                           : null
                       }
                       onChange={(e) => {
-                        if (e.value) {
-                          const date = e.value as Date;
-                          // format yyyy-mm-dd in local
-                          const localDate = new Date(
-                            date.getTime() - date.getTimezoneOffset() * 60000
-                          ).toISOString().split('T')[0];
-                          onValueChange(field.testName, localDate);
+                        const date = e.value as Date | null;
+                        if (date) {
+                          // yyyy-mm-dd in local (IST-safe)
+                          const local = new Date(date.getTime() - date.getTimezoneOffset() * 60000)
+                            .toISOString()
+                            .split('T')[0];
+                          handleSelectChange(field.testName, local);
+                        } else {
+                          handleSelectChange(field.testName, '');
                         }
                       }}
                       dateFormat="yy-mm-dd"
@@ -433,14 +419,14 @@ const App: React.FC = () => {
               {field.valueType === 'SingleSelectButton' && (
                 <>
                   <div className="gender-group">
-                    {field.values.map((val) => (
+                    {field.values.map((value) => (
                       <button
-                        key={val}
+                        key={value}
                         type="button"
-                        className={`gender-btn ${selected[field.testName] === val ? 'active' : ''}`}
-                        onClick={() => onValueChange(field.testName, val)}
+                        className={`gender-btn ${selectedValues[field.testName] === value ? 'active' : ''}`}
+                        onClick={() => handleSelectChange(field.testName, value)}
                       >
-                        {val}
+                        {value}
                       </button>
                     ))}
                   </div>
@@ -453,32 +439,31 @@ const App: React.FC = () => {
           );
         })}
 
-        <center>
-          <div className="buttons">
-            {/* Save does not validate */}
-            <button className="Next-button" onClick={handleSave}>Save</button>
+        <center className="buttons">
+          <button
+            type="button"
+            className="Next-button"
+            onClick={handleSave}
+            // disabled={!allowAllThree}
+          >
+            Save
+          </button>
 
-            {/* Finish validates; stays disabled until all visible mandatory fields are set */}
-            <button
-              className={`Finish-button ${finishDisabled ? 'disabled-button' : ''}`}
-              onClick={handleFinish}
-              disabled={finishDisabled}
-            >
-              Finish
-            </button>
-          </div>
+          <button
+            type="button"
+            className={`Finish-button ${finishDisabled || !allowAllThree ? 'disabled-button' : ''}`}
+            onClick={handleFinish}
+            disabled={finishDisabled || !allowAllThree}
+          >
+            Finish
+          </button>
         </center>
-        <br />
-      </div>
+      </form>
 
-      <footer className="footer-container-fixed">
+      <footer className="footer-container">
         <div className="footer-content">
           <p className="footer-text">Powered By</p>
-          <img
-            src="/assets/Curable logo - rectangle with black text.png"
-            alt="Curable Logo"
-            className="footer-logo"
-          />
+          <img src="/assets/Curable logo - rectangle with black text.png" alt="Curable Logo" className="footer-logo" />
         </div>
       </footer>
     </div>
