@@ -54,6 +54,8 @@ const App: React.FC = () => {
   const [formErrors, setFormErrors] = useState<string[]>([]);
   const [titleName, setTitleName] = useState('Disease Specific Details');
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  
 
   const diseaseTestIds = localStorage.getItem('diseaseTestIds');
 
@@ -63,6 +65,7 @@ const App: React.FC = () => {
     return current === trigger;
   };
 
+  
   const buildGraph = (fields: Field[]) => {
     const parentToChildren = new Map<string, Array<{ child: string; trigger: string }>>();
     const allNames = new Set<string>();
@@ -109,6 +112,14 @@ const App: React.FC = () => {
   // ----------------------------------------
 
   // ---------- fetch definitions then prefill ----------
+
+   useEffect(() => {
+      setTimeout(() => {
+            setIsLoading(false);
+    
+      }, 500);
+      
+      },[])
   useEffect(() => {
     const fetchDefsAndPrefill = async () => {
       try {
@@ -300,6 +311,24 @@ const App: React.FC = () => {
   const patientAge = localStorage.getItem('patientAge');
   const patientgender = localStorage.getItem('patientgender');
 
+  // dd-mm-yyyy or yyyy-mm-dd -> Date
+const parseToDate = (s?: string) => {
+  if (!s) return null;
+  const m1 = /^(\d{2})-(\d{2})-(\d{4})$/;      // dd-mm-yyyy
+  const m2 = /^(\d{4})-(\d{2})-(\d{2})$/;      // yyyy-mm-dd (old saved)
+  let d: Date | null = null;
+
+  if (m1.test(s)) {
+    const [, dd, mm, yyyy] = s.match(m1)!;
+    d = new Date(+yyyy, +mm - 1, +dd);
+  } else if (m2.test(s)) {
+    const [, yyyy, mm, dd] = s.match(m2)!;
+    d = new Date(+yyyy, +mm - 1, +dd);
+  }
+  return d && !isNaN(d.getTime()) ? d : null;
+};
+
+
   return (
     <div className="container2">
       <Header1 />
@@ -310,6 +339,18 @@ const App: React.FC = () => {
 
       <div className="clinic-details-form-newscreening">
         <h1 style={{ color: 'darkblue' }}>{titleName}</h1>
+
+         {isLoading?
+        <div
+  className={`loader-overlay ${isLoading ? 'show' : ''}`}
+  aria-busy={isLoading}
+  aria-live="polite"
+>
+  <div className="loader-spinner" />
+  <p className="loader-text">Loading clinical metrics…</p>
+</div>
+        :
+        <>
 
         {fieldData.map((field) => {
           if (hiddenFields.includes(field.testName)) return null;
@@ -372,33 +413,33 @@ const App: React.FC = () => {
               )}
 
               {field.valueType === 'Date' && (
-                <>
-                  <div style={{ width: '100%' }}>
-                    <Calendar
-                      value={
-                        selectedValues[field.testName]
-                          ? new Date(selectedValues[field.testName] as string)
-                          : null
-                      }
-                      onChange={(e) => {
-                        if (e.value) {
-                          const date = e.value as Date;
-                          const localDate = new Date(
-                            date.getTime() - date.getTimezoneOffset() * 60000
-                          ).toISOString().split('T')[0];
-                          handleSelectChange(field.testName, localDate);
-                        }
-                      }}
-                      dateFormat="yy-mm-dd"
-                      placeholder="yyyy-mm-dd"
-                      maxDate={new Date()}
-                    />
-                  </div>
-                  {formErrors.includes(field.testName) && (
-                    <span className="error-message">This field is required</span>
-                  )}
-                </>
-              )}
+  <>
+    <div style={{ width: '100%' }}>
+      <Calendar
+        value={parseToDate(selectedValues[field.testName] as string)}
+        onChange={(e) => {
+          const date = e.value as Date | null;
+          if (date) {
+            // store as dd-mm-yyyy
+            const dd = String(date.getDate()).padStart(2, '0');
+            const mm = String(date.getMonth() + 1).padStart(2, '0');
+            const yyyy = date.getFullYear();
+            handleSelectChange(field.testName, `${dd}-${mm}-${yyyy}`);
+          } else {
+            handleSelectChange(field.testName, '');
+          }
+        }}
+        dateFormat="dd-mm-yy"
+        placeholder="dd-mm-yyyy"
+        maxDate={new Date()}
+      />
+    </div>
+    {formErrors.includes(field.testName) && (
+      <span className="error-message">This field is required</span>
+    )}
+  </>
+)}
+
 
               {field.valueType === 'SingleSelectButton' && (
                 <>
@@ -422,6 +463,7 @@ const App: React.FC = () => {
             </div>
           );
         })}
+        </>}
 
         <center>
           <div className="buttons">

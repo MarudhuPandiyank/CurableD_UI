@@ -65,6 +65,8 @@ const App: React.FC = () => {
   const [hiddenFields, setHiddenFields] = useState<string[]>([]);
   const [formErrors, setFormErrors] = useState<string[]>([]);
   const [titleName, setTitleName] = useState('Clinical Evaluation');
+// top of component state
+const [isLoading, setIsLoading] = useState<boolean>(true);
 
   // ---------- visibility helpers ----------
   const isTriggered = (current: string | string[] | undefined, trigger: string) => {
@@ -72,6 +74,13 @@ const App: React.FC = () => {
     return current === trigger;
   };
 
+  useEffect(() => {
+    setTimeout(() => {
+          setIsLoading(false);
+  
+    }, 500);
+    
+    },[])
   const buildGraph = (fields: Field[]) => {
     const parentToChildren = new Map<string, Array<{ child: string; trigger: string }>>();
     const allNames = new Set<string>();
@@ -303,6 +312,24 @@ const App: React.FC = () => {
   const patientAge = localStorage.getItem('patientAge');
   const patientgender = localStorage.getItem('patientgender');
 
+  const parseToDate = (s?: string) => {
+  if (!s) return null;
+  // dd-mm-yyyy → Date
+  const m1 = /^(\d{2})-(\d{2})-(\d{4})$/;
+  const m2 = /^(\d{4})-(\d{2})-(\d{2})$/; // fallback for old ISO values
+  let d: Date | null = null;
+
+  if (m1.test(s)) {
+    const [, dd, mm, yyyy] = s.match(m1)!;
+    d = new Date(Number(yyyy), Number(mm) - 1, Number(dd));
+  } else if (m2.test(s)) {
+    const [, yyyy, mm, dd] = s.match(m2)!;
+    d = new Date(Number(yyyy), Number(mm) - 1, Number(dd));
+  }
+  return isNaN(d as any) ? null : d;
+};
+
+
   return (
     <div className="container2">
       <Header1 />
@@ -313,8 +340,20 @@ const App: React.FC = () => {
       </div>
 
       <h1 style={{ color: 'darkblue' }}>{titleName}</h1>
+      
 
       <form className="clinic-form" onSubmit={(e) => e.preventDefault()}>
+        {isLoading?
+        <div
+  className={`loader-overlay ${isLoading ? 'show' : ''}`}
+  aria-busy={isLoading}
+  aria-live="polite"
+>
+  <div className="loader-spinner" />
+  <p className="loader-text">Loading clinical metrics…</p>
+</div>
+        :
+        <>
         {fieldData.map((field) => {
           if (hiddenFields.includes(field.testName)) return null;
 
@@ -382,38 +421,35 @@ const App: React.FC = () => {
               )}
 
               {/* Date */}
-              {field.valueType === 'Date' && (
-                <>
-                  <div className="input-with-icon">
-                    <Calendar
-                      value={
-                        selectedValues[field.testName]
-                          ? new Date(selectedValues[field.testName] as string)
-                          : null
-                      }
-                      onChange={(e) => {
-                        const date = e.value as Date | null;
-                        if (date) {
-                          // yyyy-mm-dd in local (IST-safe)
-                          const local = new Date(date.getTime() - date.getTimezoneOffset() * 60000)
-                            .toISOString()
-                            .split('T')[0];
-                          handleSelectChange(field.testName, local);
-                        } else {
-                          handleSelectChange(field.testName, '');
-                        }
-                      }}
-                      dateFormat="yy-mm-dd"
-                      placeholder="yyyy-mm-dd"
-                      maxDate={new Date()}
-                    />
-                    <img src="./assets/Calendar.png" className="clinic-id-icon" alt="calendar icon" />
-                  </div>
-                  {formErrors.includes(field.testName) && (
-                    <span className="error-message">This field is required</span>
-                  )}
-                </>
-              )}
+             {field.valueType === 'Date' && (
+  <>
+    <div className="input-with-icon">
+      <Calendar
+        value={parseToDate(selectedValues[field.testName] as string)}
+        onChange={(e) => {
+          const date = e.value as Date | null;
+          if (date) {
+            // dd-mm-yyyy
+            const dd = String(date.getDate()).padStart(2, '0');
+            const mm = String(date.getMonth() + 1).padStart(2, '0');
+            const yyyy = date.getFullYear();
+            handleSelectChange(field.testName, `${dd}-${mm}-${yyyy}`);
+          } else {
+            handleSelectChange(field.testName, '');
+          }
+        }}
+        dateFormat="dd-mm-yy"
+        placeholder="dd-mm-yyyy"
+        maxDate={new Date()}
+      />
+      <img src="./assets/Calendar.png" className="clinic-id-icon" alt="calendar icon" />
+    </div>
+    {formErrors.includes(field.testName) && (
+      <span className="error-message">This field is required</span>
+    )}
+  </>
+)}
+
 
               {/* SingleSelectButton */}
               {field.valueType === 'SingleSelectButton' && (
@@ -438,7 +474,9 @@ const App: React.FC = () => {
             </div>
           );
         })}
+        </>
 
+      }
         <center className="buttons">
           <button
             type="button"

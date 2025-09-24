@@ -180,7 +180,7 @@ function DiseaseSpecificDetails() {
       <p className="participant-info-text"><strong>ID:</strong> {registraionId}</p>
       
       </div>
-      <h1 style={{ color: 'darkblue' }}>Disease Specific Details2</h1>
+      <h1 style={{ color: 'darkblue' }}>Disease Specific Details</h1>
       {error && <div className="error-message">{error}</div>}
       {validationError && <div className="validation-error" style={{ color: 'red' }}>{validationError}</div>}
 
