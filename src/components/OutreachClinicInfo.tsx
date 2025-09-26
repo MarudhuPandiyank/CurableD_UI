@@ -180,11 +180,11 @@ const OutreachClinicInfo: React.FC = () => {
       <Header1 />
       <main className="content">
         <div className="search-container">
-          <label>Search:</label>
+          <label style={{ color: 'darkblue' }}> Edit Existing Outreach Clinic:</label>
           <div className="search-input-container">
             <input
               type="text"
-              placeholder="Enter Clinic ID or Name"
+              placeholder="Search By Clinic ID or Name"
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
               onKeyDown={(e) => {

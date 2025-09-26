@@ -106,7 +106,22 @@ const PatientSearchPage: React.FC = () => {
     localStorage.setItem("registrationId", patient.registraionId);
 
     if (patient.eligibleDiseases && Array.isArray(patient.eligibleDiseases)) {
-      const stages = patient.eligibleDiseases.map((disease) => disease.stage);
+
+      let stages = patient.eligibleDiseases.map((disease) => {
+        let stage = disease.stage.trim().toLowerCase();
+        let words = stage.split(' ');
+        if (words.length > 0) {
+          words[0] = words[0].charAt(0).toUpperCase() + words[0].slice(1);
+        }
+        words = words.map(word => {
+          if (word === 'screening') return 'Screening';
+          if (word === 'test') return '';
+          return word;
+        });
+        let formatted = words.join(' ');
+        console.log(formatted, "sdksdk");
+        return formatted;
+      });
       const diseaseTestIds = patient.eligibleDiseases.map(
         (disease) => disease.diseaseTestId
       );

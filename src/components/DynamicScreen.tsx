@@ -188,9 +188,9 @@ const [isLoading, setIsLoading] = useState<boolean>(true);
   // Titles
   useEffect(() => {
     const raw = (localStorage.getItem('selectedStage') || '').toLowerCase().trim();
-    if (raw.includes('breast')) setTitleName('Breast Screening');
-    else if (raw.includes('oral')) setTitleName('Oral Screening');
-    else if (raw.includes('cervical')) setTitleName('Cervical Screening');
+    if (raw.includes('breast')) setTitleName('Breast Clinical Evaluation');
+    else if (raw.includes('oral')) setTitleName('Oral Clinical Evaluation');
+    else if (raw.includes('cervical')) setTitleName('Cervical Clinical Evaluation');
     else setTitleName('Clinical Evaluation');
   }, []);
 
@@ -344,6 +344,7 @@ const [isLoading, setIsLoading] = useState<boolean>(true);
         <p className="participant-info-text"><strong>Participant: </strong>{pName} {patientAge}/{patientgender}</p>
         <p className="participant-info-text"><strong>ID:</strong> {regId}</p>
       </div>
+      <br/>
 
       <h1 style={{ color: 'darkblue' }}>{titleName}</h1>
       

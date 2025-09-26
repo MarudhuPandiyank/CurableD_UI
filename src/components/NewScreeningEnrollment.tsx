@@ -320,7 +320,7 @@ if (!isEditMode && streetId.trim() !== '') {
           <h1 className="new-screening-title">New Screening Enrollment</h1>
 
           <div className="form-group">
-            <label style={{ color: 'black' }}>Name*:</label>
+            <label style={{ color: 'black' }}>Name<span style={{ color: 'red' }}>*</span>:</label>
             <input
               type="text"
               placeholder="Enter Name"
@@ -331,7 +331,7 @@ if (!isEditMode && streetId.trim() !== '') {
           </div>
 
           <div className="form-group">
-  <label style={{ color: 'black' }}>Mobile Number*:</label>
+  <label style={{ color: 'black' }}>Mobile Number<span style={{ color: 'red' }}>*</span>:</label>
 <input
   type="text" // Use text to enable maxLength
   inputMode="numeric" // Mobile number keyboard
@@ -356,7 +356,7 @@ if (!isEditMode && streetId.trim() !== '') {
 </div>
 
           <div className="form-group">
-            <label style={{ color: 'black' }}>Gender*:</label>
+            <label style={{ color: 'black' }}>Gender<span style={{ color: 'red' }}>*</span>:</label>
             <div className="gender-group">
               {['Male', 'Female', 'Other'].map((value) => (
                 <button
@@ -376,38 +376,33 @@ if (!isEditMode && streetId.trim() !== '') {
 
           </div>
     
-          <label>
-  <label style={{ color: 'black' }}>Age*:</label>
-  <span style={{ color: 'darkred', fontWeight: 'bold' }}></span>
-   
-   <div className="form-group">
-  <input
-    type="number"
-    placeholder="Enter Age"
-    value={age}
-    onChange={(e) => {
-      const value = e.target.value;
-      const numeric = Number(value);
-      if (value === '' || (numeric >= 1 && numeric <= 100)) {
-        setAge(value === '' ? '' : numeric);
-      }
-    }}
-    min={1}
-    max={100}
-    step={1}
-    required
-    onWheel={(e) => e.currentTarget.blur()} // Prevent scroll change
-    onKeyDown={(e) => {
-      if (
-        ['e', 'E', '+', '-', '.'].includes(e.key)
-      ) {
-        e.preventDefault(); // Disallow invalid characters
-      }
-    }}
-  />
-</div>
-
-  </label>
+          <div className="form-group">
+            <label style={{ color: 'black' }}>Age<span style={{ color: 'red' }}>*</span>:</label>
+            <input
+              type="number"
+              placeholder="Enter Age"
+              value={age}
+              onChange={(e) => {
+                const value = e.target.value;
+                const numeric = Number(value);
+                if (value === '' || (numeric >= 1 && numeric <= 100)) {
+                  setAge(value === '' ? '' : numeric);
+                }
+              }}
+              min={1}
+              max={100}
+              step={1}
+              required
+              onWheel={(e) => e.currentTarget.blur()} // Prevent scroll change
+              onKeyDown={(e) => {
+                if (
+                  ['e', 'E', '+', '-', '.'].includes(e.key)
+                ) {
+                  e.preventDefault(); // Disallow invalid characters
+                }
+              }}
+            />
+          </div>
 
          
         

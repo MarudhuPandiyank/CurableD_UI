@@ -105,11 +105,13 @@ const ClinicSearchPage: React.FC = () => {
     localStorage.setItem("registrationId", patient.registraionId);
 
     if (patient.eligibleDiseases && Array.isArray(patient.eligibleDiseases)) {
-      const stages = patient.eligibleDiseases.map((disease) => disease.stage);
+      let stages = patient.eligibleDiseases.map((disease) => disease.stage);
+      stages = stages.sort((a, b) => a.localeCompare(b));
       const diseaseTestIds = patient.eligibleDiseases.map(
         (disease) => disease.diseaseTestId
       );
 
+      console.log(stages, "stages (sorted)");
       setStageList(stages);
 
       if (stages.length > 0) {
@@ -174,8 +176,8 @@ const ClinicSearchPage: React.FC = () => {
           id="search"
           type="text"
           className="search-input"
-          placeholder="Search..."
-          value={searchQuery}
+ placeholder="Search by Patient name/id/mobile"
+           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           aria-label="Search patient"
            onKeyDown={(e) => {

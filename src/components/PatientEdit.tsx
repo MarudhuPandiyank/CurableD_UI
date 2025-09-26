@@ -124,15 +124,15 @@ const PatientEdit: React.FC = () => {
   return (
     <div className="container2">
       <Header1 />
-      <h1 style={{ color: 'darkblue', fontWeight: 'bold', }}>Search Patient</h1>
+      <h1 style={{ color: 'darkblue', fontWeight: 'bold', }}>Modify Patient Information</h1>
 
       <main className="content">
         <div className="search-container">
           <div className="search-input-container">
             <input
               type="text"
-              placeholder="Enter ID/Mobile No"
-              value={searchInput}
+ placeholder="Search by Patient name/id/mobile"
+               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
               onKeyDown={(e) => {
                 if (e.key === 'Enter') {

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./ProfileScreen.css";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { useDispatch, useSelector } from 'react-redux';
 import './HomePage.css'; // Assuming you are keeping it for other styles
 import config from '../config';  // Import the config file
 import Header1 from "./Header1";
@@ -13,17 +14,21 @@ interface ProfileData {
   password: string;
   keycloakUserId:string;
 }
-
 const ProfilePage: React.FC = () => {
   const [name, setName] = useState<string>("");
   const [gender, setGender] = useState<string>("");
   const [phoneNo, setPhoneNo] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [keycloakUserId, setkeycloakUserId] = useState<string>("");
-   const [showPassword, setShowPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const userId = localStorage.getItem("userId");
+  const dispatch = useDispatch();
+  const roleName = useSelector((state: any) => state.user?.roleName || '');
+  const reduxState = useSelector((state: any) => state);
+  console.log('Redux full state:', reduxState);
+  console.log('Redux roleName state:', roleName);
   useEffect(() => {
     const fetchProfileData = async () => {
       const token = localStorage.getItem("token");
@@ -124,7 +129,7 @@ const ProfilePage: React.FC = () => {
 
   return (
     <>
-    <div style={{marginTop:'20px',padding:'20px'}}>
+    <div style={{marginTop:'0px',padding:'10px'}}>
     <Header1 />
     </div>
     
@@ -159,7 +164,10 @@ const ProfilePage: React.FC = () => {
 </div>
 
         <label>Alternate Mobile Number:</label>
-        <input type="text" value={phoneNo} onChange={(e) => setPhoneNo(e.target.value)} />
+  <input type="text" value={phoneNo} onChange={(e) => setPhoneNo(e.target.value)} />
+
+  <label>Role:</label>
+  <input type="text" value={roleName} disabled style={{ background: '#f0f0f0' }} />
 
         <label>Change Password:</label>
         <div className="password-field-wrapper">
