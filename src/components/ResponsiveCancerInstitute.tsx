@@ -19,6 +19,7 @@ const ResponsiveCancerInstitute: React.FC = () => {
       m?.menu?.trim().toLowerCase() !== 'modify patient information' &&
       normalize(m?.url || '') !== normalize('/PatientEdit')
   );
+                        console.log(visibleMenus,"Evaluation")
 
   return (
     <div style={{ backgroundColor: 'white', minHeight: '100vh' }}>
@@ -34,7 +35,11 @@ const ResponsiveCancerInstitute: React.FC = () => {
               style={{ cursor: 'pointer' }}
             >
               <img
-                src={`/HomeScreenIcons/PNG/${m.menu}.png`}
+                src={`/HomeScreenIcons/PNG/${m.menu==="Clinical Evaluvation"?"Clinical Evaluvation"
+                  :m.menu==="Clinical Evaluation"?"Clinical Evaluation"
+
+                  : m.menu
+                }.png`}
                 onError={(e: any) => {
                   e.currentTarget.style.visibility = 'hidden';
                 }}

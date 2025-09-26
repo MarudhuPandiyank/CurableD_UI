@@ -154,66 +154,31 @@ function FamilyPersonalDetails() {
     if (expandedMemberIndex === index) setExpandedMemberIndex(null);
   };
 
-  // ✅ Only payload changed earlier; kept as grouped Name+Relation per your requirement
+  // ✅ FIXED: build payload with ALL fields defined in formData, and skip empty members
   const buildPayload = () => {
-    const norm = (s: string) => s.trim().toLowerCase();
+    const norm = (s: string) => (s ?? '').trim();
 
-    // Find canonical field defs for Name and Relation (Relation often has a trailing space in testName)
-    const nameFieldDef =
-      formData.find(f => norm(f.testName) === 'name') ||
-      ({
-        testName: 'Name',
-        subtestName: 'NONE',
-        condition: null,
-        valueType: 'Input',
-        values: [],
-        selectedValues: [],
-      } as FamilyMetricsParam);
+    // keep members that have at least one non-empty field
+    const nonEmptyMembers = (formValues || []).filter(m =>
+      Object.values(m || {}).some(v => norm(String(v)) !== '')
+    );
 
-    const relationFieldDef =
-      formData.find(f => norm(f.testName) === 'relation') ||
-      formData.find(f => f.testName === 'Relation ') ||
-      ({
-        testName: 'Relation ',
-        subtestName: 'NONE',
-        condition: null,
-        valueType: 'SingleSelect',
-        values: [
-          'Aunt',
-          'Brother',
-          'Cousin',
-          'Daughter',
-          'Father',
-          'Grand Father',
-          'Grand Mother',
-          'Mother',
-          'Nephew',
-          'Niece',
-          'Sister',
-          'Son',
-          'Spouse',
-          'Uncle',
-        ],
-        selectedValues: [],
-      } as FamilyMetricsParam);
-
-    const groups = formValues.map(member => {
-      const nameVal = (member['Name'] ?? '').trim();
-      const relationVal =
-        (member['Relation'] ?? member['Relation '] ?? '').toString().trim();
-
-      const nameParam: FamilyMetricsParam = {
-        ...nameFieldDef,
-        selectedValues: nameVal ? [nameVal] : [],
-      };
-
-      const relationParam: FamilyMetricsParam = {
-        ...relationFieldDef,
-        selectedValues: relationVal ? [relationVal] : [],
-      };
+    const groups = nonEmptyMembers.map(member => {
+      const params = formData.map(def => {
+        const key = norm(def.testName);
+        const val = norm(String(member[key] ?? ''));
+        return {
+          ...def,
+          testName: def.testName,
+          subtestName: def.subtestName,
+          valueType: def.valueType,
+          values: def.values,
+          selectedValues: val ? [val] : [],
+        };
+      });
 
       return {
-        params: [nameParam, relationParam],
+        params,
         repeat: null,
         repeatlabel: null,
       };
@@ -222,7 +187,6 @@ function FamilyPersonalDetails() {
     return {
       description: 'Family Personal Metrics',
       diseaseTestId: 1,
-      // 👇 grouped array, only Name + Relation per member
       familyMetrics: groups,
       familyMedicalMetrics: null,
       eligibilityMetrics: null,
@@ -396,6 +360,23 @@ function FamilyPersonalDetails() {
                               );
                             })}
                           </div>
+                        ) : trimmedName.toLowerCase() === 'age' ? (
+                          <input
+                            type="number"
+                            min={1}
+                            max={99}
+                            value={value}
+                            placeholder="Enter Age"
+                            onChange={(e) => {
+                              let v = e.target.value;
+                              if (
+                                v === '' ||
+                                (/^\d{1,2}$/.test(v) && Number(v) >= 1 && Number(v) <= 99)
+                              ) {
+                                handleFieldChange(formIndex, trimmedName, v);
+                              }
+                            }}
+                          />
                         ) : trimmedName.toLowerCase().includes('monthlyincome') ? (
                           <input
                             type="text"

@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectMenus, selectTenantName, selectUserName, logout } from '../store/userSlice';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChevronLeft } from '@fortawesome/free-solid-svg-icons';
+import { faChevronLeft, faUserEdit } from '@fortawesome/free-solid-svg-icons';
 import './ResponsiveCancerInstitute.css';
 import { toRoute } from '../utils/routeMap';
 
@@ -19,6 +19,7 @@ const Header1: React.FC<HeaderProps> = ({ showwidth = false }) => {
   const tenantName = useSelector(selectTenantName);
   const userName = useSelector(selectUserName);
   const menus = useSelector(selectMenus);
+  console.log(selectMenus,"selectMenus")
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -65,19 +66,27 @@ const Header1: React.FC<HeaderProps> = ({ showwidth = false }) => {
           <h6>Menu</h6>
         </div>
         <div className="sidebar-content p-3">
-          {menus.map((m) => (
-            <button key={m.menu} className="sidebar-btn" onClick={() => handleNavigation(m.url)}>
-              <img
-                src={`./HomeScreenIcons/PNG/${m.menu==='Modify Patient Information'?
-                  "Patient Registration":m.menu
-                }.png`}
-                onError={(e: any) => { e.currentTarget.style.visibility = 'hidden'; }}
-                alt={`${m.menu} Icon`}
-                style={{ width: 20, height: 20, marginRight: 8 }}
-              />
-              {m.menu}
-            </button>
-          ))}
+          {menus.map((m) => {
+            const isModify = (m?.menu?.trim().toLowerCase() === 'modify patient information');
+            return (
+              <button key={m.menu} className="sidebar-btn" onClick={() => handleNavigation(m.url)}>
+                {isModify ? (
+                  <FontAwesomeIcon
+                    icon={faUserEdit}
+                    style={{ width: 20, height: 20, marginRight: 8, color: '#a9cff6ff' }}
+                  />
+                ) : (
+                  <img
+                    src={`./HomeScreenIcons/PNG/${m.menu}.png`}
+                    onError={(e: any) => { e.currentTarget.style.visibility = 'hidden'; }}
+                    alt={`${m.menu} Icon`}
+                    style={{ width: 20, height: 20, marginRight: 8 }}
+                  />
+                )}
+                {isModify ? 'Patient Edit' : m.menu}
+              </button>
+            );
+          })}
         </div>
       </div>
 

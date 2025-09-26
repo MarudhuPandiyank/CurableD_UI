@@ -117,7 +117,7 @@ const App: React.FC = () => {
       setTimeout(() => {
             setIsLoading(false);
     
-      }, 500);
+      }, 700);
       
       },[])
   useEffect(() => {
@@ -186,6 +186,12 @@ const App: React.FC = () => {
 
   // Change handler
   const handleSelectChange = (testName: string, value: string | string[]) => {
+    if(testName==="Breast Examination"){
+      setIsLoading(true);
+      setTimeout(() => {
+            setIsLoading(false);
+      },200)
+    }
     const nextSelected = { ...selectedValues, [testName]: value };
     const nextHidden = computeHidden(fieldData, nextSelected);
 

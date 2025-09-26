@@ -285,11 +285,23 @@ if (totalPreg === 0) {
           setSpo2(data.spo2.toString());
           setAllergy(data.allergy);
           setOtherComplaints(data.otherComplaints);
-          setAgeAtMenarche(data.ageAtMenarche.toString());
+setAgeAtMenarche(
+  data.ageAtMenarche && data.ageAtMenarche !== 0
+    ? data.ageAtMenarche.toString()
+    : ""
+);
           setSelectedLastMenstruation(data.whenWasLastMentrution);
           setSelectedBleedingIssues(data.abnormalBleedingVaginum);
-          setAgeAtMarriage(data.ageAtMarriage.toString());
-          setTotalPregnancies(data.totalPregnancies.toString());
+setAgeAtMarriage(
+  data.ageAtMarriage && data.ageAtMarriage !== 0
+    ? data.ageAtMarriage.toString()
+    : ""
+);
+setTotalPregnancies(
+  data.totalPregnancies && data.totalPregnancies !== 0
+    ? data.totalPregnancies.toString()
+    : ""
+);
           setAgeAtFirstChild(data.ageAtFirstChild.toString());
           setAgeAtLastChild(data.ageAtLastChild.toString());
           setSelectedToggle1(data.currentlyPregant ? 'yes' : 'no');

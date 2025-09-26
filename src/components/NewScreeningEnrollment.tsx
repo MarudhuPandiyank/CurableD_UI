@@ -153,7 +153,7 @@ useEffect(() => {
 
 
     const streetIdValue = parseInt(streetId, 10);
-  if (!streetId || isNaN(streetIdValue) || streetIdValue < 100) {
+  if (!/^\d{3}$/.test(streetId) || streetId === '000') {
     alert('Street ID must be 3 digits and at least 100.');
     return;
   }

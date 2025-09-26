@@ -196,6 +196,12 @@ const [isLoading, setIsLoading] = useState<boolean>(true);
 
   // Change handlers
   const handleSelectChange = (testName: string, value: string | string[]) => {
+     if(testName==="Oral Clinical Evaluation"){
+      setIsLoading(true);
+      setTimeout(() => {
+            setIsLoading(false);
+      },200)
+    }
     const nextSelected = { ...selectedValues, [testName]: value };
     const nextHidden = computeHidden(fieldData, nextSelected);
 

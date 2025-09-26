@@ -135,8 +135,8 @@ const Login: React.FC = () => {
 
   return (
     <div className="login-container">
-      <img src="/assets/CI_70 years Logo.jpg" alt="Logo" className="logo" />
-      <h1>Cancer Institute (WIA)</h1>
+      <img src="/assets/screeninglogo.png" alt="Logo" className="logo" />
+      <h1>Screening App</h1>
       <h2>{isForgotPassword ? 'Forgot Password' : 'Login'}</h2>
 
       <form className="login-form" onSubmit={handleSignIn}>

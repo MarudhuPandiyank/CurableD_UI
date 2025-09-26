@@ -168,7 +168,6 @@ const PatientSearchPage: React.FC = () => {
       <div className="title">
         <h1 style={{ color: 'darkblue' }}>Screening</h1>
       </div>
-      <main className="content">
       <div className="search-container">
 
       <div className="search-input-container">
@@ -271,7 +270,6 @@ const PatientSearchPage: React.FC = () => {
           <br/>
         </>
       )}
-</main>
       {/* {patients.length === 0 && !loading && <p>No patients found.</p>} */}
       <footer className="footer-container-fixed">
         <div className="footer-content">
