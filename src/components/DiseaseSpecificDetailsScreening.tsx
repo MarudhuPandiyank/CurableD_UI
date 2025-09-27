@@ -296,9 +296,10 @@ const App: React.FC = () => {
   // Titles for 3 stages (robust)
   useEffect(() => {
     const raw = (localStorage.getItem('selectedStage') || '').toLowerCase().trim();
-    if (raw === 'breast screening test') setTitleName('Breast Screening');
-    else if (raw === 'oral screening test') setTitleName('Oral Screening');
-    else if (raw === 'cervical screening test') setTitleName('Cervical Screening');
+   
+    if (raw === 'breast screening') setTitleName('Breast Screening');
+    else if (raw === 'oral screening') setTitleName('Oral Screening');
+    else if (raw === 'cervical screening') setTitleName('Cervical Screening');
     else setTitleName('Disease Specific Details');
   }, []);
 
@@ -344,7 +345,7 @@ const parseToDate = (s?: string) => {
       </div>
 
       <div className="clinic-details-form-newscreening">
-        <h1 style={{ color: 'darkblue' }}>{titleName}</h1>
+        <h1 style={{ color: 'darkblue',marginTop:'15px' }}>{titleName}</h1>
 
          {isLoading?
         <div

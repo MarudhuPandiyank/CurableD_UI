@@ -140,56 +140,48 @@ const didFetch = useRef(false);
         <h1 style={{ color: "darkblue" }}>Reports</h1>
 
 
+<label className="report-label">
+  Start Date<span className="report-required">*</span>:
+  <div className="input-with-icon">
+    <Calendar
+      value={startDate}
+      onChange={(e) => setStartDate(e.value as Date | null)}
+      placeholder="Select Start Date"
+      dateFormat="dd/mm/yy"
+      maxDate={endDate || undefined}
+    />
+    <img src="./assets/Calendar.png" className="clinic-id-icon" alt="calendar icon" />
+  </div>
+</label>
 
-        <label>
-          Start Date*:
-          <div className="input-with-icon">
-            <Calendar
-              value={startDate}
-              onChange={(e) => setStartDate(e.value as Date | null)}
-              placeholder="Select Start Date"
-              dateFormat="dd/mm/yy"
-              maxDate={endDate || undefined}
-            />
-            <img
-              src="./assets/Calendar.png"
-              className="clinic-id-icon"
-              alt="calendar icon"
-            />
-          </div>
-        </label>
+<label className="report-label">
+  End Date<span className="report-required">*</span>:
+  <div className="input-with-icon">
+    <Calendar
+      value={endDate}
+      onChange={(e) => setEndDate(e.value as Date | null)}
+      placeholder="Select End Date"
+      dateFormat="dd/mm/yy"
+      minDate={startDate || undefined}
+    />
+    <img src="./assets/Calendar.png" className="clinic-id-icon" alt="calendar icon" />
+  </div>
+</label>
 
-        <label>
-          End Date*:
-          <div className="input-with-icon">
-            <Calendar
-              value={endDate}
-              onChange={(e) => setEndDate(e.value as Date | null)}
-              placeholder="Select End Date"
-              dateFormat="dd/mm/yy"
-              minDate={startDate || undefined}
-            />
-            <img
-              src="./assets/Calendar.png"
-              className="clinic-id-icon"
-              alt="calendar icon"
-            />
-          </div>
-        </label>
+<label className="report-label">
+  Report Type<span className="report-required">*</span>:
+  <select
+    value={downloadBy}
+    onChange={(e) => setDownloadBy(e.target.value)}
+  >
+    <option value="">Select</option>
+    <option value="OUTREACH_CLINIC">Outreach Clinic</option>
+    <option value="PATIENT_REGISTRATION">Patient Registration</option>
+    <option value="SCREENING">Screening</option>
+  </select>
+</label>
 
-        <label>
-          Report Type*:
-          <select
-            value={downloadBy}
-            onChange={(e) => setDownloadBy(e.target.value)}
-          >
-            <option value="">Select</option>
-            <option value="OUTREACH_CLINIC">Outreach Clinic</option>
-            <option value="PATIENT_REGISTRATION">Patient Registration</option>
-            <option value="SCREENING">Screening</option>
-          </select>
-        </label>
-  <label>
+<label className="report-label">
   Outreach Clinic Name:
   <div className="input-with-icon">
     <MultiSelect
@@ -208,6 +200,7 @@ const didFetch = useRef(false);
     />
   </div>
 </label>
+
 {errorMsg && (
   <center>
     <p className="submit-button1" style={{ backgroundColor: "transparent", color: "red", border: "none", boxShadow: "none", cursor: "default" }}>
@@ -223,16 +216,12 @@ const didFetch = useRef(false);
 </center>
       </form>
 
-      <div className="footer-container">
+      <footer className="footer-container-fixed">
         <div className="footer-content">
           <p className="footer-text">Powered By</p>
-          <img
-            src="/assets/Curable logo - rectangle with black text.png"
-            alt="Curable Logo"
-            className="footer-logo"
-          />
+          <img src="/assets/Curable logo - rectangle with black text.png" alt="Curable Logo" className="footer-logo" />
         </div>
-      </div>
+      </footer>
     </div>
   );
 };

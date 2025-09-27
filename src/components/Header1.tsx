@@ -80,7 +80,7 @@ const Header1: React.FC<HeaderProps> = ({ showwidth = false }) => {
                     src={`./HomeScreenIcons/PNG/${m.menu}.png`}
                     onError={(e: any) => { e.currentTarget.style.visibility = 'hidden'; }}
                     alt={`${m.menu} Icon`}
-                    style={{ width: 20, height: 20, marginRight: 8 }}
+                    style={{ width: 20, height: 20, marginRight: 4 }}
                   />
                 )}
                 {isModify ? 'Patient Edit' : m.menu}

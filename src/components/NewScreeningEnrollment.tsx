@@ -320,7 +320,7 @@ if (!isEditMode && streetId.trim() !== '') {
           <h1 className="new-screening-title">New Screening Enrollment</h1>
 
           <div className="form-group">
-            <label style={{ color: 'black' }}>Name<span style={{ color: 'red' }}>*</span>:</label>
+            <label style={{ color: 'black' }}> <strong>Name</strong><span style={{ color: 'red' }}>*</span>:</label>
             <input
               type="text"
               placeholder="Enter Name"
@@ -331,7 +331,7 @@ if (!isEditMode && streetId.trim() !== '') {
           </div>
 
           <div className="form-group">
-  <label style={{ color: 'black' }}>Mobile Number<span style={{ color: 'red' }}>*</span>:</label>
+  <label style={{ color: 'black' }}><strong>Mobile Number</strong> <span style={{ color: 'red' }}>*</span>:</label>
 <input
   type="text" // Use text to enable maxLength
   inputMode="numeric" // Mobile number keyboard
@@ -356,7 +356,7 @@ if (!isEditMode && streetId.trim() !== '') {
 </div>
 
           <div className="form-group">
-            <label style={{ color: 'black' }}>Gender<span style={{ color: 'red' }}>*</span>:</label>
+            <label style={{ color: 'black' }}><strong>Gender</strong> <span style={{ color: 'red' }}>*</span>:</label>
             <div className="gender-group">
               {['Male', 'Female', 'Other'].map((value) => (
                 <button
@@ -377,7 +377,7 @@ if (!isEditMode && streetId.trim() !== '') {
           </div>
     
           <div className="form-group">
-            <label style={{ color: 'black' }}>Age<span style={{ color: 'red' }}>*</span>:</label>
+            <label style={{ color: 'black' }}><strong>Age</strong> <span style={{ color: 'red' }}>*</span>:</label>
             <input
               type="number"
               placeholder="Enter Age"
@@ -408,7 +408,7 @@ if (!isEditMode && streetId.trim() !== '') {
         
 
           <div className="form-group">
-            <label style={{ color: 'black' }}>Address:</label>
+            <label style={{ color: 'black' }}><strong>Address:</strong> </label>
             <textarea
               placeholder="Enter Address"
               value={address}
@@ -417,7 +417,7 @@ if (!isEditMode && streetId.trim() !== '') {
           </div>
 
           <div className="form-group">
-            <label style={{ color: 'black' }}>Street ID:</label>
+            <label style={{ color: 'black', marginTop:'-7px', marginBottom:'-2px' }}><strong>Street ID:</strong> </label>
       <input
   type="text"
   placeholder="Enter Street ID"

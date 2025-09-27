@@ -18,6 +18,21 @@
   box-sizing: border-box;
 }
 
+/* Only affects Reports screen */
+.report-label {
+  font-weight: bold;
+  display: block;
+  margin-bottom: 15px;
+  color: #002366; /* Dark blue */
+}
+
+.report-required {
+  color: red;
+  margin-left: 3px;
+  font-weight: bold;
+}
+
+
 /* Reuse the same icon style as calendar inputs */
 .input-with-icon img.clinic-id-icon {
   position: absolute;
