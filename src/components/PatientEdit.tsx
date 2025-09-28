@@ -124,13 +124,18 @@ const PatientEdit: React.FC = () => {
   return (
     <div className="container2">
       <Header1 />
-      <h1 style={{ color: 'darkblue', fontWeight: 'bold', }}>Modify Patient Information</h1>
 
-      <main className="content">
-        <div className="search-container">
-          <div className="search-input-container">
-            <input
-              type="text"
+
+      
+        <div className="title">
+          
+        <h1 style={{ color: 'darkblue' }}>Modify Patient Information</h1>
+      </div>
+  <div className="search-section_common">
+        <input
+                  className="search-input"
+
+           type="text"
  placeholder="Search by Patient name/id/mobile"
                value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
@@ -139,12 +144,18 @@ const PatientEdit: React.FC = () => {
                   e.preventDefault();       
                   handleSearch();           
                 }
-              }}
-            />
-            <button className="search-button" onClick={handleSearch} disabled={loading}>
-              {loading ? 'Searching...' : 'Search'}
-            </button>
-          </div>
+              }} />
+        <button
+           className={`search-button_common ${!allowAllThree ? 'disabled-button' : ''}`}
+onClick={handleSearch} disabled={loading}>                  {loading ? 'Searching...' : 'Search'}
+        
+        </button>
+      </div>
+
+
+      <main className="content">
+        <div className="search-container">
+         
         </div>
 
         {message && <div className="message">{message}</div>}

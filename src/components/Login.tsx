@@ -1,5 +1,6 @@
 // src/components/Login.tsx
 import React, { useState } from 'react';
+import '../index.css';
 import './Login.css';
 import LockIcon from '@mui/icons-material/Lock';
 import MailIcon from '@mui/icons-material/Mail';

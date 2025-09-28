@@ -187,15 +187,15 @@ const PatientRegistrationSearch: React.FC = () => {
   return (
     <div className="container2">
       <Header1 />
-      <h1 style={{ color: 'darkblue', fontWeight: 'bold' }}>Patient Registration</h1>
-
-      <main className="content">
-        <div className="search-section_patitent">
-          <div className="full-width-search-section">
-            <div className="full-width-search-input-container">
-              <input
-                className="full-width-search-input"
-                type="text"
+       <div className="title">
+          
+        <h1 style={{ color: 'darkblue' }}>Patient Registration</h1>
+      </div>
+  <div className="search-section_common">
+        <input
+          id="search"
+          type="text"
+          className="search-input"
                 placeholder="Enter Clinic ID or Name"
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
@@ -204,17 +204,22 @@ const PatientRegistrationSearch: React.FC = () => {
                     e.preventDefault();
                     handleSearch();
                   }
-                }}
-              />
-
-              {/* VIEW → show Search button. If you prefer "disabled when no VIEW", replace block with one disabled button */}
-             
-                <button
-                  className={`full-width-search-button ${!allowAllThree ? 'disabled-button' : ''}`}
+                }}        />
+        <button
+           className={`search-button_common ${!allowAllThree ? 'disabled-button' : ''}`}
                   onClick={handleSearch}
  disabled={!allowAllThree || loading}                >
                   {loading ? 'Searching...' : 'Search'}
-                </button>
+        
+        </button>
+      </div>
+
+
+      <main className="content">
+        <div className="search-section_patitent">
+          <div className="full-width-search-section">
+            <div className="full-width-search-input-container">
+             
               
             </div>
           </div>

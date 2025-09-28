@@ -183,7 +183,7 @@ const ProfilePage: React.FC = () => {
             )}
         </div>
         <center className="buttons">
-        <button  style={{marginBottom:"40px"}} type="button" className="Finish-button" onClick={handleUpdate}>
+        <button  style={{marginBottom:"40px",borderRadius:'25px'}} type="button" className="Finish-Homebutton" onClick={handleUpdate}>
           Update
         </button>
         </center>

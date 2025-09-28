@@ -428,6 +428,17 @@ input[type="date"] {
   transition: all 0.3s ease;
  
 }
+.Finish-Homebutton {
+  padding: 10px 50px;
+  border: none;
+  background-color: #d774ad; /* Pink background for 'Next' */
+  color: white; /* White text color */
+  border-radius: 10px; /* Rounded corners */
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+ 
+}
 
  .Finish-button.disabled-button {
   background-color: #d6d6d6; /* grey */
@@ -436,6 +447,9 @@ input[type="date"] {
 }
 
 .Finish-button:hover {
+  background-color: #d774ad; /* Darker pink on hover */
+}
+.Finish-Homebutton:hover {
   background-color: #d774ad; /* Darker pink on hover */
 }
 
@@ -599,7 +613,11 @@ h1 {
     .title1 {
         font-size: 1.25rem;
     }
+
+    
 }
+
+
 
 @media only screen and (max-width: 600px) {
   .Finish-button,
@@ -614,6 +632,13 @@ h1 {
   color: #999;
   cursor: not-allowed;
 }
+ .Finish-Homebutton
+   {
+    padding: 15px 20px; 
+    font-size: 14px;     
+    width: 100%;         
+    max-width: 500px;   
+  }
 
   .Next-button_familydetails{
     padding: 10px 20px; 

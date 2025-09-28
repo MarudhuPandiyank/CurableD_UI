@@ -91,5 +91,6 @@ h1 {
     .secondary-button {
         font-size: 15px;
         padding: 10px;
+        max-width: 500px;
     }
 }

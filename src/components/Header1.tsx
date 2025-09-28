@@ -70,7 +70,7 @@ const Header1: React.FC<HeaderProps> = ({ showwidth = false }) => {
             const isModify = (m?.menu?.trim().toLowerCase() === 'modify patient information');
             return (
               <button key={m.menu} className="sidebar-btn" onClick={() => handleNavigation(m.url)}>
-                {isModify ? (
+                {false ? (
                   <FontAwesomeIcon
                     icon={faUserEdit}
                     style={{ width: 20, height: 20, marginRight: 8, color: '#a9cff6ff' }}
@@ -83,7 +83,7 @@ const Header1: React.FC<HeaderProps> = ({ showwidth = false }) => {
                     style={{ width: 20, height: 20, marginRight: 4 }}
                   />
                 )}
-                {isModify ? 'Patient Edit' : m.menu}
+                { m.menu}
               </button>
             );
           })}

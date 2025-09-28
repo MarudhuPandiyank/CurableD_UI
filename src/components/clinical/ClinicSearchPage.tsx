@@ -35,6 +35,7 @@ const ClinicSearchPage: React.FC = () => {
   const [stageList, setStageList] = useState<string[]>([]);
   const [selectedStage, setSelectedStage] = useState<string | null>(null);
   const [searchAttempted, setSearchAttempted] = useState(false);
+  const [stageToId, setStageToId] = useState<Record<string, number>>({});
 
   const navigate = useNavigate();
       const { canView, canCreate, canEdit } = useSelector(
@@ -97,50 +98,54 @@ const ClinicSearchPage: React.FC = () => {
     }
   };
 
-  const handlePatientClick = (patient: Patient) => {
-    setSelectedPatient(patient);
+  // ⬇️ replace your handlePatientClick with this
+const handlePatientClick = (patient: Patient) => {
+  setSelectedPatient(patient);
 
-    localStorage.setItem("candidateId", patient.id.toString());
-    localStorage.setItem("ptName", patient.name.toString());
-    localStorage.setItem("registrationId", patient.registraionId);
+  localStorage.setItem("candidateId", String(patient.id));
+  localStorage.setItem("ptName", patient.name);
+  localStorage.setItem("registrationId", patient.registraionId);
 
-    if (patient.eligibleDiseases && Array.isArray(patient.eligibleDiseases)) {
-      let stages = patient.eligibleDiseases.map((disease) => disease.stage);
-      stages = stages.sort((a, b) => a.localeCompare(b));
-      const diseaseTestIds = patient.eligibleDiseases.map(
-        (disease) => disease.diseaseTestId
-      );
+  if (patient.eligibleDiseases && Array.isArray(patient.eligibleDiseases)) {
+    // Sort the objects by stage so pairing stays intact
+    const sorted = [...patient.eligibleDiseases].sort((a, b) =>
+      a.stage.localeCompare(b.stage)
+    );
 
-      console.log(stages, "stages (sorted)");
-      setStageList(stages);
+    const stages = sorted.map(d => d.stage);
+    const map: Record<string, number> = {};
+    sorted.forEach(d => { map[d.stage] = d.diseaseTestId; });
 
-      if (stages.length > 0) {
-        setSelectedStage(stages[0]);
-        localStorage.setItem("diseaseTestIds", JSON.stringify(diseaseTestIds[0]));
-      } else {
-        setSelectedStage(null);
-      }
+    setStageList(stages);
+    setStageToId(map);
+
+    if (stages.length > 0) {
+      const firstStage = stages[0];
+      setSelectedStage(firstStage);
+      // store the matching diseaseTestId for the default (first) stage
+      localStorage.setItem("diseaseTestIds", String(map[firstStage]));
     } else {
-      setStageList([]);
       setSelectedStage(null);
     }
-  };
+  } else {
+    setStageList([]);
+    setStageToId({});
+    setSelectedStage(null);
+  }
+};
 
-  const handleStageChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedStageValue = event.target.value;
 
-    setSelectedStage(selectedStageValue);
+  // ⬇️ replace your handleStageChange with this
+const handleStageChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+  const selectedStageValue = event.target.value;
+  setSelectedStage(selectedStageValue);
 
-    if (selectedPatient?.eligibleDiseases) {
-      const selectedDisease = selectedPatient.eligibleDiseases.find(
-        (disease) => disease.stage === selectedStageValue
-      );
+  const id = stageToId[selectedStageValue];
+  if (id !== undefined) {
+    localStorage.setItem("diseaseTestIds", String(id));
+  }
+};
 
-      if (selectedDisease) {
-        localStorage.setItem("diseaseTestIds", JSON.stringify(selectedDisease.diseaseTestId));
-      }
-    }
-  };
 
   const handleNext = () => {
     if (!selectedStage) {

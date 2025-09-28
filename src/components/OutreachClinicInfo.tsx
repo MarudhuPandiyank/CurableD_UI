@@ -178,12 +178,15 @@ const OutreachClinicInfo: React.FC = () => {
   return (
     <div className="container2">
       <Header1 />
-      <main className="content">
-        <div className="search-container">
-          <label style={{ color: 'darkblue' }}> Edit Existing Outreach Clinic:</label>
-          <div className="search-input-container">
-            <input
-              type="text"
+ <div className="title">
+         
+        <h1 style={{ color: 'darkblue' }}> Edit Existing Outreach Clinic:</h1>
+      </div>
+      <div className="search-section">
+        <input
+          id="search"
+          type="text"
+          className="search-input"
               placeholder="Search By Clinic ID or Name"
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
@@ -193,12 +196,22 @@ const OutreachClinicInfo: React.FC = () => {
                   handleSearch();           
                 }
               }}
+        />
+        <button
+          className="search-button"
+          onClick={handleSearch}
+          aria-label="Search"
+          disabled={loading}
+        >
+           {loading ? 'Searching...' : 'Search'}
+        </button>
+      </div>
 
-            />
-            <button className="search-button" onClick={handleSearch} disabled={loading}>
-              {loading ? 'Searching...' : 'Search'}
-            </button>
-          </div>
+
+
+      <main className="content">
+        <div className="search-container">
+         
         </div>
 
         {message && <div className="message">{message}</div>}

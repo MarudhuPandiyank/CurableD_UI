@@ -244,6 +244,7 @@ function DiseaseSpecificDetails() {
           }}>Next</button>
         </center>
       </form>
+      <br/>
 
       <footer className="footer-container-fixed">
         <div className="footer-content">

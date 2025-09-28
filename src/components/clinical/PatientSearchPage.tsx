@@ -180,16 +180,18 @@ const PatientSearchPage: React.FC = () => {
   return (
     <div className="container10">
        <Header1 />
-      <div className="title">
+     
+
+        <div className="title">
+          
         <h1 style={{ color: 'darkblue' }}>Screening</h1>
       </div>
-      <div className="search-container">
+  <div className="search-section_common">
+        <input
+                  className="search-input"
 
-      <div className="search-input-container">
-      <input
-          id="search"
+           id="search"
           type="text"
-          className="search-input"
           placeholder="Search by Patient name/id/mobile"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
@@ -199,16 +201,19 @@ const PatientSearchPage: React.FC = () => {
               e.preventDefault();       
               handleSearch();           
             }
-          }}
-        />
+          }}      />
         <button
-          className="search-button"
-          onClick={handleSearch}
-          aria-label="Search"
-        >
-          Search
+           className={`search-button_common ${!allowAllThree ? 'disabled-button' : ''}`}
+                  onClick={handleSearch}
+ disabled={!allowAllThree || loading}                >
+                  {loading ? 'Searching...' : 'Search'}
+        
         </button>
       </div>
+
+      <div className="search-container">
+
+      
       </div>
 
 

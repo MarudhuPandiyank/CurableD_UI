@@ -28,10 +28,11 @@ console.log('test');
     return (
         <div className="container1">
             <Header1/>
-  <h1 style={{ color: 'darkblue', marginTop:'0%' }}>Outreach Clinic</h1>
-          
-            <main className="content">
-                <div className="button-container">
+   <div className="title">
+         
+        <h1 style={{ color: 'darkblue' }}>Outreach Clinic</h1>
+      </div>
+   <div className="button-container">
                     <button className={`primary-button ${!allowAllThree ? 'disabled-button' : ''}`}
                      disabled={!allowAllThree }  onClick={() => navigate('/create-outreach-clinic')}>
                         Create New Outreach Clinic
@@ -41,6 +42,9 @@ console.log('test');
                         Edit Existing Outreach Clinic
                     </button>
                 </div>
+          
+            <main className="content">
+               
             </main>
 
             {/* <center>
