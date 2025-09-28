@@ -58,6 +58,8 @@ const MedicalomenHealthDetails: React.FC = () => {
   const [showModal, setShowModal] = useState(false); // State for modal visibility
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+const [id, setId] = useState<number | null | undefined>(null);
+
   const [errorMenarche, setErrorMenarche] = useState('');
 const [errorFirstChild, setErrorFirstChild] = useState('');
 const [errorLastChild, setErrorLastChild] = useState('');
@@ -187,6 +189,7 @@ if (totalPreg === 0) {
   console.log(selectedContraception,selectedHistory,"selectedHistory")
 
   const payload = {
+    id,
     abnormalBleedingVaginum: selectedBleedingIssues,
     ageAtFirstChild: parseInt(ageAtFirstChild) || 0,
     ageAtLastChild: parseInt(ageAtLastChild) || 0,
@@ -207,7 +210,8 @@ if (totalPreg === 0) {
     spo2: parseInt(spo2) || 0,
     totalPregnancies: totalPreg,
     weight: parseInt(weight) || 0,
-    whenWasLastMentrution: selectedLastMenstruation
+    whenWasLastMentrution: selectedLastMenstruation,
+    
   };
 
   try {
@@ -285,6 +289,7 @@ if (totalPreg === 0) {
           setSpo2(data.spo2.toString());
           setAllergy(data.allergy);
           setOtherComplaints(data.otherComplaints);
+          setId(data.id);
 setAgeAtMenarche(
   data.ageAtMenarche && data.ageAtMenarche !== 0
     ? data.ageAtMenarche.toString()
