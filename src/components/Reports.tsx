@@ -66,10 +66,14 @@ const didFetch = useRef(false);
 
   const handleFilter = (searchTerm: string) => fetchCamps(searchTerm);
 
-  const formatDate = (date: Date | null) => {
-    if (!date) return null;
-    return new Date(date).toISOString().split("T")[0]; // yyyy-MM-dd
-  };
+const formatDate = (date: Date | null) => {
+  if (!date) return null;
+  const d = new Date(date);
+  const year = d.getFullYear();
+  const month = (d.getMonth() + 1).toString().padStart(2, "0");
+  const day = d.getDate().toString().padStart(2, "0");
+  return `${year}-${month}-${day}`; // yyyy-MM-dd in local time
+};
 
   const handleDownload = async (e: React.FormEvent) => {
     e.preventDefault();
