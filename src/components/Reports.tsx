@@ -24,7 +24,11 @@ const Reports: React.FC = () => {
   const [downloadBy, setDownloadBy] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [errorMsg, setErrorMsg] = useState<string>("");
-
+  const selectAllOption: ClinicOption = {
+    campId: -1,
+    campIdPrefix: "ALL",
+    campName: "Select All",
+  };
 
   const token = localStorage.getItem("token");
 const didFetch = useRef(false);
@@ -74,6 +78,21 @@ const formatDate = (date: Date | null) => {
   const day = d.getDate().toString().padStart(2, "0");
   return `${year}-${month}-${day}`; // yyyy-MM-dd in local time
 };
+  const handleCampChange = (e: MultiSelectChangeEvent) => {
+    const values = e.value as number[];
+
+    if (values.includes(selectAllOption.campId)) {
+      if (selectedCamps.length === campOptions.length) {
+        // Already all selected → unselect all
+        setSelectedCamps([]);
+      } else {
+        // Select all camps
+        setSelectedCamps(campOptions.map((camp) => camp.campId));
+      }
+    } else {
+      setSelectedCamps(values);
+    }
+  };
 
   const handleDownload = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -121,13 +140,15 @@ const formatDate = (date: Date | null) => {
       }
 
       const blob = new Blob([response.data as Blob], {
-        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        type: "text/csv;charset=utf-8;",
       });
 
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement("a");
+      const currentDate = new Date().toISOString().split("T")[0]; 
+
       link.href = url;
-      link.setAttribute("download", `${downloadBy}Report.csv`);
+      link.setAttribute("download", `${downloadBy}_Report_${currentDate}.csv`);
       document.body.appendChild(link);
       link.click();
       link.remove();
@@ -179,31 +200,48 @@ const formatDate = (date: Date | null) => {
     onChange={(e) => setDownloadBy(e.target.value)}
   >
     <option value="">Select</option>
-    <option value="OUTREACH_CLINIC">Outreach Clinic</option>
-    <option value="PATIENT_REGISTRATION">Patient Registration</option>
-    <option value="SCREENING">Screening</option>
+    <option value="Outreachclinic">Outreach Clinic</option>
+    <option value="Patientregistration">Patient Registration</option>
+    <option value="Screening">Screening</option>
+    <option value="Clinical_Evaluation">Clinical Evaluation</option>
   </select>
 </label>
 
-<label className="report-label">
-  Outreach Clinic Name:
-  <div className="input-with-icon">
-    <MultiSelect
-      value={selectedCamps}
-      options={campOptions}
-      onChange={(e: MultiSelectChangeEvent) =>
-        setSelectedCamps(e.value as number[])
-      }
-      optionLabel="campName"
-      optionValue="campId"
-      filter
-      filterBy="campName"
-      onFilter={(e: MultiSelectFilterEvent) => handleFilter(e.filter)}
-      placeholder={loading ? "Loading camps..." : "Select Camps"}
-      className="multi-select-dropdown"
-    />
-  </div>
-</label>
+  <label className="report-label">
+          Report Type<span className="report-required">*</span>:
+          <select
+            value={downloadBy}
+            onChange={(e) => setDownloadBy(e.target.value)}
+          >
+            <option value="">Select</option>
+            <option value="Outreachclinic">Outreach Clinic</option>
+            <option value="Patientregistration">Patient Registration</option>
+            <option value="Screening">Screening</option>
+            <option value="Clinical_Evaluation">Clinical Evaluation</option>
+          </select>
+        </label>
+
+        {/* MultiSelect with Select All */}
+        <label className="report-label">
+          Outreach Clinic Name:
+          <div className="input-with-icon">
+<MultiSelect
+  value={selectedCamps}
+  options={[selectAllOption, ...campOptions]}
+  onChange={handleCampChange}
+  optionLabel="campName"
+  optionValue="campId"
+  filter
+  filterBy="campName"
+  onFilter={(e: MultiSelectFilterEvent) => handleFilter(e.filter)}
+  placeholder={loading ? "Loading camps..." : "Select Camps"}
+  className="multi-select-dropdown"
+  showSelectAll={false} // hides built-in corner checkbox
+    resetFilterOnHide={true} // ✅ built-in way to clear search when dropdown closes
+
+/>
+          </div>
+        </label>
 
 {errorMsg && (
   <center>
