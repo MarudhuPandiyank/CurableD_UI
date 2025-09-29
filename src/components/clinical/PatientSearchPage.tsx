@@ -139,22 +139,28 @@ const PatientSearchPage: React.FC = () => {
       setSelectedStage(null);
     }
   };
+const handleStageChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+  const selectedStageValue = event.target.value;
+  setSelectedStage(selectedStageValue);
 
-  const handleStageChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const selectedStageValue = event.target.value;
+  if (selectedPatient?.eligibleDiseases) {
+    const selectedDisease = selectedPatient.eligibleDiseases.find(
+      (disease) =>
+        disease.stage &&
+        (disease.stage === selectedStageValue ||
+         disease.stage.startsWith(selectedStageValue) || 
+         disease.stage.includes(selectedStageValue))
+    );
 
-    setSelectedStage(selectedStageValue);
 
-    if (selectedPatient?.eligibleDiseases) {
-      const selectedDisease = selectedPatient.eligibleDiseases.find(
-        (disease) => disease.stage === selectedStageValue
+    if (selectedDisease) {
+      localStorage.setItem(
+        "diseaseTestIds",
+        JSON.stringify(selectedDisease.diseaseTestId)
       );
-
-      if (selectedDisease) {
-        localStorage.setItem("diseaseTestIds", JSON.stringify(selectedDisease.diseaseTestId));
-      }
     }
-  };
+  }
+};
 
   const handleNext = () => {
     if (!selectedStage) {
