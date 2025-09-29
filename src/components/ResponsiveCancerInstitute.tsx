@@ -54,16 +54,13 @@ const ResponsiveCancerInstitute: React.FC = () => {
             <div style={{ color: '#666', padding: 16 }}>No menus available.</div>
           )}
         </div>
+        <br/>
       </main>
 
-      <footer className="footer-container">
+        <footer className="footer-container-fixed">
         <div className="footer-content">
           <p className="footer-text">Powered By</p>
-          <img
-            src="/assets/Curable logo - rectangle with black text.png"
-            alt="Curable Logo"
-            className="footer-logo"
-          />
+          <img src="/assets/Curable logo - rectangle with black text.png" alt="Curable Logo" className="footer-logo" />
         </div>
       </footer>
     </div>

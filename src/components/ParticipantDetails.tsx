@@ -138,7 +138,7 @@ const ParticipantDetails: React.FC = () => {
         setFatherName(data.fatherName || '');
         setSpouseName(data.spouseName || '');
         setAltMobile(data.alternateMobileNo || '');
-        setIncome(data.monthlyIncome?.toString() || '');
+setIncome(data.monthlyIncome === 0 ? '' : (data.monthlyIncome?.toString() || ''));
         setAadhaar(data.aadhar || '');
         setVoterId(data.voterId || '');
         setRationCard(data.rationCard || '');

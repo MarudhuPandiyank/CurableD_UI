@@ -283,9 +283,9 @@ if (totalPreg === 0) {
         }
           setBloodPressure(data.bloodPressure);
           setPulseRate(data.pulseRate);
-          setWeight(data.weight.toString());
+setWeight(data.weight === 0 ? '' : (data.weight?.toString() || ''));
           setSelectedToggle(data.historyOfSurgery ? 'yes' : 'no');
-          setHeight(data.height.toString());
+setHeight(data.height === 0 ? '' : (data.height?.toString() || ''));
           setSpo2(data.spo2.toString());
           setAllergy(data.allergy);
           setOtherComplaints(data.otherComplaints);
@@ -581,7 +581,19 @@ console.log(age,participant,ageString,"skkksa")
   onChange={(e) => {
     const value = e.target.value.replace(/[^0-9]/g, '');
     setAgeAtFirstChild(value);
-    setErrorFirstChild('');
+
+    const preg = parseInt(totalPregnancies || '0', 10);
+    const v = value === '' ? NaN : parseInt(value, 10);
+
+    if (value === '') {
+      setErrorFirstChild('');
+    } else if (preg === 0) {
+      setErrorFirstChild("Age at First Child must be empty when pregnancies are 0");
+    } else if (!Number.isNaN(v) && v >= age) {
+      setErrorFirstChild("Age at First Child must be less than participant's age");
+    } else {
+      setErrorFirstChild('');
+    }
   }}
 />
 {errorFirstChild && <span className="error-message">{errorFirstChild}</span>}
@@ -600,7 +612,22 @@ console.log(age,participant,ageString,"skkksa")
   onChange={(e) => {
     const value = e.target.value.replace(/[^0-9]/g, '');
     setAgeAtLastChild(value);
-    setErrorLastChild('');
+
+    const preg = parseInt(totalPregnancies || '0', 10);
+    const first = parseInt(ageAtFirstChild || '0', 10);
+    const v = value === '' ? NaN : parseInt(value, 10);
+
+    if (value === '') {
+      setErrorLastChild('');
+    } else if (preg <= 1) {
+      setErrorLastChild("Age at Last Child should not be filled when pregnancies are 1");
+    } else if (!Number.isNaN(v) && v >= age) {
+      setErrorLastChild("Age at Last Child must be less than participant's age and greater than Age at First Child");
+    } else if (!Number.isNaN(v) && !Number.isNaN(first) && v <= first) {
+      setErrorLastChild("Age at Last Child must be greater than Age at First Child");
+    } else {
+      setErrorLastChild('');
+    }
   }}
 />
 {errorLastChild && <span className="error-message">{errorLastChild}</span>}
