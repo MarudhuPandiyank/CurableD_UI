@@ -129,7 +129,7 @@ const ProfilePage: React.FC = () => {
 
   return (
     <>
-    <div style={{marginTop:'0px',padding:'10px'}}>
+    <div  className="container20">
     <Header1 />
     </div>
     

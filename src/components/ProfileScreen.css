@@ -15,6 +15,12 @@
   justify-content: center;
 }
 
+.container20 {
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    padding: 1rem;
+}
 .profile-account-icon-wrapper {
   position: relative;
 }
@@ -173,3 +179,10 @@
     font-size: 16px;
   }
 }
+/* Desktop Styles */
+@media (min-width: 1024px) {
+    /* Use default desktop styles for large screens */
+    .container20 {
+        padding: 2rem;
+    }
+  }

@@ -22,8 +22,8 @@ const ResponsiveCancerInstitute: React.FC = () => {
                         console.log(visibleMenus,"Evaluation")
 
   return (
-    <div style={{ backgroundColor: 'white', minHeight: '100vh' }}>
-      <Header1 showwidth />
+    <div  className="container10">
+      <Header1  />
 
       <main className="container4-fluid mt-4">
         <div className="container4-box d-flex flex-wrap justify-content-center">

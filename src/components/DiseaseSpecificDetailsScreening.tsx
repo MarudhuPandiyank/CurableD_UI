@@ -304,8 +304,16 @@ const App: React.FC = () => {
   }, []);
 
   // Finish disabled derived
+  const isCervicalStage =
+    (localStorage.getItem('selectedStage') || '').toLowerCase().trim() === 'cervical screening';
+
+  const cervicalNotNowFields = ['HR-HPV DNA', 'Cytology', 'Visual Test'];
+
+  const isCervicalNotNow =
+    isCervicalStage &&
+    cervicalNotNowFields.some((name) => (selectedValues[name] as string) === 'Not now');
   const finishDisabled =
-    isNoFlow ||
+    isNoFlow || isCervicalNotNow || 
     fieldData.some(f => {
       if (hiddenFields.includes(f.testName)) return false;
       if (!f.isMandatory) return false;
