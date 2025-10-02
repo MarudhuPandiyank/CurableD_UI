@@ -45,7 +45,7 @@ const Header1: React.FC<HeaderProps> = ({ showwidth = false }) => {
           aria-label="Open Left Sidebar"
           style={{ color: '#003366', cursor: 'pointer', marginTop: -12 }}
         />
-        <span className="title text-center flex-grow-1" style={{ fontSize: 20, color: '#003366',marginTop:"5px" }}>
+        <span className="title text-center flex-grow-1" style={{ fontSize: 20, color: '#003366',marginTop:"7px" }}>
           {/* <img src="./Curable Icons/PNG/Earth.png" style={{ height: 30, width: 30, marginTop: -7 }} alt="Earth" /> */}
           {tenantName}
         </span>

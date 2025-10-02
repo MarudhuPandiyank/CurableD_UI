@@ -254,6 +254,20 @@ if (totalPreg === 0) {
 
   useEffect(() => {
     const fetchPrefillData = async () => {
+      const touchedspo2 = localStorage.getItem("touchedspo2")==="true"?true:false;
+      const agevalue = localStorage.getItem("agevalue")==="true"?true:false;
+            const ageatmarriage = localStorage.getItem("ageatmarriage")==="true"?true:false;
+      const totalpreg = localStorage.getItem("totalpreg")==="true"?true:false;
+      console.log(touchedspo2,"totalpreg")
+      const firstchild = localStorage.getItem("firstchild")==="true"?true:false;
+      const latschild = localStorage.getItem("latschild")==="true"?true:false;
+
+      const weightval= localStorage.getItem("weightval")==="true"?true:false;
+            const heightval= localStorage.getItem("heightval")==="true"?true:false;
+
+
+
+
       try {
         const token = localStorage.getItem('token');
         if (!token) {
@@ -283,32 +297,39 @@ if (totalPreg === 0) {
         }
           setBloodPressure(data.bloodPressure);
           setPulseRate(data.pulseRate);
-setWeight(data.weight === 0 ? '' : (data.weight?.toString() || ''));
+setWeight(weightval?data.weight?.toString():data.weight === 0 ? '' : (data.weight?.toString() || ''));
           setSelectedToggle(data.historyOfSurgery ? 'yes' : 'no');
-setHeight(data.height === 0 ? '' : (data.height?.toString() || ''));
-          setSpo2(data.spo2.toString());
+setHeight(heightval?data.height?.toString()
+  :data.height === 0 ? '' : (data.height?.toString() || ''));
+          setSpo2(touchedspo2?data.spo2.toString():data.spo2 === 0 ? '' : (data.spo2?.toString() || ''));
           setAllergy(data.allergy);
           setOtherComplaints(data.otherComplaints);
           setId(data.id);
-setAgeAtMenarche(
+setAgeAtMenarche(agevalue?data.ageAtMenarche.toString():
   data.ageAtMenarche && data.ageAtMenarche !== 0
     ? data.ageAtMenarche.toString()
     : ""
 );
           setSelectedLastMenstruation(data.whenWasLastMentrution);
           setSelectedBleedingIssues(data.abnormalBleedingVaginum);
-setAgeAtMarriage(
+setAgeAtMarriage(ageatmarriage?data.ageAtMarriage.toString():
   data.ageAtMarriage && data.ageAtMarriage !== 0
     ? data.ageAtMarriage.toString()
     : ""
 );
-setTotalPregnancies(
+setTotalPregnancies(totalpreg?data.totalPregnancies.toString():
   data.totalPregnancies && data.totalPregnancies !== 0
     ? data.totalPregnancies.toString()
     : ""
 );
-          setAgeAtFirstChild(data.ageAtFirstChild.toString());
-          setAgeAtLastChild(data.ageAtLastChild.toString());
+          setAgeAtFirstChild(firstchild?
+            data.ageAtFirstChild.toString(): data.ageAtFirstChild && data.ageAtFirstChild !== 0
+    ? data.ageAtFirstChild.toString()
+    : "");
+          setAgeAtLastChild(latschild?data.ageAtLastChild.toString():
+        data.ageAtLastChild && data.ageAtLastChild !== 0
+    ? data.ageAtLastChild.toString()
+    : "");
           setSelectedToggle1(data.currentlyPregant ? 'yes' : 'no');
           setSelectedContraception(data.methodOfContraceptionUsed);
           setSelectedBreastFedMonths(data.noOfBreastFedMonths);
@@ -402,6 +423,13 @@ console.log(age,participant,ageString,"skkksa")
   value={weight}
  onChange={(e) => {
     let value = e.target.value;
+    if(e.target.value==="0"){
+              localStorage.setItem("weightval", "true")
+              }
+              else{
+              localStorage.setItem("weightval", "false")
+  
+              }
 
     if (/^\d*\.?\d{0,2}$/.test(value)) {
       const numericValue = parseFloat(value);
@@ -448,6 +476,13 @@ console.log(age,participant,ageString,"skkksa")
     if (!value || (Number.isInteger(numericValue) && numericValue >= 1 && numericValue <= 300)) {
       setHeight(value);
     }
+    if(e.target.value==="0"){
+              localStorage.setItem("heightval", "true")
+              }
+              else{
+              localStorage.setItem("heightval", "false")
+  
+              }
   }}
 />
 
@@ -459,7 +494,19 @@ console.log(age,participant,ageString,"skkksa")
             type="text"
             placeholder="Enter SpO2"
             value={spo2}
-            onChange={(e) => setSpo2(e.target.value)}
+            onChange={(e) =>
+            {
+               setSpo2(e.target.value)
+               if(e.target.value==="0"){
+              localStorage.setItem("touchedspo2", "true")
+              }
+              else{
+              localStorage.setItem("touchedspo2", "false")
+  
+              }
+
+            }
+              }
           />
 
           <label>Allergy:</label>
@@ -490,6 +537,13 @@ console.log(age,participant,ageString,"skkksa")
   value={ageAtMenarche}
   onChange={(e) => {
     const val = e.target.value;
+    if(e.target.value==="0"){
+              localStorage.setItem("agevalue", "true")
+              }
+              else{
+              localStorage.setItem("agevalue", "false")
+  
+              }
     const num = parseInt(val || '0');
     if (/^(|[1-9][0-9]?)$/.test(val)) {
       setAgeAtMenarche(val);
@@ -535,6 +589,13 @@ console.log(age,participant,ageString,"skkksa")
           const val = e.target.value.replace(/\D/g, '');
           if (val.length <= 2) {
             setAgeAtMarriage(val);
+            if(e.target.value==="0"){
+              localStorage.setItem("ageatmarriage", "true")
+              }
+              else{
+              localStorage.setItem("ageatmarriage", "false")
+  
+              }
             const ageVal = parseInt(val || '0');
             if (ageVal > age) {
               setErrorMarriage('Age at Marriage must be less than participant age');
@@ -555,6 +616,13 @@ console.log(age,participant,ageString,"skkksa")
   value={totalPregnancies}
   onChange={(e) => {
     const val = e.target.value;
+     if(e.target.value==="0"){
+              localStorage.setItem("totalpreg", "true")
+              }
+              else{
+              localStorage.setItem("totalpreg", "false")
+  
+              }
     if (/^(|0|[1-9][0-9]*)$/.test(val)) {
       setTotalPregnancies(val);
       const num = parseInt(val || '0');
@@ -582,6 +650,13 @@ console.log(age,participant,ageString,"skkksa")
     const value = e.target.value.replace(/[^0-9]/g, '');
     setAgeAtFirstChild(value);
 
+     if(e.target.value==="0"){
+              localStorage.setItem("firstchild", "true")
+              }
+              else{
+              localStorage.setItem("firstchild", "false")
+  
+              }
     const preg = parseInt(totalPregnancies || '0', 10);
     const v = value === '' ? NaN : parseInt(value, 10);
 
@@ -612,6 +687,13 @@ console.log(age,participant,ageString,"skkksa")
   onChange={(e) => {
     const value = e.target.value.replace(/[^0-9]/g, '');
     setAgeAtLastChild(value);
+    if(e.target.value==="0"){
+              localStorage.setItem("latschild", "true")
+              }
+              else{
+              localStorage.setItem("latschild", "false")
+  
+              }
 
     const preg = parseInt(totalPregnancies || '0', 10);
     const first = parseInt(ageAtFirstChild || '0', 10);

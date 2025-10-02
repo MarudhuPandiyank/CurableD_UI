@@ -118,6 +118,15 @@ const PatientEdit: React.FC = () => {
   const handleEditClick = (candidateId: number) => {
     localStorage.setItem('prefill', 'true');
     localStorage.setItem('patientId', candidateId.toString());
+    localStorage.removeItem("touchedspo2");
+localStorage.removeItem("agevalue");
+localStorage.removeItem("ageatmarriage");
+localStorage.removeItem("totalpreg");
+localStorage.removeItem("firstchild");
+localStorage.removeItem("latschild");
+localStorage.removeItem("heightval");
+localStorage.removeItem("weightval");
+
     navigate('/NewScreeningEnrollment');
   };
 
