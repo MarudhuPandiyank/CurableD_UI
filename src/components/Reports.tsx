@@ -237,7 +237,7 @@ const formatDate = (date: Date | null) => {
   placeholder={loading ? "Loading camps..." : "Select Camps"}
   className="multi-select-dropdown"
   showSelectAll={false} // hides built-in corner checkbox
-    resetFilterOnHide={true} // ✅ built-in way to clear search when dropdown closes
+  resetFilterOnHide={true} // ✅ built-in way to clear search when dropdown closes
 
 />
           </div>
