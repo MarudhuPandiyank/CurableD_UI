@@ -216,14 +216,15 @@ const Login: React.FC = () => {
             </button>
           </>
         )}
-      </form>
-
-      {error && (
+           {error && (
         <div style={{ marginTop: 20 }}>
           <p className="error-message">{error}</p>
         </div>
       )}
 
+      </form>
+
+   
       <footer className="footer-container-fixed">
         <div className="footer-content">
           <p className="footer-text">Powered By</p>

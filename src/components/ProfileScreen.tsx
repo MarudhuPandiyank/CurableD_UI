@@ -163,7 +163,7 @@ const ProfilePage: React.FC = () => {
   ))}
 </div>
 
-        <label>Alternate Mobile Number:</label>
+        <label>Mobile Number:</label>
   <input type="text" value={phoneNo} onChange={(e) => setPhoneNo(e.target.value)} />
 
   <label>Role:</label>

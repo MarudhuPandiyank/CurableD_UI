@@ -129,11 +129,11 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onChange={handleChange}
   />
 
-  <label><span style={{ color: "darkblue" }}>Camp Co-ordinator:</span></label>
+  <label><span style={{ color: "darkblue" }}>Outreach Clinic Coordinator:</span></label>
   <input
     type="text"
     inputMode="numeric"
-    placeholder="Enter No of Camp Co-ordinators"
+    placeholder="Enter No of Outreach Clinic Coordinators"
     name="noCampcordinators"
     value={formData.noCampcordinators}
     onChange={handleChange}
