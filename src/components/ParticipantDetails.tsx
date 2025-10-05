@@ -230,21 +230,22 @@ setIncome(data.monthlyIncome === 0 ? '' : (data.monthlyIncome?.toString() || '')
     }
 
     console.log(habits, 'habits');
-    const candidateHabitDTOs = habits.map((habit) => ({
-      candidateId: localStorage.getItem('patientId'),
-      duration: tobaccoUser ? parseFloat(duration) || 0 : 0,
-      frequency: habit.frequency,
-      habits: habit.habit,
-      howLong: parseFloat(habit.howLong) || 0,
-      quit: habit.quit === 'Yes' ? true : false,
-      type: habit.habitType,
-    }));
+   const candidateHabitDTOs = habits.map((habit) => ({
+  candidateId: localStorage.getItem('patientId'),
+  duration: tobaccoUser ? (duration ? parseFloat(duration) : null) : null,  // Set to null if duration is empty
+  frequency: habit.frequency || null,  // Set to null if frequency is empty
+  habits: habit.habit || null,  // Set to null if habit is empty
+  howLong: habit.howLong ? parseFloat(habit.howLong) : null,  // Set to null if howLong is empty
+  quit: habit.quit === 'Yes' ? true : false,  // This can remain as is
+  type: habit.habitType || null,  // Set to null if habitType is empty
+}));
+
 
     const formData = {
       fatherName,
       spouseName,
       alternateMobileNo: altMobile,
-      monthlyIncome: parseFloat(income) || 0,
+      monthlyIncome:income? parseFloat(income) :null,
       houseType,
       occupation,
       education,

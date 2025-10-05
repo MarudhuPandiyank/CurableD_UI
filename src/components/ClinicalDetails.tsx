@@ -35,7 +35,7 @@ const ClinicalDetails: React.FC = () => {
       fatherName,
       spouseName,
       alternateMobileNo: altMobile,
-      monthlyIncome: parseFloat(income) || 0,
+      monthlyIncome: income?parseFloat(income) : null,
       houseType,
       occupation,
       education,

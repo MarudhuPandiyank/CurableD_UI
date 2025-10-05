@@ -188,31 +188,30 @@ if (totalPreg === 0) {
 
   console.log(selectedContraception,selectedHistory,"selectedHistory")
 
-  const payload = {
-    id,
-    abnormalBleedingVaginum: selectedBleedingIssues,
-    ageAtFirstChild: parseInt(ageAtFirstChild) || 0,
-    ageAtLastChild: parseInt(ageAtLastChild) || 0,
-    ageAtMarriage: parseInt(ageAtMarriage) || 0,
-    ageAtMenarche: parseInt(ageAtMenarche) || 0,
-    allergy,
-    bloodPressure,
-    candidateId: patientId,
-    undergoneCervicalBreastScrening:selectedBreastCrevixMonths,
-    currentlyPregant: selectedToggle1 === 'yes',
-    height: parseInt(height) || 0,
-    historyOfSurgery: selectedToggle === 'yes',
-    medicalhistory: selectedHistory.join(','),
-    methodOfContraceptionUsed: selectedContraception,
-    noOfBreastFedMonths: selectedBreastFedMonths,
-    otherComplaints,
-    pulseRate,
-    spo2: parseInt(spo2) || 0,
-    totalPregnancies: totalPreg,
-    weight: parseInt(weight) || 0,
-    whenWasLastMentrution: selectedLastMenstruation,
-    
-  };
+const payload = {
+  id,
+  abnormalBleedingVaginum: selectedBleedingIssues,
+  ageAtFirstChild: ageAtFirstChild ? parseInt(ageAtFirstChild) : null,
+  ageAtLastChild: ageAtLastChild ? parseInt(ageAtLastChild) : null,
+  ageAtMarriage: ageAtMarriage ? parseInt(ageAtMarriage) : null,
+  ageAtMenarche: ageAtMenarche ? parseInt(ageAtMenarche) : null,
+  allergy,
+  bloodPressure,
+  candidateId: patientId,
+  undergoneCervicalBreastScrening: selectedBreastCrevixMonths,
+  currentlyPregant: selectedToggle1 === 'yes',
+  height: height ? parseInt(height) : "",
+  historyOfSurgery: selectedToggle === 'yes',
+  medicalhistory: selectedHistory.join(','),
+  methodOfContraceptionUsed: selectedContraception,
+  noOfBreastFedMonths: selectedBreastFedMonths,
+  otherComplaints,
+  pulseRate,
+  spo2: spo2 ? parseInt(spo2) : null,
+  totalPregnancies:totalPreg ? totalPreg : null,
+  weight: weight ? parseInt(weight) :null,
+  whenWasLastMentrution: selectedLastMenstruation,
+};
 
   try {
     const token = localStorage.getItem('token');
