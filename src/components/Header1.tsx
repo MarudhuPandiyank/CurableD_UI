@@ -68,7 +68,7 @@ const Header1: React.FC<HeaderProps> = ({ showwidth = false }) => {
         <div className="sidebar-content p-3">
           {menus.map((m) => {
             const isModify = (m?.menu?.trim().toLowerCase() === 'modify patient information');
-            console.log(isModify,"isModify",m)
+            console.log(isModify,"isModify",m) 
             return (
               <button key={m.menu} className="sidebar-btn" onClick={() => handleNavigation(m.url)}>
                 {false ? (

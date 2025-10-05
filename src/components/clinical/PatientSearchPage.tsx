@@ -42,7 +42,7 @@ const PatientSearchPage: React.FC = () => {
       selectPrivilegeFlags('Patient Registration') // or selectPrivilegeFlags('/preg')
     );
   
-    const allowAllThree = useSelector(canAll('/Outrich Clinic', 'CREATE', 'VIEW', 'EDIT'));
+    const allowAllThree = useSelector(canAll('/screening', 'CREATE', 'VIEW', 'EDIT'));
 
 
   const handleSearch = async () => {
