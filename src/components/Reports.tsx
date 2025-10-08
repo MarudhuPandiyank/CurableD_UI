@@ -193,20 +193,6 @@ const formatDate = (date: Date | null) => {
   </div>
 </label>
 
-<label className="report-label">
-  Report Type<span className="report-required">*</span>:
-  <select
-    value={downloadBy}
-    onChange={(e) => setDownloadBy(e.target.value)}
-  >
-    <option value="">Select</option>
-    <option value="Outreachclinic">Outreach Clinic</option>
-    <option value="Patientregistration">Patient Registration</option>
-    <option value="Screening">Screening</option>
-    <option value="Clinical_Evaluation">Clinical Evaluation</option>
-  </select>
-</label>
-
   <label className="report-label">
           Report Type<span className="report-required">*</span>:
           <select
@@ -218,6 +204,7 @@ const formatDate = (date: Date | null) => {
             <option value="Patientregistration">Patient Registration</option>
             <option value="Screening">Screening</option>
             <option value="Clinical_Evaluation">Clinical Evaluation</option>
+            <option value="SavedPatient">Saved Patient</option>
           </select>
         </label>
 
