@@ -22,6 +22,7 @@ export interface UserState {
   hospitalId?: number | null;
   tenantName?: string | null;
   menus: MenuItem[];
+  showLocalName?: boolean;
 }
 
 const initialState: UserState = {
@@ -35,6 +36,7 @@ const initialState: UserState = {
   hospitalId: null,
   tenantName: null,
   menus: [],
+  showLocalName: false,
 };
 
 type AuthorizeApi = {
@@ -111,19 +113,23 @@ const slice = createSlice({
       state.hospitalId = p.hospitalId;
       state.tenantName = p.tenantName;
     },
+    setShowLocalName(state, action: PayloadAction<boolean>) {
+      state.showLocalName = action.payload;
+    },
     logout(state) {
       Object.assign(state, initialState);
     },
   },
 });
 
-export const { setToken, setAuthorizedUser, logout } = slice.actions;
+export const { setToken, setAuthorizedUser, setShowLocalName, logout } = slice.actions;
 export default slice.reducer;
 
 // selectors
 export const selectTenantName = (state: RootState) => state.user.tenantName || 'Cancer Institute';
 export const selectUserName = (state: RootState) => state.user.userName || 'Guest';
 export const selectMenus = (state: RootState) => state.user.menus;
+export const selectShowLocalName = (state: RootState) => state.user.showLocalName ?? false;
 
 // privilege selector
 const norm = (url: string) => (url || '').trim().replace(/\s+/g, '');

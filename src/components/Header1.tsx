@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectMenus, selectTenantName, selectUserName, logout } from '../store/userSlice';
+import { selectMenus, selectTenantName, selectUserName, selectShowLocalName, setShowLocalName, logout } from '../store/userSlice';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChevronLeft, faUserEdit } from '@fortawesome/free-solid-svg-icons';
 import './ResponsiveCancerInstitute.css';
@@ -17,7 +17,9 @@ const Header1: React.FC<HeaderProps> = ({ showwidth = false }) => {
   const [isRightSidebarOpen, setIsRightSidebarOpen] = useState(false);
 
   const tenantName = useSelector(selectTenantName);
-  const userName = useSelector(selectUserName);
+  const userNameFromState = useSelector(selectUserName);
+  const showLocalName = useSelector(selectShowLocalName);
+  const userName = showLocalName ? (localStorage.getItem('userName') || userNameFromState) : userNameFromState;
   const menus = useSelector(selectMenus);
   console.log(selectMenus,"selectMenus")
 
@@ -32,6 +34,8 @@ const Header1: React.FC<HeaderProps> = ({ showwidth = false }) => {
 
   const handleLogout = () => {
     localStorage.removeItem('token');
+    // also stop using localStorage username on logout
+    dispatch(setShowLocalName(false));
     dispatch(logout());
     navigate('/');
   };

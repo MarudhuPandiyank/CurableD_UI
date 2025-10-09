@@ -268,7 +268,11 @@ const PatientRegistrationSearch: React.FC = () => {
                   <strong>Panchayat/Village Name:</strong> <span>{clinic.village}</span>
                 </p>
                 <p>
-                  <strong>Start Date:</strong> <span>{clinic.displayStartDate}</span>
+                  <strong>Start Date:</strong> <span>
+  {new Date(clinic.displayStartDate)
+    .toLocaleDateString('en-GB')
+    .replaceAll('/', '-')}
+</span>
                 </p>
                 <p>
                   <strong>End Date:</strong> <span>{clinic.displayEndDate}</span>

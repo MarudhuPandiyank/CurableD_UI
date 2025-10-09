@@ -3,6 +3,7 @@ import axios from "axios";
 import "./ProfileScreen.css";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useDispatch, useSelector } from 'react-redux';
+import { setShowLocalName } from '../store/userSlice';
 import './HomePage.css'; // Assuming you are keeping it for other styles
 import config from '../config';  // Import the config file
 import Header1 from "./Header1";
@@ -120,6 +121,9 @@ const ProfilePage: React.FC = () => {
 
       if (response.status === 200) {
         alert("Profile updated successfully!");
+        localStorage.setItem('userName', name);
+        // tell redux to prefer localStorage userName for display
+        try { dispatch(setShowLocalName(true)); } catch (e) { /* ignore in tests */ }
       }
     } catch (err) {
       console.error("Error updating profile:", err);
