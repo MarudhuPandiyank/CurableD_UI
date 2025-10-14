@@ -168,6 +168,7 @@ const PatientRegistrationSearch: React.FC = () => {
         noSocialWorkers: clinic.noSocialWorkers,
       },
     });
+    localStorage.setItem('prefill', 'false');
   };
 
   const handleClinicSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {

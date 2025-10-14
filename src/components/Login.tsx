@@ -6,7 +6,8 @@ import LockIcon from '@mui/icons-material/Lock';
 import MailIcon from '@mui/icons-material/Mail';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { Visibility, VisibilityOff } from '@mui/icons-material';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import config from '../config';
 
 // redux
@@ -17,7 +18,7 @@ const Login: React.FC = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const [userName, setEmail] = useState('');
+  const [userName, setUserName] = useState('');
   const [password, setPassword] = useState('');
   const [isForgotPassword, setIsForgotPassword] = useState(false);
   const [newPassword, setNewPassword] = useState('');
@@ -103,9 +104,10 @@ const Login: React.FC = () => {
 
       // 3) go to home
       navigate('/responsive-cancer-institute');
-    } catch (err) {
+    } catch (err: any) {
       console.error('Error during login or authorization:', err);
-      setError('Invalid password! Retry or click forgot password');
+      const message = err?.response?.data?.error || err?.message || String(err) || 'Login failed. Please try again.';
+      setError(message);
     }
   };
 
@@ -150,7 +152,7 @@ const Login: React.FC = () => {
               id="email"
               className="input-field"
               value={userName}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) => setUserName(e.target.value)}
             />
           </div>
         </div>
@@ -191,7 +193,7 @@ const Login: React.FC = () => {
                 className="password-toggle-icon"
                 onClick={() => setShowPassword((prev) => !prev)}
               >
-                {showPassword ? <Visibility /> : <VisibilityOff />}
+                {showPassword ? <VisibilityOff /> : <Visibility />}
               </span>
             </div>
           </div>

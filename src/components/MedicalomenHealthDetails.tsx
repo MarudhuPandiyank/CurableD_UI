@@ -96,141 +96,167 @@ const navigate = useNavigate();
     setShowModal(true);
   };
   const handlePrevClick = () => {
-    navigate('/ParticipantDetails');
+    // retained for backward compatibility; prefer using submitAndNavigate
+    submitAndNavigate('/ParticipantDetails');
   };
   // Function to close modal
   const closeModal = () => {
     setShowModal(false);
   };
-const handleSubmit = async (event: React.FormEvent, navigateTo: string) => {
-  event.preventDefault();
-  const patientId = localStorage.getItem('patientId');
-  let hasError = false;
+  // Prepare payload and validate; returns payload or null
+  const prepareMedicalPayload = () => {
+    const patientId = localStorage.getItem('patientId');
+    let hasError = false;
 
-  // Age value from localStorage
-  const age = parseInt(localStorage.getItem('participantage') || '0', 10);
+    // Age value from localStorage
+    const age = parseInt(localStorage.getItem('participantage') || '0', 10);
 
-  // Age at Menarche
-  if (ageAtMenarche && parseInt(ageAtMenarche) > age) {
-    setErrorMenarche("Age at Menarche cannot be greater than participant's age.");
-    hasError = true;
-  } else {
-    setErrorMenarche('');
-  }
+    // Age at Menarche
+    if (ageAtMenarche && parseInt(ageAtMenarche) > age) {
+      setErrorMenarche("Age at Menarche cannot be greater than participant's age.");
+      hasError = true;
+    } else {
+      setErrorMenarche('');
+    }
 
-  // Age at Marriage
-  if (ageAtMarriage && parseInt(ageAtMarriage) > age) {
-    setErrorMarriage("Age at Marriage must be less than participant's age");
-    hasError = true;
-  } else {
-    setErrorMarriage('');
-  }
+    // Age at Marriage
+    if (ageAtMarriage && parseInt(ageAtMarriage) > age) {
+      setErrorMarriage("Age at Marriage must be less than participant's age");
+      hasError = true;
+    } else {
+      setErrorMarriage('');
+    }
 
-const totalPreg = parseInt(totalPregnancies || '0');
-const first = parseInt(ageAtFirstChild || '0');
-const last = parseInt(ageAtLastChild || '0');
+    const totalPreg = parseInt(totalPregnancies || '0');
+    const first = parseInt(ageAtFirstChild || '0');
+    const last = parseInt(ageAtLastChild || '0');
 
-// Enforce reset when pregnancy changes
-if (totalPreg === 0) {
-  if (first || last) {
-    setErrorFirstChild("Age at First Child must be empty when pregnancies are 0");
-    setErrorLastChild("Age at Last Child must be empty when pregnancies are 0");
-    hasError = true;
-  } else {
-    setErrorFirstChild('');
-    setErrorLastChild('');
-  }
-} else if (totalPreg === 1) {
-  if (!first) {
-    setErrorFirstChild("Age at First Child is required");
-    hasError = true;
-  } else if (first >= age) {
-    setErrorFirstChild("Age at First Child must be less than participant's age");
-    hasError = true;
-  } else {
-    setErrorFirstChild('');
-  }
-
-  if (last) {
-    setErrorLastChild("Age at Last Child should not be filled when pregnancies are 1");
-    hasError = true;
-  } else {
-    setErrorLastChild('');
-  }
-} else {
-  if (!first) {
-    setErrorFirstChild("Age at First Child is required");
-    hasError = true;
-  } else if (first >= age) {
-    setErrorFirstChild("Age at First Child must be less than participant's age");
-    hasError = true;
-  } else {
-    setErrorFirstChild('');
-  }
-
-  if (!last) {
-    setErrorLastChild("Age at Last Child is required");
-    hasError = true;
-  } else if (last >= age) {
-    setErrorLastChild("Age at Last Child must be less than participant's age and greater than Age at First Child");
-    hasError = true;
-  } else if (last <= first) {
-    setErrorLastChild("Age at Last Child must be greater than Age at First Child");
-    hasError = true;
-  } else {
-    setErrorLastChild('');
-  }
-}
-  if (hasError) {
-    alert("Please correct validation errors before proceeding.");
-    return;
-  }
-
-  console.log(selectedContraception,selectedHistory,"selectedHistory")
-
-const payload = {
-  id,
-  abnormalBleedingVaginum: selectedBleedingIssues,
-  ageAtFirstChild: ageAtFirstChild ? parseInt(ageAtFirstChild) : null,
-  ageAtLastChild: ageAtLastChild ? parseInt(ageAtLastChild) : null,
-  ageAtMarriage: ageAtMarriage ? parseInt(ageAtMarriage) : null,
-  ageAtMenarche: ageAtMenarche ? parseInt(ageAtMenarche) : null,
-  allergy,
-  bloodPressure,
-  candidateId: patientId,
-  undergoneCervicalBreastScrening: selectedBreastCrevixMonths,
-  currentlyPregant: selectedToggle1 === 'yes',
-  height: height ? parseInt(height) : "",
-  historyOfSurgery: selectedToggle === 'yes',
-  medicalhistory: selectedHistory.join(','),
-  methodOfContraceptionUsed: selectedContraception,
-  noOfBreastFedMonths: selectedBreastFedMonths,
-  otherComplaints,
-  pulseRate,
-  spo2: spo2 ? parseInt(spo2) : null,
-  totalPregnancies:totalPreg ? totalPreg : null,
-  weight: weight ? parseInt(weight) :null,
-  whenWasLastMentrution: selectedLastMenstruation,
-};
-
-  try {
-    const token = localStorage.getItem('token');
-    const response = await axios.post(
-      `${config.appURL}/curable/createMedicalHistory`,
-      payload,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+    // Enforce reset when pregnancy changes
+    if (totalPreg === 0) {
+      if (first || last) {
+        setErrorFirstChild("Age at First Child must be empty when pregnancies are 0");
+        setErrorLastChild("Age at Last Child must be empty when pregnancies are 0");
+        hasError = true;
+      } else {
+        setErrorFirstChild('');
+        setErrorLastChild('');
       }
-    );
-    console.log('Response:', response.data);
-    navigate(navigateTo);
-  } catch (error) {
-    console.error('Error submitting data:', error);
-    alert('Failed to submit data.');
-  }
-};
+    } else if (totalPreg === 1) {
+      if (!first) {
+        setErrorFirstChild("Age at First Child is required");
+        hasError = true;
+      } else if (first >= age) {
+        setErrorFirstChild("Age at First Child must be less than participant's age");
+        hasError = true;
+      } else {
+        setErrorFirstChild('');
+      }
+
+      if (last) {
+        setErrorLastChild("Age at Last Child should not be filled when pregnancies are 1");
+        hasError = true;
+      } else {
+        setErrorLastChild('');
+      }
+    } else {
+      if (!first) {
+        setErrorFirstChild("Age at First Child is required");
+        hasError = true;
+      } else if (first >= age) {
+        setErrorFirstChild("Age at First Child must be less than participant's age");
+        hasError = true;
+      } else {
+        setErrorFirstChild('');
+      }
+
+      if (!last) {
+        setErrorLastChild("Age at Last Child is required");
+        hasError = true;
+      } else if (last >= age) {
+        setErrorLastChild("Age at Last Child must be less than participant's age and greater than Age at First Child");
+        hasError = true;
+      } else if (last <= first) {
+        setErrorLastChild("Age at Last Child must be greater than Age at First Child");
+        hasError = true;
+      } else {
+        setErrorLastChild('');
+      }
+    }
+
+    if (hasError) {
+      alert("Please correct validation errors before proceeding.");
+      return null;
+    }
+
+    const payload = {
+      id,
+      abnormalBleedingVaginum: selectedBleedingIssues,
+      ageAtFirstChild: ageAtFirstChild ? parseInt(ageAtFirstChild) : null,
+      ageAtLastChild: ageAtLastChild ? parseInt(ageAtLastChild) : null,
+      ageAtMarriage: ageAtMarriage ? parseInt(ageAtMarriage) : null,
+      ageAtMenarche: ageAtMenarche ? parseInt(ageAtMenarche) : null,
+      allergy,
+      bloodPressure,
+      candidateId: patientId,
+      undergoneCervicalBreastScrening: selectedBreastCrevixMonths,
+      currentlyPregant: selectedToggle1 === 'yes',
+      height: height ? parseInt(height) : '',
+      historyOfSurgery: selectedToggle === 'yes',
+      medicalhistory: selectedHistory.join(','),
+      methodOfContraceptionUsed: selectedContraception,
+      noOfBreastFedMonths: selectedBreastFedMonths,
+      otherComplaints,
+      pulseRate,
+      spo2: spo2 ? parseInt(spo2) : null,
+      totalPregnancies: totalPreg ? totalPreg : null,
+      weight: weight ? parseInt(weight) : null,
+      whenWasLastMentrution: selectedLastMenstruation,
+    };
+
+    return payload;
+  };
+
+  const submitMedicalHistory = async (payload: any) => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        alert('Session expired. Please log in again.');
+        return false;
+      }
+      setLoading(true);
+      const response = await axios.post(
+        `${config.appURL}/curable/createMedicalHistory`,
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      console.log('Response:', response.data);
+      return true;
+    } catch (error) {
+      console.error('Error submitting data:', error);
+      alert('Failed to submit data.');
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // unified submit helper used by Prev, form submit and modal
+  const submitAndNavigate = async (navigateTo: string) => {
+    const payload = prepareMedicalPayload();
+    if (!payload) return;
+    const ok = await submitMedicalHistory(payload);
+    if (ok) navigate(navigateTo);
+  };
+
+  // wrapper used by form onSubmit and modal buttons to prevent default
+  const handleSubmit = (event: React.FormEvent, navigateTo: string) => {
+    event.preventDefault();
+    submitAndNavigate(navigateTo);
+  };
 
 
 

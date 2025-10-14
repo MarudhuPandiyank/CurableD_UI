@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";  // ⬅ add useRef
+import React, { useState, useEffect, useRef } from "react";
 import { Calendar } from "primereact/calendar";
 import {
   MultiSelect,
@@ -24,15 +24,18 @@ const Reports: React.FC = () => {
   const [downloadBy, setDownloadBy] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const [errorMsg, setErrorMsg] = useState<string>("");
+
+  const token = localStorage.getItem("token");
+  const didFetch = useRef(false);
+
+  // Our synthetic "Select All" option
   const selectAllOption: ClinicOption = {
     campId: -1,
     campIdPrefix: "ALL",
     campName: "Select All",
   };
 
-  const token = localStorage.getItem("token");
-const didFetch = useRef(false);
-  // Fetch active camps
+  // --- API: Fetch camps (with optional search) ---
   const fetchCamps = async (searchInput: string = "") => {
     try {
       const userId = localStorage.getItem("userId");
@@ -52,7 +55,7 @@ const didFetch = useRef(false);
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      setCampOptions(response.data);
+      setCampOptions(response.data || []);
     } catch (error) {
       console.error("Error fetching camps:", error);
       alert("Failed to fetch camps. Please try again.");
@@ -70,53 +73,84 @@ const didFetch = useRef(false);
 
   const handleFilter = (searchTerm: string) => fetchCamps(searchTerm);
 
-const formatDate = (date: Date | null) => {
-  if (!date) return null;
-  const d = new Date(date);
-  const year = d.getFullYear();
-  const month = (d.getMonth() + 1).toString().padStart(2, "0");
-  const day = d.getDate().toString().padStart(2, "0");
-  return `${year}-${month}-${day}`; // yyyy-MM-dd in local time
-};
-  const handleCampChange = (e: MultiSelectChangeEvent) => {
-    const values = e.value as number[];
+  // --- Utils ---
+  const formatDate = (date: Date | null) => {
+    if (!date) return null;
+    const d = new Date(date);
+    const year = d.getFullYear();
+    const month = (d.getMonth() + 1).toString().padStart(2, "0");
+    const day = d.getDate().toString().padStart(2, "0");
+    return `${year}-${month}-${day}`; // yyyy-MM-dd in local time
+  };
 
+  const isAllSelected = (vals: number[], options: ClinicOption[]) =>
+    vals.filter((v) => v !== -1).length === options.length &&
+    options.length > 0;
+
+  // Keep the "Select All" tick in sync if options list changes after selection
+  useEffect(() => {
+    setSelectedCamps((prev) => {
+      const withoutAll = prev.filter((v) => v !== -1);
+      if (isAllSelected(withoutAll, campOptions)) {
+        return [-1, ...withoutAll];
+      }
+      return withoutAll;
+    });
+  }, [campOptions]);
+
+  // --- MultiSelect change handler (with Select All tick logic) ---
+  const handleCampChange = (e: MultiSelectChangeEvent) => {
+    let values = (e.value as number[]) ?? [];
+
+    // If user clicked our "Select All" (-1), toggle everything
     if (values.includes(selectAllOption.campId)) {
-      if (selectedCamps.length === campOptions.length) {
-        // Already all selected → unselect all
+      if (isAllSelected(selectedCamps, campOptions)) {
+        // Was all-selected → clear
         setSelectedCamps([]);
       } else {
-        // Select all camps
-        setSelectedCamps(campOptions.map((camp) => camp.campId));
+        // Select all real options + include -1 so the row shows checked
+        setSelectedCamps([-1, ...campOptions.map((c) => c.campId)]);
       }
+      return;
+    }
+
+    // Normal option clicked
+    values = values.filter((v) => v !== -1);
+
+    if (isAllSelected(values, campOptions)) {
+      setSelectedCamps([-1, ...values]); // add -1 to show the tick
     } else {
-      setSelectedCamps(values);
+      setSelectedCamps(values); // ensure -1 is absent
     }
   };
 
+  // --- Download ---
   const handleDownload = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if ( !startDate || !endDate || !downloadBy) {
-        setErrorMsg("Please fill all fields before downloading.");
-    return;
+    if (!startDate || !endDate || !downloadBy) {
+      setErrorMsg("Please fill all fields before downloading.");
       return;
     }
 
     if (startDate > endDate) {
       setErrorMsg("Start date cannot be after end date.");
-    return;
+      return;
     }
+
+    setErrorMsg("");
 
     try {
       const userId = localStorage.getItem("userId");
       const roleId = localStorage.getItem("roleId");
       const hospitalId = localStorage.getItem("hospitalId");
- // ✅ if no camp selected, take all campIds from campOptions
-    const idsToSend =
-      selectedCamps.length > 0
-        ? selectedCamps
-        : campOptions.map((camp) => camp.campId);
+
+      // If none chosen, send all campIds; otherwise drop -1 marker
+      const idsToSend =
+        selectedCamps.length > 0
+          ? selectedCamps.filter((id) => id !== -1)
+          : campOptions.map((camp) => camp.campId);
+
       const response = await axios.post(
         `${config.appURL}/curable/camps-report`,
         {
@@ -145,7 +179,7 @@ const formatDate = (date: Date | null) => {
 
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement("a");
-      const currentDate = new Date().toISOString().split("T")[0]; 
+      const currentDate = new Date().toISOString().split("T")[0];
 
       link.href = url;
       link.setAttribute("download", `${downloadBy}_Report_${currentDate}.csv`);
@@ -164,36 +198,43 @@ const formatDate = (date: Date | null) => {
         <Header1 />
         <h1 style={{ color: "darkblue" }}>Reports</h1>
 
+        <label className="report-label">
+          Start Date<span className="report-required">*</span>:
+          <div className="input-with-icon">
+            <Calendar
+              value={startDate}
+              onChange={(e) => setStartDate(e.value as Date | null)}
+              placeholder="Select Start Date"
+              dateFormat="dd/mm/yy"
+              maxDate={endDate || undefined}
+            />
+            <img
+              src="./assets/Calendar.png"
+              className="clinic-id-icon"
+              alt="calendar icon"
+            />
+          </div>
+        </label>
 
-<label className="report-label">
-  Start Date<span className="report-required">*</span>:
-  <div className="input-with-icon">
-    <Calendar
-      value={startDate}
-      onChange={(e) => setStartDate(e.value as Date | null)}
-      placeholder="Select Start Date"
-      dateFormat="dd/mm/yy"
-      maxDate={endDate || undefined}
-    />
-    <img src="./assets/Calendar.png" className="clinic-id-icon" alt="calendar icon" />
-  </div>
-</label>
+        <label className="report-label">
+          End Date<span className="report-required">*</span>:
+          <div className="input-with-icon">
+            <Calendar
+              value={endDate}
+              onChange={(e) => setEndDate(e.value as Date | null)}
+              placeholder="Select End Date"
+              dateFormat="dd/mm/yy"
+              minDate={startDate || undefined}
+            />
+            <img
+              src="./assets/Calendar.png"
+              className="clinic-id-icon"
+              alt="calendar icon"
+            />
+          </div>
+        </label>
 
-<label className="report-label">
-  End Date<span className="report-required">*</span>:
-  <div className="input-with-icon">
-    <Calendar
-      value={endDate}
-      onChange={(e) => setEndDate(e.value as Date | null)}
-      placeholder="Select End Date"
-      dateFormat="dd/mm/yy"
-      minDate={startDate || undefined}
-    />
-    <img src="./assets/Calendar.png" className="clinic-id-icon" alt="calendar icon" />
-  </div>
-</label>
-
-  <label className="report-label">
+        <label className="report-label">
           Report Type<span className="report-required">*</span>:
           <select
             value={downloadBy}
@@ -208,49 +249,62 @@ const formatDate = (date: Date | null) => {
           </select>
         </label>
 
-        {/* MultiSelect with Select All */}
+        {/* MultiSelect with custom "Select All" row */}
         <label className="report-label">
           Outreach Clinic Name:
           <div className="input-with-icon">
-<MultiSelect
-  value={selectedCamps}
-  options={[selectAllOption, ...campOptions]}
-  onChange={handleCampChange}
-  optionLabel="campName"
-  optionValue="campId"
-  filter
-  filterBy="campName"
-  onFilter={(e: MultiSelectFilterEvent) => handleFilter(e.filter)}
-  placeholder={loading ? "Loading camps..." : "Select Camps"}
-  className="multi-select-dropdown"
-  showSelectAll={false} // hides built-in corner checkbox
-  resetFilterOnHide={true} // ✅ built-in way to clear search when dropdown closes
-
-/>
+            <MultiSelect
+              value={selectedCamps}
+              options={[selectAllOption, ...campOptions]}
+              onChange={handleCampChange}
+              optionLabel="campName"
+              optionValue="campId"
+              filter
+              filterBy="campName"
+              onFilter={(e: MultiSelectFilterEvent) => handleFilter(e.filter)}
+              placeholder={loading ? "Loading camps..." : "Select Camps"}
+              className="multi-select-dropdown"
+              showSelectAll={false}      // hide built-in checkbox
+              resetFilterOnHide={true}   // clear search when dropdown closes
+            />
           </div>
         </label>
 
-{errorMsg && (
-  <center>
-    <p className="submit-button1" style={{ backgroundColor: "transparent", color: "red", border: "none", boxShadow: "none", cursor: "default" }}>
-      {errorMsg}
-    </p>
-  </center>
-)}
+        {errorMsg && (
+          <center>
+            <p
+              className="submit-button1"
+              style={{
+                backgroundColor: "transparent",
+                color: "red",
+                border: "none",
+                boxShadow: "none",
+                cursor: "default",
+              }}
+            >
+              {errorMsg}
+            </p>
+          </center>
+        )}
 
-<center>
-  <button type="submit" className="submit-button1">
-    Download
-  </button>
-  <br/><br/>  <br/><br/>
-
-</center>
+        <center>
+          <button type="submit" className="submit-button1">
+            Download
+          </button>
+          <br />
+          <br /> <br />
+          <br />
+        </center>
       </form>
 
       <footer className="footer-container-fixed">
         <div className="footer-content">
           <p className="footer-text">Powered By</p>
-          <img src="/assets/Curable logo - rectangle with black text.png" alt="Curable Logo" className="footer-logo" />
+          <img
+            src="/assets/Curable logo - rectangle with black text.png"
+            alt="Curable Logo"
+            className="footer-logo"
+          />
         </div>
       </footer>
     </div>

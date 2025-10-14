@@ -205,44 +205,42 @@ function FamilyPersonalDetails() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        setError('Token is missing. Please log in again.');
-        return;
-      }
-      await axios.post(`${config.appURL}/curable/candidatehistory`, buildPayload(), {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      console.log('Data submitted successfully!');
-      navigate('/FamilyMedicalDetails');
-    } catch (error) {
-      console.error('Submit Error:', error);
-      setError('Failed to submit data.');
-    }
+    const ok = await submitPayload();
+    if (ok) navigate('/FamilyMedicalDetails');
   };
 
   const handleFinish = async (e: React.FormEvent) => {
     e.preventDefault();
+    const ok = await submitPayload();
+    if (ok) navigate('/SuccessMessagePRFinal');
+  };
+
+  // Prev should submit the same payload and then navigate back to MedicalomenHealthDetails
+  const handlePrevClick = async (e?: React.MouseEvent) => {
+    // if called from a button click event, prevent default behavior if present
+    if (e && typeof (e.preventDefault) === 'function') e.preventDefault();
+    const ok = await submitPayload();
+    if (ok) navigate('/MedicalomenHealthDetails');
+  };
+
+  // Shared submit helper used by Prev, Next and Finish
+  const submitPayload = async (): Promise<boolean> => {
     try {
       const token = localStorage.getItem('token');
       if (!token) {
         setError('Token is missing. Please log in again.');
-        return;
+        return false;
       }
       await axios.post(`${config.appURL}/curable/candidatehistory`, buildPayload(), {
         headers: { Authorization: `Bearer ${token}` },
       });
       console.log('Data submitted successfully!');
-      navigate('/SuccessMessagePRFinal');
+      return true;
     } catch (error) {
-      console.error('Finish Error:', error);
+      console.error('Submit Error:', error);
       setError('Failed to submit data.');
+      return false;
     }
-  };
-
-  const handlePrevClick = () => {
-    navigate('/MedicalomenHealthDetails');
   };
 
   const patientId = localStorage.getItem('patientId');
@@ -408,7 +406,7 @@ function FamilyPersonalDetails() {
         </div>
 
         <center className="buttons">
-          <button type="submit" className="Finish-button" onClick={handlePrevClick}>
+          <button type="button" className="Finish-button" onClick={handlePrevClick}>
             Prev
           </button>
           <button type="button" className="Next-button" onClick={handleFinish}>

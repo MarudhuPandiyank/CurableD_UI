@@ -9,7 +9,8 @@ const map: Record<string, string> = {
   '/screening': '/PatientSearchPage',
   '/clinical': '/ClinicSearchPage',
   '/reftohospital': '/ClinicSearchPage', // change to your real route if needed
-  '/management': '/Reports',
+   '/reports': '/Reports',
+    '/management': '/UserManagement',
   '/PatientEdit': '/PatientEdit',        // injected "Modify Patient Information"
   '/OutrichClinic': '/HomePage',         // backend sent "/Outrich Clinic"
 };

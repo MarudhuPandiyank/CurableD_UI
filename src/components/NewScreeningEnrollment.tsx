@@ -236,6 +236,9 @@ if (!isEditMode && streetId.trim() !== '') {
       return;
     }
 
+       let getprefillid= localStorage.getItem('prefill');
+
+
     const payload = {
       name,
       mobileNo: mobile,
@@ -247,7 +250,7 @@ if (!isEditMode && streetId.trim() !== '') {
       streetId: parseInt(streetId, 10) || 0,
       hospitalId: parseInt(hospitalId, 10),
       campId,
-      id:  localStorage.getItem('prefillId'),
+       id: getprefillid? localStorage.getItem('prefillId'):null,
             // id:  null,
 
           type: 1,

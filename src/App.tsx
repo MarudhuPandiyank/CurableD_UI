@@ -7,6 +7,7 @@ import UserAccountInfo from './components/UserAccountInfo';
 import AuthGuard from './components/AuthGuard';
 import HomePage from './components/HomePage';
 import OutreachClinicCreation from './components/OutreachClinicCreation';
+import CreateNewUser from './components/CreateNewUser';
 import ResourcePlanning from './components/ResourcePlanning'; 
 import SuccessMessage from './components/SuccessMessage'; 
 import OutreachClinicInfo from './components/OutreachClinicInfo'; 
@@ -39,6 +40,9 @@ import PatientEdit from './components/PatientEdit';
 import refreshToken from './components/refreshToken';
 import ScrollToTop from './ScrollToTop';
 import Reports from "./components/Reports";
+import UserManagement from "./components/UserManagement";
+
+
 
 const App: React.FC = () => {
   useEffect(() => {
@@ -98,6 +102,11 @@ const App: React.FC = () => {
                 <Route path="/DynamicScreen" element={<DynamicScreen />} />
                 <Route path="/PatientEdit" element={<PatientEdit />} />
                 <Route path="/reports" element={<Reports />} />
+                 <Route path="/userManagement" element={<UserManagement />} />
+                <Route path="/create-new-user" element={<CreateNewUser />} />
+
+
+                
               </Routes>
             </AuthGuard>
           }

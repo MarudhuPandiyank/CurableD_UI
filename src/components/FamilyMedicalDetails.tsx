@@ -162,10 +162,8 @@ const FamilyMedicalDetails: React.FC = () => {
     if (expandedIndex === index) setExpandedIndex(null);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    // Build grouped array the backend expects
+  // Build grouped array the backend expects
+  const buildPayload = () => {
     const groups: FamilyMemberGroup[] = formValues.map(member => {
       const paramsForMember = formData.map(field => {
         const key = (field.testName || '').trim();
@@ -175,7 +173,7 @@ const FamilyMedicalDetails: React.FC = () => {
       return { params: paramsForMember, repeat: null, repeatlabel: null };
     });
 
-    const payload = {
+    return {
       description: 'Family Medical Metrics',
       diseaseTestId: 1,
       familyMedicalMetrics: groups, // NEW grouped array shape
@@ -192,27 +190,38 @@ const FamilyMedicalDetails: React.FC = () => {
       type: 1,
       candidateId: Number(localStorage.getItem('patientId')),
     };
+  };
 
+  // Shared submit helper used by Prev and form submission
+  const submitPayload = async (): Promise<boolean> => {
     try {
       const token = localStorage.getItem('token');
       if (!token) {
         setError('Token is missing. Please log in again.');
-        return;
+        return false;
       }
 
-      await axios.post(`${config.appURL}/curable/candidatehistory`, payload, {
+      await axios.post(`${config.appURL}/curable/candidatehistory`, buildPayload(), {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-      navigate('/SuccessMessagePRFinal');
+      return true;
     } catch (err) {
       console.error('Error submitting data:', err);
       setError('Failed to submit data. Please try again.');
+      return false;
     }
   };
 
-  const handlePrevClick = () => {
-    navigate('/FamilyPersonalDetails');
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const ok = await submitPayload();
+    if (ok) navigate('/SuccessMessagePRFinal');
+  };
+
+  const handlePrevClick = async () => {
+    const ok = await submitPayload();
+    if (ok) navigate('/FamilyPersonalDetails');
   };
 
   const participant = localStorage.getItem('participant');

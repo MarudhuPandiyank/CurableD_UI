@@ -243,7 +243,7 @@ const [errors, setErrors] = useState({
             onChange={handleMultiSelectChangeWithLimit('campCoordinators', Number(noCampcordinators) || 0)}
 
           />
-          {errors.programCoordinators && (
+          {errors.campCoordinators && (
     <p className="error-text">{errors.campCoordinators}</p>
   )}
         </div>
@@ -262,7 +262,7 @@ const [errors, setErrors] = useState({
             onChange={handleMultiSelectChangeWithLimit('socialWorkers', Number(noSocialWorkers) || 0)}
 
           />
-          {errors.programCoordinators && (
+          {errors.socialWorkers && (
     <p className="error-text">{errors.socialWorkers}</p>
   )}
         </div>
@@ -280,7 +280,7 @@ const [errors, setErrors] = useState({
             //onChange={handleMultiSelectChange('nurses')}
             onChange={handleMultiSelectChangeWithLimit('nurses', Number(noNurses) || 0)}
           />
-          {errors.programCoordinators && (
+          {errors.nurses && (
     <p className="error-text">{errors.nurses}</p>
   )}
         </div>
@@ -299,7 +299,7 @@ const [errors, setErrors] = useState({
             onChange={handleMultiSelectChangeWithLimit('doctors', Number(noDoctors) || 0)}
 
           />
-          {errors.programCoordinators && (
+          {errors.doctors && (
     <p className="error-text">{errors.doctors}</p>
   )}
         </div>

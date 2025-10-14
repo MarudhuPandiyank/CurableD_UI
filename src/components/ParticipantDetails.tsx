@@ -208,15 +208,14 @@ setIncome(data.monthlyIncome === 0 ? '' : (data.monthlyIncome?.toString() || '')
     }
   };
 
-  const handleFormSubmit = async (e: React.FormEvent, navigateTo: string) => {
-    e.preventDefault();
-
+  // Prepare form data and run inline validators. Returns the data object or null if validation fails.
+  const prepareFormData = () => {
     const tobaccoUser = selectedToggle1 === 'yes';
 
     // Block submit if invalid alt mobile
     if (altMobile && altMobile.length !== 10) {
       setAltMobileError('Alternate Mobile No must be exactly 10 digits.');
-      return;
+      return null;
     } else {
       setAltMobileError('');
     }
@@ -224,28 +223,26 @@ setIncome(data.monthlyIncome === 0 ? '' : (data.monthlyIncome?.toString() || '')
     // Block submit if invalid aadhaar
     if (aadhaar && aadhaar.length !== 12) {
       setAadhaarError('Aadhaar Number must be exactly 12 digits.');
-      return;
+      return null;
     } else {
       setAadhaarError('');
     }
 
-    console.log(habits, 'habits');
-   const candidateHabitDTOs = habits.map((habit) => ({
-  candidateId: localStorage.getItem('patientId'),
-  duration: tobaccoUser ? (duration ? parseFloat(duration) : null) : null,  // Set to null if duration is empty
-  frequency: habit.frequency || null,  // Set to null if frequency is empty
-  habits: habit.habit || null,  // Set to null if habit is empty
-  howLong: habit.howLong ? parseFloat(habit.howLong) : null,  // Set to null if howLong is empty
-  quit: habit.quit === 'Yes' ? true : false,  // This can remain as is
-  type: habit.habitType || null,  // Set to null if habitType is empty
-}));
+    const candidateHabitDTOs = habits.map((habit) => ({
+      candidateId: localStorage.getItem('patientId'),
+      duration: tobaccoUser ? (duration ? parseFloat(duration) : null) : null,
+      frequency: habit.frequency || null,
+      habits: habit.habit || null,
+      howLong: habit.howLong ? parseFloat(habit.howLong) : null,
+      quit: habit.quit === 'Yes' ? true : false,
+      type: habit.habitType || null,
+    }));
 
-
-    const formData = {
+    const data = {
       fatherName,
       spouseName,
       alternateMobileNo: altMobile,
-      monthlyIncome:income? parseFloat(income) :null,
+      monthlyIncome: income ? parseFloat(income) : null,
       houseType,
       occupation,
       education,
@@ -260,12 +257,17 @@ setIncome(data.monthlyIncome === 0 ? '' : (data.monthlyIncome?.toString() || '')
       screenId: 3,
     };
 
+    return data;
+  };
+
+  // Submits the candidate data. Returns true on success.
+  const submitCandidate = async (data: any) => {
     const token = localStorage.getItem('token');
 
     if (!token) {
       console.error('Token not found');
       alert('Session expired. Please log in again.');
-      return;
+      return false;
     }
 
     try {
@@ -277,24 +279,36 @@ setIncome(data.monthlyIncome === 0 ? '' : (data.monthlyIncome?.toString() || '')
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(data),
       });
 
       if (response.ok) {
-        const data = await response.json();
-        console.log('Success:', data);
-        navigate(navigateTo);
+        const respData = await response.json();
+        console.log('Success:', respData);
+        return true;
       } else {
         const errorData = await response.json();
         console.error('Error:', errorData);
         alert(`Error: ${errorData.message || response.statusText}`);
+        return false;
       }
     } catch (error) {
       console.error('Error:', error);
       alert('An error occurred while submitting the form. Please try again.');
+      return false;
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleFormSubmit = async (e: React.FormEvent | React.MouseEvent, navigateTo: string) => {
+    if (e && 'preventDefault' in e) e.preventDefault();
+
+    const prepared = prepareFormData();
+    if (!prepared) return;
+
+    const ok = await submitCandidate(prepared);
+    if (ok) navigate(navigateTo);
   };
 
   const patientId = localStorage.getItem('patientId');
@@ -396,8 +410,18 @@ setIncome(data.monthlyIncome === 0 ? '' : (data.monthlyIncome?.toString() || '')
     setHabits(updatedHabits);
   };
 
-  const handlePrevClick = () => {
-    navigate('/DiseaseSpecificDetails');
+  const handlePrevClick = async () => {
+    // Prepare data and submit same API as Next, but navigate to DiseaseSpecificDetails on success.
+    const prepared = prepareFormData();
+    if (!prepared) {
+      // If validation failed, don't proceed. Optionally still navigate—currently we stop.
+      return;
+    }
+
+    const ok = await submitCandidate(prepared);
+    if (ok) {
+      navigate('/DiseaseSpecificDetails');
+    }
   };
 
   useEffect(() => {

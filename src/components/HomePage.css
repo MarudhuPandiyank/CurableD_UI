@@ -426,6 +426,17 @@ input[type="date"] {
   transition: all 0.3s ease;
  
 }
+.Finish-createbutton {
+  padding: 10px 50px;
+  border: none;
+  background-color: #d774ad; /* Pink background for 'Next' */
+  color: white; /* White text color */
+  border-radius: 10px; /* Rounded corners */
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+ 
+}
 .Finish-Homebutton {
   padding: 10px 50px;
   border: none;
@@ -624,6 +635,13 @@ h1 {
     font-size: 14px;     
     width: 100%;         
     max-width: 300px;   
+  }
+  .Finish-createbutton
+  {
+    padding: 10px 20px; 
+    font-size: 14px;     
+    width: 100%;         
+    max-width: 200px;   
   }
   .Finish-button.disabled-button {
   background-color: #d6d6d6; /* grey */
