@@ -11,6 +11,7 @@ import CreateNewUser from './components/CreateNewUser';
 import ResourcePlanning from './components/ResourcePlanning'; 
 import SuccessMessage from './components/SuccessMessage'; 
 import OutreachClinicInfo from './components/OutreachClinicInfo'; 
+import EditUserManagement from './components/EditUserManagement'; 
 import EditOutreachClinic from './components/EditOutreachClinic';
 import ResourceAllocation from './components/ResourceAllocation';
 import DiseaseSpecificDetails from './components/DiseaseSpecificDetails';
@@ -75,6 +76,7 @@ const App: React.FC = () => {
                 <Route path="/success-message" element={<SuccessMessage />} />
                 <Route path="/success-messageEdit" element={<SuccessMessageEdit />} />
                 <Route path="/outreach-clinic-info" element={<OutreachClinicInfo />} />
+                <Route path="/edit-user-management" element={<EditUserManagement />} />
                 <Route path="/EditOutreachClinic" element={<EditOutreachClinic />} />
                 <Route path="/resource-allocation" element={<ResourceAllocation />} />
                 <Route path="/DiseaseSpecificDetails" element={<DiseaseSpecificDetails />} />

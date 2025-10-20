@@ -37,10 +37,10 @@ console.log('test');
                      disabled={!allowAllThree }  onClick={() => navigate('/create-new-user')}>
                         Create New User
                     </button>
-                    {/* <button className={`secondary-button ${!allowAllThree ? 'disabled-button' : ''}`}
-                      onClick={() => navigate('/outreach-clinic-info')}>
+                    <button className={`secondary-button ${!allowAllThree ? 'disabled-button' : ''}`}
+                      onClick={() => navigate('/edit-user-management')}>
                         Edit Existing User
-                    </button> */}
+                    </button>
                 </div>
           
             <main className="content">

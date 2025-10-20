@@ -71,14 +71,16 @@ const Header1: React.FC<HeaderProps> = ({ showwidth = false }) => {
         </div>
         <div className="sidebar-content p-3">
           {menus.map((m) => {
-            const isModify = (m?.menu?.trim().toLowerCase() === 'modify patient information');
-            console.log(isModify,"isModify",m) 
+            const isModify = (m?.menu === 'Reports');
+            console.log(isModify,"isModify",m,m?.menu=== 'Reports') 
             return (
               <button key={m.menu} className="sidebar-btn" onClick={() => handleNavigation(m.url)}>
-                {false ? (
-                  <FontAwesomeIcon
-                    icon={faUserEdit}
-                    style={{ width: 20, height: 20, marginRight: 8, color: '#a9cff6ff' }}
+                {isModify ? (
+                  <img
+                    src={`./HomeScreenIcons/PNG/Reports2.png`}
+                    onError={(e: any) => { e.currentTarget.style.visibility = 'hidden'; }}
+                    alt={`${m.menu} Icon`}
+                    style={{ width: 20, height: 20, marginRight: 4 }}
                   />
                 ) : (
                   <img
