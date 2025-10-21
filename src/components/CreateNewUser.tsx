@@ -111,13 +111,15 @@ const CreateNewUser: React.FC = () => {
   }, [incomingPrefill, isEdit, editUser]);
 
   const validate = () => {
+    // When editing we only allow status changes; skip other validations so Update can submit
+    if (isEdit) return {};
     const e: Record<string, string> = {};
     if (!name || name.trim().length < 2 || name.trim().length > 60) e.name = 'Please enter a valid name (2–60 characters).';
     if (!roleId) e.roleId = 'Please select a role.';
     if (!emailRegex.test(email)) e.email = 'Please enter a valid email address.';
     if (!/^\d{10}$/.test(phoneNo)) e.phoneNo = 'Mobile number must be exactly 10 digits.';
     if (!gender) e.gender = 'Please select gender.';
-  // yearsExp validation removed
+    // yearsExp validation removed
     if (!isEdit && !passwordRegex.test(password)) e.password = 'Password must be 6–32 characters with letters and numbers.';
     return e;
   };
@@ -191,13 +193,13 @@ const CreateNewUser: React.FC = () => {
 
         <div className="form-group">
           <label style={{ color: 'black' }}><strong>Name</strong> <span style={{ color: 'red' }}>*</span>:</label>
-          <input type="text" placeholder="Enter Name" value={name} onChange={e => setName(e.target.value)} aria-invalid={!!errors.name} />
+          <input type="text" placeholder="Enter Name" value={name} onChange={e => setName(e.target.value)} aria-invalid={!!errors.name} disabled={isEdit} />
           {showErrors && errors.name && <p className="errors_message">{errors.name}</p>}
         </div>
 
         <div className="form-group">
           <label style={{ color: 'black' }}><strong>Role</strong> <span style={{ color: 'red' }}>*</span>:</label>
-          <select value={roleId} onChange={e => setRoleId(e.target.value ? Number(e.target.value) : '')} aria-invalid={!!errors.roleId}>
+          <select value={roleId} onChange={e => setRoleId(e.target.value ? Number(e.target.value) : '')} aria-invalid={!!errors.roleId} disabled={isEdit}>
             <option value="">Select</option>
             {roles.map(r => <option key={r.id} value={r.id}>{r.name}</option>)}
           </select>
@@ -218,7 +220,7 @@ const CreateNewUser: React.FC = () => {
 
         <div className="form-group">
           <label style={{ color: 'black' }}><strong>Gender</strong> <span style={{ color: 'red' }}>*</span>:</label>
-          <div className="gender-group">{(['Male','Female','Other'] as GenderUI[]).map(g => <button key={g} type="button" className={`gender-btn ${gender === g ? 'active' : ''}`} aria-pressed={gender === g} onClick={() => setGender(g)}>{g}</button>)}</div>
+          <div className="gender-group">{(['Male','Female','Other'] as GenderUI[]).map(g => <button key={g} type="button" disabled={isEdit} className={`gender-btn ${gender === g ? 'active' : ''}`} aria-pressed={gender === g} onClick={() => setGender(g)}>{g}</button>)}</div>
           {showErrors && errors.gender && <p className="errors_message">{errors.gender}</p>}
         </div>
 
@@ -239,8 +241,8 @@ const CreateNewUser: React.FC = () => {
         {isEdit && (
           <div className="form-group">
             <label style={{ color: 'black' }}><strong>Status</strong>:</label>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-              <span className="toggle-label">{isActive ? 'Active' : 'Inactive'}</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10 ,marginLeft:'10px'}}>
+              <span style={{marginTop:"10px"}} className="toggle-label">{isActive ? 'Active' : 'Inactive'}</span>
 
               <label className="toggle-switch" aria-label="Toggle user status">
   <input

@@ -38,7 +38,7 @@
 
 /* Checked (active) state */
 .toggle-switch input:checked + .slider {
-  background-color: #ff6fa0; /* 🌹 rose color */
+  background-color: #d774ad; /* 🌹 rose color */
 }
 
 /* Move the circle when checked */

@@ -34,18 +34,25 @@ const ResponsiveCancerInstitute: React.FC = () => {
               onClick={() => navigate(toRoute(m.url))}
               style={{ cursor: 'pointer' }}
             >
-              <img
-                src={`/HomeScreenIcons/PNG/${m.menu==="Clinical Evaluvation"?"Clinical Evaluvation"
-                  :m.menu==="Clinical Evaluation"?"Clinical Evaluation"
-
-                  : m.menu
-                }.png`}
-                onError={(e: any) => {
-                  e.currentTarget.style.visibility = 'hidden';
-                }}
-                alt={m.menu}
-                style={{ width: 50, height: 50, marginBottom: 10 }}
-              />
+              {
+                // compute image size: Reports should be larger (64), others default to 50
+              }
+              {(() => {
+                const imgKey = m.menu === "Clinical Evaluvation" ? "Clinical Evaluvation"
+                  : m.menu === "Clinical Evaluation" ? "Clinical Evaluation"
+                  : m.menu;
+                const isReports = typeof m.menu === 'string' && m.menu.trim().toLowerCase() === 'reports';
+                const imgSize = isReports ? 64 : 50;
+                const isbotton=isReports?5:10;
+                return (
+                  <img
+                    src={`/HomeScreenIcons/PNG/${imgKey}.png`}
+                    onError={(e: any) => { e.currentTarget.style.visibility = 'hidden'; }}
+                    alt={m.menu}
+                    style={{ width: imgSize, height: imgSize, marginBottom: isbotton ,marginTop:isbotton && "-2px"}}
+                  />
+                );
+              })()}
               <div style={{ color: 'black' }}>{m.menu}</div>
             </div>
           ))}

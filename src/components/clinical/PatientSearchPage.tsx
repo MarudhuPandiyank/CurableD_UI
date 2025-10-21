@@ -115,10 +115,11 @@ const PatientSearchPage: React.FC = () => {
         }
         words = words.map(word => {
           if (word === 'screening') return 'Screening';
-          if (word === 'test') return '';
+          if (word === 'test') return ''; 
           return word;
         });
-        let formatted = words.join(' ');
+        // join words, remove any empty segments and normalize whitespace
+        let formatted = words.filter(w => w && w.trim() !== '').join(' ').replace(/\s+/g, ' ').trim();
         console.log(formatted, "sdksdk");
         return formatted;
       });
@@ -127,6 +128,7 @@ const PatientSearchPage: React.FC = () => {
       );
 
       setStageList(stages);
+      console.log(diseaseTestIds,"diseaseTestIds")
 
       if (stages.length > 0) {
         setSelectedStage(stages[0]);
@@ -143,16 +145,22 @@ const handleStageChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
   const selectedStageValue = event.target.value;
   setSelectedStage(selectedStageValue);
 
+  console.log(selectedPatient,selectedStageValue,"selectedPatient")
+
   if (selectedPatient?.eligibleDiseases) {
-    const selectedDisease = selectedPatient.eligibleDiseases.find(
-      (disease) =>
-        disease.stage &&
-        (disease.stage === selectedStageValue ||
-         disease.stage.startsWith(selectedStageValue) || 
-         disease.stage.includes(selectedStageValue))
-    );
+    const selectedStageNorm = selectedStageValue.trim().toLowerCase();
+    const selectedDisease = selectedPatient.eligibleDiseases.find((disease) => {
+      if (!disease.stage) return false;
+      const diseaseStageNorm = disease.stage.trim().toLowerCase();
+      return (
+        diseaseStageNorm === selectedStageNorm ||
+        diseaseStageNorm.startsWith(selectedStageNorm) ||
+        diseaseStageNorm.includes(selectedStageNorm) ||
+        selectedStageNorm.includes(diseaseStageNorm)
+      );
+    });
 
-
+console.log(selectedDisease,"selectedDisease")
     if (selectedDisease) {
       localStorage.setItem(
         "diseaseTestIds",
