@@ -91,7 +91,14 @@ const FamilyMedicalDetails: React.FC = () => {
 
         if (isGrouped(fmRaw)) {
           prefilledMembers = fmRaw
-            .map(group => mapParamsToMemberValuesSafe(group?.params))
+            .map(group => {
+              const m = mapParamsToMemberValuesSafe(group?.params);
+              // preserve metadata if present so we can send it back later
+              if (group && (group as any).id !== undefined) (m as any).__groupId = (group as any).id;
+              if (group && (group as any).repeat !== undefined) (m as any).__repeat = (group as any).repeat;
+              if (group && (group as any).repeatlabel !== undefined) (m as any).__repeatlabel = (group as any).repeatlabel;
+              return m;
+            })
             .filter(m => Object.keys(m).length > 0);
         } else if (isFlat(fmRaw)) {
           if (masterParams.length > 0) {
@@ -170,7 +177,14 @@ const FamilyMedicalDetails: React.FC = () => {
         const v = (member[key] ?? '').toString().trim();
         return { ...field, selectedValues: v ? [v] : [] };
       });
-      return { params: paramsForMember, repeat: null, repeatlabel: null };
+      // attach preserved metadata when available
+      const groupId = (member as any)?.__groupId ?? null;
+      const groupRepeat = (member as any)?.__repeat ?? null;
+      const groupRepeatLabel = (member as any)?.__repeatlabel ?? null;
+
+      const groupObj: any = { params: paramsForMember, repeat: groupRepeat, repeatlabel: groupRepeatLabel };
+      if (groupId !== null && groupId !== undefined) groupObj.id = groupId;
+      return groupObj as FamilyMemberGroup;
     });
 
     return {

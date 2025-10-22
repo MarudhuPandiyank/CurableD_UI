@@ -76,7 +76,14 @@ function FamilyPersonalDetails() {
         if (fm != null) {
           // CASE 1: GROUPED (array) -> one member per group
           if (Array.isArray(fm)) {
-            const values = fm.map((g: any) => paramsToRecord(g?.params ?? []));
+            const values = fm.map((g: any) => {
+              const rec = paramsToRecord(g?.params ?? []);
+              // preserve group-level metadata so we can send it back on submit
+              if (g?.id !== undefined) rec.__groupId = g.id;
+              if (g?.repeat !== undefined) rec.__repeat = g.repeat;
+              if (g?.repeatlabel !== undefined) rec.__repeatlabel = g.repeatlabel;
+              return rec;
+            });
             setFormValues(values.length ? values : []);
             setExpandedMemberIndex(values.length ? 0 : null);
           }
@@ -176,12 +183,18 @@ function FamilyPersonalDetails() {
           selectedValues: val ? [val] : [],
         };
       });
+      // include preserved group-level metadata if present
+      const groupId = (member as any)?.__groupId ?? null;
+      const groupRepeat = (member as any)?.__repeat ?? null;
+      const groupRepeatLabel = (member as any)?.__repeatlabel ?? null;
 
-      return {
+      const groupObj: any = {
         params,
-        repeat: null,
-        repeatlabel: null,
+        repeat: groupRepeat,
+        repeatlabel: groupRepeatLabel,
       };
+      if (groupId !== null && groupId !== undefined) groupObj.id = groupId;
+      return groupObj;
     });
 
     return {
