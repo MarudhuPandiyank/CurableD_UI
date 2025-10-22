@@ -152,11 +152,14 @@ useEffect(() => {
     const hospitalId = localStorage.getItem('hospitalId');
 
 
-    const streetIdValue = parseInt(streetId, 10);
-  if (!/^\d{3}$/.test(streetId) || streetId === '000') {
-    alert('Street ID must be 3 digits and at least 100.');
-    return;
-  }
+    // parse streetId defensively (null if empty) and skip strict validation when editing/prefill
+    const streetIdValue = streetId.trim() !== '' ? parseInt(streetId, 10) : null;
+    if (!isEditMode) {
+      if (streetIdValue === null || !/^\d{3}$/.test(streetId) || streetId === '000') {
+        alert('Street ID must be exactly 3 digits from 001 to 999.');
+        return;
+      }
+    }
 
     if (!token) {
       alert('No token found. Please log in again.');
