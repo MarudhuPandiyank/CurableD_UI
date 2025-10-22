@@ -252,7 +252,7 @@ if (!isEditMode && streetId.trim() !== '') {
       address,
       streetId: parseInt(streetId, 10) || 0,
       hospitalId: parseInt(hospitalId, 10),
-      campId,
+      campId:null,
        id: getprefillid? localStorage.getItem('prefillId'):null,
             // id:  null,
 
