@@ -21,6 +21,7 @@ interface Candidate {
   mobileNo: string;
   dob?: string | null;
   fatherName?: string | null;
+  campId?: number;
   hospitalId: number;
 }
 
@@ -34,6 +35,7 @@ interface CandidateAPIResponse {
   mobileNo: string;
   dob?: string | null;
   fatherName?: string | null;
+  campId?: number;
   hospitalId: number;
 }
 
@@ -61,6 +63,8 @@ const PatientEdit: React.FC = () => {
 
     setLoading(true);
     setMessage('');
+          localStorage.removeItem('campId');
+
 
     const token = localStorage.getItem('token');
     const hospitalId = localStorage.getItem('hospitalId');
@@ -94,7 +98,8 @@ const PatientEdit: React.FC = () => {
           mobileNo: candidateData.mobileNo,
           dob: candidateData.dob,
           fatherName: candidateData.fatherName,
-          hospitalId: candidateData.hospitalId,
+            campId: candidateData.campId,
+            hospitalId: candidateData.hospitalId,
         }));
 
         setCandidates(candidatesData);
@@ -115,9 +120,18 @@ const PatientEdit: React.FC = () => {
     setOpenNoCandidateDialog(false);
   };
 
-  const handleEditClick = (candidateId: number) => {
+  const handleEditClick = (candidateId: number, candidateObj?: Candidate | any) => {
+    // mark that we should prefill and store the patientId
     localStorage.setItem('prefill', 'true');
     localStorage.setItem('patientId', candidateId.toString());
+    // if the candidate object contains campId, persist it for the enrollment form
+    if (candidateObj && candidateObj.campId !== undefined && candidateObj.campId !== null) {
+      localStorage.setItem('campId', String(candidateObj.campId));
+    }
+    console.log(  candidateObj,   String(candidateObj.campId),"sdskd"
+)
+
+    console.log(candidateObj,"candidateObj")
     localStorage.removeItem("touchedspo2");
 localStorage.removeItem("agevalue");
 localStorage.removeItem("ageatmarriage");
@@ -127,7 +141,7 @@ localStorage.removeItem("latschild");
 localStorage.removeItem("heightval");
 localStorage.removeItem("weightval");
 
-    navigate('/NewScreeningEnrollment');
+    navigate('/NewScreeningEnrollment', { state: { candidateId: candidateId, edit: true, registrationId: candidateObj?.registrationId, registraionId: candidateObj?.registrationId } });
   };
 
   return (
@@ -183,7 +197,7 @@ onClick={handleSearch} disabled={loading}>                  {loading ? 'Searchin
                 <div className="edit-button-container">
                   <button  disabled={!allowAllThree }
                     className={`edit-button ${!allowAllThree ? 'disabled-button' : ''}`}
-                    onClick={() => handleEditClick(candidate.id)}
+                    onClick={() => handleEditClick(candidate.id,candidate)}
                   >
                     Edit
                   </button>

@@ -6,7 +6,7 @@ import './NewScreeningEnrollment.css';
 import config from '../config';  // Import the config file
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Calendar } from 'primereact/calendar';
 import 'primereact/resources/themes/saga-blue/theme.css'; // Theme
 import 'primereact/resources/primereact.min.css'; // Core CSS
@@ -50,6 +50,8 @@ interface PrefillApiResponse {
 
 const NewScreeningEnrollment: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const [navCandidateId, setNavCandidateId] = useState<number | null>(null);
   const [name, setName] = useState('');
   const [mobile, setMobile] = useState('');
   const [gender, setGender] = useState<string>('');
@@ -63,7 +65,7 @@ const NewScreeningEnrollment: React.FC = () => {
   const [mobileError, setMobileError] = useState('');
 const [streetIdError, setStreetIdError] = useState('');
 const [genderError, setGenderError] = useState('');
-const [isEditMode, setIsEditMode] = useState(false); // NEW
+  const [isEditMode, setIsEditMode] = useState(false); // NEW
 const [age, setAge] = useState<number | ''>('');
 
 
@@ -78,6 +80,21 @@ useEffect(() => {
 
     if (!token || !patientId) return;
 
+    // If navigation state indicates edit, respect it (PatientEdit passes state)
+    const navState: any = location.state;
+    if (navState && navState.edit) {
+      setIsEditMode(true);
+      // capture candidateId from navigation state (do NOT persist to localStorage)
+      if (navState.candidateId) {
+        setNavCandidateId(Number(navState.candidateId));
+      }
+      // capture registration id if supplied (registrationId / registraionId)
+      if (navState.registrationId || navState.registraionId) {
+        setRegistraionId(String(navState.registrationId || navState.registraionId));
+      }
+    }
+
+    console.log(prefillNeeds,"prefillNeeds")
     if (prefillNeeds === 'true') {
       localStorage.setItem('prefill', 'false');
       localStorage.setItem('prefillId', patientId);
@@ -98,7 +115,7 @@ useEffect(() => {
           return;
         }
 
-        setIsEditMode(true);
+  setIsEditMode(true);
         if (data.name) setName(data.name);
         if (data.mobileNo) setMobile(data.mobileNo);
         if (data.gender) {
@@ -165,17 +182,24 @@ useEffect(() => {
       alert('No token found. Please log in again.');
       return;
     }
+       console.log(navCandidateId,"navCandidateId")
 
    const payload = {
   address,
-  campId: parseInt(campId || '0', 10), // Convert campId to number
-  streetId: streetIdValue,             // Convert to number
+  // send campId as number when present, otherwise null
+  campId: campId ? parseInt(campId, 10) : null,
+  streetId: streetIdValue,             // Convert to number (or null)
   reason,                              // Include reason directly in the payload
   hospitalId,
   name: name ? name : null,            // If value present, use it else null
   mobileNo: mobile ? mobile : null,    // Same check for mobile
   gender: gender ? gender.toUpperCase() : null, // Ensure uppercase only if present
   age: age ? age : null,               // Send value else null
+  // include candidateId only when editing / a candidate is selected
+  ...(navCandidateId ? { id: navCandidateId } : {}),
+  // include registration id for prefill/edit flows when available
+    ...(navCandidateId ? { registraionId: registraionId } : null),
+
   screenId: 2,                         // constant value for identify the screen type
 };
 
@@ -239,7 +263,8 @@ if (!isEditMode && streetId.trim() !== '') {
       return;
     }
 
-       let getprefillid= localStorage.getItem('prefill');
+       let getprefillid= localStorage.getItem('prefillId');
+       console.log(getprefillid,isEditMode,"navCandidateId")
 
 
     const payload = {
@@ -252,8 +277,9 @@ if (!isEditMode && streetId.trim() !== '') {
       address,
       streetId: parseInt(streetId, 10) || 0,
       hospitalId: parseInt(hospitalId, 10),
-      campId:null,
-       id: getprefillid? localStorage.getItem('prefillId'):null,
+  campId: campId ? parseInt(campId, 10) : null,
+       // prefer navigation-provided candidate id, otherwise fall back to stored prefillId
+       id: isEditMode ? navCandidateId : (getprefillid ? localStorage.getItem('prefillId') : null),
             // id:  null,
 
           type: 1,
