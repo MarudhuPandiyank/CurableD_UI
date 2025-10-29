@@ -29,6 +29,7 @@ interface Patient {
 const PatientSearchPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [patients, setPatients] = useState<Patient[]>([]);
+  const [currentPage, setCurrentPage] = useState<number>(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
@@ -87,6 +88,7 @@ const PatientSearchPage: React.FC = () => {
           eligibleDiseases: patient.eligibleDiseases,
         }));
         setPatients(patientData);
+        setCurrentPage(1);
       } else {
         setPatients([]);
       }
@@ -191,6 +193,29 @@ console.log(selectedDisease,"selectedDisease")
     navigate("/DiseaseSpecificDetailsScreening");
   };
 
+  // Pagination helpers (client-side)
+  const pageSize = 5;
+  const totalPages = Math.max(1, Math.ceil(patients.length / pageSize));
+  const pagedPatients = patients.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+
+  const goToPage = (n: number) => {
+    const target = Math.max(1, Math.min(n, totalPages));
+    setCurrentPage(target);
+  };
+
+  // clamp page when patients list shrinks
+  React.useEffect(() => {
+    if (currentPage > totalPages) setCurrentPage(1);
+  }, [patients.length]);
+
+  // Page-grouping for numbered buttons (show pages in groups of 5)
+  const pageGroupSize = 5;
+  const currentGroupIndex = Math.floor((currentPage - 1) / pageGroupSize);
+  const groupStartPage = currentGroupIndex * pageGroupSize + 1;
+  const groupEndPage = Math.min(groupStartPage + pageGroupSize - 1, totalPages);
+  const goToPrevGroup = () => goToPage(Math.max(1, groupStartPage - pageGroupSize));
+  const goToNextGroup = () => goToPage(Math.min(totalPages, groupStartPage + pageGroupSize));
+
   return (
     <div className="container10">
        <Header1 />
@@ -247,7 +272,7 @@ console.log(selectedDisease,"selectedDisease")
           <div className="patient-list">
             <label className="select-label">Select Patient</label>
             <div>
-              {patients.map((patient) => (
+              {pagedPatients.map((patient) => (
                 <div
                   key={patient.id}
                   className={`patient-item ${
@@ -276,6 +301,56 @@ console.log(selectedDisease,"selectedDisease")
               ))}
             </div>
           </div>
+
+            {patients.length > pageSize && (
+              <div className="pagination-container">
+                <div className="pagination-center">
+                  <div className="pagination-summary">
+                    Showing {(patients.length === 0) ? 0 : ((currentPage - 1) * pageSize + 1)} - {Math.min(currentPage * pageSize, patients.length)} of {patients.length}
+                  </div>
+
+                  <div className="pagination-prev">
+                    <button
+                      onClick={() => goToPage(currentPage - 1)}
+                      disabled={currentPage === 1}
+                      className="page-btn"
+                      aria-label="Previous page"
+                    >
+                      Prev
+                    </button>
+                  </div>
+
+                  <div className="pagination-pages">
+                    {/* Desktop: show current group. Mobile: CSS will show pages 1..5 via JS below */}
+                    {(() => {
+                      // On small screens we want to show first 5 pages; otherwise show current group
+                      const isMobileApprox = typeof window !== 'undefined' && window.innerWidth <= 600;
+                      const start = isMobileApprox ? 1 : groupStartPage;
+                      const end = isMobileApprox ? Math.min(5, totalPages) : groupEndPage;
+                      return Array.from({ length: end - start + 1 }, (_, i) => start + i).map(p => (
+                        <button key={p} onClick={() => goToPage(p)} className={`page-btn ${p === currentPage ? 'active' : ''}`}>{p}</button>
+                      ));
+                    })()}
+                  </div>
+
+                  <div className="pagination-next">
+                    <button
+                      onClick={() => goToPage(currentPage + 1)}
+                      disabled={currentPage === totalPages}
+                      className="page-btn"
+                      aria-label="Next page"
+                    >
+                      Next
+                    </button>
+                  </div>
+                </div>
+
+                {/* On mobile we show the summary below the controls */}
+                <div className="pagination-summary-mobile">
+                  Showing {(patients.length === 0) ? 0 : ((currentPage - 1) * pageSize + 1)} - {Math.min(currentPage * pageSize, patients.length)} of {patients.length}
+                </div>
+              </div>
+            )}
 
           <div className="stage-dropdown">
             <label className="select-label">Screening</label>

@@ -452,6 +452,77 @@ select::-ms-expand {
 }
     
 }
+/* Pagination styles added */
+.pagination-container{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-top:12px;
+}
+.pagination-info{
+    font-size:13px;
+    color:#333;
+}
+.pagination-controls{
+    display:flex;
+    gap:6px;
+    align-items:center;
+}
+.page-btn{
+    min-width:34px;
+    padding:6px 10px;
+    border:1px solid #cfd8dc;
+    background:#fff;
+    color:#333;
+    border-radius:4px;
+    cursor:pointer;
+}
+.page-btn:disabled{
+    opacity:0.45;
+    cursor:not-allowed;
+}
+.page-btn.active{
+    background:#d774ad;
+    color:#fff;
+    border-color:#d774ad;
+}
+@media (max-width:480px){
+    .pagination-info{ font-size:12px }
+    .page-btn{ padding:6px 8px; min-width:30px }
+}
+
+/* Centered single-line pagination layout */
+.pagination-center{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:16px;
+    width:100%;
+}
+
+/* On small screens, stack prev/summary/next vertically */
+@media (max-width:600px) {
+    .pagination-center{
+        flex-direction: row;
+        gap:8px;
+        flex-wrap:wrap;
+    }
+    .pagination-summary{ order: 3; width:100%; text-align:center; }
+    .pagination-summary-mobile{ display:block; text-align:center; margin-top:8px; }
+    .pagination-center .page-btn{ width: auto; max-width:48px; }
+}
+
+/* hide old numbered controls if any left */
+.pagination-controls{ display: none; }
+
+/* Desktop: show mobile-summary hidden */
+.pagination-summary-mobile{ display:none; }
+
+/* Layout ordering for desktop: summary first, then prev, pages, next */
+.pagination-summary{ order: 0; }
+.pagination-prev{ order: 1; }
+.pagination-pages{ order: 2; display:flex; gap:8px; }
+.pagination-next{ order: 3; }
 
 /* Desktop Styles */
 @media (min-width: 1024px) {
