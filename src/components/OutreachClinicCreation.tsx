@@ -188,7 +188,8 @@ const OutreachClinicCreation: React.FC = () => {
         if (selectedPanchayats) {
             setPanchayatCode(selectedPanchayats.code);
             setPanchayatId(selectedPanchayats.id);
-            setClinicCode(`${districtCode}${talukCode}${selectedPanchayats.code}`);
+            // Do NOT auto-prefill clinicCode; user may enter it manually if desired.
+            // setClinicCode(`${districtCode}${talukCode}${selectedPanchayats.code}`);
         }
         console.log(`Selected Panchayat: ${selectedPanchayat}`);
     };
@@ -209,6 +210,11 @@ const OutreachClinicCreation: React.FC = () => {
             return;
         }
 
+            // If the user supplied a clinicCode, it must be exactly 7 digits
+            if ((clinicCode || '').trim() !== '' && !/^\d{7}$/.test(clinicCode)) {
+                alert('If provided, Outreach Clinic System ID must be exactly 7 digits.');
+                return;
+            }
         navigate('/resource-planning', {
             state: { startDate, endDate, panchayatId, pincode, clinicName, clinicCode }
         });
@@ -381,21 +387,22 @@ const OutreachClinicCreation: React.FC = () => {
                 </label> */}
 
                 <label>
-                    <span style={{ color: 'black' }}>Outreach Clinic ID*:</span>
+                    <span style={{ color: 'black' }}>Edit Outreach Clinic ID:</span>
                     <span style={{ color: 'darkred', fontWeight: 'bold' }}></span>
                     <div className="input-with-icon">
-                       <input
-  type="text"
-  inputMode="numeric" 
-  placeholder="Show 7 digit System ID"
-  value={clinicCode}
-  onChange={(e) => {
-    const value = e.target.value;
-    if (/^\d{0,7}$/.test(value)) { // Allows up to 7 digits
-      setClinicCode(value);
-    }
-  }}
-  required
+                                             <input
+    type="text"
+    inputMode="numeric" 
+    placeholder="Optional: enter 7 digit System ID"
+    value={clinicCode}
+    onChange={(e) => {
+        const value = e.target.value;
+        // allow up to 7 digits while typing; no auto-fill
+        if (/^\d{0,7}$/.test(value)) {
+            setClinicCode(value);
+        }
+    }}
+    // clinicCode is optional; validation done on submit
 />
 
                         <img

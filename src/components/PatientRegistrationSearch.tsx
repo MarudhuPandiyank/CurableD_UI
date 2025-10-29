@@ -155,6 +155,7 @@ const PatientRegistrationSearch: React.FC = () => {
     // Guard: you may also require canCreate AND/OR canView here depending on flow
     if (!canCreate) return;
 
+    console.log(clinic,"Clinic")
     navigate('/NewScreeningEnrollment', {
       state: {
         startDate: clinic.startDate,
@@ -184,7 +185,8 @@ const PatientRegistrationSearch: React.FC = () => {
     (clinic, index, self) =>
       self.findIndex((c) => c.name === clinic.name) !== index
   );
-
+  // debug: show filteredClinics during render (moved out of JSX)
+  console.log(filteredClinics, 'filteredClinics');
   return (
     <div className="container2">
       <Header1 />
@@ -242,6 +244,7 @@ const PatientRegistrationSearch: React.FC = () => {
             </select>
           </div>
         )} */}
+
 
         {filteredClinics.length > 0 && (
           <div className="clinic-details-container">

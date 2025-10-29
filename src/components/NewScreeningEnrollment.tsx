@@ -89,8 +89,8 @@ useEffect(() => {
         setNavCandidateId(Number(navState.candidateId));
       }
       // capture registration id if supplied (registrationId / registraionId)
-      if (navState.registrationId || navState.registraionId) {
-        setRegistraionId(String(navState.registrationId || navState.registraionId));
+      if (navState.registrationId && navState.edit) {
+        setRegistraionId(String(navState.registrationId));
       }
     }
 
@@ -271,7 +271,7 @@ if (!isEditMode && streetId.trim() !== '') {
       name,
       mobileNo: mobile,
       gender: gender.toUpperCase(),
-      registraionId: registraionId,
+      registraionId: registraionId?registraionId:null,
       // dob: dob ? dob.toISOString().split('T')[0] : null,
       age,
       address,
