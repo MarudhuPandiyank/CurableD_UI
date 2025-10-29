@@ -61,8 +61,10 @@ const App: React.FC = () => {
 
   // ---------- visibility helpers ----------
   const isTriggered = (current: string | string[] | undefined, trigger: string) => {
-    if (Array.isArray(current)) return current.includes(trigger);
-    return current === trigger;
+    if (!trigger) return false;
+    const t = trigger.trim();
+    if (Array.isArray(current)) return current.map(c => (typeof c === 'string' ? c.trim() : c)).includes(t);
+    return (typeof current === 'string' ? current.trim() : current) === t;
   };
 
   
@@ -72,12 +74,14 @@ const App: React.FC = () => {
     const childNames = new Set<string>();
 
     fields.forEach(f => {
-      allNames.add(f.testName);
+      const parentName = (f.testName || '').trim();
+      allNames.add(parentName);
       (f.condition || []).forEach(c => {
-        const arr = parentToChildren.get(f.testName) || [];
-        arr.push({ child: c.enabledField, trigger: c.triggerValue });
-        parentToChildren.set(f.testName, arr);
-        childNames.add(c.enabledField);
+        const childName = (c.enabledField || '').trim();
+        const arr = parentToChildren.get(parentName) || [];
+        arr.push({ child: childName, trigger: (c.triggerValue || '').trim() });
+        parentToChildren.set(parentName, arr);
+        childNames.add(childName);
       });
     });
 
@@ -91,11 +95,11 @@ const App: React.FC = () => {
   ) => {
     const { parentToChildren, allNames, roots } = buildGraph(fields);
 
-    const visible = new Set<string>(roots);
-    const queue: string[] = [...roots];
+  const visible = new Set<string>(roots.map(r => r.trim()));
+  const queue: string[] = roots.map(r => r.trim());
 
     while (queue.length) {
-      const parent = queue.shift() as string;
+      const parent = (queue.shift() as string).trim();
       const children = parentToChildren.get(parent) || [];
       for (const { child, trigger } of children) {
         if (isTriggered(selections[parent], trigger)) {
@@ -107,7 +111,7 @@ const App: React.FC = () => {
       }
     }
 
-    return Array.from(allNames).filter(n => !visible.has(n));
+    return Array.from(allNames).filter(n => !visible.has(n.trim()));
   };
   // ----------------------------------------
 
@@ -152,7 +156,8 @@ const App: React.FC = () => {
           // Normalize into { testName: string | string[] } based on field.valueType
           const initial: { [k: string]: string | string[] } = {};
           params.forEach(f => {
-            const hit = histParams.find(p => p.testName === f.testName);
+            const key = (f.testName || '').trim();
+            const hit = histParams.find(p => (p.testName || '').trim() === key);
             if (!hit) return;
 
             // collect candidates of values in order of preference
@@ -161,9 +166,9 @@ const App: React.FC = () => {
                         typeof hit.value === 'string' ? [hit.value] : []) as string[];
 
             if (f.valueType === 'Multi Select') {
-              initial[f.testName] = arr || [];
+              initial[key] = arr || [];
             } else {
-              initial[f.testName] = (arr && arr.length > 0) ? arr[0] : '';
+              initial[key] = (arr && arr.length > 0) ? arr[0] : '';
             }
           });
 
@@ -192,23 +197,24 @@ const App: React.FC = () => {
             setIsLoading(false);
       },200)
     }
-    const nextSelected = { ...selectedValues, [testName]: value };
-    const nextHidden = computeHidden(fieldData, nextSelected);
+  const key = (testName || '').trim();
+  const nextSelected = { ...selectedValues, [key]: value };
+  const nextHidden = computeHidden(fieldData, nextSelected);
 
     // Clear values for any fields that just became hidden
     const prevHiddenSet = new Set(hiddenFields);
     const nextHiddenSet = new Set(nextHidden);
-    Object.keys(nextSelected).forEach(key => {
-      if (!prevHiddenSet.has(key) && nextHiddenSet.has(key)) {
-        delete nextSelected[key];
+    Object.keys(nextSelected).forEach(k => {
+      if (!prevHiddenSet.has(k) && nextHiddenSet.has(k)) {
+        delete nextSelected[k];
       }
     });
 
     setSelectedValues(nextSelected);
     setHiddenFields(nextHidden);
 
-    if (formErrors.includes(testName)) {
-      setFormErrors(errs => errs.filter(e => e !== testName));
+    if (formErrors.includes(key)) {
+      setFormErrors(errs => errs.filter(e => e !== key));
     }
   };
 
@@ -220,8 +226,8 @@ const App: React.FC = () => {
   // Validate only visible & mandatory
   const validateForFinish = () => {
     const missing = fieldData
-      .filter(f => !hiddenFields.includes(f.testName) && f.isMandatory)
-      .map(f => f.testName)
+      .filter(f => !hiddenFields.includes((f.testName || '').trim()) && f.isMandatory)
+      .map(f => (f.testName || '').trim())
       .filter(name => {
         const v = selectedValues[name];
         return v === undefined || v === '' || (Array.isArray(v) && v.length === 0);
@@ -252,15 +258,18 @@ const App: React.FC = () => {
       completed,
       type: 1,
       testMetrics: {
-        params: fieldData.map(field => ({
-          testName: field.testName,
-          subtestName: field.subtestName,
-          selectedValues: selectedValues[field.testName]
-            ? Array.isArray(selectedValues[field.testName])
-              ? (selectedValues[field.testName] as string[])
-              : [selectedValues[field.testName] as string]
-            : [],
-        })),
+        params: fieldData.map(field => {
+          const key = (field.testName || '').trim();
+          return {
+            testName: field.testName,
+            subtestName: field.subtestName,
+            selectedValues: selectedValues[key]
+              ? Array.isArray(selectedValues[key])
+                ? (selectedValues[key] as string[])
+                : [selectedValues[key] as string]
+              : [],
+          };
+        }),
       },
     };
   };
@@ -370,7 +379,8 @@ const parseToDate = (s?: string) => {
         <>
 
         {fieldData.map((field) => {
-          if (hiddenFields.includes(field.testName)) return null;
+          const key = (field.testName || '').trim();
+          if (hiddenFields.includes(key)) return null;
 
           return (
             <div key={field.testName} className="form-group">
@@ -382,7 +392,7 @@ const parseToDate = (s?: string) => {
               {field.valueType === 'SingleSelect' && (
                 <>
                   <select
-                    value={(selectedValues[field.testName] as string) || ''}
+                    value={(selectedValues[key] as string) || ''}
                     onChange={(e) => handleSelectChange(field.testName, e.target.value)}
                   >
                     <option value="" disabled>Select an option</option>
@@ -390,7 +400,7 @@ const parseToDate = (s?: string) => {
                       <option key={val} value={val}>{val}</option>
                     ))}
                   </select>
-                  {formErrors.includes(field.testName) && (
+                  {formErrors.includes(key) && (
                     <span className="error-message">This field is required</span>
                   )}
                 </>
@@ -402,15 +412,15 @@ const parseToDate = (s?: string) => {
                     isMulti
                     options={field.values.map((val) => ({ value: val, label: val }))}
                     value={
-                      Array.isArray(selectedValues[field.testName])
-                        ? (selectedValues[field.testName] as string[]).map(v => ({ value: v, label: v }))
+                      Array.isArray(selectedValues[key])
+                        ? (selectedValues[key] as string[]).map(v => ({ value: v, label: v }))
                         : []
                     }
                     onChange={(options: MultiValue<ColourOption>) =>
                       handleSelectChange(field.testName, (options || []).map(o => o.value))
                     }
                   />
-                  {formErrors.includes(field.testName) && (
+                  {formErrors.includes(key) && (
                     <span className="error-message">This field is required</span>
                   )}
                 </>
@@ -420,42 +430,42 @@ const parseToDate = (s?: string) => {
                 <>
                   <input
                     type="text"
-                    value={(selectedValues[field.testName] as string) || ''}
+                    value={(selectedValues[key] as string) || ''}
                     onChange={(e) => handleSelectChange(field.testName, e.target.value)}
                   />
-                  {formErrors.includes(field.testName) && (
+                  {formErrors.includes(key) && (
                     <span className="error-message">This field is required</span>
                   )}
                 </>
               )}
 
               {field.valueType === 'Date' && (
-  <>
-    <div style={{ width: '100%' }}>
-      <Calendar
-        value={parseToDate(selectedValues[field.testName] as string)}
-        onChange={(e) => {
-          const date = e.value as Date | null;
-          if (date) {
-            // store as dd-mm-yyyy
-            const dd = String(date.getDate()).padStart(2, '0');
-            const mm = String(date.getMonth() + 1).padStart(2, '0');
-            const yyyy = date.getFullYear();
-            handleSelectChange(field.testName, `${dd}-${mm}-${yyyy}`);
-          } else {
-            handleSelectChange(field.testName, '');
-          }
-        }}
-        dateFormat="dd-mm-yy"
-        placeholder="dd-mm-yyyy"
-        maxDate={new Date()}
-      />
-    </div>
-    {formErrors.includes(field.testName) && (
-      <span className="error-message">This field is required</span>
-    )}
-  </>
-)}
+                <>
+                  <div style={{ width: '100%' }}>
+                    <Calendar
+                      value={parseToDate(selectedValues[key] as string)}
+                      onChange={(e) => {
+                        const date = e.value as Date | null;
+                        if (date) {
+                          // store as dd-mm-yyyy
+                          const dd = String(date.getDate()).padStart(2, '0');
+                          const mm = String(date.getMonth() + 1).padStart(2, '0');
+                          const yyyy = date.getFullYear();
+                          handleSelectChange(field.testName, `${dd}-${mm}-${yyyy}`);
+                        } else {
+                          handleSelectChange(field.testName, '');
+                        }
+                      }}
+                      dateFormat="dd-mm-yy"
+                      placeholder="dd-mm-yyyy"
+                      maxDate={new Date()}
+                    />
+                  </div>
+                  {formErrors.includes(key) && (
+                    <span className="error-message">This field is required</span>
+                  )}
+                </>
+              )}
 
 
               {field.valueType === 'SingleSelectButton' && (
@@ -465,14 +475,14 @@ const parseToDate = (s?: string) => {
                       <button
                         key={val}
                         type="button"
-                        className={`gender-btn ${selectedValues[field.testName] === val ? 'active' : ''}`}
+                        className={`gender-btn ${selectedValues[key] === val ? 'active' : ''}`}
                         onClick={() => handleSelectChange(field.testName, val)}
                       >
                         {val}
                       </button>
                     ))}
                   </div>
-                  {formErrors.includes(field.testName) && (
+                  {formErrors.includes(key) && (
                     <span className="error-message">This field is required</span>
                   )}
                 </>
