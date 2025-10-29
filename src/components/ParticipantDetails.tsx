@@ -228,15 +228,38 @@ setIncome(data.monthlyIncome === 0 ? '' : (data.monthlyIncome?.toString() || '')
       setAadhaarError('');
     }
 
-    const candidateHabitDTOs = habits.map((habit) => ({
-      candidateId: localStorage.getItem('patientId'),
-      duration: tobaccoUser ? (duration ? parseFloat(duration) : null) : null,
-      frequency: habit.frequency || null,
-      habits: habit.habit || null,
-      howLong: habit.howLong ? parseFloat(habit.howLong) : null,
-      quit: habit.quit === 'Yes' ? true : false,
-      type: habit.habitType || null,
-    }));
+    // map habits to DTOs, but skip entries that are entirely empty
+    const candidateHabitDTOs = habits
+      .map((habit) => {
+        const dto = {
+          candidateId: Number(localStorage.getItem('patientId')) || null,
+          duration: tobaccoUser ? (duration ? parseFloat(duration) : null) : null,
+          frequency: habit.frequency || null,
+          habits: habit.habit || null,
+          howLong: habit.howLong ? parseFloat(habit.howLong) : null,
+          quit: habit.quit === 'Yes',
+          type: habit.habitType || null,
+        } as {
+          candidateId: number | null;
+          duration: number | null;
+          frequency: string | null;
+          habits: string | null;
+          howLong: number | null;
+          quit: boolean;
+          type: string | null;
+        };
+
+        return dto;
+      })
+      // remove DTOs where all meaningful fields are empty/null
+      .filter((d) => {
+        const allEmpty =
+          (d.duration === null || d.duration === undefined) &&
+          (d.frequency === null || d.frequency === undefined || d.frequency === '') &&
+          (d.habits === null || d.habits === undefined || d.habits === '') &&
+          (d.howLong === null || d.howLong === undefined);
+        return !allEmpty;
+      });
 
     const data = {
       fatherName,
