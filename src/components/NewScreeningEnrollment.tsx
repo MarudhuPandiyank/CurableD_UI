@@ -306,6 +306,9 @@ if (!isEditMode && streetId.trim() !== '') {
         localStorage.setItem('participant', participantValue);
        localStorage.setItem('participantage', `${setage}`);
         localStorage.removeItem('prefillId');         
+        // Mark this patient as just-created in this session so ParticipantDetails
+        // won't auto-select 'No' when opened immediately after enrollment.
+        localStorage.setItem('justCreatedPatient', 'true');
         navigate('/DiseaseSpecificDetails');
       }
     } catch (error) {

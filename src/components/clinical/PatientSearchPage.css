@@ -15,11 +15,18 @@
     /* margin-top: 20px; */
 }
 .no-data-message {
-    text-align: center;
-    color: red;
-    margin-top: 1rem;
-    font-size: 16px;
-  }
+        text-align: left;
+        color: red;
+        margin-top: 1rem;
+        font-size: 16px;
+    }
+
+/* center-only helper used for the inline error on this page */
+.center-message {
+    text-align: center !important;
+    width: 100%;
+    margin-top: 8px;
+}
   
 .search-patient-title {
     font-size: 18px;

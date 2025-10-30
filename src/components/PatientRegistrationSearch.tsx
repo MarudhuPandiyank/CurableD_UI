@@ -86,6 +86,12 @@ const PatientRegistrationSearch: React.FC = () => {
 
     setLoading(true);
     setMessage('');
+    // require at least 3 characters to perform search
+    if (!searchInput || searchInput.trim().length < 3) {
+      setMessage('please enter min 3 char');
+      setLoading(false);
+      return;
+    }
 
     const token = localStorage.getItem('token');
     if (!token) {

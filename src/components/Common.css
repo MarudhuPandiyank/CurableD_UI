@@ -212,6 +212,42 @@
     background-color: #d774ad;
   }
 
+/* Inline message / error shown under search inputs */
+.message {
+  color: #d32f2f; /* red */
+  font-weight: 600;
+  margin-top: 8px;
+}
+
+/* generic error class used by some clinical search screens */
+.error {
+  color: #d32f2f; /* red */
+  font-weight: 600;
+  margin-top: 8px;
+}
+
+/* When an error/message follows the search-section, align it to the left beneath the input */
+.search-section + .error,
+.search-section + .message,
+.search-section + .no-data-message,
+.search-section_common + .error,
+.search-section_common + .message,
+.search-section_common + .no-data-message {
+  text-align: left;
+  width: 100%;
+  margin-top: 8px;
+  padding-left: 0;
+}
+
+/* Make the search input and button layout more responsive and consistent */
+.search-section_common .search-input_common {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.search-section_common .search-button_common {
+  flex: 0 0 auto;
+}
+
 
   .new-screening-form {
     margin-top: -20px; /* Adjust this value to move the form up */

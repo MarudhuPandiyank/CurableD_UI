@@ -92,7 +92,9 @@ const ParticipantDetails: React.FC = () => {
   const [habitTypes, setHabitTypes] = useState<string[]>([]);
   const [selectedHabit, setSelectedHabit] = useState<string>('');
   const [selectedHabitType, setSelectedHabitType] = useState<string>('');
-  const [hasTobaccoHabit, setHasTobaccoHabit] = useState('No');
+  // default to empty so new enrollments do NOT show "No" preselected
+  // existing/edit flows will set this value when prefill runs
+  const [hasTobaccoHabit, setHasTobaccoHabit] = useState<string>('');
   const [hasQuit, setHasQuit] = useState('');
   const [altMobileError, setAltMobileError] = useState('');        // Alternate mobile inline error
   const [aadhaarError, setAadhaarError] = useState('');            // Aadhaar inline error
@@ -143,8 +145,10 @@ setIncome(data.monthlyIncome === 0 ? '' : (data.monthlyIncome?.toString() || '')
         setVoterId(data.voterId || '');
         setRationCard(data.rationCard || '');
 
-        if (data.candidateHabitDTOs && data.candidateHabitDTOs.length > 0) {
-          setHasTobaccoHabit('Yes');
+        const justCreated = localStorage.getItem('justCreatedPatient') === 'true';
+
+            if (data.candidateHabitDTOs && data.candidateHabitDTOs.length > 0) {
+              setHasTobaccoHabit('Yes');
 
           const mappedHabits: Habit[] = data.candidateHabitDTOs.map((habit, idx) => ({
             habit: habit.habits || '',
@@ -167,9 +171,21 @@ setIncome(data.monthlyIncome === 0 ? '' : (data.monthlyIncome?.toString() || '')
               await fetchHabitTypes(habit.habit);
             }
           }
-        } else {
-          setHasTobaccoHabit('No');
+        } else if (data.tobaccoUser === true) {
+          // API indicates tobaccoUser true but no habit DTOs — show Yes but empty habit list
+          setHasTobaccoHabit('Yes');
           setHabits([{ habit: '', habitType: '', frequency: '', quit: '', howLong: '', isOpen: true }]);
+        } else {
+          // If this patient was just created in this session, leave the toggle
+          // unset so the UI does not always default to 'No' on first visit.
+          if (justCreated) {
+            setHasTobaccoHabit('');
+            setHabits([{ habit: '', habitType: '', frequency: '', quit: '', howLong: '', isOpen: true }]);
+            localStorage.removeItem('justCreatedPatient');
+          } else {
+            setHasTobaccoHabit('No');
+            setHabits([{ habit: '', habitType: '', frequency: '', quit: '', howLong: '', isOpen: true }]);
+          }
         }
 
         console.log('Prefill Data:', data);
@@ -210,7 +226,8 @@ setIncome(data.monthlyIncome === 0 ? '' : (data.monthlyIncome?.toString() || '')
 
   // Prepare form data and run inline validators. Returns the data object or null if validation fails.
   const prepareFormData = () => {
-    const tobaccoUser = selectedToggle1 === 'yes';
+    // derive tobaccoUser from visible UI state
+    const tobaccoUser = hasTobaccoHabit === 'Yes';
 
     // Block submit if invalid alt mobile
     if (altMobile && altMobile.length !== 10) {

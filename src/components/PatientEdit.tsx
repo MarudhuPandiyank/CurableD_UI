@@ -56,13 +56,14 @@ const PatientEdit: React.FC = () => {
   const [message, setMessage] = useState<string>('');
 
   const handleSearch = async () => {
-    // if (!searchInput) {
-    //   setMessage('Please enter a search term.');
-    //   return;
-    // }
-
+    // Require at least 3 characters before searching to avoid broad queries
     setLoading(true);
     setMessage('');
+    if (!searchInput || searchInput.trim().length < 3) {
+      setMessage('please enter min 3 char');
+      setLoading(false);
+      return;
+    }
           localStorage.removeItem('campId');
 
 

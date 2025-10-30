@@ -47,7 +47,13 @@ const PatientSearchPage: React.FC = () => {
 
 
   const handleSearch = async () => {
-    setSearchSubmitted(true); 
+    // require at least 3 characters before searching
+    if (!searchQuery || searchQuery.trim().length < 3) {
+      setError('please enter min 3 char');
+      return;
+    }
+    // only mark submitted when a real API call will be made
+    setSearchSubmitted(true);
     const hospitalId = localStorage.getItem("hospitalId");
      const roleId= localStorage.getItem('roleId');
     const token = localStorage.getItem("token");
@@ -264,8 +270,10 @@ console.log(selectedDisease,"selectedDisease")
 )}
 
 
-      {loading && <p>Loading patients...</p>}
-      {error && <p className="error">{error}</p>}
+  {loading && <p>Loading patients...</p>}
+  {error && <p className="error center-message">{error}</p>}
+
+      
 
       {patients.length > 0 && (
         <>

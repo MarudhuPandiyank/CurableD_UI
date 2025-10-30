@@ -54,10 +54,17 @@ const ClinicSearchPage: React.FC = () => {
       setError("Hospital ID or Token missing. Please log in again.");
       return;
     }
-
-    setLoading(true);
+    // require at least 3 characters to search
     setError(null);
-     setSearchAttempted(true);
+    if (!searchQuery || searchQuery.trim().length < 3) {
+      setError('please enter min 3 char');
+      // don't mark as searchAttempted — API wasn't called
+      return;
+    }
+
+    // mark that a real search is being attempted and start loading
+    setSearchAttempted(true);
+    setLoading(true);
 
     try {
       const response = await axios.post<Patient[]>(
@@ -200,6 +207,8 @@ const handleStageChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
           Search
         </button>
       </div>
+
+    {error && <p className="error center-message">{error}</p>}
 
 {!loading && searchAttempted && patients.length === 0 && (
   <p className="no-data-message">No patient found</p>

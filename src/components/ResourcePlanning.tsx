@@ -60,7 +60,7 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
   const requestData = {
     campDTO: {
       name: clinicName || '',
-      campIdPrefix: clinicCode || '',
+      campIdPrefix: clinicCode || null,
       hospitalId,
       startDate: reviewData.outreachClinicStartDate,
       endDate: reviewData.outreachClinicEndDate,
