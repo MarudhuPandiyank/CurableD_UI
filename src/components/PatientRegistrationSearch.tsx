@@ -88,7 +88,7 @@ const PatientRegistrationSearch: React.FC = () => {
     setMessage('');
     // require at least 3 characters to perform search
     if (!searchInput || searchInput.trim().length < 3) {
-      setMessage('please enter min 3 char');
+      setMessage('Please enter a minimum of 3 characters.');
       setLoading(false);
       return;
     }

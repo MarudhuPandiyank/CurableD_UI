@@ -60,7 +60,7 @@ const PatientEdit: React.FC = () => {
     setLoading(true);
     setMessage('');
     if (!searchInput || searchInput.trim().length < 3) {
-      setMessage('please enter min 3 char');
+      setMessage('Please enter a minimum of 3 characters.');
       setLoading(false);
       return;
     }

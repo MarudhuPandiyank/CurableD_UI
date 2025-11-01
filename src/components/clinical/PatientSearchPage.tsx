@@ -49,7 +49,7 @@ const PatientSearchPage: React.FC = () => {
   const handleSearch = async () => {
     // require at least 3 characters before searching
     if (!searchQuery || searchQuery.trim().length < 3) {
-      setError('please enter min 3 char');
+      setError('Please enter a minimum of 3 characters.');
       return;
     }
     // only mark submitted when a real API call will be made

@@ -65,6 +65,9 @@ const OutreachClinicCreation: React.FC = () => {
     const [panchayatCode, setPanchayatCode] = useState('');
     const [panchayatId, setPanchayatId] = useState(0);
     const [clinicCode, setClinicCode] = useState('');
+    const [clinicNameError, setClinicNameError] = useState('');
+    const [showDuplicateModal, setShowDuplicateModal] = useState(false);
+    const [pendingNextState, setPendingNextState] = useState<any>(null);
     const token = localStorage.getItem('token');
     useEffect(() => {
         const fetchStates = async () => {
@@ -189,18 +192,34 @@ const OutreachClinicCreation: React.FC = () => {
             setPanchayatCode(selectedPanchayats.code);
             setPanchayatId(selectedPanchayats.id);
             // Do NOT auto-prefill clinicCode; user may enter it manually if desired.
-            // setClinicCode(`${districtCode}${talukCode}${selectedPanchayats.code}`);
+            setClinicCode(`${districtCode}${talukCode}${selectedPanchayats.code}`);
         }
         console.log(`Selected Panchayat: ${selectedPanchayat}`);
     };
 
 
     // Handle form submission
-    const handleNextClick = (e: React.FormEvent) => {
+    const handleClinicNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value;
+        setClinicName(value);
+        if (value.trim().length > 0 && value.trim().length < 3) {
+            setClinicNameError('Outreach Clinic Name must be at least 3 characters.');
+        } else {
+            setClinicNameError('');
+        }
+    };
+
+    const handleNextClick = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        if (!clinicName || !pincode || !state || !district || !taluk || !panchayat || !startDate) {
-            alert('Please fill out all required fields.');
+
+        if (!clinicName || !pincode || !state || !district || !taluk || !panchayat || !startDate || !clinicCode) {
+            alert('Please fill out all required fields, including Outreach Clinic ID.');
+            return;
+        }
+        if (clinicName.trim().length < 3) {
+            setClinicNameError('Outreach Clinic Name must be at least 3 characters.');
+            alert('Outreach Clinic Name must be at least 3 characters.');
             return;
         }
 
@@ -210,14 +229,55 @@ const OutreachClinicCreation: React.FC = () => {
             return;
         }
 
-            // If the user supplied a clinicCode, it must be exactly 7 digits
-            if ((clinicCode || '').trim() !== '' && !/^\d{7}$/.test(clinicCode)) {
-                alert('If provided, Outreach Clinic System ID must be exactly 7 digits.');
+        // ClinicCode is now mandatory and must be exactly 7 digits
+        if (!/^\d{7}$/.test(clinicCode)) {
+            alert('Outreach Clinic System ID must be exactly 7 digits.');
+            return;
+        }
+
+        // Check for duplicate Clinic ID before proceeding
+        const hospitalId = localStorage.getItem('hospitalId');
+        if (!hospitalId) {
+            alert('No hospital ID found. Please ensure hospitalId is set in local storage.');
+            return;
+        }
+        try {
+            const resp = await axios.get(
+                `${config.appURL}/curable/isDuplicateClinic/hospitalId/${hospitalId}/outreachClinicId/${clinicCode}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+            console.log(resp.data, "duplicate check response");
+            if (resp.data === true || resp.data === 'true') {
+                // Show modal, store navigation state for later
+                setPendingNextState({ startDate, endDate, panchayatId, pincode, clinicName, clinicCode });
+                setShowDuplicateModal(true);
                 return;
             }
+        } catch (err) {
+            alert('Error checking for duplicate Clinic ID.');
+            return;
+        }
+        // Not duplicate, proceed
         navigate('/resource-planning', {
             state: { startDate, endDate, panchayatId, pincode, clinicName, clinicCode }
         });
+    };
+
+    const handleDuplicateModalYes = () => {
+        setShowDuplicateModal(false);
+        if (pendingNextState) {
+            navigate('/resource-planning', { state: pendingNextState });
+            setPendingNextState(null);
+        }
+    };
+
+    const handleDuplicateModalNo = () => {
+        setShowDuplicateModal(false);
+        setPendingNextState(null);
     };
     return (
         <div className="container2">
@@ -230,9 +290,10 @@ const OutreachClinicCreation: React.FC = () => {
                         type="text"
                         placeholder="Enter Outreach Clinic Name"
                         value={clinicName}
-                        onChange={(e) => setClinicName(e.target.value)}
+                        onChange={handleClinicNameChange}
                         required
                     />
+                    {clinicNameError && <p className="errors_message">{clinicNameError}</p>}
                 </label>
                 <label>
                     <span style={{ color: "black" }}>Pincode*:</span><span style={{ color: 'darkred', fontWeight: 'bold', }}></span>
@@ -387,7 +448,7 @@ const OutreachClinicCreation: React.FC = () => {
                 </label> */}
 
                 <label>
-                    <span style={{ color: 'black' }}>Edit Outreach Clinic ID:</span>
+                    <span style={{ color: 'black' }}>Outreach Clinic ID*:</span>
                     <span style={{ color: 'darkred', fontWeight: 'bold' }}></span>
                     <div className="input-with-icon">
                                              <input
@@ -423,6 +484,30 @@ const OutreachClinicCreation: React.FC = () => {
                     <img src="/assets/Curable logo - rectangle with black text.png" alt="Curable Logo" className="footer-logo" />
                 </div>
             </div>
+            {/* Duplicate Clinic ID Modal */}
+            {showDuplicateModal && (
+                <div className="custom-modal">
+                    <div className="custom-modal-outreach">
+                        <h2 className="custom-modal-title">Are you sure you want to use a duplicate Clinic ID?</h2>
+                                                <div className="custom-modal-buttons">
+                                                        <button 
+                                                            className="Next-button Next-button_home" 
+                                                            type="button" 
+                                                            onClick={handleDuplicateModalNo}
+                                                        >
+                                                            No
+                                                        </button>
+                                                        <button 
+                                                            className="custom-modal-button custom-save-button" 
+                                                            type="button" 
+                                                            onClick={handleDuplicateModalYes}
+                                                        >
+                                                            Yes
+                                                        </button>
+                                                </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

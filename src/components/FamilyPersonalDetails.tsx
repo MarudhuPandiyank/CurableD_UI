@@ -34,6 +34,7 @@ function FamilyPersonalDetails() {
   const [formValues, setFormValues] = useState<Record<string, string>[]>([]);
   const [expandedMemberIndex, setExpandedMemberIndex] = useState<number | null>(0);
   const [error, setError] = useState<string | null>(null);
+  const [nameErrors, setNameErrors] = useState<string[]>([]);
 
   useEffect(() => {
     const fetchFamilyPersonalMetrics = async () => {
@@ -135,24 +136,46 @@ function FamilyPersonalDetails() {
       [trimmedName]: value,
     };
     setFormValues(updatedFormValues);
+
+    // Name validation: first field in formData is Name
+    if (index < nameErrors.length && testName === formData[0]?.testName.trim()) {
+      const newNameErrors = [...nameErrors];
+      if (value.trim().length > 0 && value.trim().length < 3) {
+        newNameErrors[index] = 'Name must be at least 3 characters.';
+      } else {
+        newNameErrors[index] = '';
+      }
+      setNameErrors(newNameErrors);
+    }
   };
 
   const handleAddMember = () => {
     if (formValues.length === 0) {
       setFormValues([{}]);
+      setNameErrors(['']);
       setExpandedMemberIndex(0);
       return;
     }
 
     const lastMember = formValues[formValues.length - 1];
-    const hasData = Object.values(lastMember).some(value => (value ?? '').toString().trim() !== '');
+    const nameField = formData[0]?.testName.trim();
+    const nameValue = lastMember[nameField] || '';
+    if (nameValue.trim().length < 3) {
+      const newNameErrors = [...nameErrors];
+      newNameErrors[formValues.length - 1] = 'Name must be at least 3 characters.';
+      setNameErrors(newNameErrors);
+      alert('Name must be at least 3 characters.');
+      return;
+    }
 
+    const hasData = Object.values(lastMember).some(value => (value ?? '').toString().trim() !== '');
     if (!hasData) {
       alert('Please fill at least one field before adding another member.');
       return;
     }
 
     setFormValues(prev => [...prev, {}]);
+    setNameErrors(prev => [...prev, '']);
     setExpandedMemberIndex(formValues.length);
   };
 
@@ -338,6 +361,7 @@ function FamilyPersonalDetails() {
                   {formData.map((field, index) => {
                     const trimmedName = field.testName.trim();
                     const value = formValues[formIndex][trimmedName] || '';
+                    const isNameField = index === 0;
                     return (
                       <div key={index} className="form-group">
                         <label style={{ color: 'darkblue' }}>{field.testName}:</label>
@@ -381,7 +405,7 @@ function FamilyPersonalDetails() {
                             onChange={(e) => {
                               let v = e.target.value;
                               if (
-                                v === '' ||
+                                v === '' || 
                                 (/^\d{1,2}$/.test(v) && Number(v) >= 1 && Number(v) <= 99)
                               ) {
                                 handleFieldChange(formIndex, trimmedName, v);
@@ -403,6 +427,9 @@ function FamilyPersonalDetails() {
                             placeholder={`Enter ${field.testName}`}
                             onChange={(e) => handleFieldChange(formIndex, trimmedName, e.target.value)}
                           />
+                        )}
+                        {isNameField && nameErrors[formIndex] && (
+                          <p className="errors_message">{nameErrors[formIndex]}</p>
                         )}
                       </div>
                     );

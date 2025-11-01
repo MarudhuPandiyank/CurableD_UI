@@ -159,7 +159,7 @@ const [errors, setErrors] = useState({
         noProgramcordinators: noProgramCoordinators,
         noSocialworkers: noSocialWorkers,
         name: clinicName || '',
-        campIdPrefix: clinicCode || null,
+        campIdPrefix: clinicCode || '',
         hospitalId: localStorage.getItem('hospitalId'),
         id: id || null,
       },

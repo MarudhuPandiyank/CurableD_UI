@@ -57,7 +57,7 @@ const ClinicSearchPage: React.FC = () => {
     // require at least 3 characters to search
     setError(null);
     if (!searchQuery || searchQuery.trim().length < 3) {
-      setError('please enter min 3 char');
+      setError('Please enter a minimum of 3 characters.');
       // don't mark as searchAttempted — API wasn't called
       return;
     }

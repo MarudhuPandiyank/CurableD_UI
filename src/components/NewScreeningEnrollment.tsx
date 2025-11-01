@@ -66,7 +66,8 @@ const NewScreeningEnrollment: React.FC = () => {
 const [streetIdError, setStreetIdError] = useState('');
 const [genderError, setGenderError] = useState('');
   const [isEditMode, setIsEditMode] = useState(false); // NEW
-const [age, setAge] = useState<number | ''>('');
+  const [age, setAge] = useState<number | ''>('');
+  const [nameError, setNameError] = useState('');
 
 
 
@@ -144,6 +145,16 @@ useEffect(() => {
 
   const handleGenderChange = (value: string) => setGender(value);
 
+  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setName(value);
+    if (value.length > 0 && value.length < 3) {
+      setNameError('Please enter a minimum of 3 characters.');
+    } else {
+      setNameError('');
+    }
+  };
+
   const handleMobileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const input = e.target.value;
     if (/^\d*$/.test(input)) setMobile(input); // Only numeric input
@@ -164,6 +175,13 @@ useEffect(() => {
   //   }
   // };
     const handleSave = async () => {
+    // Validate name before save
+    if (name.trim().length < 3) {
+      setNameError('Please enter a minimum of 3 characters.');
+            alert('Please enter a name minimum of 3 characters.');
+
+      return;
+    }
     const token = localStorage.getItem('token');
     const campId = localStorage.getItem('campId');
     const hospitalId = localStorage.getItem('hospitalId');
@@ -227,31 +245,33 @@ useEffect(() => {
     const campId = localStorage.getItem('campId');
     const hospitalId = localStorage.getItem('hospitalId');
 
-    setMobileError('');
+  setMobileError('');
   setStreetIdError('');
   setGenderError('');
-
-
   let hasError = false;
+
+  if (name.trim().length < 3) {
+    setNameError('Please enter a minimum of 3 characters.');
+    hasError = true;
+  }
 
   if (mobile.length < 10) {
     setMobileError('Mobile number must be exactly 10 digits.');
     hasError = true;
   }
 
-if (!isEditMode && streetId.trim() !== '') {
-  if (!/^\d{3}$/.test(streetId) || streetId === '000') {
-    setStreetIdError('Street ID must be 3 digits from 001 to 999.');
-    hasError = true;
+  if (!isEditMode && streetId.trim() !== '') {
+    if (!/^\d{3}$/.test(streetId) || streetId === '000') {
+      setStreetIdError('Street ID must be 3 digits from 001 to 999.');
+      hasError = true;
+    }
   }
-}
-   if (!gender) {
+  if (!gender) {
     setGenderError('Please select gender.');
     hasError = true;
   }
 
-  if (hasError) return; 
-  
+  if (hasError) return;
 
     if (!token) {
       alert('No token found. Please log in again.');
@@ -354,16 +374,17 @@ if (!isEditMode && streetId.trim() !== '') {
           
           <h1 className="new-screening-title">New Screening Enrollment</h1>
 
-          <div className="form-group">
-            <label style={{ color: 'black' }}> <strong>Name</strong><span style={{ color: 'red' }}>*</span>:</label>
-            <input
-              type="text"
-              placeholder="Enter Name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-            />
-          </div>
+      <div className="form-group">
+      <label style={{ color: 'black' }}> <strong>Name</strong><span style={{ color: 'red' }}>*</span>:</label>
+      <input
+        type="text"
+        placeholder="Enter Name"
+        value={name}
+        onChange={handleNameChange}
+        required
+      />
+      {nameError && <p className="errors_message">{nameError}</p>}
+      </div>
 
           <div className="form-group">
   <label style={{ color: 'black' }}><strong>Mobile Number</strong> <span style={{ color: 'red' }}>*</span>:</label>
