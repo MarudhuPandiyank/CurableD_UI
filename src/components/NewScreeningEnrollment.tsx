@@ -126,7 +126,13 @@ useEffect(() => {
         if (data.dob) setDob(new Date(data.dob));
         setAge(data.age ?? '');
         if (data.address) setAddress(data.address);
-        if (data.streetId != null) setStreetId(String(data.streetId));
+        if (data.streetId != null) {
+          if (data.streetId === 0) {
+            setStreetId('000');
+          } else {
+            setStreetId(String(data.streetId));
+          }
+        }
         if (data.registraionId) setRegistraionId(data.registraionId);
       } catch (err: any) {
         if (err?.response?.status && err.response.status !== 200) {

@@ -112,6 +112,14 @@
   margin-top: 10px;
 }
 
+.custom-modal-title-duplicate {
+  text-align: center;
+  font-size: 18px;
+  font-weight: bold;
+  width: 100%;
+  margin-top: 10px;
+}
+
 .custom-form-group {
   width: 100%;
   display: flex;
@@ -146,6 +154,20 @@
   border-radius: 5px;
 }
 
+.custom-modal-button-duplicate {
+  width: 150px;
+  padding: 12px;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+  border: 2px solid #d774ad;
+    background-color: white;
+    color: #d774ad;
+    border-radius: 10px;
+}
+
+
 .custom-close-button {
   background: white;
   color: #d774ad;
@@ -154,6 +176,12 @@
 .custom-save-button {
   background: #d774ad;
   color: white;
+  
+}
+
+.custom-Yes-button {
+  color: #d774ad;
+  background: white;
 }
 .container21{
   padding: 2rem;

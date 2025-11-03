@@ -205,7 +205,7 @@ const PatientRegistrationSearch: React.FC = () => {
           id="search"
           type="text"
           className="search-input"
-                placeholder="Enter Clinic ID or Name"
+                placeholder="Enter Clinic ID/Name"
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
                 onKeyDown={(e) => {

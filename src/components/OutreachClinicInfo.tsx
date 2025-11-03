@@ -56,6 +56,7 @@ const OutreachClinicInfo: React.FC = () => {
 
   const [clinics, setClinics] = useState<Clinic[]>([]);
   const [searchInput, setSearchInput] = useState<string>('');
+  const [searchError, setSearchError] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const [selectedClinicId, setSelectedClinicId] = useState<string>('');
   const [openNoClinicDialog, setOpenNoClinicDialog] = useState<boolean>(false);
@@ -68,10 +69,12 @@ const OutreachClinicInfo: React.FC = () => {
   
 
   const handleSearch = async () => {
-    // if (!searchInput) {
-    //   setMessage('Please enter a clinic ID or Name.');
-    //   return;
-    // }
+    if (searchInput.trim().length < 3) {
+      setSearchError('Please enter a minimum of 3 characters.');
+      return;
+    } else {
+      setSearchError('');
+    }
 
     setLoading(true);
     setMessage('');
@@ -84,19 +87,19 @@ const OutreachClinicInfo: React.FC = () => {
     }
 
     try {
-            let userIds= localStorage.getItem('userId');
-             let roleId= localStorage.getItem('roleId');
-            let hospitalId= localStorage.getItem('hospitalId')
+      let userIds = localStorage.getItem('userId');
+      let roleId = localStorage.getItem('roleId');
+      let hospitalId = localStorage.getItem('hospitalId');
       const response = await axios.post<ClinicAPIResponse[]>(
         `${config.appURL}/curable/activecamp`,
- { search: searchInput, userId: Number(userIds) ,roleId: Number(roleId) ,hospitalId: Number(hospitalId),stage:1},
-         { headers: { Authorization: `Bearer ${token}` } }
+        { search: searchInput, userId: Number(userIds), roleId: Number(roleId), hospitalId: Number(hospitalId), stage: 1 },
+        { headers: { Authorization: `Bearer ${token}` } }
       );
 
       if (response.data.length > 0) {
         const clinicsData = response.data.map((clinicData) => {
           const startDate = clinicData.startDate.replace(" ", "T") + "Z";
-          const endDate = clinicData.endDate!=null ? clinicData.endDate.replace(" ", "T") + "Z":clinicData.endDate;
+          const endDate = clinicData.endDate != null ? clinicData.endDate.replace(" ", "T") + "Z" : clinicData.endDate;
 
           return {
             id: clinicData.campId,
@@ -115,8 +118,7 @@ const OutreachClinicInfo: React.FC = () => {
             noSocialWorkers: clinicData.noSocialWorkers,
             displayStartDate: clinicData.displayStartDate,
             displayEndDate: clinicData.displayEndDate,
-            campIdPrefix : clinicData.campIdPrefix,
-
+            campIdPrefix: clinicData.campIdPrefix,
           };
         });
 
@@ -187,15 +189,22 @@ const OutreachClinicInfo: React.FC = () => {
           id="search"
           type="text"
           className="search-input"
-              placeholder="Search By Clinic ID or Name"
-              value={searchInput}
-              onChange={(e) => setSearchInput(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  e.preventDefault();       
-                  handleSearch();           
-                }
-              }}
+                placeholder="Enter Clinic ID/Name"
+          value={searchInput}
+          onChange={(e) => {
+            setSearchInput(e.target.value);
+            if (e.target.value.trim().length < 3) {
+              setSearchError('Please enter a minimum of 3 characters.');
+            } else {
+              setSearchError('');
+            }
+          }}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              e.preventDefault();
+              handleSearch();
+            }
+          }}
         />
         <button
           className="search-button"
@@ -206,6 +215,8 @@ const OutreachClinicInfo: React.FC = () => {
            {loading ? 'Searching...' : 'Search'}
         </button>
       </div>
+              {searchError && <p className="errors_message">{searchError}</p>}
+
 
 
 

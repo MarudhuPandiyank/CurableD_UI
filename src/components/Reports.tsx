@@ -99,30 +99,35 @@ const Reports: React.FC = () => {
   }, [campOptions]);
 
   // --- MultiSelect change handler (with Select All tick logic) ---
-  const handleCampChange = (e: MultiSelectChangeEvent) => {
-    let values = (e.value as number[]) ?? [];
+ const handleCampChange = (e: MultiSelectChangeEvent) => {
+  const next = (e.value as number[]) ?? [];
+  const wasAll = selectedCamps.includes(selectAllOption.campId); // had -1 before?
+  const hasAllMarkerNow = next.includes(selectAllOption.campId); // has -1 now?
 
-    // If user clicked our "Select All" (-1), toggle everything
-    if (values.includes(selectAllOption.campId)) {
-      if (isAllSelected(selectedCamps, campOptions)) {
-        // Was all-selected → clear
-        setSelectedCamps([]);
-      } else {
-        // Select all real options + include -1 so the row shows checked
-        setSelectedCamps([-1, ...campOptions.map((c) => c.campId)]);
-      }
-      return;
-    }
+  // User just turned "Select All" ON
+  if (!wasAll && hasAllMarkerNow) {
+    setSelectedCamps([
+      selectAllOption.campId,
+      ...campOptions.map((c) => c.campId),
+    ]);
+    return;
+  }
 
-    // Normal option clicked
-    values = values.filter((v) => v !== -1);
+  // User just turned "Select All" OFF
+  if (wasAll && !hasAllMarkerNow) {
+    setSelectedCamps([]);
+    return;
+  }
 
-    if (isAllSelected(values, campOptions)) {
-      setSelectedCamps([-1, ...values]); // add -1 to show the tick
-    } else {
-      setSelectedCamps(values); // ensure -1 is absent
-    }
-  };
+  // Normal option clicked
+  const cleaned = next.filter((v) => v !== selectAllOption.campId);
+  if (isAllSelected(cleaned, campOptions)) {
+    setSelectedCamps([selectAllOption.campId, ...cleaned]); // show -1 tick
+  } else {
+    setSelectedCamps(cleaned); // ensure -1 is absent
+  }
+};
+
 
   // --- Download ---
   const handleDownload = async (e: React.FormEvent) => {
@@ -262,7 +267,7 @@ const Reports: React.FC = () => {
               filter
               filterBy="campName"
               onFilter={(e: MultiSelectFilterEvent) => handleFilter(e.filter)}
-              placeholder={loading ? "Loading camps..." : "Select Camps"}
+              placeholder={loading ? "Loading camps..." : "Select Outreach Clinics"}
               className="multi-select-dropdown"
               showSelectAll={false}      // hide built-in checkbox
               resetFilterOnHide={true}   // clear search when dropdown closes

@@ -448,7 +448,7 @@ const OutreachClinicCreation: React.FC = () => {
                 </label> */}
 
                 <label>
-                    <span style={{ color: 'black' }}>Outreach Clinic ID*:</span>
+                    <span style={{ color: 'black' }}>Outreach Clinic ID:</span>
                     <span style={{ color: 'darkred', fontWeight: 'bold' }}></span>
                     <div className="input-with-icon">
                                              <input
@@ -488,21 +488,23 @@ const OutreachClinicCreation: React.FC = () => {
             {showDuplicateModal && (
                 <div className="custom-modal">
                     <div className="custom-modal-outreach">
-                        <h2 className="custom-modal-title">Are you sure you want to use a duplicate Clinic ID?</h2>
+                        <h2 className="custom-modal-title-duplicate">Are you sure you want to use a duplicate Clinic ID?</h2>
                                                 <div className="custom-modal-buttons">
                                                         <button 
-                                                            className="Next-button Next-button_home" 
-                                                            type="button" 
-                                                            onClick={handleDuplicateModalNo}
-                                                        >
-                                                            No
-                                                        </button>
-                                                        <button 
-                                                            className="custom-modal-button custom-save-button" 
+                                                            className="custom-modal-button-duplicate custom-Yes-button"
                                                             type="button" 
                                                             onClick={handleDuplicateModalYes}
                                                         >
                                                             Yes
+                                                        </button>
+                                                        <button 
+                                                             
+                                                             className="custom-modal-button custom-save-button"
+                                                            type="button" 
+                                                           
+                                                            onClick={handleDuplicateModalNo}
+                                                        >
+                                                            No
                                                         </button>
                                                 </div>
                     </div>
