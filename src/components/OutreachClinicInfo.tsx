@@ -261,7 +261,7 @@ const OutreachClinicInfo: React.FC = () => {
                   <strong>District Name:</strong> <span>{clinic.district}</span>
                 </p>
                 <p>
-                  <strong>Taluk Name:</strong> <span>{clinic.taluk}</span>
+                  <strong>Taluk/Block Name:</strong> <span>{clinic.taluk}</span>
                 </p>
                 <p>
                   <strong>Panchayat/Village Name:</strong> <span>{clinic.village}</span>

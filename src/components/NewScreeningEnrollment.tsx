@@ -305,7 +305,7 @@ useEffect(() => {
       hospitalId: parseInt(hospitalId, 10),
   campId: campId ? parseInt(campId, 10) : null,
        // prefer navigation-provided candidate id, otherwise fall back to stored prefillId
-       id: isEditMode ? navCandidateId : (getprefillid ? localStorage.getItem('prefillId') : null),
+       id: isEditMode ? navCandidateId :  null,
             // id:  null,
 
           type: 1,

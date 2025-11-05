@@ -334,7 +334,7 @@ const OutreachClinicCreation: React.FC = () => {
                     </select>
                 </label>
                 <label>
-                    <span style={{ color: "black" }}>Taluk Name*:</span><span style={{ color: 'darkred', fontWeight: 'bold', }}></span>
+                    <span style={{ color: "black" }}>Taluk/Block Name*:</span><span style={{ color: 'darkred', fontWeight: 'bold', }}></span>
                     <select value={taluk} onChange={(e) => handleTalukChange(e.target.value)} required disabled={!district || loadingTaluks}>
                         <option value="">Select Taluk</option>
                         {taluks.map((taluk) => (

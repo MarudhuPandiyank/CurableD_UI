@@ -100,7 +100,7 @@ const EditOutreachClinic: React.FC = () => {
           />
         </div>
         <div className="form-group">
-          <label className="label">Taluk Name:</label>
+          <label className="label">Taluk/Block Name:</label>
           <input
             type="text"
             value={clinic.taluk}

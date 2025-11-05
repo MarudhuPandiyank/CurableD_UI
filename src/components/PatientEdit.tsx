@@ -12,11 +12,11 @@ import { canAll, can, Privilege } from '../store/userSlice';
 
 
 interface Candidate {
-  id: number;  // Standardized to number
+  id: number;
   registrationId: string;
   name: string;
-  gender: string;
-  age: number;
+  gender: string;             // keep as string
+  age: number;                // keep as number
   spouseName?: string | null;
   mobileNo: string;
   dob?: string | null;
@@ -25,17 +25,19 @@ interface Candidate {
   hospitalId: number;
 }
 
+
 interface CandidateAPIResponse {
   id: number;
-  registrationId: string;
-  name: string;
-  gender: string;
-  age: number;
+  registraionId?: string | null;   // <-- API typo (keep it)
+  registrationId?: string | null;  // <-- in case backend fixes later
+  name?: string | null;
+  gender?: string | null;
+  age?: number | null;
   spouseName?: string | null;
-  mobileNo: string;
+  mobileNo?: string | null;
   dob?: string | null;
   fatherName?: string | null;
-  campId?: number;
+  campId?: number | null;
   hospitalId: number;
 }
 
@@ -89,22 +91,24 @@ const PatientEdit: React.FC = () => {
       );
 
       if (response.data.length > 0) {
-        const candidatesData = response.data.map((candidateData) => ({
-          id: candidateData.id,
-          registrationId: candidateData.registrationId,
-          name: candidateData.name,
-          gender: candidateData.gender,
-          age: candidateData.age,
-          spouseName: candidateData.spouseName,
-          mobileNo: candidateData.mobileNo,
-          dob: candidateData.dob,
-          fatherName: candidateData.fatherName,
-            campId: candidateData.campId,
-            hospitalId: candidateData.hospitalId,
-        }));
+  const candidatesData: Candidate[] = response.data.map((c: CandidateAPIResponse) => ({
+  id: c.id,
+  // prefer proper key if backend fixes it; otherwise use the typo key; fallback to empty string
+  registrationId: (c.registrationId ?? c.registraionId ?? '').toString(),
+  // ensure required strings/numbers are non-null
+  name: (c.name ?? '').toString(),
+  gender: (c.gender ?? '-').toString(),
+  age: Number(c.age ?? 0),
+  spouseName: c.spouseName ?? null,
+  mobileNo: (c.mobileNo ?? '').toString(),
+  dob: c.dob ?? null,
+  fatherName: c.fatherName ?? null,
+  campId: c.campId ?? undefined,
+  hospitalId: c.hospitalId,
+}));
 
-        setCandidates(candidatesData);
-                {console.log(candidatesData,"candidates")}
+setCandidates(candidatesData);
+
 
       } else {
         setOpenNoCandidateDialog(true);
@@ -188,7 +192,11 @@ onClick={handleSearch} disabled={loading}>                  {loading ? 'Searchin
           <div className="clinic-details-container">
             {candidates.map((candidate) => (
               <div className="clinic-details" key={candidate.id}>
-                <p><strong>Individual Name:</strong> <span>{candidate.name}</span></p>
+<p>
+  <strong>Individual Name:</strong>{" "}
+  <span>{candidate.name} </span>
+</p>
+ <p><strong>RegistrationId:</strong> <span>{candidate.registrationId}</span></p>
                 {/* <p><strong>Date of Birth:</strong> <span>{candidate.dob?.split("-").reverse().join("-")}</span></p> */}
                 <p><strong>Age:</strong> <span>{candidate.age}</span></p>
                 <p><strong>Gender:</strong> <span>{candidate.gender}</span></p>
