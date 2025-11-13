@@ -5,7 +5,7 @@ import './SuccessMessage.css';
 const SuccessMessagePRFinal = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { clickId } = location.state || {};
+  const { clickId, hideNextEnrollment } = location.state || {};
 
   const [registraionId, setRegistraionId] = useState<string | null>(null);
 
@@ -27,9 +27,11 @@ const SuccessMessagePRFinal = () => {
           <p className="reg-id-text">Registration ID: <strong>{registraionId}</strong></p>
         )}
 
-        <button className="primary-button" onClick={() => navigate('/NewScreeningEnrollment')}>
-          Begin Next Enrollment
-        </button>
+        {!hideNextEnrollment && (
+          <button className="primary-button" onClick={() => navigate('/NewScreeningEnrollment')}>
+            Begin Next Enrollment
+          </button>
+        )}
         <button className="secondary-button" onClick={() => navigate('/responsive-cancer-institute')}>
           Back To Home
         </button>

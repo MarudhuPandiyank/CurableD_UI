@@ -171,6 +171,7 @@
 .custom-close-button {
   background: white;
   color: #d774ad;
+  border: 2px solid #d774ad;
 }
 
 .custom-save-button {

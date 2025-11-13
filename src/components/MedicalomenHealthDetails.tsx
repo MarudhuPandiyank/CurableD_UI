@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Header from './Header';
 import './HomePage.css';
+import './NewScreeningEnrollment.css';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import Header1 from './Header1';
@@ -16,7 +17,7 @@ interface PrefillApiResponse {
   bloodPressure: string;
   pulseRate: string;
   weight: number;
-  historyOfSurgery: boolean;
+  historyOfSurgery: boolean | null;
   height: number;
   spo2: number;
   allergy: string;
@@ -28,7 +29,7 @@ interface PrefillApiResponse {
   totalPregnancies: number;
   ageAtFirstChild: number;
   ageAtLastChild: number;
-  currentlyPregant: boolean;
+  currentlyPregant: boolean | null;
   methodOfContraceptionUsed: string;
   noOfBreastFedMonths: string;
   undergoneCervicalBreastScrening: string;
@@ -199,9 +200,11 @@ const navigate = useNavigate();
       bloodPressure,
       candidateId: patientId,
       undergoneCervicalBreastScrening: selectedBreastCrevixMonths,
-      currentlyPregant: selectedToggle1 === 'yes',
+      currentlyPregant:
+        selectedToggle1 === null ? null : selectedToggle1 === 'yes',
       height: height ? parseInt(height) : '',
-      historyOfSurgery: selectedToggle === 'yes',
+      historyOfSurgery:
+        selectedToggle === null ? null : selectedToggle === 'yes',
       medicalhistory: selectedHistory.join(','),
       methodOfContraceptionUsed: selectedContraception,
       noOfBreastFedMonths: selectedBreastFedMonths,
@@ -323,7 +326,13 @@ const navigate = useNavigate();
           setBloodPressure(data.bloodPressure);
           setPulseRate(data.pulseRate);
 setWeight(weightval?data.weight?.toString():data.weight === 0 ? '' : (data.weight?.toString() || ''));
-          setSelectedToggle(data.historyOfSurgery ? 'yes' : 'no');
+          if (data.historyOfSurgery === true) {
+            setSelectedToggle('yes');
+          } else if (data.historyOfSurgery === false) {
+            setSelectedToggle('no');
+          } else {
+            setSelectedToggle(null);
+          }
 setHeight(heightval?data.height?.toString()
   :data.height === 0 ? '' : (data.height?.toString() || ''));
           setSpo2(touchedspo2?data.spo2.toString():data.spo2 === 0 ? '' : (data.spo2?.toString() || ''));
@@ -355,7 +364,13 @@ setTotalPregnancies(totalpreg?data.totalPregnancies.toString():
         data.ageAtLastChild && data.ageAtLastChild !== 0
     ? data.ageAtLastChild.toString()
     : "");
-          setSelectedToggle1(data.currentlyPregant ? 'yes' : 'no');
+          if (data.currentlyPregant === true) {
+            setSelectedToggle1('yes');
+          } else if (data.currentlyPregant === false) {
+            setSelectedToggle1('no');
+          } else {
+            setSelectedToggle1(null);
+          }
           setSelectedContraception(data.methodOfContraceptionUsed);
           setSelectedBreastFedMonths(data.noOfBreastFedMonths);
           // setSelectedToggle2(data.cervicalBreastScrening ? 'yes' : 'no');
@@ -817,31 +832,29 @@ console.log(age,participant,ageString,"skkksa")
         
         {showModal && (
           <div className="custom-modal">
-    <div className="custom-modal-content">
-                <h1 style={{ marginTop: '130px', textAlign: 'center', color: 'darkblue' }}>Non mandatory fields are not provided Are you sure you want to finish registration?</h1>
-                
-
-                <div className="form-group">
-               
-  </div>
-
-                <div className="modal-buttons">
-                  <button className="Finish-button"
-                    type="button"
-                    onClick={(e) => handleSubmit(e, '/SuccessMessagePRFinal')}
-                  >
-                    Yes
-                  </button>
-                  <button className="Next-button"
-                    type="button"
-                    onClick={closeModal}
-                  >
-                    No
-                  </button>
-                </div>
+            <div className="custom-modal-content">
+              <h2 className="custom-modal-title">
+                Non mandatory fields are not provided. Are you sure you want to finish registration?
+              </h2>
+              <div className="custom-modal-buttons">
+                <button
+                  className="custom-modal-button custom-save-button"
+                  type="button"
+                  onClick={(e) => handleSubmit(e, '/SuccessMessagePRFinal')}
+                >
+                  Yes
+                </button>
+                <button
+                  className="custom-modal-button custom-close-button"
+                  type="button"
+                  onClick={closeModal}
+                >
+                  No
+                </button>
               </div>
             </div>
-          )}
+          </div>
+        )}
         <div className="buttons">
         <button type="button" className="Finish-button" onClick={handlePrevClick} >Prev</button>
 

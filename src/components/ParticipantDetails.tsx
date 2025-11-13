@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { NavigateOptions, useNavigate } from 'react-router-dom';
 import Header1 from './Header1';
 import './ParticipantDetails.css';
 import axios from 'axios';
@@ -39,7 +39,8 @@ interface PrefillApiResponse {
   aadhar: string;
   address: string | null;
   email: string | null;
-  tobaccoUser: boolean;
+  tobaccoUser: boolean | null;
+  socialHabits?: boolean | null;
   parentCandidateId: string | null;
   surveyStatus: string | null;
   consentDate: string | null;
@@ -146,9 +147,13 @@ setIncome(data.monthlyIncome === 0 ? '' : (data.monthlyIncome?.toString() || '')
         setRationCard(data.rationCard || '');
 
         const justCreated = localStorage.getItem('justCreatedPatient') === 'true';
+        const backendSocialHabits =
+          typeof data.socialHabits === 'boolean' || data.socialHabits === null
+            ? data.socialHabits
+            : data.tobaccoUser;
 
-            if (data.candidateHabitDTOs && data.candidateHabitDTOs.length > 0) {
-              setHasTobaccoHabit('Yes');
+        if (data.candidateHabitDTOs && data.candidateHabitDTOs.length > 0) {
+          setHasTobaccoHabit('Yes');
 
           const mappedHabits: Habit[] = data.candidateHabitDTOs.map((habit, idx) => ({
             habit: habit.habits || '',
@@ -171,21 +176,23 @@ setIncome(data.monthlyIncome === 0 ? '' : (data.monthlyIncome?.toString() || '')
               await fetchHabitTypes(habit.habit);
             }
           }
-        } else if (data.tobaccoUser === true) {
-          // API indicates tobaccoUser true but no habit DTOs — show Yes but empty habit list
-          setHasTobaccoHabit('Yes');
-          setHabits([{ habit: '', habitType: '', frequency: '', quit: '', howLong: '', isOpen: true }]);
         } else {
-          // If this patient was just created in this session, leave the toggle
-          // unset so the UI does not always default to 'No' on first visit.
-          if (justCreated) {
-            setHasTobaccoHabit('');
-            setHabits([{ habit: '', habitType: '', frequency: '', quit: '', howLong: '', isOpen: true }]);
-            localStorage.removeItem('justCreatedPatient');
-          } else {
-            setHasTobaccoHabit('No');
-            setHabits([{ habit: '', habitType: '', frequency: '', quit: '', howLong: '', isOpen: true }]);
-          }
+          const toggleFromBackend =
+            backendSocialHabits === true
+              ? 'Yes'
+              : backendSocialHabits === false
+              ? 'No'
+              : '';
+
+          setHasTobaccoHabit(toggleFromBackend);
+          setHabits([{ habit: '', habitType: '', frequency: '', quit: '', howLong: '', isOpen: true }]);
+          setDuration('');
+          setHowLong('');
+          setHasQuit('');
+        }
+
+        if (justCreated) {
+          localStorage.removeItem('justCreatedPatient');
         }
 
         console.log('Prefill Data:', data);
@@ -226,8 +233,11 @@ setIncome(data.monthlyIncome === 0 ? '' : (data.monthlyIncome?.toString() || '')
 
   // Prepare form data and run inline validators. Returns the data object or null if validation fails.
   const prepareFormData = () => {
-    // derive tobaccoUser from visible UI state
-    const tobaccoUser = hasTobaccoHabit === 'Yes';
+    // derive tri-state socialHabits flag (true/false/null) from visible UI state
+    const socialHabits =
+      hasTobaccoHabit === ''
+        ? null
+        : hasTobaccoHabit === 'Yes';
 
     // Block submit if invalid alt mobile
     if (altMobile && altMobile.length !== 10) {
@@ -246,37 +256,40 @@ setIncome(data.monthlyIncome === 0 ? '' : (data.monthlyIncome?.toString() || '')
     }
 
     // map habits to DTOs, but skip entries that are entirely empty
-    const candidateHabitDTOs = habits
-      .map((habit) => {
-        const dto = {
-          candidateId: Number(localStorage.getItem('patientId')) || null,
-          duration: tobaccoUser ? (duration ? parseFloat(duration) : null) : null,
-          frequency: habit.frequency || null,
-          habits: habit.habit || null,
-          howLong: habit.howLong ? parseFloat(habit.howLong) : null,
-          quit: habit.quit === 'Yes',
-          type: habit.habitType || null,
-        } as {
-          candidateId: number | null;
-          duration: number | null;
-          frequency: string | null;
-          habits: string | null;
-          howLong: number | null;
-          quit: boolean;
-          type: string | null;
-        };
+    const candidateHabitDTOs =
+      socialHabits === true
+        ? habits
+            .map((habit) => {
+              const dto = {
+                candidateId: Number(localStorage.getItem('patientId')) || null,
+                duration: duration ? parseFloat(duration) : null,
+                frequency: habit.frequency || null,
+                habits: habit.habit || null,
+                howLong: habit.howLong ? parseFloat(habit.howLong) : null,
+                quit: habit.quit === 'Yes',
+                type: habit.habitType || null,
+              } as {
+                candidateId: number | null;
+                duration: number | null;
+                frequency: string | null;
+                habits: string | null;
+                howLong: number | null;
+                quit: boolean;
+                type: string | null;
+              };
 
-        return dto;
-      })
-      // remove DTOs where all meaningful fields are empty/null
-      .filter((d) => {
-        const allEmpty =
-          (d.duration === null || d.duration === undefined) &&
-          (d.frequency === null || d.frequency === undefined || d.frequency === '') &&
-          (d.habits === null || d.habits === undefined || d.habits === '') &&
-          (d.howLong === null || d.howLong === undefined);
-        return !allEmpty;
-      });
+              return dto;
+            })
+            // remove DTOs where all meaningful fields are empty/null
+            .filter((d) => {
+              const allEmpty =
+                (d.duration === null || d.duration === undefined) &&
+                (d.frequency === null || d.frequency === undefined || d.frequency === '') &&
+                (d.habits === null || d.habits === undefined || d.habits === '') &&
+                (d.howLong === null || d.howLong === undefined);
+              return !allEmpty;
+            })
+        : [];
 
     const data = {
       fatherName,
@@ -289,8 +302,9 @@ setIncome(data.monthlyIncome === 0 ? '' : (data.monthlyIncome?.toString() || '')
       aadhar: aadhaar,
       rationCard,
       voterId,
-      tobaccoUser,
-      duration: tobaccoUser ? parseFloat(duration) || 0 : null,
+      tobaccoUser: socialHabits,
+      socialHabits,
+      duration: socialHabits === true ? (duration ? parseFloat(duration) : 0) : null,
       id: localStorage.getItem('patientId') || '',
       candidateHabitDTOs,
       type: 3,
@@ -341,14 +355,18 @@ setIncome(data.monthlyIncome === 0 ? '' : (data.monthlyIncome?.toString() || '')
     }
   };
 
-  const handleFormSubmit = async (e: React.FormEvent | React.MouseEvent, navigateTo: string) => {
+  const handleFormSubmit = async (
+    e: React.FormEvent | React.MouseEvent,
+    navigateTo: string,
+    navigateOptions?: NavigateOptions
+  ) => {
     if (e && 'preventDefault' in e) e.preventDefault();
 
     const prepared = prepareFormData();
     if (!prepared) return;
 
     const ok = await submitCandidate(prepared);
-    if (ok) navigate(navigateTo);
+    if (ok) navigate(navigateTo, navigateOptions);
   };
 
   const patientId = localStorage.getItem('patientId');
@@ -801,7 +819,15 @@ setIncome(data.monthlyIncome === 0 ? '' : (data.monthlyIncome?.toString() || '')
               </p>
 
               <div className="modal-buttons">
-                <button className="Finish-button" type="button" onClick={(e) => handleFormSubmit(e, '/SuccessMessagePRFinal')}>
+                <button
+                  className="Finish-button"
+                  type="button"
+                  onClick={(e) =>
+                    handleFormSubmit(e, '/SuccessMessagePRFinal', {
+                      state: { hideNextEnrollment: true },
+                    })
+                  }
+                >
                   Yes
                 </button>
                 <button className="Next-button" type="button" onClick={closeModal}>

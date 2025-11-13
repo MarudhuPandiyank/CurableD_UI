@@ -5,7 +5,7 @@ import './SuccessMessage.css';
 const SuccessMessagePatient = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { clickId } = location.state || {};
+  const { clickId, hideNextEnrollment } = location.state || {};
   return (
     <div className='container5'>
       <main className="content">
@@ -14,9 +14,11 @@ const SuccessMessagePatient = () => {
            <p className="reg-id-text">Patient Registration ID: <strong>{clickId && clickId.registraionId}</strong></p>
 
         
-        <button className="primary-button" onClick={() => navigate('/NewScreeningEnrollment')}>
-          Begin Next Enrollment
-        </button>
+        {!hideNextEnrollment && (
+          <button className="primary-button" onClick={() => navigate('/NewScreeningEnrollment')}>
+            Begin Next Enrollment
+          </button>
+        )}
         <button className="secondary-button" onClick={() => navigate('/responsive-cancer-institute')}>
           Back To Home
         </button>

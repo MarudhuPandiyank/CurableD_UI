@@ -236,7 +236,9 @@ useEffect(() => {
       });
 
       if (response.status === 200) {
-        navigate('/SuccessMessagePatient',{ state: { clickId: response.data } });
+        navigate('/SuccessMessagePatient', {
+          state: { clickId: response.data, hideNextEnrollment: true },
+        });
       }
     } catch (error) {
       console.error('Error saving candidate:', error);
