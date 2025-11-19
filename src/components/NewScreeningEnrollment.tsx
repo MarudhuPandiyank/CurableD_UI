@@ -237,7 +237,7 @@ useEffect(() => {
 
       if (response.status === 200) {
         navigate('/SuccessMessagePatient', {
-          state: { clickId: response.data, hideNextEnrollment: true },
+          state: { clickId: response.data, hideNextEnrollment:isEditMode? true:false },
         });
       }
     } catch (error) {

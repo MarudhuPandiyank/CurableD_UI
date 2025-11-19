@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { NavigateOptions, useNavigate } from 'react-router-dom';
+import { NavigateOptions, useNavigate,useLocation } from 'react-router-dom';
 import Header1 from './Header1';
 import './ParticipantDetails.css';
 import axios from 'axios';
@@ -72,6 +72,8 @@ interface PrefillApiResponse {
 
 const ParticipantDetails: React.FC = () => {
   const [houseType, setHouseType] = useState<string>('');
+    const location = useLocation();
+
   const [selectedToggle1, setSelectedToggle1] = useState<string | null>(null);
   const [education, setEducation] = useState<string>('');
   const [occupation, setOccupation] = useState<string>('');
@@ -97,6 +99,7 @@ const ParticipantDetails: React.FC = () => {
   // existing/edit flows will set this value when prefill runs
   const [hasTobaccoHabit, setHasTobaccoHabit] = useState<string>('');
   const [hasQuit, setHasQuit] = useState('');
+    const [isEditMode, setIsEditMode] = useState(false); // NEW
   const [altMobileError, setAltMobileError] = useState('');        // Alternate mobile inline error
   const [aadhaarError, setAadhaarError] = useState('');            // Aadhaar inline error
   const [habits, setHabits] = useState<Habit[]>([
@@ -123,7 +126,12 @@ const ParticipantDetails: React.FC = () => {
         alert('Session expired. Please log in again.');
         return;
       }
+ const navStatepd: any = location.state;
+ console.log("navStatepd",navStatepd);
+   if (navStatepd && navStatepd.edit) {
+      setIsEditMode(true);
 
+   }
       const response = await axios.post<PrefillApiResponse>(
         `${config.appURL}/curable/candidatehistoryForPrefil`,
         { candidateId: patientId, type: 2 },
@@ -824,7 +832,7 @@ setIncome(data.monthlyIncome === 0 ? '' : (data.monthlyIncome?.toString() || '')
                   type="button"
                   onClick={(e) =>
                     handleFormSubmit(e, '/SuccessMessagePRFinal', {
-                      state: { hideNextEnrollment: true },
+                      state: { hideNextEnrollment: isEditMode? true:false },
                     })
                   }
                 >
