@@ -9,6 +9,8 @@ import { useSelector } from 'react-redux';
 import { selectPrivilegeFlags } from '../store/userSlice';
 
 import { canAll, can, Privilege } from '../store/userSlice';
+import Loader from "../components/common/Loader";
+
 
 
 interface Candidate {
@@ -117,7 +119,10 @@ setCandidates(candidatesData);
       console.error('Error fetching candidate data:', error);
       setMessage('Failed to fetch candidate details. Please try again.');
     } finally {
-      setLoading(false);
+      setTimeout(() => {
+              setLoading(false);
+
+      }, 300);
     }
   };
 
@@ -151,6 +156,7 @@ localStorage.removeItem("weightval");
 
   return (
     <div className="container2">
+      <Loader isLoading={loading} text="Searching patients..." />
       <Header1 />
 
 

@@ -9,6 +9,7 @@ import { useSelector } from 'react-redux';
 import { selectPrivilegeFlags } from '../../store/userSlice';
 
 import { canAll, can, Privilege } from '../../store/userSlice';
+import Loader from "../common/Loader";
 
 
 interface Patient {
@@ -47,6 +48,7 @@ const PatientSearchPage: React.FC = () => {
 
 
   const handleSearch = async () => {
+
     // require at least 3 characters before searching
     if (!searchQuery || searchQuery.trim().length < 3) {
       setError('Please enter a minimum of 3 characters.');
@@ -94,6 +96,11 @@ const PatientSearchPage: React.FC = () => {
           eligibleDiseases: patient.eligibleDiseases,
         }));
         setPatients(patientData);
+               setTimeout(() => {
+              setLoading(false);
+
+      }, 300);
+
         setCurrentPage(1);
       } else {
         setPatients([]);
@@ -102,7 +109,10 @@ const PatientSearchPage: React.FC = () => {
       console.error("Error fetching patients:", error);
       setError("Failed to fetch patients. Please try again later.");
     } finally {
-      setLoading(false);
+      setTimeout(() => {
+              setLoading(false);
+
+      }, 300);
     }
   };
 
@@ -224,6 +234,7 @@ console.log(selectedDisease,"selectedDisease")
 
   return (
     <div className="container10">
+      <Loader isLoading={loading} text="Searching patients..." />
        <Header1 />
      
 
@@ -263,14 +274,11 @@ console.log(selectedDisease,"selectedDisease")
 
 
 
-
-
 {!loading && searchSubmitted && patients.length === 0 && (
   <p className="no-data-message">No patient found</p>
 )}
 
 
-  {loading && <p>Loading patients...</p>}
   {error && <p className="error center-message">{error}</p>}
 
       

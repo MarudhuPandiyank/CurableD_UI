@@ -7,6 +7,8 @@ import Header1 from "../Header1";
 import config from '../../config'; 
 import { useSelector } from 'react-redux';
 import { selectPrivilegeFlags } from '../../store/userSlice';
+import Loader from "../common/Loader";
+
 
 import { canAll, can, Privilege } from '../../store/userSlice';
 
@@ -101,7 +103,10 @@ const ClinicSearchPage: React.FC = () => {
       console.error("Error fetching patients:", error);
       setError("Failed to fetch patients. Please try again later.");
     } finally {
-      setLoading(false);
+      setTimeout(() => {
+            setLoading(false);
+  
+      }, 300);
     }
   };
 
@@ -178,6 +183,7 @@ const handleStageChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
 
   return (
     <div className="container10">
+       <Loader isLoading={loading} text="Searching patients..." />
        <Header1 />
       <div className="title">
          

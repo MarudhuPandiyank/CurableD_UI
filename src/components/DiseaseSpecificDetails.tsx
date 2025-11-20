@@ -47,7 +47,7 @@ function DiseaseSpecificDetails() {
           return;
         }
       const hospitalId = localStorage.getItem('hospitalId');
-        const response = await axios.get<ApiResponse>(`${config.appURL}/curable/getMetricsByGender/ELIGIBILE/${gender}/${hospitalId}`, {
+        const response = await axios.get<ApiResponse>(`${config.appURL}/curable/getMetricsByGender/ELIGIBILE/${gender}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },

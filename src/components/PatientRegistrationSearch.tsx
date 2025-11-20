@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import Loader from "../components/common/Loader";
 import {
   Dialog,
   DialogTitle,
@@ -144,7 +145,10 @@ const PatientRegistrationSearch: React.FC = () => {
       console.error('Error fetching clinic data:', error);
       setMessage('Failed to fetch clinic details. Please try again.');
     } finally {
-      setLoading(false);
+      setTimeout(() => {
+           setLoading(false);
+   
+      }, 300);
     }
   };
 
@@ -195,7 +199,11 @@ const PatientRegistrationSearch: React.FC = () => {
   console.log(filteredClinics, 'filteredClinics');
   return (
     <div className="container2">
+      <>
+       <Loader isLoading={loading} text="Searching patients..." />
+      </>
       <Header1 />
+      
        <div className="title">
           
         <h1 style={{ color: 'darkblue' }}>Patient Registration</h1>
