@@ -200,7 +200,7 @@ const PatientRegistrationSearch: React.FC = () => {
   return (
     <div className="container2">
       <>
-       <Loader isLoading={loading} text="Searching patients..." />
+       <Loader isLoading={loading} />
       </>
       <Header1 />
       

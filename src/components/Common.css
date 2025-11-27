@@ -31,8 +31,8 @@
 .loader-spinner {
   width: 48px;
   height: 48px;
-  border: 4px solid #e0e0e0;
-  border-top-color: white; /* dark blue to match your title */
+  border: 4px solid #d774ad;
+  border-top-color: #ffffff;
   border-radius: 50%;
   animation: loader-rotate 1s linear infinite;
   margin-right: 12px;
@@ -40,14 +40,14 @@
 
 .loader-text {
   font-weight: 600;
-  color: #1f2937; /* slate-800 */
+  color: #ffffff;
 }
 
 /* Motion-reduced accessibility */
 @media (prefers-reduced-motion: reduce) {
   .loader-spinner {
     animation: none;
-    border-top-color: #1e3a8a;
+    border-top-color: #ffffff;
   }
 }
 

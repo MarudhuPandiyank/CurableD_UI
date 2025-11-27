@@ -183,7 +183,7 @@ const handleStageChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
 
   return (
     <div className="container10">
-       <Loader isLoading={loading} text="Searching patients..." />
+       <Loader isLoading={loading} />
        <Header1 />
       <div className="title">
          

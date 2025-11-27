@@ -10,6 +10,7 @@ import 'primeicons/primeicons.css';
 import config from '../config';
 import './Common.css';
 import './disease.css';
+import Loader from './common/Loader';
 
 interface Condition {
   enabledField: string;
@@ -366,131 +367,123 @@ const parseToDate = (s?: string) => {
       <div className="clinic-details-form-newscreening">
         <h1 style={{ color: 'darkblue',marginTop:'15px' }}>{titleName}</h1>
 
-         {isLoading?
-        <div
-  className={`loader-overlay ${isLoading ? 'show' : ''}`}
-  aria-busy={isLoading}
-  aria-live="polite"
->
-  <div className="loader-spinner" />
-  <p className="loader-text">Loading clinical metrics…</p>
-</div>
-        :
-        <>
+        {isLoading ? (
+          <Loader isLoading />
+        ) : (
+          <>
+            {fieldData.map((field) => {
+              const key = (field.testName || '').trim();
+              if (hiddenFields.includes(key)) return null;
 
-        {fieldData.map((field) => {
-          const key = (field.testName || '').trim();
-          if (hiddenFields.includes(key)) return null;
+              return (
+                <div key={field.testName} className="form-group">
+                  <label style={{ fontSize: '15px' }}>
+                    {field.testName}{' '}
+                    {field.isMandatory && <span style={{ color: 'red' }}>*</span>}
+                  </label>
 
-          return (
-            <div key={field.testName} className="form-group">
-              <label style={{ fontSize: '15px' }}>
-                {field.testName}{' '}
-                {field.isMandatory && <span style={{ color: 'red' }}>*</span>}
-              </label>
-
-              {field.valueType === 'SingleSelect' && (
-                <>
-                  <select
-                    value={(selectedValues[key] as string) || ''}
-                    onChange={(e) => handleSelectChange(field.testName, e.target.value)}
-                  >
-                    <option value="" disabled>Select an option</option>
-                    {field.values.map((val) => (
-                      <option key={val} value={val}>{val}</option>
-                    ))}
-                  </select>
-                  {formErrors.includes(key) && (
-                    <span className="error-message">This field is required</span>
-                  )}
-                </>
-              )}
-
-              {field.valueType === 'Multi Select' && (
-                <>
-                  <Select
-                    isMulti
-                    options={field.values.map((val) => ({ value: val, label: val }))}
-                    value={
-                      Array.isArray(selectedValues[key])
-                        ? (selectedValues[key] as string[]).map(v => ({ value: v, label: v }))
-                        : []
-                    }
-                    onChange={(options: MultiValue<ColourOption>) =>
-                      handleSelectChange(field.testName, (options || []).map(o => o.value))
-                    }
-                  />
-                  {formErrors.includes(key) && (
-                    <span className="error-message">This field is required</span>
-                  )}
-                </>
-              )}
-
-              {field.valueType === 'Input' && (
-                <>
-                  <input
-                    type="text"
-                    value={(selectedValues[key] as string) || ''}
-                    onChange={(e) => handleSelectChange(field.testName, e.target.value)}
-                  />
-                  {formErrors.includes(key) && (
-                    <span className="error-message">This field is required</span>
-                  )}
-                </>
-              )}
-
-              {field.valueType === 'Date' && (
-                <>
-                  <div style={{ width: '100%' }}>
-                    <Calendar
-                      value={parseToDate(selectedValues[key] as string)}
-                      onChange={(e) => {
-                        const date = e.value as Date | null;
-                        if (date) {
-                          // store as dd-mm-yyyy
-                          const dd = String(date.getDate()).padStart(2, '0');
-                          const mm = String(date.getMonth() + 1).padStart(2, '0');
-                          const yyyy = date.getFullYear();
-                          handleSelectChange(field.testName, `${dd}-${mm}-${yyyy}`);
-                        } else {
-                          handleSelectChange(field.testName, '');
-                        }
-                      }}
-                      dateFormat="dd-mm-yy"
-                      placeholder="dd-mm-yyyy"
-                      maxDate={new Date()}
-                    />
-                  </div>
-                  {formErrors.includes(key) && (
-                    <span className="error-message">This field is required</span>
-                  )}
-                </>
-              )}
-
-
-              {field.valueType === 'SingleSelectButton' && (
-                <>
-                  <div className="gender-group">
-                    {field.values.map((val) => (
-                      <button
-                        key={val}
-                        type="button"
-                        className={`gender-btn ${selectedValues[key] === val ? 'active' : ''}`}
-                        onClick={() => handleSelectChange(field.testName, val)}
+                  {field.valueType === 'SingleSelect' && (
+                    <>
+                      <select
+                        value={(selectedValues[key] as string) || ''}
+                        onChange={(e) => handleSelectChange(field.testName, e.target.value)}
                       >
-                        {val}
-                      </button>
-                    ))}
-                  </div>
-                  {formErrors.includes(key) && (
-                    <span className="error-message">This field is required</span>
+                        <option value="" disabled>Select an option</option>
+                        {field.values.map((val) => (
+                          <option key={val} value={val}>{val}</option>
+                        ))}
+                      </select>
+                      {formErrors.includes(key) && (
+                        <span className="error-message">This field is required</span>
+                      )}
+                    </>
                   )}
-                </>
-              )}
-            </div>
-          );
-        })}
-        </>}
+
+                  {field.valueType === 'Multi Select' && (
+                    <>
+                      <Select
+                        isMulti
+                        options={field.values.map((val) => ({ value: val, label: val }))}
+                        value={
+                          Array.isArray(selectedValues[key])
+                            ? (selectedValues[key] as string[]).map(v => ({ value: v, label: v }))
+                            : []
+                        }
+                        onChange={(options: MultiValue<ColourOption>) =>
+                          handleSelectChange(field.testName, (options || []).map(o => o.value))
+                        }
+                      />
+                      {formErrors.includes(key) && (
+                        <span className="error-message">This field is required</span>
+                      )}
+                    </>
+                  )}
+
+                  {field.valueType === 'Input' && (
+                    <>
+                      <input
+                        type="text"
+                        value={(selectedValues[key] as string) || ''}
+                        onChange={(e) => handleSelectChange(field.testName, e.target.value)}
+                      />
+                      {formErrors.includes(key) && (
+                        <span className="error-message">This field is required</span>
+                      )}
+                    </>
+                  )}
+
+                  {field.valueType === 'Date' && (
+                    <>
+                      <div style={{ width: '100%' }}>
+                        <Calendar
+                          value={parseToDate(selectedValues[key] as string)}
+                          onChange={(e) => {
+                            const date = e.value as Date | null;
+                            if (date) {
+                              // store as dd-mm-yyyy
+                              const dd = String(date.getDate()).padStart(2, '0');
+                              const mm = String(date.getMonth() + 1).padStart(2, '0');
+                              const yyyy = date.getFullYear();
+                              handleSelectChange(field.testName, `${dd}-${mm}-${yyyy}`);
+                            } else {
+                              handleSelectChange(field.testName, '');
+                            }
+                          }}
+                          dateFormat="dd-mm-yy"
+                          placeholder="dd-mm-yyyy"
+                          maxDate={new Date()}
+                        />
+                      </div>
+                      {formErrors.includes(key) && (
+                        <span className="error-message">This field is required</span>
+                      )}
+                    </>
+                  )}
+
+                  {field.valueType === 'SingleSelectButton' && (
+                    <>
+                      <div className="gender-group">
+                        {field.values.map((val) => (
+                          <button
+                            key={val}
+                            type="button"
+                            className={`gender-btn ${selectedValues[key] === val ? 'active' : ''}`}
+                            onClick={() => handleSelectChange(field.testName, val)}
+                          >
+                            {val}
+                          </button>
+                        ))}
+                      </div>
+                      {formErrors.includes(key) && (
+                        <span className="error-message">This field is required</span>
+                      )}
+                    </>
+                  )}
+                </div>
+              );
+            })}
+          </>
+        )}
 
         <center>
           <div className="buttons">

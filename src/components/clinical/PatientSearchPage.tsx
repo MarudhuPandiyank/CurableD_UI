@@ -234,7 +234,7 @@ console.log(selectedDisease,"selectedDisease")
 
   return (
     <div className="container10">
-      <Loader isLoading={loading} text="Searching patients..." />
+      <Loader isLoading={loading} />
        <Header1 />
      
 

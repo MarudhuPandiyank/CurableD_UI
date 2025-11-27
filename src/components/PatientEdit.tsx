@@ -156,7 +156,7 @@ localStorage.removeItem("weightval");
 
   return (
     <div className="container2">
-      <Loader isLoading={loading} text="Searching patients..." />
+      <Loader isLoading={loading} />
       <Header1 />
 
 
