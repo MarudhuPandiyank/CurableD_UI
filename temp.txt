@@ -6,7 +6,6 @@ import config from '../config';
 import './Common.css';
 import './HomePage.css';
 import './CreateNewUser.css';
-import Loader from './common/Loader';
 
 type GenderUI = 'Male' | 'Female' | 'Other';
 type GenderAPI = 'MALE' | 'FEMALE' | 'OTHER';
@@ -49,7 +48,6 @@ const CreateNewUser: React.FC = () => {
   const [isActive, setIsActive] = useState<boolean>(true);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [showErrors, setShowErrors] = useState(false);
-  const [loading, setLoading] = useState(false);
 
   // fetch roles & hospitals once
   useEffect(() => {
@@ -127,9 +125,8 @@ const CreateNewUser: React.FC = () => {
   };
 
   const handleCreate = async () => {
-    setLoading(true);
-    const v = validate(); setErrors(v); setShowErrors(true); if (Object.keys(v).length) { setLoading(false); return; }
-    const token = localStorage.getItem('token'); if (!token) { setErrors({ form: 'No token found. Please log in again.' }); setLoading(false); return; }
+    const v = validate(); setErrors(v); setShowErrors(true); if (Object.keys(v).length) return;
+    const token = localStorage.getItem('token'); if (!token) { setErrors({ form: 'No token found. Please log in again.' }); return; }
     const hospitalIdsStr = localStorage.getItem('hospitalId'); const hospitalIdNum = hospitalIdsStr ? Number(hospitalIdsStr) : undefined;
 
     // ensure we send the role name — prefer resolved label, fall back to roles lookup
@@ -183,19 +180,13 @@ const CreateNewUser: React.FC = () => {
       else if (status === 409 && /phone/i.test(message)) setErrors({ phoneNo: 'An account with this mobile number already exists.' });
       else setErrors({ form: 'Network or server error. Please try again.' });
       setShowErrors(true);
-    } finally {
-      setSubmitting(false);
-      setTimeout(() => {
-        setLoading(false);
-      }, 300);
-    }
+    } finally { setSubmitting(false); }
   };
 
   const handleHospitalToggle = (id: number) => setHospitalIds(prev => (prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]));
 
   return (
     <div className="container2">
-      <Loader isLoading={loading} />
       <Header1 />
       <form className="clinic-details-form-newscreening" onSubmit={e => { e.preventDefault(); handleCreate(); }} noValidate>
         <h1 className="new-screening-title">{isEdit ? 'Edit User' : 'Create New User'}</h1>

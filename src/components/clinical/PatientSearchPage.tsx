@@ -275,7 +275,7 @@ console.log(selectedDisease,"selectedDisease")
 
 
 {!loading && searchSubmitted && patients.length === 0 && (
-  <p className="no-data-message">No patient found</p>
+  <p className="error center-message">No patient found</p>
 )}
 
 

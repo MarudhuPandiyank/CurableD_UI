@@ -10,6 +10,7 @@ import './Common.css';
 interface Habit {
   habit: string;
   habitType: string;
+  duration: string;
   frequency: string;
   quit: string;
   howLong: string;
@@ -87,7 +88,6 @@ const ParticipantDetails: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [tag, setTag] = useState<string>('');
-  const [duration, setDuration] = useState<string>('');
   const [habitType, setHabitType] = useState<string>('');
   const [frequency, setFrequency] = useState<string>('');
   const [quit, setQuit] = useState<string>('');
@@ -103,7 +103,7 @@ const ParticipantDetails: React.FC = () => {
   const [altMobileError, setAltMobileError] = useState('');        // Alternate mobile inline error
   const [aadhaarError, setAadhaarError] = useState('');            // Aadhaar inline error
   const [habits, setHabits] = useState<Habit[]>([
-    { habit: '', habitType: '', frequency: '', quit: '', howLong: '', isOpen: true },
+    { habit: '', habitType: '', duration: '', frequency: '', quit: '', howLong: '', isOpen: true },
   ]);
 
   const navigate = useNavigate();
@@ -166,6 +166,7 @@ setIncome(data.monthlyIncome === 0 ? '' : (data.monthlyIncome?.toString() || '')
           const mappedHabits: Habit[] = data.candidateHabitDTOs.map((habit, idx) => ({
             habit: habit.habits || '',
             habitType: habit.type || '',
+            duration: habit.duration?.toString() || '',
             frequency: habit.frequency || '',
             quit: habit.quit ? 'Yes' : 'No',
             howLong: habit.howLong?.toString() || '',
@@ -175,7 +176,6 @@ setIncome(data.monthlyIncome === 0 ? '' : (data.monthlyIncome?.toString() || '')
           setHabits(mappedHabits);
 
           const firstHabit = data.candidateHabitDTOs[0];
-          setDuration(firstHabit.duration?.toString() || '');
           setHowLong(firstHabit.howLong?.toString() || '');
           setHasQuit(firstHabit.quit ? 'Yes' : 'No');
 
@@ -193,8 +193,7 @@ setIncome(data.monthlyIncome === 0 ? '' : (data.monthlyIncome?.toString() || '')
               : '';
 
           setHasTobaccoHabit(toggleFromBackend);
-          setHabits([{ habit: '', habitType: '', frequency: '', quit: '', howLong: '', isOpen: true }]);
-          setDuration('');
+          setHabits([{ habit: '', habitType: '', duration: '', frequency: '', quit: '', howLong: '', isOpen: true }]);
           setHowLong('');
           setHasQuit('');
         }
@@ -246,6 +245,7 @@ setIncome(data.monthlyIncome === 0 ? '' : (data.monthlyIncome?.toString() || '')
       hasTobaccoHabit === ''
         ? null
         : hasTobaccoHabit === 'Yes';
+    const primaryDuration = habits[0]?.duration || '';
 
     // Block submit if invalid alt mobile
     if (altMobile && altMobile.length !== 10) {
@@ -270,7 +270,7 @@ setIncome(data.monthlyIncome === 0 ? '' : (data.monthlyIncome?.toString() || '')
             .map((habit) => {
               const dto = {
                 candidateId: Number(localStorage.getItem('patientId')) || null,
-                duration: duration ? parseFloat(duration) : null,
+                duration: habit.duration ? parseFloat(habit.duration) : null,
                 frequency: habit.frequency || null,
                 habits: habit.habit || null,
                 howLong: habit.howLong ? parseFloat(habit.howLong) : null,
@@ -312,7 +312,7 @@ setIncome(data.monthlyIncome === 0 ? '' : (data.monthlyIncome?.toString() || '')
       voterId,
       tobaccoUser: socialHabits,
       socialHabits,
-      duration: socialHabits === true ? (duration ? parseFloat(duration) : 0) : null,
+      duration: socialHabits === true ? (primaryDuration ? parseFloat(primaryDuration) : 0) : null,
       id: localStorage.getItem('patientId') || '',
       candidateHabitDTOs,
       type: 3,
@@ -450,7 +450,12 @@ setIncome(data.monthlyIncome === 0 ? '' : (data.monthlyIncome?.toString() || '')
 
   const addHabit = () => {
     const lastHabit = habits[habits.length - 1];
-    const hasData = lastHabit.habit || lastHabit.habitType || lastHabit.frequency || lastHabit.quit;
+    const hasData =
+      lastHabit.habit ||
+      lastHabit.habitType ||
+      lastHabit.duration ||
+      lastHabit.frequency ||
+      lastHabit.quit;
 
     if (!hasData) {
       alert('Please fill at least one field before adding another habit.');
@@ -461,7 +466,7 @@ setIncome(data.monthlyIncome === 0 ? '' : (data.monthlyIncome?.toString() || '')
 
     setHabits([
       ...updated,
-      { habit: '', habitType: '', frequency: '', quit: '', howLong: '', isOpen: true },
+      { habit: '', habitType: '', duration: '', frequency: '', quit: '', howLong: '', isOpen: true },
     ]);
   };
 
@@ -749,6 +754,25 @@ setIncome(data.monthlyIncome === 0 ? '' : (data.monthlyIncome?.toString() || '')
                               </option>
                             ))}
                           </select>
+                        </label>
+                      </div>
+
+                      <div>
+                        <label>
+                          Habit Duration (Yrs):
+                          <input
+                            type="text"
+                            inputMode="numeric"
+                            pattern="[0-9]*"
+                            value={habit.duration}
+                            placeholder="Enter Duration"
+                            onChange={(e) => {
+                              const val = e.target.value;
+                              if (/^[0-9]*$/.test(val)) {
+                                handleInputChange(index, 'duration', val);
+                              }
+                            }}
+                          />
                         </label>
                       </div>
 

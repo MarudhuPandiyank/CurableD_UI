@@ -12,6 +12,8 @@ import './Common.css';
 import './disease.css';
 import { useSelector } from 'react-redux';
 import { selectPrivilegeFlags, canAll } from '../store/userSlice';
+import Loader from "./common/Loader";
+
 
 interface Condition {
   enabledField: string;
@@ -351,14 +353,8 @@ const [isLoading, setIsLoading] = useState<boolean>(true);
 
       <form className="clinic-form" onSubmit={(e) => e.preventDefault()}>
         {isLoading?
-        <div
-  className={`loader-overlay ${isLoading ? 'show' : ''}`}
-  aria-busy={isLoading}
-  aria-live="polite"
->
-  <div className="loader-spinner" />
-  <p className="loader-text">Loading clinical metrics…</p>
-</div>
+             <Loader isLoading={isLoading} />
+
         :
         <>
         {fieldData.map((field) => {

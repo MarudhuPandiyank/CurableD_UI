@@ -12,6 +12,7 @@ import 'primereact/resources/themes/saga-blue/theme.css'; // Theme
 import 'primereact/resources/primereact.min.css'; // Core CSS
 import 'primeicons/primeicons.css'; // Icons
 import './Common.css';
+import Loader from './common/Loader';
 
 interface PrefillApiResponse {
   id: number;
@@ -68,6 +69,8 @@ const [genderError, setGenderError] = useState('');
   const [isEditMode, setIsEditMode] = useState(false); // NEW
   const [age, setAge] = useState<number | ''>('');
   const [nameError, setNameError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [loadingText, setLoadingText] = useState('Loading...');
 
 
 
@@ -78,6 +81,7 @@ useEffect(() => {
     const token = localStorage.getItem('token');
     const prefillNeeds = localStorage.getItem('prefill');
     const patientId = localStorage.getItem('patientId');
+    const shouldPrefill = prefillNeeds === 'true';
 
     if (!token || !patientId) return;
 
@@ -96,7 +100,9 @@ useEffect(() => {
     }
 
     console.log(prefillNeeds,"prefillNeeds")
-    if (prefillNeeds === 'true') {
+    if (shouldPrefill) {
+      setLoadingText('Loading enrollment...');
+      setIsLoading(true);
       localStorage.setItem('prefill', 'false');
       localStorage.setItem('prefillId', patientId);
 
@@ -141,6 +147,8 @@ useEffect(() => {
           alert('Network error fetching prefill data. Please try again.');
         }
         console.error('Prefill error:', err);
+      } finally {
+        setIsLoading(false);
       }
     }
   };
@@ -228,6 +236,8 @@ useEffect(() => {
 };
 
     try {
+      setLoadingText('Saving enrollment...');
+      setIsLoading(true);
       const response = await axios.post(`${config.appURL}/curable/saveCandidate`, payload, {
         headers: {
           'Content-Type': 'application/json',
@@ -243,6 +253,8 @@ useEffect(() => {
     } catch (error) {
       console.error('Error saving candidate:', error);
       alert('Failed to save candidate. Please try again.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -316,6 +328,8 @@ useEffect(() => {
     };
 
     try {
+      setLoadingText('Enrolling participant...');
+      setIsLoading(true);
       const response = await axios.post(`${config.appURL}/curable/candidate`, payload, {
         headers: {
           'Content-Type': 'application/json',
@@ -342,6 +356,8 @@ useEffect(() => {
     } catch (error) {
       console.error('Error during enrollment:', error);
       alert('Failed to enroll. Please try again.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -377,6 +393,7 @@ useEffect(() => {
   return (
     <div>
       <div className="container2">
+        <Loader isLoading={isLoading} text={loadingText} />
         <Header1 />
         <form className="clinic-details-form-newscreening" onSubmit={handleSubmit}>
           
