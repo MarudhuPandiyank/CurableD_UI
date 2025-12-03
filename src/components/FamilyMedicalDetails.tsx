@@ -69,8 +69,9 @@ const FamilyMedicalDetails: React.FC = () => {
         }
 
         // 1) Load master field definitions
+         const hospitalId = localStorage.getItem('hospitalId');
         const response = await axios.get<MetricsResponse>(
-          `${config.appURL}/curable/getMetrics/FAMILY_MEDICAL`,
+          `${config.appURL}/curable/getMetrics/FAMILY_MEDICAL/${hospitalId}`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         const masterParams = response.data?.testMetrics?.params || [];

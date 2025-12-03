@@ -310,6 +310,8 @@ const App: React.FC = () => {
     if (raw === 'breast screening') setTitleName('Breast Screening');
     else if (raw === 'oral screening') setTitleName('Oral Screening');
     else if (raw === 'cervical screening') setTitleName('Cervical Screening');
+        else if (raw === 'general screening') setTitleName('General Screening');
+
     // if the selected stage contains the word 'symptoms' (case-insensitive), treat it as Symptoms based referral screening
     else if (raw.includes('symptoms')) setTitleName('Symptoms based referral screening');
     else setTitleName('Disease Specific Details');

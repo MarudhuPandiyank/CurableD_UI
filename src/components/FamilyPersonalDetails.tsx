@@ -46,7 +46,8 @@ function FamilyPersonalDetails() {
         }
 
         // 1) Metrics definition (field list) – flat { params: [...] }
-        const response = await axios.get<ApiResponse>(`${config.appURL}/curable/getMetrics/FAMILY_PERSONAL`, {
+         const hospitalId = localStorage.getItem('hospitalId');
+        const response = await axios.get<ApiResponse>(`${config.appURL}/curable/getMetrics/FAMILY_PERSONAL/${hospitalId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setFormData(response.data.familyMetrics.params);

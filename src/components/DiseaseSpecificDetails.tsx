@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import config from '../config'; 
 import './NewScreeningEnrollment.css';
 import './Common.css';
+import NoDataModal from './common/NoDataModal';
 
 interface FamilyMetricsParam {
   testName: string;
@@ -35,6 +36,7 @@ function DiseaseSpecificDetails() {
   const [formValues, setFormValues] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(true);
   const [validationError, setValidationError] = useState<string | null>(null);
+  const [showNoDataModal, setShowNoDataModal] = useState(false);
 
   const participantValue = localStorage.getItem('participant');
   const gender = participantValue?.split('/')[1];
@@ -47,12 +49,20 @@ function DiseaseSpecificDetails() {
           return;
         }
       const hospitalId = localStorage.getItem('hospitalId');
-        const response = await axios.get<ApiResponse>(`${config.appURL}/curable/getMetricsByGender/ELIGIBILE/${gender}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        setFormData(response.data.eligibilityMetrics.params);
+      const response = await axios.get<ApiResponse>(
+        `${config.appURL}/curable/getMetricsByGender/ELIGIBILE/${gender}/${hospitalId}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+        const apiParams = response?.data?.eligibilityMetrics?.params || [];
+        if (Array.isArray(apiParams) && apiParams.length === 0) {
+          // success but empty: show no-data modal
+          setShowNoDataModal(true);
+          setLoading(false);
+          return;
+        }
+        setFormData(apiParams);
         console.log('Disease Test Master Data:', response.data);
   
         // Fetch prefill data
@@ -172,6 +182,11 @@ function DiseaseSpecificDetails() {
   const handlePrevClick = () => {
     navigate('/NewScreeningEnrollment');
   };
+
+  const handleNoDataOk = () => {
+    setShowNoDataModal(false);
+    navigate('/responsive-cancer-institute');
+  };
   return (
     <div className="container21">
       <Header1 />
@@ -182,6 +197,7 @@ function DiseaseSpecificDetails() {
       </div>
       <h1 style={{ color: 'darkblue' }}>Disease Specific Details</h1>
       {error && <div className="error-message">{error}</div>}
+      <NoDataModal show={showNoDataModal} onOk={handleNoDataOk} />
       {validationError && <div className="validation-error" style={{ color: 'red' }}>{validationError}</div>}
 
       <form className="clinic-form" onSubmit={(e) => handleSubmit(e, '/ParticipantDetails')}>

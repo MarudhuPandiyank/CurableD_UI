@@ -36,8 +36,8 @@ function DiseaseSpecificDetailsClinic() {
           setError('Token is missing. Please log in again.');
           return;
         }
-
-        const response = await axios.get<ApiResponse>(`${config.appURL}/curable/getMetrics/${selectedStage}`, {
+ const hospitalId = localStorage.getItem('hospitalId');
+        const response = await axios.get<ApiResponse>(`${config.appURL}/curable/getMetrics/${selectedStage}/${hospitalId}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },

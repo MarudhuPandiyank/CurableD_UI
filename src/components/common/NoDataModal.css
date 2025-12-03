@@ -1,0 +1,37 @@
+.no-data-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.no-data-box {
+  background: #fff;
+  border-radius: 12px;
+  padding: 24px 16px;
+  width: 90%;
+  max-width: 420px;
+  text-align: center;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18);
+}
+
+.no-data-text {
+  margin-bottom: 30px;
+  color: #1f2937;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.Finish-button_modal {
+  padding: 10px 30px;
+  border: none;
+  background-color: #d774ad; /* Pink background for 'Next' */
+  color: white; /* White text color */
+  border-radius: 10px; /* Rounded corners */
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}

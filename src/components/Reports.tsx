@@ -44,7 +44,7 @@ const Reports: React.FC = () => {
       setLoading(true);
 
       const response = await axios.post<ClinicOption[]>(
-        `${config.appURL}/curable/activecamp`,
+        `${config.appURL}/curable/activecampForReports`,
         {
           search: searchInput,
           userId: Number(userId),
