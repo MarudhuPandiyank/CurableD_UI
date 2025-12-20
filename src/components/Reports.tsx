@@ -251,6 +251,7 @@ const Reports: React.FC = () => {
             <option value="Screening">Screening</option>
             <option value="Clinical_Evaluation">Clinical Evaluation</option>
             <option value="SavedPatient">Saved Patient</option>
+            <option value="UniquePatientReport">Unique Patient Report</option>
           </select>
         </label>
 
