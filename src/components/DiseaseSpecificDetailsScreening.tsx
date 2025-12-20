@@ -39,8 +39,9 @@ interface PrefillResponse {
 }
 
 interface ApiResponse {
-  id: number;
-  testMetrics: { params: Field[] };
+  id?: number;
+  stage?: string;
+  testMetrics?: { params?: Field[] };
 }
 
 interface ColourOption {
@@ -56,6 +57,7 @@ const App: React.FC = () => {
   const [titleName, setTitleName] = useState('Disease Specific Details');
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [apiStage, setApiStage] = useState<string | null>(null);
   
 
   const diseaseTestIds = localStorage.getItem('diseaseTestIds');
@@ -136,6 +138,9 @@ const App: React.FC = () => {
         );
         const params = response.data?.testMetrics?.params || [];
         setFieldData(params);
+        // store stage returned from the master data API so we can send it in the payload
+        setApiStage(response.data?.stage || null);
+        console.log(response.data,"response1data")
 
         // 2) prefill (candidate history)
         try {
@@ -241,6 +246,7 @@ const App: React.FC = () => {
   // Build payload with completed flag
   const buildPayload = (completed: 0 | 1) => {
     const candidateId = Number(localStorage.getItem('candidateId'));
+    console.log(apiStage,"apiStage")
     return {
       candidateId,
       diseaseTestMasterId: Number(diseaseTestIds),
@@ -254,7 +260,8 @@ const App: React.FC = () => {
       id: null,
       medicalMetrics: null,
       name: 'Eligibility Metrics',
-      stage: localStorage.getItem('selectedStage'),
+      // prefer stage provided by the getMetricsById API; fall back to localStorage
+      stage: apiStage ,
       eligibilityMetrics: null,
       completed,
       type: 1,
