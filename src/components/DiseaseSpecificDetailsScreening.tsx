@@ -256,7 +256,7 @@ const App: React.FC = () => {
       familyMetrics: null,
       gender: 'FEMALE',
       genderValid: true,
-      hospitalId: 1,
+      hospitalId: localStorage.getItem('hospitalId'),
       id: null,
       medicalMetrics: null,
       name: 'Eligibility Metrics',
@@ -333,15 +333,15 @@ const App: React.FC = () => {
   const isCervicalNotNow =
     isCervicalStage &&
     cervicalNotNowFields.some((name) => (selectedValues[name] as string) === 'Not now');
-  const finishDisabled =
+  		 const finishDisabled =
     isNoFlow || isCervicalNotNow || 
     fieldData.some(f => {
-      if (hiddenFields.includes(f.testName)) return false;
+      const key = (f.testName || '').trim();
+      if (hiddenFields.includes(key)) return false;
       if (!f.isMandatory) return false;
-      const v = selectedValues[f.testName];
+      const v = selectedValues[key];
       return v === undefined || v === '' || (Array.isArray(v) && v.length === 0);
     });
-
   const pName = localStorage.getItem('patientName');
   const regId = localStorage.getItem('registrationId');
   const patientAge = localStorage.getItem('patientAge');
