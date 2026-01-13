@@ -39,7 +39,8 @@ function DiseaseSpecificDetails() {
   const [showNoDataModal, setShowNoDataModal] = useState(false);
 
   const participantValue = localStorage.getItem('participant');
-  const gender = participantValue?.split('/')[1];
+  const parts = participantValue?.split('/') || [];
+  const gender = parts.length > 0 ? parts[parts.length - 1] : undefined;
   useEffect(() => {
     const fetchDiseaseTestMaster = async () => {
       try {
