@@ -626,7 +626,7 @@ setIncome(data.monthlyIncome === 0 ? '' : (data.monthlyIncome?.toString() || '')
             <option value="" disabled>
               Select Occupation
             </option>
-            <option value="farmer">House wife</option>
+            <option value="House wife">House wife</option>
             <option value="Laborer-skilled">Laborer-skilled</option>
             <option value="Laborer-Unskilled">Laborer-Unskilled</option>
             <option value="Teaching/Office">Teaching/Office jobs</option>
