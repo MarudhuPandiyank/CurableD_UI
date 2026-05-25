@@ -238,8 +238,8 @@ const SearchBox: React.FC<SearchBoxProps> = ({ onSearchActiveChange }) => {
 
     // Condition 1:
     // revisitDate not null and revisitId > 0
-    // if (revisitDate !== null && revisitId > 0) {
-        if (true) {
+    if (revisitDate !== null && revisitId > 0) {
+        // if (true) {
 
       navigate('/PatientEdit', {
         state: {
@@ -254,7 +254,7 @@ const SearchBox: React.FC<SearchBoxProps> = ({ onSearchActiveChange }) => {
     // Condition 2:
     // reason = Screening ClinicSearchPage PatientSearchPage
     else if (reason.includes('screening')) {
-      navigate('/ClinicSearchPage', {
+      navigate('/PatientSearchPage', {
         state: {
           searchName: c.name,
           searchflow: true,
