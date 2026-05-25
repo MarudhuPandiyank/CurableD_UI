@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './FamilyPersonalDetails.css';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from "react-router-dom";
 import Header1 from './Header1';
 import config from '../config';
 
@@ -35,6 +35,11 @@ function FamilyPersonalDetails() {
   const [expandedMemberIndex, setExpandedMemberIndex] = useState<number | null>(0);
   const [error, setError] = useState<string | null>(null);
   const [nameErrors, setNameErrors] = useState<string[]>([]);
+    const location = useLocation();
+const searchNameFromBox = location.state?.searchName || "";
+const searchflow = location.state?.searchflow || "";
+const registrationId = location.state?.registrationId || "";
+
 
   useEffect(() => {
     const fetchFamilyPersonalMetrics = async () => {
@@ -243,7 +248,12 @@ function FamilyPersonalDetails() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const ok = await submitPayload();
-    if (ok) navigate('/FamilyMedicalDetails');
+    if (ok) navigate('/FamilyMedicalDetails', {
+  state: {
+    searchNameFromBox,
+    searchflow
+  }
+});
   };
 
   const handleFinish = async (e: React.FormEvent) => {
@@ -257,7 +267,12 @@ function FamilyPersonalDetails() {
     // if called from a button click event, prevent default behavior if present
     if (e && typeof (e.preventDefault) === 'function') e.preventDefault();
     const ok = await submitPayload();
-    if (ok) navigate('/MedicalomenHealthDetails');
+    if (ok) navigate('/MedicalomenHealthDetails', {
+  state: {
+    searchNameFromBox,
+    searchflow
+  }
+});
   };
 
   // Shared submit helper used by Prev, Next and Finish

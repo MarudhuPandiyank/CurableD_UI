@@ -107,6 +107,10 @@ const ParticipantDetails: React.FC = () => {
   ]);
 
   const navigate = useNavigate();
+  const searchNameFromBox = location.state?.searchName || "";
+const searchflow = location.state?.searchflow || "";
+const registrationId = location.state?.registrationId || "";
+
 
   const toggleOption = (setOption: React.Dispatch<React.SetStateAction<string>>, value: string) => {
     setOption(value);
@@ -514,7 +518,12 @@ setIncome(data.monthlyIncome === 0 ? '' : (data.monthlyIncome?.toString() || '')
 
       <h1 style={{ color: 'darkblue', fontWeight: 'bold' }}>General Details</h1>
 
-      <div className="clinic-form" onSubmit={(e) => handleFormSubmit(e, '/MedicalomenHealthDetails')}>
+      <div className="clinic-form" onSubmit={(e) => handleFormSubmit(e, '/MedicalomenHealthDetails', {
+  state: {
+    searchNameFromBox,
+    searchflow
+  }
+})}>
         <div className="form-group">
           <label htmlFor="father-name">Father Name:</label>
           <input
@@ -641,6 +650,9 @@ setIncome(data.monthlyIncome === 0 ? '' : (data.monthlyIncome?.toString() || '')
 
         {/* Aadhaar — EXACTLY 12, inline error while typing */}
         <div className="form-group">
+                    <br/>
+                    <h2 style={{ marginBottom: '1px' }}>ID Proof</h2>
+
           <label htmlFor="aadhaar">Aadhaar Number:</label>
           <input
             type="text"
@@ -694,7 +706,8 @@ setIncome(data.monthlyIncome === 0 ? '' : (data.monthlyIncome?.toString() || '')
         </div>
 
         <div>
-          <h2 style={{ marginBottom: '1px' }}>Social Habits</h2>
+          <br/>
+          <h2 style={{ marginBottom: '12px' }}>Social Habits</h2>
           <div className="social-habits-row">
             <label className="label-text">Tobacco/Alcohol Habits:</label>
             <div className="toggle-group">
@@ -883,7 +896,12 @@ setIncome(data.monthlyIncome === 0 ? '' : (data.monthlyIncome?.toString() || '')
         <button
           type="submit"
           className="Finish-button"
-          onClick={(e) => handleFormSubmit(e, '/MedicalomenHealthDetails')}
+          onClick={(e) => handleFormSubmit(e, '/MedicalomenHealthDetails', {
+  state: {
+    searchNameFromBox,
+    searchflow
+  }
+})}
           disabled={isLoading}
         >
           {'Next'}

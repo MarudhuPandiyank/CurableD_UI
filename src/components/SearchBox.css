@@ -1,0 +1,145 @@
+.searchbox-container {
+  width: 100%;
+  max-width: 1400px;
+  margin: 32px auto;
+  padding: 16px;
+  background: #fafaf5;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+.searchbox-input-wrapper {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border: 1.5px solid #d774ad;
+  border-radius: 6px;
+  padding: 0 12px;
+  margin-bottom: 8px;
+}
+
+.searchbox-icon {
+  font-size: 1.3rem;
+  margin-right: 8px;
+}
+
+.searchbox-input {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 1.1rem;
+  padding: 12px 0;
+  background: transparent;
+}
+
+.searchbox-input.error {
+  border: none;
+  color: #d32f2f;
+}
+
+.searchbox-error {
+  color: #d32f2f;
+  font-size: 0.98rem;
+  margin-bottom: 8px;
+}
+
+.searchbox-loading {
+  color: #d774ad;
+  font-size: 1rem;
+  margin-bottom: 8px;
+}
+
+.searchbox-result-box {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+  padding: 18px 20px 24px 20px;
+  margin-top: 12px;
+}
+
+.searchbox-patient-name {
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.searchbox-patient-reg {
+  color: #888;
+  font-size: 1.01rem;
+  margin-bottom: 8px;
+}
+
+
+.searchbox-next-btn {
+  width: 100%;
+  background: #d774ad;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 0;
+  font-size: 1.1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.searchbox-next-btn:hover {
+  background: #d774ad;
+}
+
+.searchbox-no-result {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+  padding: 32px 20px 24px 20px;
+  margin-top: 12px;
+}
+.searchbox-no-result-icon {
+  font-size: 2.8rem;
+  color: #6c63ff;
+  margin-bottom: 10px;
+}
+.searchbox-no-result-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.searchbox-no-result-desc {
+  color: #888;
+  font-size: 1.01rem;
+  margin-bottom: 18px;
+}
+.searchbox-create-btn {
+  background: #d774ad;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 12px 24px;
+  font-size: 1.05rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.searchbox-create-btn:hover {
+  background: #d774ad;
+}
+
+@media (max-width: 600px) {
+  .searchbox-container {
+    max-width: 98vw;
+    padding: 8px;
+  }
+  .searchbox-result-box, .searchbox-no-result {
+    padding: 14px 8px 18px 8px;
+  }
+  .searchbox-input {
+    font-size: 1rem;
+    padding: 10px 0;
+  }
+  .searchbox-next-btn, .searchbox-create-btn {
+    padding: 12px 0;
+    font-size: 1rem;
+  }
+}

@@ -216,7 +216,7 @@
 .message {
   color: #d32f2f; /* red */
   font-weight: 600;
-  margin-top: 8px;
+  margin-top: 2px;
 }
 
 /* generic error class used by some clinical search screens */

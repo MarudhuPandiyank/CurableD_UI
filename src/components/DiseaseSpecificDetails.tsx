@@ -2,11 +2,13 @@ import React, { useEffect, useState } from 'react';
 import Header1 from './Header1';
 import './HomePage.css';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from "react-router-dom";
 import config from '../config'; 
 import './NewScreeningEnrollment.css';
 import './Common.css';
 import NoDataModal from './common/NoDataModal';
+import Loader from "../components/common/Loader";
+
 
 interface FamilyMetricsParam {
   testName: string;
@@ -41,6 +43,11 @@ function DiseaseSpecificDetails() {
   const participantValue = localStorage.getItem('participant');
   const parts = participantValue?.split('/') || [];
   const gender = parts.length > 0 ? parts[parts.length - 1] : undefined;
+    const location = useLocation();
+const searchNameFromBox = location.state?.searchName || "";
+const searchflow = location.state?.searchflow || "";
+const registrationId = location.state?.registrationId || "";
+
   useEffect(() => {
     const fetchDiseaseTestMaster = async () => {
       try {
@@ -124,6 +131,8 @@ function DiseaseSpecificDetails() {
 
   const handleSubmit = async (e: React.FormEvent, navigateTo: string) => {
     e.preventDefault();
+        setLoading(true)
+
 
     const updatedFormData = formData.map((field) => {
       const selectedValue = formValues[field.testName] ? [formValues[field.testName]] : [];
@@ -157,6 +166,8 @@ function DiseaseSpecificDetails() {
       const token = localStorage.getItem('token');
       if (!token) {
         setError('Token is missing. Please log in again.');
+                    setLoading(false)
+
         return;
       }
 
@@ -167,10 +178,19 @@ function DiseaseSpecificDetails() {
       });
 
       console.log('Data submitted successfully!');
-      navigate(navigateTo);
+                  setLoading(false)
+
+      navigate(navigateTo, {
+  state: {
+    searchNameFromBox,
+    searchflow
+  }
+});
     } catch (error) {
       console.error('Error submitting data:', error);
       setError('Failed to submit data. Please try again.');
+                  setLoading(false)
+
     }
   };
 
@@ -191,6 +211,8 @@ function DiseaseSpecificDetails() {
   return (
     <div className="container21">
       <Header1 />
+             <Loader isLoading={loading} />
+
       <div className="participant-container">
       <p className="participant-info-text"><strong>Participant: </strong> {participantValue}</p>
       <p className="participant-info-text"><strong>ID:</strong> {registraionId}</p>

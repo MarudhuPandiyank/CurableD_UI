@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./PatientSearchPage.css";
 import Header from "../Header";
@@ -7,6 +6,7 @@ import Header1 from "../Header1";
 import config from "../../config";
 import { useSelector } from 'react-redux';
 import { selectPrivilegeFlags } from '../../store/userSlice';
+import { useNavigate, useLocation } from "react-router-dom";
 
 import { canAll, can, Privilege } from '../../store/userSlice';
 import Loader from "../common/Loader";
@@ -37,6 +37,13 @@ const PatientSearchPage: React.FC = () => {
   const [stageList, setStageList] = useState<string[]>([]);
   const [selectedStage, setSelectedStage] = useState<string | null>(null);
   const [searchSubmitted, setSearchSubmitted] = useState(false);
+  const location = useLocation();
+const searchNameFromBox = location.state?.searchName || "";
+const searchflow = location.state?.searchflow || "";
+const registrationId = location.state?.registrationId || "";
+console.log(location.state,"location.state")
+
+
 
 
   const navigate = useNavigate();
@@ -47,15 +54,21 @@ const PatientSearchPage: React.FC = () => {
     const allowAllThree = useSelector(canAll('/screening', 'CREATE', 'VIEW', 'EDIT'));
 
 
-  const handleSearch = async () => {
+    React.useEffect(() => {
+  if (searchNameFromBox && searchNameFromBox.trim().length >= 3) {
+    setSearchQuery(registrationId);
+    handleSearch(registrationId);
+  }
+}, []);
+const handleSearch = async (value?: string) => {
+  const finalSearch = value ?? searchQuery;
 
-    // require at least 3 characters before searching
-    if (!searchQuery || searchQuery.trim().length < 3) {
-      setError('Please enter a minimum of 3 characters.');
-      return;
-    }
-    // only mark submitted when a real API call will be made
-    setSearchSubmitted(true);
+  if (!finalSearch || finalSearch.trim().length < 3) {
+    setError('Please enter a minimum of 3 characters.');
+    return;
+  }
+
+  setSearchSubmitted(true);
     const hospitalId = localStorage.getItem("hospitalId");
      const roleId= localStorage.getItem('roleId');
     const token = localStorage.getItem("token");
@@ -73,7 +86,7 @@ const PatientSearchPage: React.FC = () => {
         `${config.appURL}/curable/getCandidatesList`,
         {
           hospitalId: Number(hospitalId),
-          search: searchQuery,
+          search: finalSearch,
           stage: 1,
           roleId: Number(roleId),
           userId: Number(userId),
@@ -206,8 +219,13 @@ console.log(selectedDisease,"selectedDisease")
     console.log(patientAge,selectedPatient,"patientAge")
     
 
-    navigate("/DiseaseSpecificDetailsScreening");
-  };
+navigate("/DiseaseSpecificDetailsScreening", {
+  state: {
+    searchNameFromBox,
+    searchflow,
+    registrationId
+  }
+});  };
 
   // Pagination helpers (client-side)
   const pageSize = 5;
@@ -260,12 +278,13 @@ console.log(selectedDisease,"selectedDisease")
           }}      />
         <button
            className={`search-button_common ${!allowAllThree ? 'disabled-button' : ''}`}
-                  onClick={handleSearch}
- disabled={!allowAllThree || loading}                >
+ onClick={() => handleSearch()}
+  disabled={!allowAllThree || loading}                >
                   {loading ? 'Searching...' : 'Search'}
         
         </button>
       </div>
+  {error && <p className="error center-message">{error}</p>}
 
       <div className="search-container">
 
@@ -279,7 +298,6 @@ console.log(selectedDisease,"selectedDisease")
 )}
 
 
-  {error && <p className="error center-message">{error}</p>}
 
       
 

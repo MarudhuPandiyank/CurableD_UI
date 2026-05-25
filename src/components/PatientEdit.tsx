@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Dialog, DialogTitle, DialogContent, DialogActions, Button, Typography } from '@mui/material';
 import '../components/OutreachClinicInfo.css';  // Same CSS file
@@ -58,12 +58,25 @@ const PatientEdit: React.FC = () => {
   const [selectedCandidateId, setSelectedCandidateId] = useState<number>(0);
   const [openNoCandidateDialog, setOpenNoCandidateDialog] = useState<boolean>(false);
   const [message, setMessage] = useState<string>('');
+  const location = useLocation();
 
-  const handleSearch = async () => {
+  const searchNameFromBox = location.state?.searchName || "";
+const searchflow = location.state?.searchflow || "";
+const registrationId = location.state?.registrationId || "";
+
+    React.useEffect(() => {
+  if (searchNameFromBox && searchNameFromBox.trim().length >= 3) {
+    setSearchInput(registrationId);
+    handleSearch(registrationId);
+  }
+}, []);
+const handleSearch = async (value?: string) => {
     // Require at least 3 characters before searching to avoid broad queries
     setLoading(true);
     setMessage('');
-    if (!searchInput || searchInput.trim().length < 3) {
+      const finalSearch = value ?? searchInput;
+
+  if (!finalSearch || finalSearch.trim().length < 3) {
       setMessage('Please enter a minimum of 3 characters.');
       setLoading(false);
       return;
@@ -88,7 +101,7 @@ const PatientEdit: React.FC = () => {
       }
       const response = await axios.post<CandidateAPIResponse[]>(
         `${config.appURL}/curable/getCandidatesList`,
- { hospitalId: parseInt(hospitalId, 10), search: searchInput, stage: 3,roleId: Number(roleId) ,userId :Number(userId) },
+ { hospitalId: parseInt(hospitalId, 10), search: finalSearch, stage: 3,roleId: Number(roleId) ,userId :Number(userId) },
          { headers: { Authorization: `Bearer ${token}` } }
       );
 
@@ -151,7 +164,10 @@ localStorage.removeItem("latschild");
 localStorage.removeItem("heightval");
 localStorage.removeItem("weightval");
 
-    navigate('/NewScreeningEnrollment', { state: { candidateId: candidateId, edit: true, registrationId: candidateObj?.registrationId, registraionId: candidateObj?.registrationId } });
+    navigate('/NewScreeningEnrollment', { state: { candidateId: candidateId, edit: true, registrationId: candidateObj?.registrationId, registraionId: candidateObj?.registrationId ,
+      searchNameFromBox,
+    searchflow
+    } });
   };
 
   return (
@@ -181,7 +197,8 @@ localStorage.removeItem("weightval");
               }} />
         <button
            className={`search-button_common ${!allowAllThree ? 'disabled-button' : ''}`}
-onClick={handleSearch} disabled={loading}>                  {loading ? 'Searching...' : 'Search'}
+ onClick={() => handleSearch()}
+ disabled={loading}>                  {loading ? 'Searching...' : 'Search'}
         
         </button>
       </div>

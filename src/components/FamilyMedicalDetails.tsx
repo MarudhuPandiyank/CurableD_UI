@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Header1 from './Header1';
 import './HomePage.css';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from "react-router-dom";
 import config from '../config';
 
 // ----- Types -----
@@ -58,6 +58,11 @@ const FamilyMedicalDetails: React.FC = () => {
   // each array element = one family member (map of fieldName -> value)
   const [formValues, setFormValues] = useState<Record<string, string>[]>([]);
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
+
+    const location = useLocation();
+const searchNameFromBox = location.state?.searchName || "";
+const searchflow = location.state?.searchflow || "";
+const registrationIds = location.state?.registrationId || "";
 
   useEffect(() => {
     const fetchFamilyMedicalMetrics = async () => {
@@ -231,7 +236,13 @@ const FamilyMedicalDetails: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const ok = await submitPayload();
-    if (ok) navigate('/SuccessMessagePRFinal');
+    if (ok) navigate('/SuccessMessagePRFinal', {
+  state: {
+    searchNameFromBox,
+    searchflow,
+    registrationId:registrationIds
+  }
+});
   };
 
   const handlePrevClick = async () => {

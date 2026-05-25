@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from "react-router-dom";
 import axios from 'axios';
 import Header1 from './Header1';
 import Select, { MultiValue } from 'react-select';
@@ -53,6 +53,19 @@ interface ColourOption {
   label: string;
 }
 
+interface DiseaseEligibilityDTO {
+  candidateId: number;
+  stage: string;
+  name: string;
+  diseaseTestId: number;
+  candidateTestId: number;
+}
+
+interface CandidateHistoryResponse {
+  diseaseEligibilityDTO?: DiseaseEligibilityDTO;
+}
+
+
 const App: React.FC = () => {
   const navigate = useNavigate();
 
@@ -61,12 +74,26 @@ const App: React.FC = () => {
   const allowAllThree = useSelector(canAll('/clinical', 'CREATE', 'VIEW', 'EDIT'));
 
   // ids & state
-  const diseaseTestIds = localStorage.getItem('diseaseTestIds');
   const [fieldData, setFieldData] = useState<Field[]>([]);
   const [selectedValues, setSelectedValues] = useState<Record<string, string | string[]>>({});
   const [hiddenFields, setHiddenFields] = useState<string[]>([]);
   const [formErrors, setFormErrors] = useState<string[]>([]);
   const [titleName, setTitleName] = useState('Clinical Evaluation');
+    const location = useLocation();
+const searchNameFromBox = location.state?.searchName || "";
+const searchflow = location.state?.searchflow || "";
+const registrationId = location.state?.registrationId || "";
+
+const finalsearch = location.state?.finalsearch || false;
+const diseaseEligibilityDTO =
+  location.state?.diseaseEligibilityDTO || null;
+  const diseaseTestIds = finalsearch
+  ? location.state?.diseaseTestIds
+  : localStorage.getItem('diseaseTestIds');
+
+
+
+
 // top of component state
 const [isLoading, setIsLoading] = useState<boolean>(true);
 
@@ -189,12 +216,59 @@ const [isLoading, setIsLoading] = useState<boolean>(true);
 
   // Titles
   useEffect(() => {
-    const raw = (localStorage.getItem('selectedStage') || '').toLowerCase().trim();
-    if (raw.includes('breast')) setTitleName('Breast Clinical Evaluation');
-    else if (raw.includes('oral')) setTitleName('Oral Clinical Evaluation');
-    else if (raw.includes('cervical')) setTitleName('Cervical Clinical Evaluation');
-    else setTitleName('Clinical Evaluation');
-  }, []);
+
+  if (finalsearch) {
+
+    const dtoStage =
+      diseaseEligibilityDTO?.stage?.toLowerCase().trim() || '';
+
+    if (dtoStage.includes('breast')) {
+      setTitleName('Breast Clinical Evaluation');
+
+    } else if (dtoStage.includes('oral')) {
+      setTitleName('Oral Clinical Evaluation');
+
+    } else if (dtoStage.includes('cervical')) {
+      setTitleName('Cervical Clinical Evaluation');
+
+    } else if (dtoStage.includes('general')) {
+      setTitleName('General Clinical Evaluation');
+
+    } else if (dtoStage.includes('symptoms')) {
+      setTitleName('Symptoms based referral Clinical Evaluation');
+
+    } else {
+      setTitleName('Clinical Evaluation');
+    }
+
+  } else {
+
+    const raw =
+      (localStorage.getItem('selectedStage') || '')
+        .toLowerCase()
+        .trim();
+
+    if (raw.includes('breast')) {
+      setTitleName('Breast Clinical Evaluation');
+
+    } else if (raw.includes('oral')) {
+      setTitleName('Oral Clinical Evaluation');
+
+    } else if (raw.includes('cervical')) {
+      setTitleName('Cervical Clinical Evaluation');
+
+    } else if (raw.includes('general')) {
+      setTitleName('General Clinical Evaluation');
+
+    } else if (raw.includes('symptoms')) {
+      setTitleName('Symptoms based referral Clinical Evaluation');
+
+    } else {
+      setTitleName('Clinical Evaluation');
+    }
+  }
+
+}, [finalsearch, diseaseEligibilityDTO]);
 
   // Change handlers
   const handleSelectChange = (testName: string, value: string | string[]) => {
@@ -259,6 +333,7 @@ const [isLoading, setIsLoading] = useState<boolean>(true);
       diseaseTestMasterId: Number(diseaseTestIds),
       description: 'Test Metrics',
       diseaseTestId: 1,
+      requestType:searchflow?1:0,
       testMetrics: {
         params: fieldData.map(field => ({
           testName: field.testName,
@@ -283,36 +358,57 @@ const [isLoading, setIsLoading] = useState<boolean>(true);
     };
   };
 
-  const postCandidateHistory = async (payload: any) => {
-    const token = localStorage.getItem('token');
-    if (!token) throw new Error('Missing token');
-    await axios.post(`${config.appURL}/curable/candidatehistory`, payload, {
+const postCandidateHistory = async (payload: any) => {
+  const token = localStorage.getItem('token');
+  if (!token) throw new Error('Missing token');
+
+  const response = await axios.post<CandidateHistoryResponse>(
+    `${config.appURL}/curable/candidatehistory`,
+    payload,
+    {
       headers: { Authorization: `Bearer ${token}` },
-    });
-  };
+    }
+  );
 
+  return response;
+};
   const handleSave = async (e?: React.FormEvent) => {
-    if (e) e.preventDefault();
-    try {
-      await postCandidateHistory(buildPayload(0));
-      navigate('/SuccessMessageClinicalFInal');
-    } catch (error) {
-      console.error('Save failed:', error);
-      alert('Save failed. Please try again.');
-    }
-  };
+  if (e) e.preventDefault();
 
-  const handleFinish = async (e?: React.FormEvent) => {
-    if (e) e.preventDefault();
-    if (!validateForFinish()) return;
-    try {
-      await postCandidateHistory(buildPayload(1));
-      navigate('/SuccessMessageClinicalFInal');
-    } catch (error) {
-      console.error('Submit failed:', error);
-      alert('Submit failed. Please try again.');
-    }
-  };
+  try {
+    const response = await postCandidateHistory(buildPayload(0));
+
+    navigate('/SuccessMessageScreeningFInal', {
+      state: {
+        searchNameFromBox,
+        searchflow,
+        diseaseEligibilityDTO: response.data?.diseaseEligibilityDTO || null,
+      },
+    });
+  } catch (error) {
+    console.error('Save failed:', error);
+    alert('Save failed. Please try again.');
+  }
+};
+ const handleFinish = async (e?: React.FormEvent) => {
+  if (e) e.preventDefault();
+  if (!validateForFinish()) return;
+
+  try {
+    const response = await postCandidateHistory(buildPayload(1));
+
+    navigate('/SuccessMessageScreeningFInal', {
+      state: {
+        searchNameFromBox,
+        searchflow,
+        diseaseEligibilityDTO: response.data?.diseaseEligibilityDTO || null,
+      },
+    });
+  } catch (error) {
+    console.error('Submit failed:', error);
+    alert('Submit failed. Please try again.');
+  }
+};
 
   // UI bits
   const pName = localStorage.getItem('ptName') || localStorage.getItem('patientName');

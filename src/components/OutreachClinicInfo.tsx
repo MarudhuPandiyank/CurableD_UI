@@ -10,6 +10,8 @@ import { useSelector } from 'react-redux';
 import { selectPrivilegeFlags } from '../store/userSlice';
 
 import { canAll, can, Privilege } from '../store/userSlice';
+import Loader from "../components/common/Loader";
+
 
 interface Clinic {
   id: string;
@@ -179,6 +181,10 @@ const OutreachClinicInfo: React.FC = () => {
 
   return (
     <div className="container2">
+             <>
+       <Loader isLoading={loading} />
+      </>
+
       <Header1 />
  <div className="title">
          

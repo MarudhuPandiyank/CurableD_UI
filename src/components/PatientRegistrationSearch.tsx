@@ -231,6 +231,7 @@ const PatientRegistrationSearch: React.FC = () => {
         </button>
       </div>
 
+              {message && <p className="errors_message">{message}</p>}
 
       <main className="content">
         <div className="search-section_patitent">
@@ -242,7 +243,6 @@ const PatientRegistrationSearch: React.FC = () => {
           </div>
         </div>
 
-        {message && <div className="message">{message}</div>}
 
         {/* Example: duplicate name resolver dropdown (kept commented as in your code) */}
         {/* {hasDuplicateNames && (

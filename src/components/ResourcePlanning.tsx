@@ -7,6 +7,8 @@ import SuccessMessage from './SuccessMessage';
 import ResourceAllocation from './ResourceAllocation';
 import Header1 from './Header1';
 import config from '../config'; 
+import Loader from "../components/common/Loader";
+
 const ResourcePlanning: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -35,7 +37,7 @@ const ResourcePlanning: React.FC = () => {
     pincode: pincode || ''
   });
 
-  const [loading, setLoading] = useState(false);
+const [loading, setLoading] = useState<boolean>(false);
 
 const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
   const { name, value } = e.target;
@@ -117,6 +119,8 @@ const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
      /*not uswcontainer21*/
     <div className="container21">
        <Header1 />
+              <Loader isLoading={loading} />
+
       <h1 style={{ color: 'darkblue' }}>Resource Planning</h1>
 <form className="clinic-form" onSubmit={handleSubmit}>
   <label><span style={{ color: "darkblue" }}>Program Co-ordinator:</span> </label>

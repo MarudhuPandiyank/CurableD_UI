@@ -7,7 +7,43 @@ const SuccessMessageScreeningFInal = () => {
   const location = useLocation();
   const { clickId } = location.state || {};
     const [registraionId, setRegistraionId] = useState<string | null>(null);
+    const searchNameFromBox = location.state?.searchNameFromBox || "";
+  const searchflow = location.state?.searchflow || false;
 
+  const diseaseEligibilityDTO = location.state?.diseaseEligibilityDTO || null;
+
+const hasDiseaseDTO =
+  diseaseEligibilityDTO &&
+  Object.keys(diseaseEligibilityDTO).length > 0;
+
+const nextStage = diseaseEligibilityDTO?.stage || 'Breast Screening';
+
+const diseaseTestIds= diseaseEligibilityDTO?.diseaseTestId || [];
+
+const handleNextScreening = () => {
+  if (diseaseEligibilityDTO?.name === 'SCREENING') {
+    navigate('/DiseaseSpecificDetailsScreening', {
+      state: {
+        searchNameFromBox,
+        searchflow,
+        diseaseEligibilityDTO,
+        diseaseTestIds,
+        finalsearch: true, // Indicate this is coming from the final success screen
+      },
+    });
+  } else if (diseaseEligibilityDTO?.name === 'CLINICAL') {
+    navigate('/DynamicScreen', {
+      state: {
+        searchNameFromBox,
+        searchflow,
+        diseaseEligibilityDTO,
+        diseaseTestIds,
+        finalsearch: true, // Indicate this is coming from the final success screen
+
+      },
+    });
+  }
+};
      useEffect(() => {
   const regId = localStorage.getItem('registrationId');
   console.log(regId,"regId")
@@ -17,7 +53,34 @@ const SuccessMessageScreeningFInal = () => {
       }, []);
   
   return (
-    <div className='container5'>
+    <div  className={searchflow ? 'screening-success-page' : 'container5'}>
+        {searchflow  && hasDiseaseDTO ? (
+    <main className="screening-success-card">
+      <div className="screening-success-icon">✓</div>
+
+      <h1>Oral Screening Completed Successfully!</h1>
+
+      <p>
+        Patient: {searchNameFromBox} (ID: {registraionId})
+      </p>
+
+      <div className="screening-success-actions">
+        <button
+  className="screening-next-btn"
+  onClick={handleNextScreening}
+>
+  Go to {nextStage} for {searchNameFromBox}
+</button>
+
+        <button
+          className="screening-home-btn"
+          onClick={() => navigate('/responsive-cancer-institute')}
+        >
+          Go to Home
+        </button>
+      </div>
+    </main>
+  ) : (
       <main className="content">
         <img src='./Curable Icons/PNG/Group 261.png' alt="Success Icon" className="icon" /><br/>
         <h1>Screening has been Completed successfully!</h1>
@@ -33,7 +96,9 @@ const SuccessMessageScreeningFInal = () => {
           Back To Home
         </button>
       </main>
+       )}
     </div>
+
   );
 };
 

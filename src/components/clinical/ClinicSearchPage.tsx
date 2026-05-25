@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "./PatientSearchPage.css";
 import Header from "../Header";
@@ -8,6 +7,8 @@ import config from '../../config';
 import { useSelector } from 'react-redux';
 import { selectPrivilegeFlags } from '../../store/userSlice';
 import Loader from "../common/Loader";
+import { useNavigate, useLocation } from "react-router-dom";
+
 
 
 import { canAll, can, Privilege } from '../../store/userSlice';
@@ -38,6 +39,11 @@ const ClinicSearchPage: React.FC = () => {
   const [selectedStage, setSelectedStage] = useState<string | null>(null);
   const [searchAttempted, setSearchAttempted] = useState(false);
   const [stageToId, setStageToId] = useState<Record<string, number>>({});
+    const location = useLocation();
+const searchNameFromBox = location.state?.searchName || "";
+const searchflow = location.state?.searchflow || "";
+const registrationId = location.state?.registrationId || "";
+
 
   const navigate = useNavigate();
       const { canView, canCreate, canEdit } = useSelector(
@@ -46,8 +52,17 @@ const ClinicSearchPage: React.FC = () => {
   
     const allowAllThree = useSelector(canAll('/clinical', 'CREATE', 'VIEW', 'EDIT'));
 
+    React.useEffect(() => {
+  if (searchNameFromBox && searchNameFromBox.trim().length >= 3) {
+    setSearchQuery(registrationId);
+    handleSearch(registrationId);
+  }
+}, []);
 
-  const handleSearch = async () => {
+
+const handleSearch = async (value?: string) => {
+      if (loading) return; // Prevent multiple API calls if already loading
+
     const hospitalId = localStorage.getItem("hospitalId");
     const token = localStorage.getItem("token");
     const roleId= localStorage.getItem('roleId');
@@ -56,9 +71,11 @@ const ClinicSearchPage: React.FC = () => {
       setError("Hospital ID or Token missing. Please log in again.");
       return;
     }
+      const finalSearch = value ?? searchQuery;
+
     // require at least 3 characters to search
     setError(null);
-    if (!searchQuery || searchQuery.trim().length < 3) {
+  if (!finalSearch || finalSearch.trim().length < 3) {
       setError('Please enter a minimum of 3 characters.');
       // don't mark as searchAttempted — API wasn't called
       return;
@@ -73,7 +90,7 @@ const ClinicSearchPage: React.FC = () => {
         `${config.appURL}/curable/getCandidatesList`,
         {
           hospitalId: Number(hospitalId),
-          search: searchQuery,
+          search: finalSearch,
           stage: 2,
            roleId: Number(roleId),
           userId: Number(userId),
@@ -178,7 +195,13 @@ const handleStageChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
 
 
    // navigate("/DiseaseSpecificDetailsClinic");
-    navigate("/DynamicScreen");
+    navigate("/DynamicScreen", {
+  state: {
+    searchNameFromBox,
+    searchflow,
+    registrationId
+  }
+});
   };
 
   return (
@@ -206,8 +229,10 @@ const handleStageChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
   }}
         />
         <button
+                   disabled={loading}
+
           className="search-button"
-          onClick={handleSearch}
+ onClick={() => handleSearch()}
           aria-label="Search"
         >
           Search

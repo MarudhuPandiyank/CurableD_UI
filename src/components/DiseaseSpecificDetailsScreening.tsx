@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Header1 from './Header1';
 import Select, { MultiValue } from 'react-select';
@@ -11,6 +10,7 @@ import config from '../config';
 import './Common.css';
 import './disease.css';
 import Loader from './common/Loader';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 interface Condition {
   enabledField: string;
@@ -49,6 +49,18 @@ interface ColourOption {
   label: string;
 }
 
+interface DiseaseEligibilityDTO {
+  candidateId: number;
+  stage: string;
+  name: string;
+  diseaseTestId: number;
+  candidateTestId: number;
+}
+
+interface CandidateHistoryResponse {
+  diseaseEligibilityDTO?: DiseaseEligibilityDTO;
+}
+
 const App: React.FC = () => {
   const [selectedValues, setSelectedValues] = useState<{ [key: string]: string | string[] }>({});
   const [hiddenFields, setHiddenFields] = useState<string[]>([]);
@@ -58,10 +70,19 @@ const App: React.FC = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [apiStage, setApiStage] = useState<string | null>(null);
+  const location = useLocation();
+
+  const searchNameFromBox = location.state?.searchNameFromBox || "";
+const searchflow = location.state?.searchflow || "";
   
 
-  const diseaseTestIds = localStorage.getItem('diseaseTestIds');
+const finalsearch = location.state?.finalsearch || false;
+const diseaseEligibilityDTO =
+  location.state?.diseaseEligibilityDTO || null;
 
+const diseaseTestIds = finalsearch
+  ? location.state?.diseaseTestIds
+  : localStorage.getItem('diseaseTestIds');
   // ---------- visibility helpers ----------
   const isTriggered = (current: string | string[] | undefined, trigger: string) => {
     if (!trigger) return false;
@@ -264,6 +285,7 @@ const App: React.FC = () => {
       stage: apiStage ,
       eligibilityMetrics: null,
       completed,
+      requestType:searchflow?1:0,
       type: 1,
       testMetrics: {
         params: fieldData.map(field => {
@@ -283,14 +305,24 @@ const App: React.FC = () => {
   };
 
   const handleSave = async () => {
+    console.log(buildPayload(0),"save payload")
     try {
       const token = localStorage.getItem('token');
-      await axios.post(`${config.appURL}/curable/candidatehistory`, buildPayload(0), {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+     const response = await axios.post<CandidateHistoryResponse>(
+  `${config.appURL}/curable/candidatehistory`,
+  buildPayload(0),
+  {
+    headers: { Authorization: `Bearer ${token}` },
+  }
+);
       // In “No” flow, proceed after Save; else stay or toast
-      navigate('/SuccessMessageScreeningFInal');
-    } catch (error) {
+navigate('/SuccessMessageScreeningFInal', {
+  state: {
+    searchNameFromBox,
+    searchflow,
+     diseaseEligibilityDTO: response.data?.diseaseEligibilityDTO || null, // pass any additional data if needed
+  }
+});    } catch (error) {
       console.error('Error saving data:', error);
       alert('Save failed. Please try again.');
     }
@@ -300,29 +332,81 @@ const App: React.FC = () => {
     if (!validateForFinish()) return;
     try {
       const token = localStorage.getItem('token');
-      await axios.post(`${config.appURL}/curable/candidatehistory`, buildPayload(1), {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      navigate('/SuccessMessageScreeningFInal');
-    } catch (error) {
+     const response = await axios.post<CandidateHistoryResponse>(
+  `${config.appURL}/curable/candidatehistory`,
+  buildPayload(1),
+  {
+    headers: { Authorization: `Bearer ${token}` },
+  }
+);
+navigate('/SuccessMessageScreeningFInal', {
+  state: {
+    searchNameFromBox,
+    searchflow,
+     diseaseEligibilityDTO: response.data?.diseaseEligibilityDTO || null, // pass any additional data if needed
+
+  }
+});    } catch (error) {
       console.error('Error submitting data:', error);
       alert('Submit failed. Please try again.');
     }
   };
 
   // Titles for 3 stages (robust)
-  useEffect(() => {
-    const raw = (localStorage.getItem('selectedStage') || '').toLowerCase().trim();
+ useEffect(() => {
 
-    if (raw === 'breast screening') setTitleName('Breast Screening');
-    else if (raw === 'oral screening') setTitleName('Oral Screening');
-    else if (raw === 'cervical screening') setTitleName('Cervical Screening');
-        else if (raw === 'general screening') setTitleName('General Screening');
+  if (finalsearch) {
 
-    // if the selected stage contains the word 'symptoms' (case-insensitive), treat it as Symptoms based referral screening
-    else if (raw.includes('symptoms')) setTitleName('Symptoms based referral screening');
-    else setTitleName('Disease Specific Details');
-  }, []);
+    const dtoStage =
+      diseaseEligibilityDTO?.stage?.toLowerCase().trim() || '';
+
+    if (dtoStage.includes('breast')) {
+      setTitleName('Breast Screening');
+
+    } else if (dtoStage.includes('oral')) {
+      setTitleName('Oral Screening');
+
+    } else if (dtoStage.includes('cervical')) {
+      setTitleName('Cervical Screening');
+
+    } else if (dtoStage.includes('general')) {
+      setTitleName('General Screening');
+
+    } else if (dtoStage.includes('symptoms')) {
+      setTitleName('Symptoms based referral screening');
+
+    } else {
+      setTitleName('Disease Specific Details');
+    }
+
+  } else {
+
+    const raw =
+      (localStorage.getItem('selectedStage') || '')
+        .toLowerCase()
+        .trim();
+
+    if (raw === 'breast screening') {
+      setTitleName('Breast Screening');
+
+    } else if (raw === 'oral screening') {
+      setTitleName('Oral Screening');
+
+    } else if (raw === 'cervical screening') {
+      setTitleName('Cervical Screening');
+
+    } else if (raw === 'general screening') {
+      setTitleName('General Screening');
+
+    } else if (raw.includes('symptoms')) {
+      setTitleName('Symptoms based referral screening');
+
+    } else {
+      setTitleName('Disease Specific Details');
+    }
+  }
+
+}, [finalsearch, diseaseEligibilityDTO]);
 
   // Finish disabled derived
   const isCervicalStage =

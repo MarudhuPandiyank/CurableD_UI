@@ -14,6 +14,23 @@ import 'primeicons/primeicons.css'; // Icons
 import './Common.css';
 import Loader from './common/Loader';
 
+
+interface FinalVisitscall {
+  id: number;
+  name: string;
+  registraionId: string;
+  age: number;
+  gender: string;
+  mobileNo: string;
+  eligibleDiseases: {
+    candidateId: number;
+    stage: string;
+    name: string;
+    diseaseTestId: number;
+  }[] | null;
+}
+
+
 interface PrefillApiResponse {
   id: number;
   registraionId: string;
@@ -71,6 +88,9 @@ const [genderError, setGenderError] = useState('');
   const [nameError, setNameError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [loadingText, setLoadingText] = useState('Loading...');
+const searchNameFromBox = location.state?.searchName || "";
+const searchflow = location.state?.searchflow || "";
+
 
 
 
@@ -258,6 +278,56 @@ useEffect(() => {
     }
   };
 
+ const finalvisitcall = async (e: React.FormEvent) => {
+  e.preventDefault();
+
+  const token = localStorage.getItem('token');
+  const campId = localStorage.getItem('campId');
+  const hospitalId = localStorage.getItem('hospitalId');
+  const patientId = localStorage.getItem('patientId');
+
+  try {
+    const response = await axios.post(
+      `${config.appURL}/curable/createRevisit`,
+      {
+        age: age ? age : 0,
+        campId: campId ? parseInt(campId, 10) : null,
+        gender: gender ? gender.toUpperCase() : null,
+        hospitalId: Number(hospitalId),
+        id: patientId,
+        dob: dob ? dob.toISOString().split('T')[0] : null,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+console.log(registraionId,searchNameFromBox,"searchNameFromBox",response.data)
+    if (response.data === 1 || response.data === '1') {
+      navigate('/PatientSearchPage', {
+        state: {
+          searchflow: true,
+          registrationId: registraionId,
+          searchName:registraionId
+        },
+      });
+      return;
+    }
+
+    if (Array.isArray(response.data) && response.data.length > 0) {
+      navigate('/ClinicSearchPage', {
+        state: {
+          searchflow: true,
+          registrationId: response.data[0].registraionId,
+        },
+      });
+    }
+
+  } catch (error) {
+    console.error('Error fetching patients:', error);
+  }
+};
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -323,9 +393,11 @@ useEffect(() => {
             // id:  null,
 
           type: 1,
-      screenId: 1,                         // constant value for identify the screen type
+      screenId: 1,      
+      revisitStatus:searchflow ? 1 : 0                 // constant value for identify the screen type
 
     };
+    console.log(payload,"payload")
 
     try {
       setLoadingText('Enrolling participant...');
@@ -351,7 +423,12 @@ useEffect(() => {
         // Mark this patient as just-created in this session so ParticipantDetails
         // won't auto-select 'No' when opened immediately after enrollment.
         localStorage.setItem('justCreatedPatient', 'true');
-        navigate('/DiseaseSpecificDetails');
+        navigate('/DiseaseSpecificDetails', {
+  state: {
+    searchNameFromBox,
+    searchflow,
+  }
+});
       }
     } catch (error) {
       console.error('Error during enrollment:', error);
@@ -576,14 +653,20 @@ useEffect(() => {
           <center>
             <div className="buttons">
            
-              <button
+             {searchflow? <button
+                type="button"
+                className="Next-button"
+ onClick={(e) => finalvisitcall(e)}
+              >
+                Go to screening
+              </button>:<button
                 type="button"
                 className="Next-button"
                 onClick={openModal}
 
               >
                 Save
-              </button>
+              </button>}
               <button type="submit" className="Finish-button">
                 Enroll
               </button>

@@ -3,7 +3,8 @@ import Header from './Header';
 import './HomePage.css';
 import './NewScreeningEnrollment.css';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from "react-router-dom";
+
 import Header1 from './Header1';
 import config from '../config'; 
 import Select from 'react-select';
@@ -60,6 +61,11 @@ const MedicalomenHealthDetails: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 const [id, setId] = useState<number | null | undefined>(null);
+  const location = useLocation();
+const searchNameFromBox = location.state?.searchName || "";
+const searchflow = location.state?.searchflow || "";
+const registrationId = location.state?.registrationId || "";
+
 
   const [errorMenarche, setErrorMenarche] = useState('');
 const [errorFirstChild, setErrorFirstChild] = useState('');
@@ -248,17 +254,17 @@ const navigate = useNavigate();
   };
 
   // unified submit helper used by Prev, form submit and modal
-  const submitAndNavigate = async (navigateTo: string) => {
+  const submitAndNavigate = async (navigateTo: string,options?: any) => {
     const payload = prepareMedicalPayload();
     if (!payload) return;
     const ok = await submitMedicalHistory(payload);
-    if (ok) navigate(navigateTo);
+    if (ok) navigate(navigateTo,options);
   };
 
   // wrapper used by form onSubmit and modal buttons to prevent default
-  const handleSubmit = (event: React.FormEvent, navigateTo: string) => {
+  const handleSubmit = (event: React.FormEvent, navigateTo: string,options?: any) => {
     event.preventDefault();
-    submitAndNavigate(navigateTo);
+    submitAndNavigate(navigateTo,options);
   };
 
 
@@ -409,8 +415,17 @@ console.log(age,participant,ageString,"skkksa")
       <p className="participant-info-text"><strong>ID:</strong> {registraionId}</p>
             </div>
       <h1 style={{ color: 'darkblue', fontWeight: 'bold', }}>Medical Details</h1>
-      <form className="clinic-form" onSubmit={(e) => handleSubmit(e, '/FamilyPersonalDetails')}>
-        {/* Medical Details Section */}
+<form
+  className="clinic-form"
+  onSubmit={(e) =>
+    handleSubmit(e, '/FamilyPersonalDetails', {
+      state: {
+        searchNameFromBox,
+        searchflow
+      }
+    })
+  }
+>        {/* Medical Details Section */}
         <fieldset>
           {/* <legend>Medical Details</legend> */}
           <label>Medical History:</label>

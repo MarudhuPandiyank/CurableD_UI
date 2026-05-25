@@ -5,6 +5,8 @@ import Header1 from './Header1';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Select, { MultiValue, GroupBase } from 'react-select';
 import config from '../config'; 
+import NoDataModal from './common/NoDataModal';
+
 
 interface Admin {
   id: number;
@@ -39,6 +41,8 @@ const [errors, setErrors] = useState({
   nurses: '',
   doctors: '',
 });
+  const [showNoDataModal, setShowNoDataModal] = useState(false);
+
   const [formData, setFormData] = useState({
     programCoordinators: [] as Admin[],
     campCoordinators: [] as Admin[],
@@ -58,6 +62,11 @@ const [errors, setErrors] = useState({
   const axiosInstance = axios.create({
     headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
   });
+
+  const handleNoDataOk = () => {
+    setShowNoDataModal(false);
+    navigate('/responsive-cancer-institute');
+  };
 
   useEffect(() => {
     const fetchStaffDetails = async () => {
@@ -94,7 +103,7 @@ const [errors, setErrors] = useState({
         }
       } catch (error) {
         console.error('Error fetching staff details:', error);
-        alert('Failed to fetch staff details. Please try again.');
+        setShowNoDataModal(true)
       }
     };
 
@@ -210,6 +219,7 @@ const [errors, setErrors] = useState({
     <div className="container2">
       <form className="clinic-form" onSubmit={handleSubmit}>
         <Header1 />
+      <NoDataModal show={showNoDataModal} onOk={handleNoDataOk} />
 
         <h1 style={{ color: 'darkblue' }}>Resource Allocation</h1>
         <div className="form-group">
