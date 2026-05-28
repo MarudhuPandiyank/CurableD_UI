@@ -105,9 +105,8 @@ h1 {
 .screening-success-card {
   width: 100%;
   min-height: 475px;
-  border: 3px solid #159b78;
   border-radius: 10px;
-  background: #e2f4ee;
+  background:white;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -130,7 +129,6 @@ h1 {
 
 .screening-success-card h1 {
   margin: 0 0 14px;
-  color: #087462;
   font-size: 34px;
   font-weight: 700;
   text-align: center;
@@ -160,7 +158,7 @@ h1 {
 }
 
 .screening-next-btn {
-  background: #1ba37f;
+  background: #d774ad;
   color: #fff;
   border: none;
   font-weight: 600;
@@ -180,10 +178,11 @@ h1 {
   .screening-success-card {
     min-height: 520px;
     padding: 30px 16px;
+    margin-top: 30%;
   }
 
   .screening-success-card h1 {
-    font-size: 25px;
+    font-size: 19px;
   }
 
   .screening-success-card p {
@@ -199,6 +198,6 @@ h1 {
   .screening-home-btn {
     width: 100%;
     min-width: unset;
-    font-size: 18px;
+    font-size: 16px;
   }
 }

@@ -113,6 +113,10 @@ const handleSearch = async (value?: string) => {
           eligibleDiseases: patient.eligibleDiseases,
         }));
         setPatients(patientData);
+        // Auto-select first patient and stage if searchflow is true
+        if (searchflow && patientData.length > 0) {
+          handlePatientClick(patientData[0]);
+        }
       } else {
         setPatients([]);
       }

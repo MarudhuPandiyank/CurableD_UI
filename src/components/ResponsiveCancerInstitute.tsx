@@ -27,7 +27,7 @@ const [isSearchActive, setIsSearchActive] = useState(false);
       <Header1  />
       
 
-      <main className="container4-fluid mt-4">
+      <main className="container4-fluid">
 <SearchBox onSearchActiveChange={setIsSearchActive} />
 {!isSearchActive && (
   <div className="container4-box d-flex flex-wrap justify-content-center">

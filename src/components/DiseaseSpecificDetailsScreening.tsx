@@ -320,6 +320,7 @@ navigate('/SuccessMessageScreeningFInal', {
   state: {
     searchNameFromBox,
     searchflow,
+    titleName,
      diseaseEligibilityDTO: response.data?.diseaseEligibilityDTO || null, // pass any additional data if needed
   }
 });    } catch (error) {
@@ -343,6 +344,7 @@ navigate('/SuccessMessageScreeningFInal', {
   state: {
     searchNameFromBox,
     searchflow,
+    titleName,
      diseaseEligibilityDTO: response.data?.diseaseEligibilityDTO || null, // pass any additional data if needed
 
   }

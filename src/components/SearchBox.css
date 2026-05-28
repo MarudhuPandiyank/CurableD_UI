@@ -58,7 +58,7 @@
 }
 
 .searchbox-patient-name {
-  font-size: 1.3rem;
+  font-size: 1rem;
   font-weight: 600;
   margin-bottom: 4px;
 }
@@ -102,7 +102,7 @@
   margin-bottom: 10px;
 }
 .searchbox-no-result-title {
-  font-size: 1.2rem;
+  font-size: 1.4rem;
   font-weight: 600;
   margin-bottom: 4px;
 }
@@ -142,4 +142,13 @@
     padding: 12px 0;
     font-size: 1rem;
   }
+
+  .searchbox-create-btn {
+    width: 100%;
+    max-width: 100%;
+    font-size: 0.95rem;
+    padding: 14px 10px;
+    border-radius: 10px;
+  }
+
 }

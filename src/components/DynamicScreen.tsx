@@ -382,6 +382,7 @@ const postCandidateHistory = async (payload: any) => {
       state: {
         searchNameFromBox,
         searchflow,
+        titleName,
         diseaseEligibilityDTO: response.data?.diseaseEligibilityDTO || null,
       },
     });
@@ -401,6 +402,7 @@ const postCandidateHistory = async (payload: any) => {
       state: {
         searchNameFromBox,
         searchflow,
+        titleName,
         diseaseEligibilityDTO: response.data?.diseaseEligibilityDTO || null,
       },
     });

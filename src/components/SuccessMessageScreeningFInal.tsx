@@ -9,6 +9,7 @@ const SuccessMessageScreeningFInal = () => {
     const [registraionId, setRegistraionId] = useState<string | null>(null);
     const searchNameFromBox = location.state?.searchNameFromBox || "";
   const searchflow = location.state?.searchflow || false;
+  const titleName = location.state?.titleName || "";
 
   const diseaseEligibilityDTO = location.state?.diseaseEligibilityDTO || null;
 
@@ -51,14 +52,15 @@ const handleNextScreening = () => {
           setRegistraionId(regId);
         }
       }, []);
-  
+  const displayNextStage = nextStage.replace(/\s*test\s*$/i, '');
   return (
     <div  className={searchflow ? 'screening-success-page' : 'container5'}>
         {searchflow  && hasDiseaseDTO ? (
+          
     <main className="screening-success-card">
-      <div className="screening-success-icon">✓</div>
+        <img src='./Curable Icons/PNG/Group 261.png' alt="Success Icon" className="icon" /><br/>
 
-      <h1>Oral Screening Completed Successfully!</h1>
+      <h1>{titleName} Completed Successfully!</h1>
 
       <p>
         Patient: {searchNameFromBox} (ID: {registraionId})
@@ -69,7 +71,7 @@ const handleNextScreening = () => {
   className="screening-next-btn"
   onClick={handleNextScreening}
 >
-  Go to {nextStage} for {searchNameFromBox}
+  Go to {displayNextStage} for {searchNameFromBox}
 </button>
 
         <button

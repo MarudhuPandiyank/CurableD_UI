@@ -193,7 +193,7 @@ const SearchBox: React.FC<SearchBoxProps> = ({ onSearchActiveChange }) => {
             <div className="searchbox-result-box" key={c.id}>
               <div className="searchbox-patient">
                 <div className="searchbox-patient-name">
-                  {c.name}, {c.age}yrs/{c.gender}
+                  {c.name}, {c.age}yrs/ {c.gender.charAt(0).toUpperCase() + c.gender.slice(1).toLowerCase()}
                 </div>
 
                 <div className="searchbox-patient-reg">
@@ -308,7 +308,7 @@ const SearchBox: React.FC<SearchBoxProps> = ({ onSearchActiveChange }) => {
             className="searchbox-create-btn"
             onClick={() => navigate('/PatientRegistrationSearch')}
           >
-            + Create New Patient
+             Create New Patient
           </button>
         </div>
       )}
