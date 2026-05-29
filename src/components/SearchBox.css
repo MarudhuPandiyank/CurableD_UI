@@ -102,7 +102,7 @@
   margin-bottom: 10px;
 }
 .searchbox-no-result-title {
-  font-size: 1.4rem;
+  font-size: 1.1rem;
   font-weight: 600;
   margin-bottom: 4px;
 }
@@ -151,4 +151,14 @@
     border-radius: 10px;
   }
 
+  .searchbox-input-wrapper {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border: 1.5px solid #d774ad;
+  border-radius: 6px;
+  padding: 0 12px;
+  margin-bottom: 8px;
+  margin-top: -40px;
+}
 }

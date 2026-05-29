@@ -19,6 +19,7 @@ interface CandidateAPIResponse {
   hospitalId?: string | number;
   lastVistCompletedDate?: string | null;
   reason?: string | null;
+  enrolled?: string | number |null;
   revisitStatus?: number | string; // Assuming this field exists based on usage
 }
 interface SearchBoxProps {
@@ -41,6 +42,8 @@ interface Candidate {
   lastVistCompletedDate?: string | null;
   reason?: string | null;
   revisitStatus: number; // Assuming this field exists based on usage
+  enrolled?: string | number |null;
+
 }
 
 function formatDate(dateStr?: string | null): string {
@@ -197,7 +200,7 @@ const SearchBox: React.FC<SearchBoxProps> = ({ onSearchActiveChange }) => {
                 </div>
 
                 <div className="searchbox-patient-reg">
-                  Registration: {c.registrationId}
+                  Registration Id: {c.registrationId}
                 </div>
                 <br/>
 
@@ -218,8 +221,8 @@ const SearchBox: React.FC<SearchBoxProps> = ({ onSearchActiveChange }) => {
                 )}
 
                 {c.lastVistCompletedDate && (
-                  <div className="searchbox-patient-lastvisit">
-                    📅 Last visit: {formatDate(c.lastVistCompletedDate)}
+                  <div style={{marginLeft: '4px'}} className="searchbox-patient-lastvisit">
+                     <i className="fas fa-calendar-alt"></i> &nbsp;Last visit: {formatDate(c.lastVistCompletedDate)}
                   </div>
                 )}
 
@@ -235,10 +238,24 @@ const SearchBox: React.FC<SearchBoxProps> = ({ onSearchActiveChange }) => {
     const revisitDate = c.lastVistCompletedDate;
     const revisitId = c.revisitStatus?c.revisitStatus:0;
     const reason = c.reason?.toLowerCase() || '';
+    const enrolled= c.enrolled;
 
     // Condition 1:
     // revisitDate not null and revisitId > 0
-    if (revisitDate !== null && revisitId > 0) {
+
+      if (enrolled !== null) {
+        // if (true) {
+
+      navigate('/PatientEdit', {
+        state: {
+          candidateId: c.id,
+          registrationId: c.registrationId,
+          searchflow: true,
+          searchName: c.name,
+        },
+      });
+    }
+    else if (revisitDate !== null && revisitId > 0) {
         // if (true) {
 
       navigate('/PatientEdit', {
@@ -301,7 +318,7 @@ const SearchBox: React.FC<SearchBoxProps> = ({ onSearchActiveChange }) => {
           <div className="searchbox-no-result-icon">👤</div>
           <div className="searchbox-no-result-title">No patient found</div>
           <div className="searchbox-no-result-desc">
-            Try different search terms or create new patient
+            Try different search term or create new patient
           </div>
 
           <button

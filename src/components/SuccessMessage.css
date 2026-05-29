@@ -97,11 +97,10 @@ h1 {
 
 .screening-success-page {
   min-height: 100vh;
-  background: #faf9f4;
+  background: #ffffff;
   padding: 52px 28px;
   box-sizing: border-box;
 }
-
 .screening-success-card {
   width: 100%;
   min-height: 475px;

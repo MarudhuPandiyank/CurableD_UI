@@ -5,7 +5,8 @@ import './SuccessMessage.css';
 const SuccessMessagePRFinal = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { clickId, hideNextEnrollment } = location.state || {};
+  const { clickId, hideNextEnrollment ,searchNameFromBox,
+  searchflow} = location.state || {};
 
   const [registraionId, setRegistraionId] = useState<string | null>(null);
 
@@ -28,9 +29,26 @@ const SuccessMessagePRFinal = () => {
         )}
 
         {!hideNextEnrollment && (
-          <button className="primary-button" onClick={() => navigate('/NewScreeningEnrollment')}>
-            Begin Next Enrollment
-          </button>
+         <button
+  className="primary-button"
+  onClick={() => {
+    if (searchflow) {
+      navigate('/PatientSearchPage', {
+        state: {
+          searchName:registraionId,
+          searchflow:true,
+          registrationId:registraionId,
+          
+        finalsearch: true,
+        }
+      });
+    } else {
+      navigate('/NewScreeningEnrollment');
+    }
+  }}
+>
+ {searchflow?"Go to screening":"Begin Next Enrollment"}
+</button>
         )}
         <button className="secondary-button" onClick={() => navigate('/responsive-cancer-institute')}>
           Back To Home
