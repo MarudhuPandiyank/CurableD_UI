@@ -10,6 +10,7 @@ const SuccessMessageScreeningFInal = () => {
     const searchNameFromBox = location.state?.searchNameFromBox || "";
   const searchflow = location.state?.searchflow || false;
   const titleName = location.state?.titleName || "";
+  console.log(searchNameFromBox,"sdjsdjs")
 
   const diseaseEligibilityDTO = location.state?.diseaseEligibilityDTO || null;
 
@@ -25,7 +26,7 @@ const handleNextScreening = () => {
   if (diseaseEligibilityDTO?.name === 'SCREENING') {
     navigate('/DiseaseSpecificDetailsScreening', {
       state: {
-        searchNameFromBox,
+       searchName:searchNameFromBox,
         searchflow,
         diseaseEligibilityDTO,
         diseaseTestIds,
@@ -35,7 +36,7 @@ const handleNextScreening = () => {
   } else if (diseaseEligibilityDTO?.name === 'CLINICAL') {
     navigate('/DynamicScreen', {
       state: {
-        searchNameFromBox,
+        searchName:searchNameFromBox,
         searchflow,
         diseaseEligibilityDTO,
         diseaseTestIds,

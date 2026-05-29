@@ -174,14 +174,14 @@ const SearchBox: React.FC<SearchBoxProps> = ({ onSearchActiveChange }) => {
         <span className="searchbox-icon">🔍</span>
 
         <input
-          className={`searchbox-input${message ? ' error' : ''}`}
+          className={`searchbox-input${message ? ' ' : ''}`}
           type="text"
           placeholder="Search by name, mobile, ID..."
           value={searchInput}
           onChange={handleChange}
         />
       </div>
-
+<br/>
       {message && touched && <div className="searchbox-error">{message}</div>}
 
       {loading && <div className="searchbox-loading">Loading...</div>}
@@ -205,18 +205,18 @@ const SearchBox: React.FC<SearchBoxProps> = ({ onSearchActiveChange }) => {
                 <br/>
 
                 <div className="searchbox-patient-spouse">
-                  📱 Mobile No: {c.mobileNo}
+                   Mobile No: {c.mobileNo}
                 </div>
 
                 {c.spouseName && (
                   <div className="searchbox-patient-spouse">
-                    🧑‍🤝‍🧑 Spouse Name: {c.spouseName}
+                     Spouse Name: {c.spouseName}
                   </div>
                 )}
 
                 {c.fatherName && (
                   <div className="searchbox-patient-father">
-                    🧑 Father Name: {c.fatherName}
+                   Father Name: {c.fatherName}
                   </div>
                 )}
 
@@ -242,9 +242,33 @@ const SearchBox: React.FC<SearchBoxProps> = ({ onSearchActiveChange }) => {
 
     // Condition 1:
     // revisitDate not null and revisitId > 0
+    console.log(reason.includes('screening'),revisitDate === null , revisitId === 0,
+    reason.includes('screening') && revisitDate === null && revisitId === 0,
+    "revisitId")
 
-      if (enrolled !== null) {
-        // if (true) {
+    if(reason.includes('screening') && revisitDate === null && revisitId === 0 ){
+      
+       navigate('/PatientSearchPage', {
+        state: {
+          searchName: c.name,
+          searchflow: true,
+          registrationId: c.registrationId,
+        },
+      });
+
+    }
+    else if(reason.includes('clinic') && revisitDate === null && revisitId === 0 ){
+
+       navigate('/ClinicSearchPage', {
+        state: {
+          searchName: c.name,
+          searchflow: true,
+          registrationId: c.registrationId,
+        },
+      });
+
+    }
+else if (revisitDate !== null && revisitId === 1  ) {
 
       navigate('/PatientEdit', {
         state: {
@@ -255,10 +279,18 @@ const SearchBox: React.FC<SearchBoxProps> = ({ onSearchActiveChange }) => {
         },
       });
     }
-    else if (revisitDate !== null && revisitId > 0) {
-        // if (true) {
 
-      navigate('/PatientEdit', {
+    else if (revisitDate !== null && revisitId === 2  ) {
+        // if (true) {
+ let path = '/PatientEdit';
+ if (reason.includes('screening')) {
+    path = '/PatientSearchPage';
+  } else if (reason.includes('clinic')) {
+    path = '/ClinicSearchPage';
+  }
+
+
+      navigate(path, {
         state: {
           candidateId: c.id,
           registrationId: c.registrationId,
@@ -268,29 +300,42 @@ const SearchBox: React.FC<SearchBoxProps> = ({ onSearchActiveChange }) => {
       });
     }
 
-    // Condition 2:
-    // reason = Screening ClinicSearchPage PatientSearchPage
-    else if (reason.includes('screening')) {
-      navigate('/PatientSearchPage', {
+        else if ((revisitDate === null && revisitId === 0) && (enrolled !== null || enrolled !== false)  ) {
+        // if (true) {
+ let path = '/PatientEdit';
+
+      navigate(path, {
         state: {
-          searchName: c.name,
-          searchflow: true,
+          candidateId: c.id,
           registrationId: c.registrationId,
+          searchflow: true,
+          searchName: c.name,
         },
       });
     }
 
-    // Condition 3:
-    // reason = clinic
-    else if (reason.includes('clinic')) {
-      navigate('/ClinicSearchPage', {
+     else if ((revisitDate === null && revisitId === 0) && (enrolled !== null || enrolled === true)  ) {
+        // if (true) {
+ let path = '/PatientEdit';
+ if (reason.includes('screening')) {
+    path = '/PatientSearchPage';
+  } else if (reason.includes('clinic')) {
+    path = '/ClinicSearchPage';
+  }
+
+
+      navigate(path, {
         state: {
-          searchName: c.name,
-          searchflow: true,
+          candidateId: c.id,
           registrationId: c.registrationId,
+          searchflow: true,
+          searchName: c.name,
         },
       });
     }
+
+
+
 
     // Default fallback
     else {
