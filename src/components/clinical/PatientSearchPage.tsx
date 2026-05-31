@@ -24,6 +24,7 @@ interface Patient {
     stage: string;
     name: string;
     diseaseTestId: number;
+     candidateTestId: number; 
   }[] | null;
 }
 
@@ -42,6 +43,7 @@ const searchNameFromBox = location.state?.searchName || "";
 const searchflow = location.state?.searchflow || "";
 const registrationId = location.state?.registrationId || "";
 console.log(location.state,"location.state")
+const [selectedCandidateTestId, setSelectedCandidateTestId] = useState<number | null>(null);
 
 
 
@@ -139,7 +141,14 @@ const handleSearch = async (value?: string) => {
     localStorage.setItem("ptName", patient.name.toString());
     localStorage.setItem("registrationId", patient.registraionId);
 
+    
+
     if (patient.eligibleDiseases && Array.isArray(patient.eligibleDiseases)) {
+      if (patient.eligibleDiseases?.length > 0) {
+  setSelectedCandidateTestId(
+    patient.eligibleDiseases[0].candidateTestId
+  );
+}
 
       let stages = patient.eligibleDiseases.map((disease) => {
         let stage = disease.stage.trim().toLowerCase();
@@ -200,7 +209,11 @@ console.log(selectedDisease,"selectedDisease")
         "diseaseTestIds",
         JSON.stringify(selectedDisease.diseaseTestId)
       );
+      setSelectedCandidateTestId(
+    selectedDisease.candidateTestId
+  );
     }
+    
   }
 };
 
@@ -213,6 +226,7 @@ console.log(selectedDisease,"selectedDisease")
     const patientName = selectedPatient?.name || "";
     const patientgender=selectedPatient?.gender||"";
     const patientAge = selectedPatient?.age != null ? selectedPatient.age.toString() : "";
+    console.log(selectedPatient,"selectedPatient")
 
 
     localStorage.setItem("selectedStage", selectedStage);
@@ -226,7 +240,8 @@ navigate("/DiseaseSpecificDetailsScreening", {
   state: {
     searchName:searchNameFromBox,
     searchflow,
-    registrationId
+    registrationId,
+    candidateTestId: selectedCandidateTestId,
   }
 });  };
 

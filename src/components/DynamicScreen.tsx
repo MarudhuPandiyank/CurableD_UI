@@ -59,6 +59,7 @@ interface DiseaseEligibilityDTO {
   name: string;
   diseaseTestId: number;
   candidateTestId: number;
+  candidateTestIds:number;
 }
 
 interface CandidateHistoryResponse {
@@ -90,6 +91,9 @@ const diseaseEligibilityDTO =
   const diseaseTestIds = finalsearch
   ? location.state?.diseaseTestIds
   : localStorage.getItem('diseaseTestIds');
+
+    const candidateTestIds = location.state?.candidateTestId || "";
+
 
 
 
@@ -175,7 +179,7 @@ const [isLoading, setIsLoading] = useState<boolean>(true);
             {
               candidateId,
               type: 7,                       // keep as you noted for this screen
-              diseaseTypeId: Number(diseaseTestIds),
+              diseaseTestId: Number(candidateTestIds),
             },
             { headers: { Authorization: `Bearer ${token}` } }
           );

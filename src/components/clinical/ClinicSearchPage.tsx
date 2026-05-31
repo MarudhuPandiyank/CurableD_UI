@@ -26,6 +26,7 @@ interface Patient {
     stage: string;
     name: string;
     diseaseTestId: number;
+    candidateTestId:number;
   }[] | null;
 }
 
@@ -40,6 +41,7 @@ const ClinicSearchPage: React.FC = () => {
   const [searchAttempted, setSearchAttempted] = useState(false);
   const [stageToId, setStageToId] = useState<Record<string, number>>({});
     const location = useLocation();
+    const [selectedCandidateTestId, setSelectedCandidateTestId] = useState<number | null>(null);
 const searchNameFromBox = location.state?.searchName || "";
 const searchflow = location.state?.searchflow || "";
 const registrationId = location.state?.registrationId || "";
@@ -156,6 +158,8 @@ const handlePatientClick = (patient: Patient) => {
       const firstStage = stages[0];
       setSelectedStage(firstStage);
       // store the matching diseaseTestId for the default (first) stage
+      const firstDisease = sorted[0];
+  setSelectedCandidateTestId(firstDisease.candidateTestId);
       localStorage.setItem("diseaseTestIds", String(map[firstStage]));
     } else {
       setSelectedStage(null);
@@ -172,6 +176,13 @@ const handlePatientClick = (patient: Patient) => {
 const handleStageChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
   const selectedStageValue = event.target.value;
   setSelectedStage(selectedStageValue);
+  const selectedDisease = selectedPatient?.eligibleDiseases?.find(
+  (d) => d.stage === selectedStageValue
+);
+
+if (selectedDisease) {
+  setSelectedCandidateTestId(selectedDisease.candidateTestId);
+}
 
   const id = stageToId[selectedStageValue];
   if (id !== undefined) {
@@ -197,13 +208,14 @@ const handleStageChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     localStorage.setItem("patientAge", patientAge);
 
 
-
+console.log(selectedCandidateTestId,"selectedCandidateTestId")
    // navigate("/DiseaseSpecificDetailsClinic");
     navigate("/DynamicScreen", {
   state: {
     searchNameFromBox,
     searchflow,
-    registrationId
+    registrationId,
+    candidateTestId: selectedCandidateTestId,
   }
 });
   };

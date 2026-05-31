@@ -74,7 +74,10 @@ const App: React.FC = () => {
 
   const searchNameFromBox = location.state?.searchName || "";
 const searchflow = location.state?.searchflow || "";
-  console.log(searchNameFromBox,"searchNameFromBox")
+  const candidateTestId = location.state?.candidateTestId || "";
+
+  console.log(candidateTestId,"candidateTestId")
+  
 
 const finalsearch = location.state?.finalsearch || false;
 const diseaseEligibilityDTO =
@@ -171,7 +174,7 @@ const diseaseTestIds = finalsearch
             {
               candidateId,
               type:7,
-              diseaseTypeId: Number(diseaseTestIds), // adjust if your API expects diseaseTypeId instead
+              diseaseTestId: Number(candidateTestId), // adjust if your API expects diseaseTypeId instead
               // type: 7, // uncomment if your API requires a type code for this screen
             },
             { headers: { Authorization: `Bearer ${token}` } }
