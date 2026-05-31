@@ -72,7 +72,7 @@ const App: React.FC = () => {
   const [apiStage, setApiStage] = useState<string | null>(null);
   const location = useLocation();
 
-  const searchNameFromBox = location.state?.searchNameFromBox || "";
+  const searchNameFromBox = location.state?.searchName || "";
 const searchflow = location.state?.searchflow || "";
   
 

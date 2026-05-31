@@ -224,7 +224,7 @@ console.log(selectedDisease,"selectedDisease")
 
 navigate("/DiseaseSpecificDetailsScreening", {
   state: {
-    searchNameFromBox,
+    searchName:searchNameFromBox,
     searchflow,
     registrationId
   }

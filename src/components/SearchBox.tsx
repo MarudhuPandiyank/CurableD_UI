@@ -19,7 +19,7 @@ interface CandidateAPIResponse {
   hospitalId?: string | number;
   lastVistCompletedDate?: string | null;
   reason?: string | null;
-  enrolled?: string | number |null;
+  enrolled?:  boolean;
   revisitStatus?: number | string; // Assuming this field exists based on usage
 }
 interface SearchBoxProps {
@@ -42,7 +42,7 @@ interface Candidate {
   lastVistCompletedDate?: string | null;
   reason?: string | null;
   revisitStatus: number; // Assuming this field exists based on usage
-  enrolled?: string | number |null;
+  enrolled?: boolean | null;
 
 }
 
@@ -148,6 +148,7 @@ const SearchBox: React.FC<SearchBoxProps> = ({ onSearchActiveChange }) => {
           hospitalId: c.hospitalId,
           lastVistCompletedDate: c.lastVistCompletedDate ?? null,
           reason: c.reason ?? null,
+          enrolled:c.enrolled??null,
           revisitStatus : c.revisitStatus !== undefined ? Number(c.revisitStatus) : 0,
         }));
 
@@ -181,10 +182,11 @@ const SearchBox: React.FC<SearchBoxProps> = ({ onSearchActiveChange }) => {
           onChange={handleChange}
         />
       </div>
-<br/>
       {message && touched && <div className="searchbox-error">{message}</div>}
 
       {loading && <div className="searchbox-loading">Loading...</div>}
+      <br/>
+
 
       {candidates.length > 0 && (
         <>
@@ -221,8 +223,8 @@ const SearchBox: React.FC<SearchBoxProps> = ({ onSearchActiveChange }) => {
                 )}
 
                 {c.lastVistCompletedDate && (
-                  <div style={{marginLeft: '4px'}} className="searchbox-patient-lastvisit">
-                     <i className="fas fa-calendar-alt"></i> &nbsp;Last visit: {formatDate(c.lastVistCompletedDate)}
+                  <div style={{marginLeft: '1px'}} className="searchbox-patient-lastvisit">
+                    Last visit: {formatDate(c.lastVistCompletedDate)}
                   </div>
                 )}
 
@@ -242,28 +244,34 @@ const SearchBox: React.FC<SearchBoxProps> = ({ onSearchActiveChange }) => {
 
     // Condition 1:
     // revisitDate not null and revisitId > 0
-    console.log(reason.includes('screening'),revisitDate === null , revisitId === 0,
+    console.log(c,enrolled,reason.includes('screening'),revisitDate === null ,enrolled === true,enrolled, revisitId === 0,
     reason.includes('screening') && revisitDate === null && revisitId === 0,
     "revisitId")
 
-    if(reason.includes('screening') && revisitDate === null && revisitId === 0 ){
+    if(reason.includes('screening') && revisitDate === null && revisitId === 0 && 
+   ( enrolled === true)
+  ){
       
        navigate('/PatientSearchPage', {
         state: {
           searchName: c.name,
           searchflow: true,
           registrationId: c.registrationId,
+          enrolled:c.enrolled
         },
       });
 
     }
-    else if(reason.includes('clinic') && revisitDate === null && revisitId === 0 ){
+    else if(reason.includes('clinic') && revisitDate === null && revisitId === 0  &&    ( enrolled === true)
+){
 
        navigate('/ClinicSearchPage', {
         state: {
           searchName: c.name,
           searchflow: true,
           registrationId: c.registrationId,
+                    enrolled:c.enrolled
+
         },
       });
 
@@ -276,6 +284,8 @@ else if (revisitDate !== null && revisitId === 1  ) {
           registrationId: c.registrationId,
           searchflow: true,
           searchName: c.name,
+                    enrolled:c.enrolled
+
         },
       });
     }
@@ -296,6 +306,8 @@ else if (revisitDate !== null && revisitId === 1  ) {
           registrationId: c.registrationId,
           searchflow: true,
           searchName: c.name,
+                    enrolled:c.enrolled
+
         },
       });
     }
@@ -310,6 +322,8 @@ else if (revisitDate !== null && revisitId === 1  ) {
           registrationId: c.registrationId,
           searchflow: true,
           searchName: c.name,
+                    enrolled:c.enrolled
+
         },
       });
     }
@@ -330,6 +344,8 @@ else if (revisitDate !== null && revisitId === 1  ) {
           registrationId: c.registrationId,
           searchflow: true,
           searchName: c.name,
+                    enrolled:c.enrolled
+
         },
       });
     }
@@ -344,6 +360,8 @@ else if (revisitDate !== null && revisitId === 1  ) {
           searchName: c.name,
           searchflow: true,
           registrationId: c.registrationId,
+                              enrolled:c.enrolled
+
         },
       });
     }

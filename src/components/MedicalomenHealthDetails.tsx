@@ -848,10 +848,11 @@ console.log(age,participant,ageString,"skkksa")
         {showModal && (
           <div className="custom-modal">
             <div className="custom-modal-content">
-              <h2 className="custom-modal-title">
-                Non mandatory fields are not provided. Are you sure you want to finish registration?
-              </h2>
-              <div className="custom-modal-buttons">
+             
+               <h1 style={{ marginTop: '1px', textAlign: 'center', color: 'darkblue' }}>
+                Non-mandatory fields are not provided. Are you sure you want to finish registration?
+              </h1>
+              <div  className="modal-buttons">
                 <button
                   className="custom-modal-button custom-save-button"
                   type="button"

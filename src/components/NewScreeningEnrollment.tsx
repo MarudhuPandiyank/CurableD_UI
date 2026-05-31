@@ -91,6 +91,9 @@ const [genderError, setGenderError] = useState('');
 const searchNameFromBox = location.state?.searchName || "";
 const searchflow = location.state?.searchflow || "";
 
+const enrolled = location.state?.enrolled || "";
+
+
 
 
 
@@ -253,6 +256,7 @@ useEffect(() => {
     ...(navCandidateId ? { registraionId: registraionId } : null),
 
   screenId: 2,                         // constant value for identify the screen type
+      revisitStatus:enrolled ? 1 : 0                 // constant value for identify the screen type
 };
 
     try {
@@ -309,7 +313,8 @@ console.log(registraionId,searchNameFromBox,"searchNameFromBox",response.data)
         state: {
           searchflow: true,
           registrationId: registraionId,
-          searchName:registraionId
+          searchName:registraionId,
+          enrolled:enrolled
         },
       });
       return;
@@ -320,6 +325,8 @@ console.log(registraionId,searchNameFromBox,"searchNameFromBox",response.data)
         state: {
           searchflow: true,
           registrationId: response.data[0].registraionId,
+                    enrolled:enrolled
+
         },
       });
     }
@@ -394,7 +401,7 @@ console.log(registraionId,searchNameFromBox,"searchNameFromBox",response.data)
 
           type: 1,
       screenId: 1,      
-      revisitStatus:searchflow ? 1 : 0                 // constant value for identify the screen type
+      revisitStatus:enrolled ? 1 : 0                 // constant value for identify the screen type
 
     };
     console.log(payload,"payload")
@@ -653,7 +660,7 @@ console.log(registraionId,searchNameFromBox,"searchNameFromBox",response.data)
           <center>
             <div className="buttons">
            
-             {searchflow? <button
+             {enrolled? <button
                 type="button"
                 className="Next-button"
  onClick={(e) => finalvisitcall(e)}

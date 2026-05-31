@@ -63,6 +63,8 @@ const PatientEdit: React.FC = () => {
   const searchNameFromBox = location.state?.searchName || "";
 const searchflow = location.state?.searchflow || "";
 const registrationId = location.state?.registrationId || "";
+const enrolled = location.state?.enrolled || "";
+
 
     React.useEffect(() => {
   if (searchNameFromBox && searchNameFromBox.trim().length >= 3) {
@@ -166,7 +168,8 @@ localStorage.removeItem("weightval");
 
     navigate('/NewScreeningEnrollment', { state: { candidateId: candidateId, edit: true, registrationId: candidateObj?.registrationId, registraionId: candidateObj?.registrationId ,
       searchNameFromBox,
-    searchflow
+    searchflow,
+    enrolled
     } });
   };
 

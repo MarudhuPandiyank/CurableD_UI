@@ -55,7 +55,7 @@ const handleNextScreening = () => {
       }, []);
   const displayNextStage = nextStage.replace(/\s*test\s*$/i, '');
   return (
-    <div  className={searchflow ? 'screening-success-page' : 'container5'}>
+    <div  className={ 'screening-success-page'}>
         {searchflow  && hasDiseaseDTO ? (
           
     <main className="screening-success-card">
@@ -84,7 +84,8 @@ const handleNextScreening = () => {
       </div>
     </main>
   ) : (
-      <main className="content">
+          <main className="screening-success-card">
+
         <img src='./Curable Icons/PNG/Group 261.png' alt="Success Icon" className="icon" /><br/>
         <h1>Screening has been Completed successfully!</h1>
 

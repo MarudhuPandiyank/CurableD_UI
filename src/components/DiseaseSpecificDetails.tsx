@@ -257,7 +257,7 @@ const registrationId = location.state?.registrationId || "";
         {showModal && (
           <div className="custom-modal">
             <div className="custom-modal-content">
-              <h1 style={{ marginTop: '130px', textAlign: 'center', color: 'darkblue' }}>
+              <h1 style={{ marginTop: '1px', textAlign: 'center', color: 'darkblue' }}>
                 Non-mandatory fields are not provided. Are you sure you want to finish registration?
               </h1>
               <div className="modal-buttons">
