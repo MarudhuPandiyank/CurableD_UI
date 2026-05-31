@@ -90,8 +90,14 @@ const [genderError, setGenderError] = useState('');
   const [loadingText, setLoadingText] = useState('Loading...');
 const searchNameFromBox = location.state?.searchName || "";
 const searchflow = location.state?.searchflow || "";
+const [searchNameValue] = useState(
+  location.state?.searchName ||
+  location.state?.searchNameFromBox ||
+  ""
+);
 
 const enrolled = location.state?.enrolled || "";
+console.log(searchNameFromBox,location.state,"searchNameFromBox2")
 
 
 
@@ -307,13 +313,13 @@ useEffect(() => {
         },
       }
     );
-console.log(registraionId,searchNameFromBox,"searchNameFromBox",response.data)
+console.log(searchNameFromBox,"searchNameFromBox3",response.data)
     if (response.data === 1 || response.data === '1') {
       navigate('/PatientSearchPage', {
         state: {
           searchflow: true,
           registrationId: registraionId,
-          searchName:registraionId,
+          searchName:searchNameValue,
           enrolled:enrolled
         },
       });
@@ -432,7 +438,7 @@ console.log(registraionId,searchNameFromBox,"searchNameFromBox",response.data)
         localStorage.setItem('justCreatedPatient', 'true');
         navigate('/DiseaseSpecificDetails', {
   state: {
-    searchNameFromBox,
+   searchName:searchNameValue,
     searchflow,
   }
 });

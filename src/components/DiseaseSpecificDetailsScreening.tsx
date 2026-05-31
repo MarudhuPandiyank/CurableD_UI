@@ -74,7 +74,7 @@ const App: React.FC = () => {
 
   const searchNameFromBox = location.state?.searchName || "";
 const searchflow = location.state?.searchflow || "";
-  
+  console.log(searchNameFromBox,"searchNameFromBox")
 
 const finalsearch = location.state?.finalsearch || false;
 const diseaseEligibilityDTO =
@@ -315,6 +315,8 @@ const diseaseTestIds = finalsearch
     headers: { Authorization: `Bearer ${token}` },
   }
 );
+console.log(searchNameFromBox,"searchNameFromBox")
+
       // In “No” flow, proceed after Save; else stay or toast
 navigate('/SuccessMessageScreeningFInal', {
   state: {
@@ -340,6 +342,7 @@ navigate('/SuccessMessageScreeningFInal', {
     headers: { Authorization: `Bearer ${token}` },
   }
 );
+console.log(searchNameFromBox,"searchNameFromBox")
 navigate('/SuccessMessageScreeningFInal', {
   state: {
     searchNameFromBox,
