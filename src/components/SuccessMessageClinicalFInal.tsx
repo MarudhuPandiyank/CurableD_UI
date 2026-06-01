@@ -7,8 +7,45 @@ const SuccessMessageClinicalFInal = () => {
   const location = useLocation();
   const [registraionId, setRegistraionId] = useState<string | null>(null);
   const { clickId } = location.state || {};
-  const searchNameFromBox = location.state?.searchNameFromBox || "";
+    const searchNameFromBox = location.state?.searchNameFromBox || "";
   const searchflow = location.state?.searchflow || false;
+  const titleName = location.state?.titleName || "";
+
+  
+    const diseaseEligibilityDTO = location.state?.diseaseEligibilityDTO || null;
+const nextStage = diseaseEligibilityDTO?.stage || 'Breast Screening';
+
+const hasDiseaseDTO =
+  diseaseEligibilityDTO &&
+  Object.keys(diseaseEligibilityDTO).length > 0;
+
+const diseaseTestIds= diseaseEligibilityDTO?.diseaseTestId || [];
+
+const handleNextScreening = () => {
+  if (diseaseEligibilityDTO?.name === 'SCREENING') {
+    navigate('/DiseaseSpecificDetailsScreening', {
+      state: {
+       searchName:searchNameFromBox,
+        searchflow,
+        diseaseEligibilityDTO,
+        diseaseTestIds,
+        finalsearch: true, // Indicate this is coming from the final success screen
+      },
+    });
+  } else if (diseaseEligibilityDTO?.name === 'CLINICAL') {
+    navigate('/DynamicScreen', {
+      state: {
+        searchName:searchNameFromBox,
+        searchflow,
+        diseaseEligibilityDTO,
+        diseaseTestIds,
+        finalsearch: true, // Indicate this is coming from the final success screen
+
+      },
+    });
+  }
+};
+
 
    useEffect(() => {
   const regId = localStorage.getItem('registrationId');
@@ -18,29 +55,28 @@ const SuccessMessageClinicalFInal = () => {
         }
       }, []);
 
-  return (
-    <div className={searchflow ? 'screening-success-page' : 'container5'}>
-          {searchflow ? (
-    <main className="screening-success-card">
-      <div className="screening-success-icon">✓</div>
+    const displayNextStage = nextStage.replace(/\s*test\s*$/i, '');
 
-      <h1>Clinical Evaluation has been Completed successfully!</h1>
+  return (
+    <div  className={ 'screening-success-page'}>
+          {
+          searchflow  && hasDiseaseDTO ? (
+    <main className="screening-success-card">
+        <img src='./Curable Icons/PNG/Group 261.png' alt="Success Icon" className="icon" /><br/>
+
+     <h1>{titleName} Completed Successfully!</h1>
 
       <p>
         Patient: {searchNameFromBox} (ID: {registraionId})
       </p>
 
       <div className="screening-success-actions">
-        <button
-          className="screening-next-btn"
-          onClick={() =>
-            navigate('/ClinicSearchPage', {
-              state: { searchNameFromBox, searchflow },
-            })
-          }
-        >
-          Go to Breast Screening for {searchNameFromBox}
-        </button>
+         <button
+  className="screening-next-btn"
+  onClick={handleNextScreening}
+>
+  Go to {displayNextStage} for {searchNameFromBox}
+</button>
 
         <button
           className="screening-home-btn"

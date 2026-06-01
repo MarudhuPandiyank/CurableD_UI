@@ -381,8 +381,8 @@ const postCandidateHistory = async (payload: any) => {
 
   try {
     const response = await postCandidateHistory(buildPayload(0));
-
-    navigate('/SuccessMessageScreeningFInal', {
+console.log(titleName,"titleNametamil")
+    navigate('/SuccessMessageClinicalFInal', {
       state: {
         searchNameFromBox,
         searchflow,
@@ -402,7 +402,7 @@ const postCandidateHistory = async (payload: any) => {
   try {
     const response = await postCandidateHistory(buildPayload(1));
 
-    navigate('/SuccessMessageScreeningFInal', {
+    navigate('/SuccessMessageClinicalFInal', {
       state: {
         searchNameFromBox,
         searchflow,
