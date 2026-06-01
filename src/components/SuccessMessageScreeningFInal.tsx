@@ -20,6 +20,9 @@ const hasDiseaseDTO =
 
 const nextStage = diseaseEligibilityDTO?.stage || 'Breast Screening';
 
+const candidateTestId = diseaseEligibilityDTO?.candidateTestId || 'Breast Screening';
+
+
 const diseaseTestIds= diseaseEligibilityDTO?.diseaseTestId || [];
 
 const handleNextScreening = () => {
@@ -30,6 +33,7 @@ const handleNextScreening = () => {
         searchflow,
         diseaseEligibilityDTO,
         diseaseTestIds,
+        candidateTestId,
         finalsearch: true, // Indicate this is coming from the final success screen
       },
     });
@@ -40,6 +44,7 @@ const handleNextScreening = () => {
         searchflow,
         diseaseEligibilityDTO,
         diseaseTestIds,
+        candidateTestId,
         finalsearch: true, // Indicate this is coming from the final success screen
 
       },

@@ -20,6 +20,8 @@ const hasDiseaseDTO =
   Object.keys(diseaseEligibilityDTO).length > 0;
 
 const diseaseTestIds= diseaseEligibilityDTO?.diseaseTestId || [];
+const candidateTestId = diseaseEligibilityDTO?.candidateTestId || 'Breast Screening';
+
 
 const handleNextScreening = () => {
   if (diseaseEligibilityDTO?.name === 'SCREENING') {
@@ -29,6 +31,7 @@ const handleNextScreening = () => {
         searchflow,
         diseaseEligibilityDTO,
         diseaseTestIds,
+        candidateTestId,
         finalsearch: true, // Indicate this is coming from the final success screen
       },
     });
@@ -39,6 +42,7 @@ const handleNextScreening = () => {
         searchflow,
         diseaseEligibilityDTO,
         diseaseTestIds,
+        candidateTestId,
         finalsearch: true, // Indicate this is coming from the final success screen
 
       },
