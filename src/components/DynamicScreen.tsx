@@ -378,8 +378,10 @@ const postCandidateHistory = async (payload: any) => {
 };
   const handleSave = async (e?: React.FormEvent) => {
   if (e) e.preventDefault();
+if (isLoading) return;
 
   try {
+    setIsLoading(true)
     const response = await postCandidateHistory(buildPayload(0));
 console.log(titleName,"titleNametamil")
     navigate('/SuccessMessageClinicalFInal', {
@@ -394,12 +396,17 @@ console.log(titleName,"titleNametamil")
     console.error('Save failed:', error);
     alert('Save failed. Please try again.');
   }
+  finally {
+    setIsLoading(false);
+  }
 };
  const handleFinish = async (e?: React.FormEvent) => {
   if (e) e.preventDefault();
+  if (isLoading) return;
   if (!validateForFinish()) return;
 
   try {
+    setIsLoading(true)
     const response = await postCandidateHistory(buildPayload(1));
 
     navigate('/SuccessMessageClinicalFInal', {
@@ -413,6 +420,8 @@ console.log(titleName,"titleNametamil")
   } catch (error) {
     console.error('Submit failed:', error);
     alert('Submit failed. Please try again.');
+  }finally {
+    setIsLoading(false);
   }
 };
 
@@ -587,18 +596,18 @@ console.log(titleName,"titleNametamil")
             type="button"
             className="Next-button"
             onClick={handleSave}
-            // disabled={!allowAllThree}
+           disabled={isLoading}
           >
-            Save
+          {isLoading ? 'Saving...' : 'Save'}
           </button>
 
           <button
             type="button"
             className={`Finish-button ${finishDisabled || !allowAllThree ? 'disabled-button' : ''}`}
             onClick={handleFinish}
-            disabled={finishDisabled || !allowAllThree}
+            disabled={finishDisabled || !allowAllThree || isLoading}
           >
-            Finish
+           {isLoading ? 'Finishing...' : 'Finish'}
           </button>
         </center>
       </form>

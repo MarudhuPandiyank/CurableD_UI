@@ -70,6 +70,9 @@
 
 }
 
+.container4-fluid {
+  margin-top: -35px;
+}
 /* Close (Back) Button Styling */
 .close-btn {
     display: flex;
@@ -222,6 +225,10 @@
     .container4-box .box {
         border-radius: 18px;
     }
+
+    .container4-fluid {
+  margin-top: -5px;
+}
 
   .footer-container {
     bottom: 0;

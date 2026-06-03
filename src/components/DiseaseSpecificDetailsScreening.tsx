@@ -309,7 +309,9 @@ const diseaseTestIds = finalsearch
 
   const handleSave = async () => {
     console.log(buildPayload(0),"save payload")
+     if (isLoading) return;
     try {
+        setIsLoading(true);
       const token = localStorage.getItem('token');
      const response = await axios.post<CandidateHistoryResponse>(
   `${config.appURL}/curable/candidatehistory`,
@@ -332,11 +334,18 @@ navigate('/SuccessMessageScreeningFInal', {
       console.error('Error saving data:', error);
       alert('Save failed. Please try again.');
     }
+    finally {
+    setIsLoading(false);
+  }
   };
 
   const handleFinish = async () => {
     if (!validateForFinish()) return;
+         if (isLoading) return;
+
     try {
+              setIsLoading(true);
+
       const token = localStorage.getItem('token');
      const response = await axios.post<CandidateHistoryResponse>(
   `${config.appURL}/curable/candidatehistory`,
@@ -358,6 +367,9 @@ navigate('/SuccessMessageScreeningFInal', {
       console.error('Error submitting data:', error);
       alert('Submit failed. Please try again.');
     }
+    finally {
+    setIsLoading(false);
+  }
   };
 
   // Titles for 3 stages (robust)

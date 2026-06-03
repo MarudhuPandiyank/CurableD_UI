@@ -22,7 +22,6 @@ const nextStage = diseaseEligibilityDTO?.stage || 'Breast Screening';
 
 const candidateTestId = diseaseEligibilityDTO?.candidateTestId || 'Breast Screening';
 
-
 const diseaseTestIds= diseaseEligibilityDTO?.diseaseTestId || [];
 
 const handleNextScreening = () => {
@@ -63,7 +62,7 @@ const handleNextScreening = () => {
     <div  className={ 'screening-success-page'}>
         {searchflow  && hasDiseaseDTO ? (
           
-    <main className="screening-success-card">
+    <main className="content">
         <img src='./Curable Icons/PNG/Group 261.png' alt="Success Icon" className="icon" /><br/>
 
       <h1>{titleName} Completed Successfully!</h1>
@@ -71,6 +70,7 @@ const handleNextScreening = () => {
       <p>
         Patient: {searchNameFromBox} (ID: {registraionId})
       </p>
+      
 
       <div className="screening-success-actions">
         <button
@@ -89,7 +89,7 @@ const handleNextScreening = () => {
       </div>
     </main>
   ) : (
-          <main className="screening-success-card">
+          <main className="content">
 
         <img src='./Curable Icons/PNG/Group 261.png' alt="Success Icon" className="icon" /><br/>
         <h1>Screening has been Completed successfully!</h1>

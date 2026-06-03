@@ -65,7 +65,7 @@ const handleNextScreening = () => {
     <div  className={ 'screening-success-page'}>
           {
           searchflow  && hasDiseaseDTO ? (
-    <main className="screening-success-card">
+    <main className="content">
         <img src='./Curable Icons/PNG/Group 261.png' alt="Success Icon" className="icon" /><br/>
 
      <h1>{titleName} Completed Successfully!</h1>
