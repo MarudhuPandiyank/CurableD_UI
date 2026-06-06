@@ -75,6 +75,8 @@ const App: React.FC = () => {
   const searchNameFromBox = location.state?.searchName || "";
 const searchflow = location.state?.searchflow || "";
   const candidateTestId = location.state?.candidateTestId || "";
+  const enrolled = location.state?.enrolled || "";
+const lastVistCompletedDate = location.state?.lastVistCompletedDate;
 
   console.log(candidateTestId,"candidateTestId")
   
@@ -288,7 +290,7 @@ const diseaseTestIds = finalsearch
       stage: apiStage ,
       eligibilityMetrics: null,
       completed,
-      requestType:searchflow?1:0,
+      requestType:lastVistCompletedDate !== null || searchflow?1:0,
       type: 1,
       testMetrics: {
         params: fieldData.map(field => {
@@ -600,8 +602,8 @@ const parseToDate = (s?: string) => {
 
         <center>
           <div className="buttons">
-            <button className="Next-button" onClick={handleSave}>Save</button>
-            <button className="Finish-button" onClick={handleFinish} disabled={finishDisabled}>
+            <button  disabled={isLoading} className="Next-button" onClick={handleSave}>Save</button>
+            <button className="Finish-button"  onClick={handleFinish} disabled={finishDisabled || isLoading}>
               Finish
             </button>
           </div>

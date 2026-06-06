@@ -241,6 +241,7 @@ const SearchBox: React.FC<SearchBoxProps> = ({ onSearchActiveChange }) => {
     const revisitId = c.revisitStatus?c.revisitStatus:0;
     const reason = c.reason?.toLowerCase() || '';
     const enrolled= c.enrolled;
+    console.log(enrolled,"enrolledtamil")
 
     // Condition 1:
     // revisitDate not null and revisitId > 0

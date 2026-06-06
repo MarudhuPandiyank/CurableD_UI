@@ -19,6 +19,7 @@ interface Patient {
   age: number;
   gender: string;
   mobileNo: string;
+lastVistCompletedDate: number | string | null;
   eligibleDiseases: {
     candidateId: number;
     stage: string;
@@ -42,6 +43,8 @@ const PatientSearchPage: React.FC = () => {
 const searchNameFromBox = location.state?.searchName || "";
 const searchflow = location.state?.searchflow || "";
 const registrationId = location.state?.registrationId || "";
+const enrolled = location.state?.enrolled || "";
+
 console.log(location.state,"location.state")
 const [selectedCandidateTestId, setSelectedCandidateTestId] = useState<number | null>(null);
 
@@ -109,6 +112,7 @@ const handleSearch = async (value?: string) => {
           gender: patient.gender,
           mobileNo: patient.mobileNo,
           eligibleDiseases: patient.eligibleDiseases,
+          lastVistCompletedDate: patient.lastVistCompletedDate,
         }));
         setPatients(patientData);
         setTimeout(() => {
@@ -242,6 +246,8 @@ navigate("/DiseaseSpecificDetailsScreening", {
     searchflow,
     registrationId,
     candidateTestId: selectedCandidateTestId,
+    enrolled:enrolled,
+    lastVistCompletedDate:selectedPatient?.lastVistCompletedDate,
   }
 });  };
 
@@ -341,6 +347,9 @@ navigate("/DiseaseSpecificDetailsScreening", {
                     </div>
                     <div>
                       <strong>Age:</strong> {patient.age || "N/A"}
+                    </div>
+                    <div>
+                      <strong>Revisit Date:</strong> {patient.lastVistCompletedDate || "N/A"}
                     </div>
                     <div>
                       <strong>Gender:</strong> {patient.gender || "N/A"}

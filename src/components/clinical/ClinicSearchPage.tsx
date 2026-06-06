@@ -21,6 +21,7 @@ interface Patient {
   age: number;
   gender: string;
   mobileNo: string;
+  lastVistCompletedDate:number;
   eligibleDiseases: {
     candidateId: number;
     stage: string;
@@ -45,6 +46,8 @@ const ClinicSearchPage: React.FC = () => {
 const searchNameFromBox = location.state?.searchName || "";
 const searchflow = location.state?.searchflow || "";
 const registrationId = location.state?.registrationId || "";
+const enrolled = location.state?.enrolled || "";
+
 
 
   const navigate = useNavigate();
@@ -113,6 +116,7 @@ const handleSearch = async (value?: string) => {
           gender: patient.gender,
           mobileNo: patient.mobileNo,
           eligibleDiseases: patient.eligibleDiseases,
+          lastVistCompletedDate: patient.lastVistCompletedDate,
         }));
         setPatients(patientData);
         // Auto-select first patient and stage if searchflow is true
@@ -216,6 +220,9 @@ console.log(selectedCandidateTestId,"selectedCandidateTestId")
     searchflow,
     registrationId,
     candidateTestId: selectedCandidateTestId,
+    enrolled,
+    lastVistCompletedDate:selectedPatient?.lastVistCompletedDate,
+
   }
 });
   };
@@ -282,6 +289,9 @@ console.log(selectedCandidateTestId,"selectedCandidateTestId")
                     </div>
                     <div>
                       <strong>Age:</strong> {patient.age || "N/A"}
+                    </div>
+                    <div>
+                      <strong>Revisit Date:</strong> {patient.lastVistCompletedDate || "N/A"}
                     </div>
                     <div>
                       <strong>Gender:</strong> {patient.gender || "N/A"}

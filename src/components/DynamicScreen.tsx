@@ -84,6 +84,10 @@ const App: React.FC = () => {
 const searchNameFromBox = location.state?.searchName || "";
 const searchflow = location.state?.searchflow || "";
 const registrationId = location.state?.registrationId || "";
+  const enrolled = location.state?.enrolled || "";
+  const lastVistCompletedDate = location.state?.lastVistCompletedDate;
+
+
 
 const finalsearch = location.state?.finalsearch || false;
 const diseaseEligibilityDTO =
@@ -337,7 +341,7 @@ const [isLoading, setIsLoading] = useState<boolean>(true);
       diseaseTestMasterId: Number(diseaseTestIds),
       description: 'Test Metrics',
       diseaseTestId: 1,
-      requestType:searchflow?1:0,
+      requestType:lastVistCompletedDate !== null || searchflow?1:0,
       testMetrics: {
         params: fieldData.map(field => ({
           testName: field.testName,
