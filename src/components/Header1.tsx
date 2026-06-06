@@ -21,7 +21,7 @@ const Header1: React.FC<HeaderProps> = ({ showwidth = false }) => {
   const showLocalName = useSelector(selectShowLocalName);
   const userName = showLocalName ? (localStorage.getItem('userName') || userNameFromState) : userNameFromState;
   const menus = useSelector(selectMenus);
-  console.log(selectMenus,"selectMenus")
+  console.log(menus,"selectMenus")
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -72,6 +72,10 @@ const Header1: React.FC<HeaderProps> = ({ showwidth = false }) => {
         <div className="sidebar-content p-3">
           {menus.map((m) => {
             const isModify = (m?.menu === 'Reports');
+            const imageName =
+    m.menu === "Modify Patient Information"
+      ? "modify patient information"
+      : m.menu;
             console.log(isModify,"isModify",m,m?.menu=== 'Reports') 
             return (
               <button key={m.menu} className="sidebar-btn" onClick={() => handleNavigation(m.url)}>
@@ -84,7 +88,7 @@ const Header1: React.FC<HeaderProps> = ({ showwidth = false }) => {
                   />
                 ) : (
                   <img
-                    src={`./HomeScreenIcons/PNG/${m.menu}.png`}
+                    src={`./HomeScreenIcons/PNG/${imageName}.png`}
                     onError={(e: any) => { e.currentTarget.style.visibility = 'hidden'; }}
                     alt={`${m.menu} Icon`}
                     style={{ width: 20, height: 20, marginRight: 4 }}
