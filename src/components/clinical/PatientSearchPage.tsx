@@ -221,6 +221,18 @@ console.log(selectedDisease,"selectedDisease")
   }
 };
 
+const formatDate = (dateValue: string | number | null) => {
+  if (!dateValue) return "N/A";
+
+  const date = new Date(dateValue);
+
+  return date.toLocaleDateString("en-GB", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  });
+};
+
   const handleNext = () => {
     if (!selectedStage) {
       setError("Please select a stage before proceeding.");
@@ -348,9 +360,9 @@ navigate("/DiseaseSpecificDetailsScreening", {
                     <div>
                       <strong>Age:</strong> {patient.age || "N/A"}
                     </div>
-                    <div>
-                      <strong>Revisit Date:</strong> {patient.lastVistCompletedDate || "N/A"}
-                    </div>
+                   <div className="revisit-date">
+  <strong>Revisit Date:</strong> {formatDate(patient.lastVistCompletedDate)}
+</div>
                     <div>
                       <strong>Gender:</strong> {patient.gender || "N/A"}
                     </div>

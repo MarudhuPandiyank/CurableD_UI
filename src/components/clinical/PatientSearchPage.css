@@ -118,17 +118,22 @@
   color: #d774ad;
 }
 .patient-box {
-    display: grid; /* Use grid layout for fixed positioning */
- grid-template-columns: repeat(6, 1fr); /* 5 -> 6 */    gap: 10px; /* Add space between columns */
-    align-items: center; /* Align items vertically */
-    width: 100%;
-    background-color: #f8f8f8;
-    padding: 10px;
-    border-radius: 10px;
-    border: 1px solid #ddd;
-    height: 40px;
-  }
-  
+  display: grid;
+  grid-template-columns: 1.5fr 1.5fr 0.8fr 1.3fr 1.2fr 1.5fr;
+  gap: 20px;
+  align-items: center;
+  width: 100%;
+  background-color: #f8f8f8;
+  padding: 15px 20px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  min-height: 60px;
+}
+.revisit-date {
+  overflow: visible !important;
+  text-overflow: unset !important;
+  white-space: nowrap;
+}
   .patient-box > div {
     white-space: nowrap; /* Prevent text wrapping */
     overflow: hidden; /* Handle long text gracefully */
