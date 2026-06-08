@@ -46,6 +46,13 @@
     text-align: center;
 }
 
+.contentPatient {
+    flex-grow: 1;
+    padding: 16px;
+    overflow-y: auto;
+    text-align: center;
+}
+
 
 /* Search container */
 .search-container {

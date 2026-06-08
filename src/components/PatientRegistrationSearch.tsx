@@ -233,7 +233,7 @@ const PatientRegistrationSearch: React.FC = () => {
 
               {message && <p className="errors_message">{message}</p>}
 
-      <main className="content">
+      <main className="contentPatient">
         <div className="search-section_patitent">
           <div className="full-width-search-section">
             <div className="full-width-search-input-container">
