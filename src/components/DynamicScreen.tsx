@@ -81,11 +81,12 @@ const App: React.FC = () => {
   const [formErrors, setFormErrors] = useState<string[]>([]);
   const [titleName, setTitleName] = useState('Clinical Evaluation');
     const location = useLocation();
-const searchNameFromBox = location.state?.searchName || "";
+  const searchNameFromBox = location.state?.searchName || location.state?.searchNameFromBox || "";
 const searchflow = location.state?.searchflow || "";
 const registrationId = location.state?.registrationId || "";
   const enrolled = location.state?.enrolled || "";
   const lastVistCompletedDate = location.state?.lastVistCompletedDate;
+  console.log(searchNameFromBox,"searchNameFromBox")
 
 
 

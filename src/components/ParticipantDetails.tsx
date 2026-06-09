@@ -646,7 +646,6 @@ setIncome(data.monthlyIncome === 0 ? '' : (data.monthlyIncome?.toString() || '')
           </select>
         </div>
 
-        <h2>ID Proof</h2>
 
         {/* Aadhaar — EXACTLY 12, inline error while typing */}
         <div className="form-group">

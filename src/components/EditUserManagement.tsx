@@ -158,7 +158,7 @@ const EditUserManagement: React.FC = () => {
 
 
 
-      <main className="content">
+      <main className="contentPatient">
         <div className="search-container">
          
         </div>

@@ -48,6 +48,7 @@ const searchflow = location.state?.searchflow || "";
 const registrationId = location.state?.registrationId || "";
 const enrolled = location.state?.enrolled || "";
 
+console.log(searchNameFromBox,"searchNameFromBox")
 
 
   const navigate = useNavigate();

@@ -72,11 +72,14 @@ const App: React.FC = () => {
   const [apiStage, setApiStage] = useState<string | null>(null);
   const location = useLocation();
 
-  const searchNameFromBox = location.state?.searchName || "";
+  const searchNameFromBox = location.state?.searchName || location.state?.searchNameFromBox || "";
 const searchflow = location.state?.searchflow || "";
   const candidateTestId = location.state?.candidateTestId || "";
   const enrolled = location.state?.enrolled || "";
 const lastVistCompletedDate = location.state?.lastVistCompletedDate;
+
+  console.log(searchNameFromBox,"searchNameFromBox")
+
 
   console.log(candidateTestId,"candidateTestId")
   
