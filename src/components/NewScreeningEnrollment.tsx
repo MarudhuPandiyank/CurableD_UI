@@ -96,7 +96,7 @@ const [searchNameValue] = useState(
   ""
 );
 
-const enrolled = location.state?.enrolled || "";
+const enrolled = location.state?.enrolledstatus || "";
 console.log(searchNameFromBox,location.state,"searchNameFromBox2")
 
 

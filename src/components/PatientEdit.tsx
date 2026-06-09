@@ -25,6 +25,7 @@ interface Candidate {
   fatherName?: string | null;
   campId?: number;
   hospitalId: number;
+  enrolled?: boolean; // optional, default to false if not provided
 }
 
 
@@ -41,6 +42,8 @@ interface CandidateAPIResponse {
   fatherName?: string | null;
   campId?: number | null;
   hospitalId: number;
+  enrolled?: boolean; // optional, default to false if not provided
+
 }
 
 const PatientEdit: React.FC = () => {
@@ -122,6 +125,7 @@ const handleSearch = async (value?: string) => {
   fatherName: c.fatherName ?? null,
   campId: c.campId ?? undefined,
   hospitalId: c.hospitalId,
+  enrolled: c.enrolled ?? false, // default to false if not provided
 }));
 
 setCandidates(candidatesData);
@@ -166,7 +170,9 @@ localStorage.removeItem("latschild");
 localStorage.removeItem("heightval");
 localStorage.removeItem("weightval");
 
-    navigate('/NewScreeningEnrollment', { state: { candidateId: candidateId, edit: true, registrationId: candidateObj?.registrationId, registraionId: candidateObj?.registrationId ,
+    navigate('/NewScreeningEnrollment', { state: { candidateId: candidateId, edit: true,
+      enrolledstatus: candidateObj?.enrolled || false, // pass enrolled status to the enrollment form 
+      registrationId: candidateObj?.registrationId, registraionId: candidateObj?.registrationId ,
       searchNameFromBox,
     searchflow,
     enrolled
