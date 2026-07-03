@@ -35,7 +35,7 @@ const SuccessMessagePRFinal = () => {
     if (searchflow) {
       navigate('/PatientSearchPage', {
         state: {
-          searchName:registraionId,
+          searchName:searchNameFromBox,
           searchflow:true,
           registrationId:registraionId,
           
