@@ -89,7 +89,7 @@ const [genderError, setGenderError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [loadingText, setLoadingText] = useState('Loading...');
 const searchNameFromBox = location.state?.searchName || "";
-const searchflow = location.state?.searchflow || "";
+const searchflow = location.state?.searchflow || false;
 const [searchNameValue] = useState(
   location.state?.searchName ||
   location.state?.searchNameFromBox ||
@@ -97,7 +97,7 @@ const [searchNameValue] = useState(
 );
 
 const enrolled = location.state?.enrolledstatus || "";
-console.log(searchNameFromBox,location.state,"searchNameFromBox2")
+console.log(location.state,searchflow &&enrolled,"searchNameFromBox2")
 
 
 
@@ -262,8 +262,9 @@ useEffect(() => {
     ...(navCandidateId ? { registraionId: registraionId } : null),
 
   screenId: 2,                         // constant value for identify the screen type
-      revisitStatus:enrolled ? 1 : 0                 // constant value for identify the screen type
+      revisitStatus:searchflow && enrolled ? 1 : 0                 // constant value for identify the screen type
 };
+console.log(payload,"payload")
 
     try {
       setLoadingText('Saving enrollment...');
@@ -407,7 +408,7 @@ console.log(searchNameFromBox,"searchNameFromBox3",response.data)
 
           type: 1,
       screenId: 1,      
-      revisitStatus:enrolled ? 1 : 0                 // constant value for identify the screen type
+      revisitStatus:searchflow && enrolled ? 1 : 0                 // constant value for identify the screen type
 
     };
     console.log(payload,"payload")

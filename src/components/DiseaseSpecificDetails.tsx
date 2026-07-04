@@ -261,7 +261,8 @@ const registrationId = location.state?.registrationId || "";
                 Non-mandatory fields are not provided. Are you sure you want to finish registration?
               </h1>
               <div className="modal-buttons">
-                <button className="Finish-button" type="button" onClick={(e) => handleSubmit(e, '/SuccessMessagePRFinal')}>Yes</button>
+                <button className="Finish-button" type="button" 
+                onClick={(e) => handleSubmit(e, '/SuccessMessagePRFinal')}>Yes</button>
                 <button className="Next-button" type="button" onClick={closeModal}>No</button>
               </div>
             </div>
