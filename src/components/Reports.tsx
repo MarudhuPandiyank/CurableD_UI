@@ -142,6 +142,15 @@ const Reports: React.FC = () => {
       setErrorMsg("Start date cannot be after end date.");
       return;
     }
+        if (downloadBy === "Consolidated" && startDate && endDate) {
+      const maxDate = new Date(startDate);
+      maxDate.setMonth(maxDate.getMonth() + 1);
+
+      if (endDate > maxDate) {
+        setErrorMsg("For Consolidated Report, the selected date range cannot exceed one month.");
+        return;
+      }
+    }
 
     setErrorMsg("");
 
@@ -252,6 +261,7 @@ const Reports: React.FC = () => {
             <option value="Clinical_Evaluation">Clinical Evaluation</option>
             <option value="SavedPatient">Saved Patient</option>
             <option value="UniquePatientReport">Unique Patient Report</option>
+            <option value="Consolidated">Consolidated Report</option>
           </select>
         </label>
 
