@@ -667,7 +667,7 @@ console.log(searchNameFromBox,"searchNameFromBox3",response.data)
           <center>
             <div className="buttons">
            
-             {enrolled? <button
+             {enrolled && searchflow? <button
                 type="button"
                 className="Next-button"
  onClick={(e) => finalvisitcall(e)}

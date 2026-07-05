@@ -214,11 +214,17 @@ const [errors, setErrors] = useState({
       alert('Something went wrong, please try again later.');
     }
   };
-
+useEffect(() => {
+  console.log(formData,formData.programCoordinators.length === 0 &&
+            formData.campCoordinators.length === 0 &&
+            formData.socialWorkers.length === 0 &&
+            formData.doctors.length === 0, "formData");
+}, [formData]);
   return (
     <div className="container2">
       <form className="clinic-form" onSubmit={handleSubmit}>
         <Header1 />
+        
       <NoDataModal show={showNoDataModal} onOk={handleNoDataOk} />
 
         <h1 style={{ color: 'darkblue' }}>Resource Allocation</h1>
@@ -313,21 +319,30 @@ const [errors, setErrors] = useState({
     <p className="error-text">{errors.doctors}</p>
   )}
         </div>
-
         <button
         style={{marginBottom:'40px'}}
-          className="submit-button"
+          className={
+    formData.programCoordinators.length === 0 &&
+    formData.campCoordinators.length === 0 &&
+    formData.socialWorkers.length === 0 &&
+    formData.doctors.length === 0 &&
+    formData.nurses.length === 0
+      ? "submit-button submit-button-disabled"
+      : "submit-button"
+  }
           type="submit"
           disabled={
             formData.programCoordinators.length === 0 &&
             formData.campCoordinators.length === 0 &&
             formData.socialWorkers.length === 0 &&
-            formData.doctors.length === 0
+            formData.doctors.length === 0 &&
+            formData.nurses.length === 0
           }
           >
             Submit
           </button>
         </form>
+        
         <br/>
                 <br/>
         <br/>

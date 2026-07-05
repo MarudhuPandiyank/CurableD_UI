@@ -18,7 +18,13 @@
     text-decoration: none;
     font-size: 16px;
 }
-  
+  .submit-button-disabled {
+  background-color: #bfbfbf !important;
+  color: #666666 !important;
+  cursor: not-allowed;
+  border: 1px solid #bfbfbf;
+  opacity: 0.8;
+}
 .icons {
     display: flex;
     align-items: center;
